@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullname }}
+  namespace: default
+spec:
+  replicas: {{ .Values.replicaCount  | default 2 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.fullname }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fullname }}
+    spec:
+      containers:
+        - name: {{ .Values.fullname }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          volumeMounts:
+            - mountPath: "/home/node/.n8n"
+              name: n8n-config
+              readOnly: false
+          ports:
+            - containerPort: {{ .Values.service.port }}
+      volumes:
+        - name: n8n-config
+          hostPath:
+            path: /root/.n8n

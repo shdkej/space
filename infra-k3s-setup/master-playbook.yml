@@ -1,0 +1,121 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Install packages that allow apt to be used over HTTPS
+    apt:
+     name: "{{ packages }}"
+     state: present
+     update_cache: yes
+    vars:
+     packages:
+     - apt-transport-https
+     - ca-certificates
+     - curl
+     - gnupg-agent
+     - software-properties-common
+
+  - name: Add an apt signing key for Docker
+    apt_key:
+     url: https://download.docker.com/linux/ubuntu/gpg
+     state: present
+
+  - name: Add apt repository for stable version
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+      state: present
+
+  - name: Install docker and its dependecies
+    apt:
+     name: "{{ packages }}"
+     state: present
+     update_cache: yes
+    vars:
+     packages:
+     - docker-ce
+     - docker-ce-cli
+     - containerd.io
+    notify:
+     - docker status
+
+  - name: Add user to docker group
+    user:
+     name: ubuntu
+     group: docker
+
+  - name: Remove swapfile from /etc/fstab
+    mount:
+     name: "{{ item }}"
+     fstype: swap
+     state: absent
+    with_items:
+     - swap
+     - none
+
+  - name: Disable swap
+    command: swapoff -a
+    when: ansible_swaptotal_mb > 0
+
+  - name: setting environment
+    shell: "echo $K3S_KUBECONFIG_MODE"
+    environment:
+      K3S_KUBECONFIG_MODE: "644"
+      INSTALL_K3S_EXEC: " --no-deploy servicelb --no-deploy traefik"
+
+  - name: Install k3s
+    get_url: url=https://get.k3s.io dest=/tmp/k3s.sh mode=0755
+
+  - name: Execute k3s script
+    shell: /tmp/k3s.sh
+
+  - name: Remove k3s script file
+    file:
+      path: /tmp/k3s.sh
+      state: absent
+
+  - name: Enable and check K3S Service
+    systemd:
+      name: k3s
+      daemon_reload: yes
+      state: restarted
+      enabled: yes
+
+  - name: Generate join command
+    command: cat /var/lib/rancher/k3s/server/node-token
+    register: join_command
+
+  - name: Copy join command to local file
+    become: false
+    local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+
+  - name: Get the host IP
+    #shell: host {{ ansible_fqdn }} | awk '{print $4}'
+    shell: wget -qO- http://ipecho.net/plain ; echo
+    register: host_ip
+
+  - name: Copy master ip to local file
+    become: false
+    local_action: copy content="{{ host_ip.stdout_lines[0] }}" dest="./master_ip"
+
+  - name: Get the node ipecho
+    shell: cat /root/nodes
+    register: node_ip
+
+  - name: Kubectl Permission Update
+    file:
+      path: /etc/rancher/k3s/k3s.yaml
+      state: touch
+      mode: "u=rx,g=r,o=r"
+
+  - name: Install helm
+    command: "{{ item }}"
+    with_items:
+      - wget https://get.helm.sh/helm-v3.2.1-linux-amd64.tar.gz
+      - tar xvf helm-v3.2.1-linux-amd64.tar.gz
+      - mv linux-amd64/helm /usr/local/bin/
+      - rm helm-v3.2.1-linux-amd64.tar.gz
+      - rm -rf linux-amd64
+
+  handlers:
+  - name: docker status
+    service: name=docker state=started

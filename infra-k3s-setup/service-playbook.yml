@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Install ArgoCD
+    shell: |
+      - kubectl create namespace argocd
+      - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      - kubectl patch svc argocd-server -n argocd -p "{'spec': {'type': 'LoadBalancer'}}"
+
+  - name: Install Monitoring System
+    command: "{{ item }}"
+    with_items:
+      - kubectl apply -k github.com/premist/k3s-kube-prometheus/setup
+      - kubectl apply -k github.com/premist/k3s-kube-prometheus
+
+  - name: Install ArgoCD Cli
+    command: "{{ item }}"
+    with_items:
+      - VERSION=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"ta      g_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+      - curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/$VERSION/a      rgocd-linux-amd64
+      - chmod +x /usr/local/bin/argocd
+      - export ARGOCD_PASSWORD=`kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`
+      - argocd login <ARGOCD_SERVER>
+      - argocd account update-password

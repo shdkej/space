@@ -1,0 +1,19 @@
+replicaCount: 1
+
+fullname: n8n
+image:
+  repository: n8nio/n8n
+  tag: ""
+
+service:
+  type: ClusterIP
+  port: 5678
+
+ingress:
+  enabled: true
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: whoami.minikube
+      paths: [/]

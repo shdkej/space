@@ -3,6 +3,7 @@ replicaCount: 1
 fullname: n8n
 image:
   repository: n8nio/n8n
+  tag: latest
 
 service:
   type: ClusterIP

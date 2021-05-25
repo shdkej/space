@@ -1,0 +1,16 @@
+name: CD
+on:
+  push:
+    branches: [ master ]
+jobs:
+  delivery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Sync ArgoCD"
+        uses: omegion/argocd-app-actions@master
+        with:
+          address: www.shdkej.com:31598
+          token: ${{ secrets.ARGOCD_TOKEN }}
+          appName: "test"

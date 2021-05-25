@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: {{ .Values.fullname }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default latest }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default 'latest' }}"
           imagePullPolicy: IfNotPresent
           resources:
             requests:

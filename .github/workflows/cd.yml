@@ -11,6 +11,6 @@ jobs:
       - name: "Sync ArgoCD"
         uses: omegion/argocd-app-actions@master
         with:
-          address: www.shdkej.com:31598
+          address: 174.138.29.14:31598
           token: ${{ secrets.ARGOCD_TOKEN }}
           appName: "test"

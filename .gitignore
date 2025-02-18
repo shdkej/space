@@ -4,4 +4,3 @@ join-command
 variables.tf
 backend.hcl
 nodes
-master_ip

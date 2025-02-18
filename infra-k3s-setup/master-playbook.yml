@@ -97,10 +97,6 @@
     become: false
     local_action: copy content="{{ host_ip.stdout_lines[0] }}" dest="./master_ip"
 
-  - name: Get the node ipecho
-    shell: cat /root/nodes
-    register: node_ip
-
   - name: Kubectl Permission Update
     file:
       path: /etc/rancher/k3s/k3s.yaml

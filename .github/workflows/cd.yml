@@ -8,6 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get master IP
+        run: echo "MASTER_IP=$(cat infra-k3s-setup/master_ip)" >> $GITHUB_ENV
+
       - name: "Sync ArgoCD"
         uses: omegion/argocd-app-actions@master
         with:

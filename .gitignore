@@ -4,3 +4,7 @@ join-command
 variables.tf
 backend.hcl
 nodes
+infra-do/kubernetes/terraform.tfvars
+infra-do/kubernetes/terraform.tfstate
+infra-do/kubernetes/terraform.tfstate.backup
+infra-do/.DS_Store

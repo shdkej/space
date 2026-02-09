@@ -1,9 +1,14 @@
 # SPACE
 
+
+어떤 클라우드이든지 상관 없이 내 인프라를 구축한다.
+
 ## cloud
 - digitalocean
 - ~~aws free tier (expired)~~
 - cloudflare (dns)
+- oracle
+
 
 ## service
 use exist component. for more configuration. add in specific directory.

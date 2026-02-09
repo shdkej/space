@@ -1,16 +1,27 @@
+# =============================================================================
+# DigitalOcean Managed Kubernetes (DOKS)
+# =============================================================================
+
 resource "digitalocean_kubernetes_cluster" "k8s_cluster" {
-    name = "my-k8s-cluster"
-    region = "sgp1"
-    version = "1.33.1-do.1"
+  name    = var.cluster_name
+  region  = var.region
+  version = var.cluster_version
 
-    node_pool {
-        name = "default-node-pool"
-        size = "s-1vcpu-2gb"
-        node_count = 1
-        auto_scale = true
-        min_nodes = 1
-        max_nodes = 5
-    }
+  node_pool {
+    name       = "default-node-pool"
+    size       = var.node_size
+    node_count = var.min_nodes
+    auto_scale = true
+    min_nodes  = var.min_nodes
+    max_nodes  = var.max_nodes
+  }
 
-    tags = ["my-cluster-tag"]
-} 
+  tags = ["${var.cluster_name}-tag"]
+}
+
+# kubeconfig 로컬 저장
+resource "local_file" "kubeconfig" {
+  content         = digitalocean_kubernetes_cluster.k8s_cluster.kube_config[0].raw_config
+  filename        = "${path.module}/.kubeconfig"
+  file_permission = "0600"
+}

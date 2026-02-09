@@ -7,4 +7,13 @@ nodes
 infra-do/kubernetes/terraform.tfvars
 infra-do/kubernetes/terraform.tfstate
 infra-do/kubernetes/terraform.tfstate.backup
+infra-do/kubernetes/.kubeconfig
 infra-do/.DS_Store
+
+# infra-oracle
+infra-oracle/terraform.tfvars
+infra-oracle/terraform.tfstate
+infra-oracle/terraform.tfstate.backup
+infra-oracle/.kubeconfig
+infra-oracle/.node-token
+infra-oracle/.terraform*

@@ -1,19 +1,38 @@
 replicaCount: 1
 
-fullname: n8n
+fullname: my-app
+
 image:
-  repository: n8nio/n8n
+  repository: nginx
   tag: latest
 
 service:
   type: ClusterIP
-  port: 5678
+  port: 80
 
 ingress:
-  enabled: true
+  enabled: false
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: whoami.minikube
-      paths: [/]
+  hosts: []
+  tls: []
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+env: []
+# - name: NODE_ENV
+#   value: production
+
+volumes: []
+# - name: data
+#   hostPath:
+#     path: /data
+
+volumeMounts: []
+# - name: data
+#   mountPath: /data

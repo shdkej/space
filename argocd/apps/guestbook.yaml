@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/shdkej/space.git
+    targetRevision: HEAD
+    path: base
+    helm:
+      values: |
+        fullname: guestbook
+        image:
+          repository: ghcr.io/shdkej/synonym-dictionary
+          tag: latest
+        service:
+          port: 8080
+        ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          hosts:
+            - host: guestbook.oracle.shdkej.com
+              paths: [/]
+          tls:
+            - hosts: [guestbook.oracle.shdkej.com]
+              secretName: guestbook-tls
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

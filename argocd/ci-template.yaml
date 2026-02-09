@@ -1,0 +1,60 @@
+# 타겟 repo에 복사: .github/workflows/deploy.yaml
+#
+# 필수 설정 (타겟 repo의 GitHub Settings > Secrets):
+#   - SPACE_DEPLOY_TOKEN: space repo에 push 권한이 있는 GitHub PAT
+#
+# 필수 수정:
+#   - APP_NAME: argocd/apps/ 안의 YAML 파일명 (확장자 제외)
+#   - IMAGE_NAME: 컨테이너 이미지 이름
+#
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+
+env:
+  APP_NAME: guestbook                          # argocd/apps/guestbook.yaml 과 일치
+  IMAGE_NAME: ghcr.io/${{ github.repository }} # ghcr.io/shdkej/my-app
+  SPACE_REPO: shdkej/space
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # 1. 이미지 빌드 & push
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:latest
+
+      # 2. space repo의 태그 업데이트
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SPACE_REPO }}
+          token: ${{ secrets.SPACE_DEPLOY_TOKEN }}
+          path: space
+
+      - name: Update image tag
+        run: |
+          cd space
+          sed -i "s|tag: .*|tag: ${{ github.sha }}|" argocd/apps/${{ env.APP_NAME }}.yaml
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add argocd/apps/${{ env.APP_NAME }}.yaml
+          git commit -m "deploy: ${{ env.APP_NAME }} ${{ github.sha }}"
+          git push

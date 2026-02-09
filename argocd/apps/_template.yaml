@@ -1,0 +1,48 @@
+# 새 앱 배포 템플릿
+# 이 파일을 복사해서 {앱이름}.yaml 로 저장 후 git push
+#
+# 필수 수정:
+#   - metadata.name: 앱 이름
+#   - helm.values 안의 fullname, image.repository, service.port
+#
+# 원리: space repo의 base/ Helm chart를 공용 템플릿으로 사용하고
+#       아래 values로 앱별 설정만 오버라이드
+#
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app          # 앱 이름 (ArgoCD에서 보이는 이름)
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/shdkej/space.git
+    targetRevision: HEAD
+    path: base           # 공용 Helm chart 경로
+    helm:
+      values: |
+        fullname: my-app
+        image:
+          repository: ghcr.io/shdkej/my-app   # 컨테이너 이미지
+          tag: latest
+        service:
+          port: 3000
+        # ingress:
+        #   enabled: true
+        #   annotations:
+        #     cert-manager.io/cluster-issuer: letsencrypt-prod
+        #   hosts:
+        #     - host: my-app.example.com
+        #       paths: [/]
+        #   tls:
+        #     - hosts: [my-app.example.com]
+        #       secretName: my-app-tls
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

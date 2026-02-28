@@ -1,0 +1,292 @@
+name: Terraform Oracle
+
+on:
+  pull_request:
+    paths:
+      - "infra-oracle/**"
+      - "modules/k3s-cluster/**"
+      - "modules/k3s-apps/**"
+  push:
+    branches: [master]
+    paths:
+      - "infra-oracle/**"
+      - "modules/k3s-cluster/**"
+      - "modules/k3s-apps/**"
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: "적용 단계 선택"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - cluster
+          - services
+          - all
+
+env:
+  TF_WORKING_DIR: infra-oracle
+  TF_VERSION: "1.5.7"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ===========================================================================
+  # PR: terraform plan 결과를 코멘트로 게시
+  # ===========================================================================
+  plan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 키 파일 생성
+        run: |
+          echo "$OCI_PRIVATE_KEY" > /tmp/oci_api_key.pem
+          chmod 600 /tmp/oci_api_key.pem
+
+          mkdir -p /tmp/ssh
+          echo "$SSH_SERVER_KEY" > /tmp/ssh/server.key
+          echo "$SSH_AGENT1_KEY" > /tmp/ssh/agent1.key
+          echo "$SSH_AGENT2_KEY" > /tmp/ssh/agent2.key
+          chmod 600 /tmp/ssh/*.key
+        env:
+          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+          SSH_SERVER_KEY: ${{ secrets.SSH_SERVER_KEY }}
+          SSH_AGENT1_KEY: ${{ secrets.SSH_AGENT1_KEY }}
+          SSH_AGENT2_KEY: ${{ secrets.SSH_AGENT2_KEY }}
+
+      - name: terraform.tfvars 생성
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: echo "$TERRAFORM_TFVARS" > terraform.tfvars
+        env:
+          TERRAFORM_TFVARS: ${{ secrets.TERRAFORM_TFVARS }}
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          terraform init \
+            -backend-config="endpoint=https://${OCI_NAMESPACE}.compat.objectstorage.ap-seoul-1.oraclecloud.com"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+          OCI_NAMESPACE: ${{ vars.OCI_NAMESPACE }}
+
+      - name: Kubeconfig Fetch
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+        run: |
+          SERVER_IP=$(terraform output -raw server_public_ip 2>/dev/null || echo "")
+          if [ -n "$SERVER_IP" ]; then
+            ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+              -i /tmp/ssh/server.key \
+              ubuntu@"$SERVER_IP" \
+              "sudo cat /etc/rancher/k3s/k3s.yaml" | \
+              sed "s/127.0.0.1/$SERVER_IP/" > .kubeconfig
+            chmod 600 .kubeconfig
+          else
+            echo "서버 IP를 가져올 수 없음 - 신규 클러스터일 수 있음"
+            touch .kubeconfig
+          fi
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+        run: |
+          terraform plan -no-color \
+            -var="oci_private_key_path=/tmp/oci_api_key.pem" \
+            -var="server_ssh_key_path=/tmp/ssh/server.key" \
+            -var='agent_ssh_key_paths=["/tmp/ssh/agent1.key","/tmp/ssh/agent2.key"]' \
+            2>&1 | tee /tmp/plan_output.txt
+          echo "exitcode=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+
+      - name: PR 코멘트 게시
+        uses: actions/github-script@v7
+        env:
+          PLAN_EXIT_CODE: ${{ steps.plan.outputs.exitcode }}
+          GH_ACTOR: ${{ github.actor }}
+          GH_WORKFLOW: ${{ github.workflow }}
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('/tmp/plan_output.txt', 'utf8');
+            const exitCode = process.env.PLAN_EXIT_CODE;
+            const actor = process.env.GH_ACTOR;
+            const workflow = process.env.GH_WORKFLOW;
+            const status = exitCode === '0' ? '✅' : '❌';
+
+            const maxLen = 60000;
+            const truncated = plan.length > maxLen
+              ? plan.substring(0, maxLen) + '\n\n... (truncated)'
+              : plan;
+
+            const body = `### ${status} Terraform Plan (infra-oracle)\n\n<details><summary>Plan 결과 보기</summary>\n\n\`\`\`\n${truncated}\n\`\`\`\n\n</details>\n\n*Pusher: @${actor}, Workflow: \`${workflow}\`*`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Terraform Plan (infra-oracle)')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              });
+            }
+
+      - name: Plan 실패 시 워크플로우 실패 처리
+        if: steps.plan.outputs.exitcode != '0'
+        run: exit 1
+
+      - name: 키 파일 정리
+        if: always()
+        run: |
+          rm -f /tmp/oci_api_key.pem
+          rm -rf /tmp/ssh
+          rm -f "$TF_WORKING_DIR/terraform.tfvars"
+        env:
+          TF_WORKING_DIR: ${{ env.TF_WORKING_DIR }}
+
+  # ===========================================================================
+  # Apply: master push 또는 수동 실행 시 2단계 apply
+  # ===========================================================================
+  apply:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: oracle-production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: 키 파일 생성
+        run: |
+          echo "$OCI_PRIVATE_KEY" > /tmp/oci_api_key.pem
+          chmod 600 /tmp/oci_api_key.pem
+
+          mkdir -p /tmp/ssh
+          echo "$SSH_SERVER_KEY" > /tmp/ssh/server.key
+          echo "$SSH_AGENT1_KEY" > /tmp/ssh/agent1.key
+          echo "$SSH_AGENT2_KEY" > /tmp/ssh/agent2.key
+          chmod 600 /tmp/ssh/*.key
+        env:
+          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+          SSH_SERVER_KEY: ${{ secrets.SSH_SERVER_KEY }}
+          SSH_AGENT1_KEY: ${{ secrets.SSH_AGENT1_KEY }}
+          SSH_AGENT2_KEY: ${{ secrets.SSH_AGENT2_KEY }}
+
+      - name: terraform.tfvars 생성
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: echo "$TERRAFORM_TFVARS" > terraform.tfvars
+        env:
+          TERRAFORM_TFVARS: ${{ secrets.TERRAFORM_TFVARS }}
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          terraform init \
+            -backend-config="endpoint=https://${OCI_NAMESPACE}.compat.objectstorage.ap-seoul-1.oraclecloud.com"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+          OCI_NAMESPACE: ${{ vars.OCI_NAMESPACE }}
+
+      - name: 적용 단계 결정
+        id: phase
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "phase=$INPUT_PHASE" >> "$GITHUB_OUTPUT"
+          else
+            echo "phase=all" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_PHASE: ${{ inputs.phase }}
+
+      # Phase 1: K3S 클러스터 (cluster 또는 all)
+      - name: "Phase 1: K3S 클러스터 Apply"
+        if: steps.phase.outputs.phase == 'cluster' || steps.phase.outputs.phase == 'all'
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+        run: |
+          terraform apply -auto-approve \
+            -var="oci_private_key_path=/tmp/oci_api_key.pem" \
+            -var="server_ssh_key_path=/tmp/ssh/server.key" \
+            -var='agent_ssh_key_paths=["/tmp/ssh/agent1.key","/tmp/ssh/agent2.key"]' \
+            -target=oci_core_security_list.k3s \
+            -target=null_resource.attach_security_list \
+            -target=module.k3s
+
+      # Kubeconfig fetch (Phase 2 준비)
+      - name: Kubeconfig Fetch
+        if: steps.phase.outputs.phase != 'cluster'
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+        run: |
+          SERVER_IP=$(terraform output -raw server_public_ip)
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 \
+            -i /tmp/ssh/server.key \
+            ubuntu@"$SERVER_IP" \
+            "sudo cat /etc/rancher/k3s/k3s.yaml" | \
+            sed "s/127.0.0.1/$SERVER_IP/" > .kubeconfig
+          chmod 600 .kubeconfig
+          echo "Kubeconfig fetched from $SERVER_IP"
+
+      # Phase 2: Helm 서비스 (services 또는 all)
+      - name: "Phase 2: Helm 서비스 Apply"
+        if: steps.phase.outputs.phase == 'services' || steps.phase.outputs.phase == 'all'
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+        run: |
+          terraform apply -auto-approve \
+            -var="oci_private_key_path=/tmp/oci_api_key.pem" \
+            -var="server_ssh_key_path=/tmp/ssh/server.key" \
+            -var='agent_ssh_key_paths=["/tmp/ssh/agent1.key","/tmp/ssh/agent2.key"]'
+
+      - name: 키 파일 정리
+        if: always()
+        run: |
+          rm -f /tmp/oci_api_key.pem
+          rm -rf /tmp/ssh
+          rm -f "$TF_WORKING_DIR/terraform.tfvars"
+        env:
+          TF_WORKING_DIR: ${{ env.TF_WORKING_DIR }}

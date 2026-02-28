@@ -17,3 +17,5 @@ infra-do/kubernetes/.kubeconfig
 # infra-oracle
 infra-oracle/.kubeconfig
 infra-oracle/.node-token
+
+.omc

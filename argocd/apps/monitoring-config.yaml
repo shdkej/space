@@ -1,0 +1,24 @@
+# monitoring_personal 레포의 CRD 설정을 ArgoCD로 싱크
+# - PrometheusRule: alert rules → Prometheus Operator 자동 감지
+# - AlertmanagerConfig: slack 연동 → Alertmanager 자동 참조
+# - ConfigMap (dashboards): grafana_dashboard=1 label → Grafana sidecar 자동 로드
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring-config
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/shdkej/monitoring_personal.git
+    targetRevision: HEAD
+    path: .
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

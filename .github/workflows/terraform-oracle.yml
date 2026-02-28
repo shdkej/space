@@ -80,7 +80,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
           OCI_NAMESPACE: ${{ vars.OCI_NAMESPACE }}
 
-      - name: Kubeconfig Fetch
+      - name: 서버 파일 Pre-fetch (node-token, kubeconfig)
         working-directory: ${{ env.TF_WORKING_DIR }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
@@ -89,14 +89,16 @@ jobs:
           SERVER_IP=$(terraform output -raw server_public_ip 2>/dev/null || echo "")
           if [ -n "$SERVER_IP" ]; then
             ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
-              -i /tmp/ssh/server.key \
-              ubuntu@"$SERVER_IP" \
+              -i /tmp/ssh/server.key ubuntu@"$SERVER_IP" \
+              "sudo cat /var/lib/rancher/k3s/server/node-token" > .node-token 2>/dev/null || true
+            ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+              -i /tmp/ssh/server.key ubuntu@"$SERVER_IP" \
               "sudo cat /etc/rancher/k3s/k3s.yaml" | \
-              sed "s/127.0.0.1/$SERVER_IP/" > .kubeconfig
-            chmod 600 .kubeconfig
+              sed "s/127.0.0.1/$SERVER_IP/" > .kubeconfig 2>/dev/null || true
+            chmod 600 .kubeconfig .node-token 2>/dev/null || true
           else
-            echo "서버 IP를 가져올 수 없음 - 신규 클러스터일 수 있음"
-            touch .kubeconfig
+            echo "서버 IP 없음 - 신규 배포"
+            touch .kubeconfig .node-token
           fi
 
       - name: Terraform Plan
@@ -223,6 +225,27 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
           OCI_NAMESPACE: ${{ vars.OCI_NAMESPACE }}
+
+      - name: 서버 파일 Pre-fetch (node-token, kubeconfig)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+        run: |
+          SERVER_IP=$(terraform output -raw server_public_ip 2>/dev/null || echo "")
+          if [ -n "$SERVER_IP" ]; then
+            ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+              -i /tmp/ssh/server.key ubuntu@"$SERVER_IP" \
+              "sudo cat /var/lib/rancher/k3s/server/node-token" > .node-token 2>/dev/null || true
+            ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+              -i /tmp/ssh/server.key ubuntu@"$SERVER_IP" \
+              "sudo cat /etc/rancher/k3s/k3s.yaml" | \
+              sed "s/127.0.0.1/$SERVER_IP/" > .kubeconfig 2>/dev/null || true
+            chmod 600 .kubeconfig .node-token 2>/dev/null || true
+            echo "Pre-fetch 완료: $SERVER_IP"
+          else
+            echo "서버 IP 없음 - 신규 배포"
+          fi
 
       - name: 적용 단계 결정
         id: phase

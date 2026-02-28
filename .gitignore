@@ -1,7 +1,6 @@
 join-command
 .vagrant
 .terraform*
-variables.tf
 backend.hcl
 nodes
 .DS_Store

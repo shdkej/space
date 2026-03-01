@@ -85,6 +85,14 @@ resource "helm_release" "kube_prometheus_stack" {
     value = "256Mi"
   }
 
+  # Grafana sidecar - annotation 기반 대시보드 폴더 분류
+  # kube-prometheus 기본 대시보드 → 내장 폴더 구조 (Kubernetes / ...)
+  # 커스텀 대시보드 → grafana_folder annotation 값 기준 분류
+  set {
+    name  = "grafana.sidecar.dashboards.folderAnnotation"
+    value = "grafana_folder"
+  }
+
   # Grafana NodePort (30090)
   set {
     name  = "grafana.service.type"
@@ -157,5 +165,40 @@ resource "helm_release" "kube_prometheus_stack" {
   set {
     name  = "prometheusOperator.resources.limits.memory"
     value = "256Mi"
+  }
+
+  # ==========================================================================
+  # 기본 알림 규칙 관리
+  # kube-prometheus 기본 규칙에 라벨 추가 → 커스텀 규칙과 구분
+  # ==========================================================================
+  set {
+    name  = "defaultRules.labels.rule_source"
+    value = "kube-prometheus-default"
+  }
+
+  # k3s 단일 노드 환경에서 불필요한 기본 규칙 비활성화
+  set {
+    name  = "defaultRules.rules.etcd"
+    value = "false"
+  }
+
+  set {
+    name  = "defaultRules.rules.kubeSchedulerAlerting"
+    value = "false"
+  }
+
+  set {
+    name  = "defaultRules.rules.kubeSchedulerRecording"
+    value = "false"
+  }
+
+  set {
+    name  = "defaultRules.rules.kubeProxy"
+    value = "false"
+  }
+
+  set {
+    name  = "defaultRules.rules.kubeControllerManager"
+    value = "false"
   }
 }

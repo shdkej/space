@@ -4,8 +4,9 @@
 # domain 변수가 설정되고 해당 앱이 활성화된 경우에만 Ingress 생성.
 # cert-manager + Let's Encrypt로 인증서 자동 발급/갱신.
 #
-#   argocd.{domain}  → ArgoCD Server
-#   grafana.{domain} → Grafana
+#   argocd.{domain}       → ArgoCD Server
+#   alertmanager.{domain} → Alertmanager
+#   grafana.{domain}      → Grafana
 # =============================================================================
 
 resource "kubernetes_ingress_v1" "argocd" {
@@ -42,6 +43,48 @@ resource "kubernetes_ingress_v1" "argocd" {
               name = "argocd-server"
               port {
                 number = 80
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_ingress_v1" "alertmanager" {
+  count = var.domain != "" && var.enable_monitoring ? 1 : 0
+
+  depends_on = [helm_release.kube_prometheus_stack, null_resource.letsencrypt_issuer]
+
+  metadata {
+    name      = "alertmanager-ingress"
+    namespace = "monitoring"
+    annotations = {
+      "cert-manager.io/cluster-issuer"           = "letsencrypt-prod"
+      "nginx.ingress.kubernetes.io/ssl-redirect"  = "true"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+
+    tls {
+      hosts       = ["alertmanager.${var.domain}"]
+      secret_name = "alertmanager-tls"
+    }
+
+    rule {
+      host = "alertmanager.${var.domain}"
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = "kube-prometheus-stack-alertmanager"
+              port {
+                number = 9093
               }
             }
           }

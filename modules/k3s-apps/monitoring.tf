@@ -25,6 +25,10 @@ resource "helm_release" "kube_prometheus_stack" {
     name  = "alertmanager.enabled"
     value = "true"
   }
+  set {
+    name  = "alertmanager.alertmanagerSpec.externalUrl"
+    value = var.domain != "" ? "https://alertmanager.${var.domain}" : ""
+  }
 
   # Prometheus 설정
   set {

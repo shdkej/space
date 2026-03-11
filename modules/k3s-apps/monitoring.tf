@@ -181,10 +181,10 @@ resource "helm_release" "kube_prometheus_stack" {
     value = "false"
   }
 
-  # Keep kube-prometheus default dashboards enabled
+  # Reduce dashboard noise: disable kube-prometheus default dashboard bundle
   set {
     name  = "grafana.defaultDashboardsEnabled"
-    value = "true"
+    value = "false"
   }
 
   # 기본 규칙에 라벨 추가 (추후 defaultRules를 다시 켤 때 구분 용도)

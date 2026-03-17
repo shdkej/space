@@ -172,9 +172,22 @@ resource "helm_release" "kube_prometheus_stack" {
   }
 
   # ==========================================================================
-  # 기본 알림 규칙 관리
-  # kube-prometheus 기본 규칙에 라벨 추가 → 커스텀 규칙과 구분
+  # 기본 알림/대시보드 최소화
+  # - 기본 알림 규칙은 생성하지 않음 (커스텀 규칙만 사용)
+  # - 기본 Grafana 대시보드 비활성화
   # ==========================================================================
+  set {
+    name  = "defaultRules.create"
+    value = "false"
+  }
+
+  # Reduce dashboard noise: disable kube-prometheus default dashboard bundle
+  set {
+    name  = "grafana.defaultDashboardsEnabled"
+    value = "false"
+  }
+
+  # 기본 규칙에 라벨 추가 (추후 defaultRules를 다시 켤 때 구분 용도)
   set {
     name  = "defaultRules.labels.rule_source"
     value = "kube-prometheus-default"

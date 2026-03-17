@@ -47,6 +47,17 @@ resource "oci_core_security_list" "k3s" {
     }
   }
 
+  # --- Ingress: Node Exporter (Prometheus 메트릭 수집) ---
+  ingress_security_rules {
+    protocol    = "6"
+    source      = data.oci_core_vcn.main.cidr_block
+    description = "Node Exporter metrics"
+    tcp_options {
+      min = 9100
+      max = 9100
+    }
+  }
+
   # --- Ingress: Flannel VXLAN ---
   ingress_security_rules {
     protocol    = "17" # UDP

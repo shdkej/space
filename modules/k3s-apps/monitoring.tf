@@ -264,31 +264,6 @@ resource "helm_release" "yace" {
     value = "false"
   }
 
-  set {
-    name  = "extraVolumes[0].name"
-    value = "yace-config"
-  }
-
-  set {
-    name  = "extraVolumes[0].configMap.name"
-    value = "yace-config"
-  }
-
-  set {
-    name  = "extraVolumeMounts[0].name"
-    value = "yace-config"
-  }
-
-  set {
-    name  = "extraVolumeMounts[0].mountPath"
-    value = "/etc/yace/config.yml"
-  }
-
-  set {
-    name  = "extraVolumeMounts[0].subPath"
-    value = "config.yml"
-  }
-
   # 리소스 제한
   set {
     name  = "resources.requests.cpu"

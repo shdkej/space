@@ -241,22 +241,35 @@ resource "helm_release" "kube_prometheus_stack" {
 resource "helm_release" "yace" {
   count      = var.enable_monitoring ? 1 : 0
   name       = "yace"
-  repository = "https://nerdswords.github.io/yet-another-cloudwatch-exporter"
-  chart      = "yet-another-cloudwatch-exporter"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "prometheus-yet-another-cloudwatch-exporter"
   namespace  = "monitoring"
   wait       = true
   timeout    = 300
 
+  # AWS 크레덴셜 (Secret에서 주입)
   set {
     name  = "aws.secret.name"
     value = "yace-aws-credentials"
   }
 
   set {
-    name  = "config.existingConfigMap"
+    name  = "aws.secret.includesSessionToken"
+    value = "false"
+  }
+
+  # YACE config (monitoring_personal 레포의 ConfigMap 참조)
+  set {
+    name  = "config.configMap.name"
     value = "yace-config"
   }
 
+  set {
+    name  = "config.configMap.key"
+    value = "config.yml"
+  }
+
+  # 리소스 제한
   set {
     name  = "resources.requests.cpu"
     value = "25m"
@@ -277,6 +290,7 @@ resource "helm_release" "yace" {
     value = "128Mi"
   }
 
+  # Prometheus ServiceMonitor
   set {
     name  = "serviceMonitor.enabled"
     value = "true"
@@ -284,7 +298,7 @@ resource "helm_release" "yace" {
 
   set {
     name  = "serviceMonitor.interval"
-    value = "300s"
+    value = "5m"
   }
 
   depends_on = [helm_release.kube_prometheus_stack]

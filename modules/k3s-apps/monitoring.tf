@@ -296,5 +296,10 @@ resource "helm_release" "yace" {
     value = "5m"
   }
 
+  set {
+    name  = "serviceMonitor.additionalLabels.release"
+    value = "kube-prometheus-stack"
+  }
+
   depends_on = [helm_release.kube_prometheus_stack]
 }

@@ -89,6 +89,12 @@ resource "helm_release" "kube_prometheus_stack" {
     value = "256Mi"
   }
 
+  # Grafana 환경변수 - GA4 datasource 크레덴셜 (Secret에서 주입)
+  set {
+    name  = "grafana.envFromSecret"
+    value = "grafana-ga4-credentials"
+  }
+
   # Grafana sidecar - annotation 기반 대시보드 폴더 분류
   # kube-prometheus 기본 대시보드 → 내장 폴더 구조 (Kubernetes / ...)
   # 커스텀 대시보드 → grafana_folder annotation 값 기준 분류

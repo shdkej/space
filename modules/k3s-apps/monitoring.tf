@@ -89,6 +89,12 @@ resource "helm_release" "kube_prometheus_stack" {
     value = "256Mi"
   }
 
+  # Grafana 플러그인 설치
+  set {
+    name  = "grafana.plugins[0]"
+    value = "blackcowmoo-googleanalytics-datasource"
+  }
+
   # Grafana 환경변수 - GA4 datasource 크레덴셜 (Secret에서 주입)
   set {
     name  = "grafana.envFromSecret"

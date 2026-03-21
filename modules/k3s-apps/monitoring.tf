@@ -231,3 +231,61 @@ resource "helm_release" "kube_prometheus_stack" {
     value = "false"
   }
 }
+
+# =============================================================================
+# YACE (Yet Another CloudWatch Exporter)
+# AWS CloudWatch 메트릭을 Prometheus 형식으로 수집
+# config.yml은 monitoring_personal 레포에서 ConfigMap으로 관리
+# =============================================================================
+
+resource "helm_release" "yace" {
+  count      = var.enable_monitoring ? 1 : 0
+  name       = "yace"
+  repository = "https://nerdswords.github.io/yet-another-cloudwatch-exporter"
+  chart      = "yet-another-cloudwatch-exporter"
+  namespace  = "monitoring"
+  wait       = true
+  timeout    = 300
+
+  set {
+    name  = "aws.secret.name"
+    value = "yace-aws-credentials"
+  }
+
+  set {
+    name  = "config.existingConfigMap"
+    value = "yace-config"
+  }
+
+  set {
+    name  = "resources.requests.cpu"
+    value = "25m"
+  }
+
+  set {
+    name  = "resources.requests.memory"
+    value = "64Mi"
+  }
+
+  set {
+    name  = "resources.limits.cpu"
+    value = "100m"
+  }
+
+  set {
+    name  = "resources.limits.memory"
+    value = "128Mi"
+  }
+
+  set {
+    name  = "serviceMonitor.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "serviceMonitor.interval"
+    value = "300s"
+  }
+
+  depends_on = [helm_release.kube_prometheus_stack]
+}

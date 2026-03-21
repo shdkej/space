@@ -297,7 +297,7 @@ resource "helm_release" "yace" {
   }
 
   set {
-    name  = "serviceMonitor.additionalLabels.release"
+    name  = "serviceMonitor.labels.release"
     value = "kube-prometheus-stack"
   }
 

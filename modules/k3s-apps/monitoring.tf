@@ -258,14 +258,34 @@ resource "helm_release" "yace" {
     value = "false"
   }
 
-  # YACE config (monitoring_personal 레포의 ConfigMap 참조)
+  # chart 자체 ConfigMap 비활성화 (monitoring_personal 레포의 ConfigMap 사용)
   set {
-    name  = "config.configMap.name"
+    name  = "configMap.enabled"
+    value = "false"
+  }
+
+  set {
+    name  = "extraVolumes[0].name"
     value = "yace-config"
   }
 
   set {
-    name  = "config.configMap.key"
+    name  = "extraVolumes[0].configMap.name"
+    value = "yace-config"
+  }
+
+  set {
+    name  = "extraVolumeMounts[0].name"
+    value = "yace-config"
+  }
+
+  set {
+    name  = "extraVolumeMounts[0].mountPath"
+    value = "/etc/yace/config.yml"
+  }
+
+  set {
+    name  = "extraVolumeMounts[0].subPath"
     value = "config.yml"
   }
 

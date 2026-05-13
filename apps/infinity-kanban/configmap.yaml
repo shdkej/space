@@ -350,53 +350,50 @@ data:
           return null;
         }
 
+        let rateLimited = false;
+        async function ghDir(path) {
+          const dirUrl = SOURCES.apiBase + path + "?_=" + Date.now();
+          const r = await fetch(dirUrl, { cache: "no-store" });
+          if (r.status === 403 || r.status === 429) { rateLimited = true; return null; }
+          if (!r.ok) return null;
+          return await r.json();
+        }
+
         async function fetchArtifactsList(id) {
           if (!id) return [];
-          try {
-            const dirUrl = SOURCES.apiBase + "infinity/artifacts/" + encodeURIComponent(id);
-            const r = await fetch(dirUrl + "?_=" + Date.now(), { cache: "no-store" });
-            if (!r.ok) return [];
-            const items = (await r.json())
-              .filter(x => x.type === "file" && detectKind(x.name))
-              .sort((a, b) => a.name.localeCompare(b.name));
-            const out = [];
-            for (const it of items) {
-              if (!it.download_url) continue;
-              const kind = detectKind(it.name);
-              try {
-                if (kind === "image") {
-                  out.push({ name: it.name, kind, url: it.download_url });
-                } else if (kind === "html") {
-                  out.push({ name: it.name, kind, text: await fetchText(it.download_url), url: it.download_url });
-                } else {
-                  out.push({ name: it.name, kind, text: await fetchText(it.download_url) });
-                }
-              } catch (e) { /* skip */ }
-            }
-            return out;
-          } catch (e) {
-            return [];
-          }
+          const listing = await ghDir("infinity/artifacts/" + encodeURIComponent(id));
+          if (!listing) return [];
+          const items = listing
+            .filter(x => x.type === "file" && detectKind(x.name))
+            .sort((a, b) => a.name.localeCompare(b.name));
+          const tasks = items.map(async (it) => {
+            if (!it.download_url) return null;
+            const kind = detectKind(it.name);
+            try {
+              if (kind === "image") return { name: it.name, kind, url: it.download_url };
+              const text = await fetchText(it.download_url);
+              return { name: it.name, kind, text, url: it.download_url };
+            } catch (e) { return null; }
+          });
+          return (await Promise.all(tasks)).filter(Boolean);
         }
 
         async function fetchLatestReport(id) {
           if (!id) return null;
-          try {
-            const dirUrl = SOURCES.apiBase + "infinity/reports/" + encodeURIComponent(id);
-            const r = await fetch(dirUrl + "?_=" + Date.now(), { cache: "no-store" });
-            if (!r.ok) return null;
-            const files = (await r.json())
-              .filter(x => x.type === "file" && detectKind(x.name))
-              .sort((a, b) => a.name.localeCompare(b.name));
-            const latest = files[files.length - 1];
-            if (!latest || !latest.download_url) return null;
-            const kind = detectKind(latest.name);
-            const entry = { name: latest.name, kind, url: latest.download_url };
-            if (kind !== "image") entry.text = await fetchText(latest.download_url);
-            return entry;
-          } catch (e) {
-            return null;
+          const listing = await ghDir("infinity/reports/" + encodeURIComponent(id));
+          if (!listing) return null;
+          const files = listing
+            .filter(x => x.type === "file" && detectKind(x.name))
+            .sort((a, b) => a.name.localeCompare(b.name));
+          const latest = files[files.length - 1];
+          if (!latest || !latest.download_url) return null;
+          const kind = detectKind(latest.name);
+          const entry = { name: latest.name, kind, url: latest.download_url };
+          if (kind !== "image") {
+            try { entry.text = await fetchText(latest.download_url); }
+            catch (e) { return null; }
           }
+          return entry;
         }
 
         const KIND_LABELS = {
@@ -465,9 +462,28 @@ data:
           document.body.classList.remove("modal-open");
         }
 
+        const detailCache = new Map();
+        const DETAIL_CACHE_TTL = 5 * 60 * 1000;
+
+        async function loadDetailBundle(item) {
+          const key = (item.id || "") + "|" + (item.source || "") + "|" + (item.title || "");
+          const cached = detailCache.get(key);
+          if (cached && Date.now() - cached.t < DETAIL_CACHE_TTL) return cached.data;
+          const detailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
+          const [archive, detailText, artifacts, report] = await Promise.all([
+            fetchArchiveIntent(item.id),
+            detailPath ? fetchMaybeText(detailPath) : Promise.resolve(null),
+            fetchArtifactsList(item.id),
+            fetchLatestReport(item.id),
+          ]);
+          const data = { archive, detailPath, detailText, artifacts, report };
+          detailCache.set(key, { t: Date.now(), data });
+          return data;
+        }
+
         async function openDetailModal(item, sourceLabel) {
           detailTitle.textContent = item.id ? "[" + item.id + "] " + item.title : item.title;
-          detailBody.innerHTML = "";
+          detailBody.replaceChildren();
           detailModal.classList.add("open");
           detailModal.setAttribute("aria-hidden", "false");
           document.body.classList.add("modal-open");
@@ -480,22 +496,18 @@ data:
           ].filter(Boolean).join("\n");
           addDetailBlock("카드 요약", summary + "\n\n" + (item.bodyLines || []).join("\n"), "kind-summary");
 
-          const archive = await fetchArchiveIntent(item.id);
+          const { archive, detailPath, detailText, artifacts, report } = await loadDetailBundle(item);
+
           if (archive) addDetailBlock("Archive Intent: " + archive.path, archive.text, "kind-archive");
-
-          const detailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
-          const detailText = detailPath ? await fetchMaybeText(detailPath) : null;
           if (detailText) addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
-
-          const artifacts = await fetchArtifactsList(item.id);
           for (const a of artifacts) {
             renderArtifactEntry("Artifact: infinity/artifacts/" + item.id + "/" + a.name, a, "kind-artifact");
           }
-
-          const report = await fetchLatestReport(item.id);
           if (report) renderArtifactEntry("최근 리포트: infinity/reports/" + item.id + "/" + report.name, report, "kind-report");
 
-          if (!archive && !detailText && !artifacts.length && !report) {
+          if (rateLimited) {
+            addDetailBlock("GitHub API 제한", "미인증 API 호출(60/시간) 한도에 도달했습니다. 잠시 후 다시 시도해주세요. (artifacts/reports 디렉토리 listing이 누락될 수 있습니다.)", "kind-empty");
+          } else if (!archive && !detailText && !artifacts.length && !report) {
             addDetailBlock("추가 상세", "연결된 archive intent / artifacts / reports가 아직 없습니다.", "kind-empty");
           }
         }

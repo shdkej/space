@@ -1,0 +1,55 @@
+# nginx:alpine 으로 ConfigMap 의 index.html 정적 서빙
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infinity-kanban
+  namespace: default
+  labels:
+    app: infinity-kanban
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infinity-kanban
+  template:
+    metadata:
+      labels:
+        app: infinity-kanban
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+              readOnly: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 30
+      volumes:
+        - name: html
+          configMap:
+            name: infinity-kanban-html
+            items:
+              - key: index.html
+                path: index.html

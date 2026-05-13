@@ -143,8 +143,10 @@ data:
         }
         .modal-title { font-weight: 700; font-size: 15px; line-height: 1.4; }
         .modal-body {
-          padding: 14px 16px; overflow: auto;
+          padding: 14px 16px; overflow-y: auto; overflow-x: hidden;
           display: grid; gap: 14px;
+          flex: 1 1 auto; min-height: 0;
+          -webkit-overflow-scrolling: touch;
         }
         .detail-block {
           border: 1px solid var(--border); border-radius: 10px;

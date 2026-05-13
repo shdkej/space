@@ -161,7 +161,20 @@ data:
         .detail-block h3 {
           margin: 0; padding: 10px 12px; font-size: 13px;
           background: #1e293b; border-bottom: 1px solid var(--border);
+          border-left: 4px solid var(--border);
         }
+        .detail-block.kind-summary { border-color: #475569; }
+        .detail-block.kind-summary h3 { background: #1f2937; border-left-color: #94a3b8; }
+        .detail-block.kind-archive { border-color: #6366f1; }
+        .detail-block.kind-archive h3 { background: #1e1b4b; border-left-color: #818cf8; }
+        .detail-block.kind-detail { border-color: #14b8a6; }
+        .detail-block.kind-detail h3 { background: #042f2e; border-left-color: #2dd4bf; }
+        .detail-block.kind-artifact { border-color: #f59e0b; }
+        .detail-block.kind-artifact h3 { background: #3b2a08; border-left-color: #fbbf24; }
+        .detail-block.kind-report { border-color: #38bdf8; }
+        .detail-block.kind-report h3 { background: #0c2a3d; border-left-color: #7dd3fc; }
+        .detail-block.kind-empty { border-color: #475569; }
+        .detail-block.kind-empty h3 { background: #1f2937; border-left-color: #64748b; }
         .detail-block pre {
           margin: 0; padding: 12px; white-space: pre-wrap;
           word-break: break-word; color: #dbeafe; font-size: 12px;
@@ -360,9 +373,9 @@ data:
           }
         }
 
-        function makeBlock(title) {
+        function makeBlock(title, kindClass) {
           const block = document.createElement("section");
-          block.className = "detail-block";
+          block.className = "detail-block" + (kindClass ? " " + kindClass : "");
           const h = document.createElement("h3");
           h.textContent = title;
           block.appendChild(h);
@@ -370,15 +383,15 @@ data:
           return block;
         }
 
-        function addDetailBlock(title, text) {
-          const block = makeBlock(title);
+        function addDetailBlock(title, text, kindClass) {
+          const block = makeBlock(title, kindClass);
           const pre = document.createElement("pre");
           pre.textContent = text && text.trim() ? text.trim() : "내용 없음";
           block.appendChild(pre);
         }
 
-        function addImageBlock(title, url) {
-          const block = makeBlock(title);
+        function addImageBlock(title, url, kindClass) {
+          const block = makeBlock(title, kindClass);
           const img = document.createElement("img");
           img.className = "preview";
           img.loading = "lazy";
@@ -387,8 +400,8 @@ data:
           block.appendChild(img);
         }
 
-        function addHtmlBlock(title, text) {
-          const block = makeBlock(title);
+        function addHtmlBlock(title, text, kindClass) {
+          const block = makeBlock(title, kindClass);
           const frame = document.createElement("iframe");
           frame.className = "preview";
           frame.setAttribute("sandbox", "allow-same-origin");
@@ -397,11 +410,11 @@ data:
           block.appendChild(frame);
         }
 
-        function renderArtifactEntry(title, entry) {
+        function renderArtifactEntry(title, entry, kindClass) {
           if (!entry) return;
-          if (entry.kind === "image") addImageBlock(title, entry.url);
-          else if (entry.kind === "html") addHtmlBlock(title, entry.text);
-          else addDetailBlock(title, entry.text);
+          if (entry.kind === "image") addImageBlock(title, entry.url, kindClass);
+          else if (entry.kind === "html") addHtmlBlock(title, entry.text, kindClass);
+          else addDetailBlock(title, entry.text, kindClass);
         }
 
         function closeDetailModal() {
@@ -423,25 +436,25 @@ data:
             item.meta.decision ? "decision: " + item.meta.decision : "",
             pickUpdated(item) ? "updated: " + pickUpdated(item) : "",
           ].filter(Boolean).join("\n");
-          addDetailBlock("카드 요약", summary + "\n\n" + (item.bodyLines || []).join("\n"));
+          addDetailBlock("카드 요약", summary + "\n\n" + (item.bodyLines || []).join("\n"), "kind-summary");
 
           const archive = await fetchArchiveIntent(item.id);
-          if (archive) addDetailBlock("Archive Intent: " + archive.path, archive.text);
+          if (archive) addDetailBlock("Archive Intent: " + archive.path, archive.text, "kind-archive");
 
           const detailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
           const detailText = detailPath ? await fetchMaybeText(detailPath) : null;
-          if (detailText) addDetailBlock("상세 파일: " + detailPath, detailText);
+          if (detailText) addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
 
           const artifacts = await fetchArtifactsList(item.id);
           for (const a of artifacts) {
-            renderArtifactEntry("Artifact: infinity/artifacts/" + item.id + "/" + a.name, a);
+            renderArtifactEntry("Artifact: infinity/artifacts/" + item.id + "/" + a.name, a, "kind-artifact");
           }
 
           const report = await fetchLatestReport(item.id);
-          if (report) renderArtifactEntry("최근 리포트: infinity/reports/" + item.id + "/" + report.name, report);
+          if (report) renderArtifactEntry("최근 리포트: infinity/reports/" + item.id + "/" + report.name, report, "kind-report");
 
           if (!archive && !detailText && !artifacts.length && !report) {
-            addDetailBlock("추가 상세", "연결된 archive intent / artifacts / reports가 아직 없습니다.");
+            addDetailBlock("추가 상세", "연결된 archive intent / artifacts / reports가 아직 없습니다.", "kind-empty");
           }
         }
 

@@ -162,6 +162,14 @@ data:
           word-break: break-word; color: #dbeafe; font-size: 12px;
           line-height: 1.55;
         }
+        .detail-block img.preview {
+          display: block; max-width: 100%; height: auto;
+          background: #0b1220;
+        }
+        .detail-block iframe.preview {
+          display: block; width: 100%; height: 480px; border: 0;
+          background: #ffffff;
+        }
         .modal-close {
           border: 1px solid var(--border); background: #1e293b;
           color: var(--text); border-radius: 8px; padding: 7px 10px;
@@ -291,6 +299,13 @@ data:
           return text ? { path, text } : null;
         }
 
+        function detectKind(name) {
+          if (/\.(png|jpe?g|gif|svg|webp|avif)$/i.test(name)) return "image";
+          if (/\.(html?|xhtml)$/i.test(name)) return "html";
+          if (/\.(md|txt|json|ya?ml|csv|log)$/i.test(name)) return "text";
+          return null;
+        }
+
         async function fetchArtifactsList(id) {
           if (!id) return [];
           try {
@@ -298,13 +313,20 @@ data:
             const r = await fetch(dirUrl + "?_=" + Date.now(), { cache: "no-store" });
             if (!r.ok) return [];
             const items = (await r.json())
-              .filter(x => x.type === "file" && /\.(md|txt|json|ya?ml)$/i.test(x.name))
+              .filter(x => x.type === "file" && detectKind(x.name))
               .sort((a, b) => a.name.localeCompare(b.name));
             const out = [];
             for (const it of items) {
               if (!it.download_url) continue;
+              const kind = detectKind(it.name);
               try {
-                out.push({ name: it.name, text: await fetchText(it.download_url) });
+                if (kind === "image") {
+                  out.push({ name: it.name, kind, url: it.download_url });
+                } else if (kind === "html") {
+                  out.push({ name: it.name, kind, text: await fetchText(it.download_url), url: it.download_url });
+                } else {
+                  out.push({ name: it.name, kind, text: await fetchText(it.download_url) });
+                }
               } catch (e) { /* skip */ }
             }
             return out;
@@ -320,29 +342,61 @@ data:
             const r = await fetch(dirUrl + "?_=" + Date.now(), { cache: "no-store" });
             if (!r.ok) return null;
             const files = (await r.json())
-              .filter(x => x.type === "file" && /\.md$/i.test(x.name))
+              .filter(x => x.type === "file" && detectKind(x.name))
               .sort((a, b) => a.name.localeCompare(b.name));
             const latest = files[files.length - 1];
             if (!latest || !latest.download_url) return null;
-            return {
-              name: latest.name,
-              text: await fetchText(latest.download_url),
-            };
+            const kind = detectKind(latest.name);
+            const entry = { name: latest.name, kind, url: latest.download_url };
+            if (kind !== "image") entry.text = await fetchText(latest.download_url);
+            return entry;
           } catch (e) {
             return null;
           }
         }
 
-        function addDetailBlock(title, text) {
+        function makeBlock(title) {
           const block = document.createElement("section");
           block.className = "detail-block";
           const h = document.createElement("h3");
           h.textContent = title;
+          block.appendChild(h);
+          detailBody.appendChild(block);
+          return block;
+        }
+
+        function addDetailBlock(title, text) {
+          const block = makeBlock(title);
           const pre = document.createElement("pre");
           pre.textContent = text && text.trim() ? text.trim() : "내용 없음";
-          block.appendChild(h);
           block.appendChild(pre);
-          detailBody.appendChild(block);
+        }
+
+        function addImageBlock(title, url) {
+          const block = makeBlock(title);
+          const img = document.createElement("img");
+          img.className = "preview";
+          img.loading = "lazy";
+          img.alt = title;
+          img.src = url;
+          block.appendChild(img);
+        }
+
+        function addHtmlBlock(title, text) {
+          const block = makeBlock(title);
+          const frame = document.createElement("iframe");
+          frame.className = "preview";
+          frame.setAttribute("sandbox", "allow-same-origin");
+          frame.setAttribute("referrerpolicy", "no-referrer");
+          frame.srcdoc = text || "";
+          block.appendChild(frame);
+        }
+
+        function renderArtifactEntry(title, entry) {
+          if (!entry) return;
+          if (entry.kind === "image") addImageBlock(title, entry.url);
+          else if (entry.kind === "html") addHtmlBlock(title, entry.text);
+          else addDetailBlock(title, entry.text);
         }
 
         function closeDetailModal() {
@@ -375,11 +429,11 @@ data:
 
           const artifacts = await fetchArtifactsList(item.id);
           for (const a of artifacts) {
-            addDetailBlock("Artifact: infinity/artifacts/" + item.id + "/" + a.name, a.text);
+            renderArtifactEntry("Artifact: infinity/artifacts/" + item.id + "/" + a.name, a);
           }
 
           const report = await fetchLatestReport(item.id);
-          if (report) addDetailBlock("최근 리포트: infinity/reports/" + item.id + "/" + report.name, report.text);
+          if (report) renderArtifactEntry("최근 리포트: infinity/reports/" + item.id + "/" + report.name, report);
 
           if (!archive && !detailText && !artifacts.length && !report) {
             addDetailBlock("추가 상세", "연결된 archive intent / artifacts / reports가 아직 없습니다.");

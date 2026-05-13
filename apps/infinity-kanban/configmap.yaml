@@ -100,6 +100,18 @@ data:
           font-size: 13px;
         }
         .card .title { font-weight: 600; margin-bottom: 4px; word-break: break-word; }
+        .card--done {
+          background: #0c1a14;
+          border-color: #14532d;
+          border-left: 4px solid #22c55e;
+          opacity: 0.85;
+        }
+        .card--done .title { color: #bbf7d0; }
+        .card--done .title::before {
+          content: "✓ "; color: #4ade80; font-weight: 700;
+        }
+        .card--done .snippet { color: #94a3b8; }
+        .card--done:hover { background: #122a1f; border-color: #16a34a; opacity: 1; }
         .card .meta {
           color: var(--muted); font-size: 11px;
           display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;
@@ -588,9 +600,12 @@ data:
             cards.appendChild(e);
             return;
           }
+          const doneStatus = /^(done|completed|archived|resolved|closed|approved)$/i;
           for (const it of items) {
             const card = document.createElement("div");
-            card.className = "card";
+            const st = it.meta.status || it.meta.decision || "";
+            const isDone = key === "done" || doneStatus.test(String(st).trim());
+            card.className = "card" + (isDone ? " card--done" : "");
             card.tabIndex = 0;
             card.setAttribute("role", "button");
             card.setAttribute("aria-label", "상세 보기");
@@ -612,7 +627,6 @@ data:
             src.className = "badge";
             src.textContent = it.source || sourceLabel;
             metaEl.appendChild(src);
-            const st = it.meta.status || it.meta.decision;
             if (st) {
               const b = document.createElement("span");
               b.className = "badge";

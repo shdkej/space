@@ -599,6 +599,45 @@ data:
               || "";
         }
 
+        // 완료 컬럼 정렬용: completed_at / resolved 를 updated 보다 우선
+        function pickCompleted(item) {
+          return item.meta.completed_at
+              || item.meta.resolved
+              || item.meta.updated
+              || item.meta.created
+              || item.meta.requested
+              || "";
+        }
+
+        // "YYYY-MM-DD" / "YYYY-MM-DDTHH:mm" / "YYYY-MM-DD HH:mm" 등 허용.
+        // 파싱 실패 시 NaN 반환 → 비교에서 가장 뒤로 밀림.
+        function parseDateMs(s) {
+          if (!s) return NaN;
+          const t = String(s).trim().replace(/^["'`]|["'`]$/g, "");
+          const m = t.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2}))?)?/);
+          if (!m) {
+            const d = Date.parse(t);
+            return isNaN(d) ? NaN : d;
+          }
+          const [_, y, mo, da, h, mi, se] = m;
+          return Date.UTC(+y, +mo - 1, +da, +(h || 0), +(mi || 0), +(se || 0));
+        }
+
+        // 최신 완료가 위로 오도록 desc 정렬. 날짜 없으면 뒤로, 동률은 id/title/source 안정 fallback.
+        function sortDoneByCompletionDesc(items) {
+          return items.slice().sort((a, b) => {
+            const ta = parseDateMs(pickCompleted(a));
+            const tb = parseDateMs(pickCompleted(b));
+            const aOk = !isNaN(ta), bOk = !isNaN(tb);
+            if (aOk && bOk && ta !== tb) return tb - ta;
+            if (aOk && !bOk) return -1;
+            if (!aOk && bOk) return 1;
+            return (a.id || "").localeCompare(b.id || "")
+                || (a.title || "").localeCompare(b.title || "")
+                || (a.source || "").localeCompare(b.source || "");
+          });
+        }
+
         function renderColumn(key, items, sourceLabel) {
           const col = document.querySelector('.column[data-key="' + key + '"]');
           const cards = col.querySelector("[data-cards]");
@@ -678,11 +717,11 @@ data:
           const inboxItems = parseItems(intentSections["Inbox"] || "");
           const activeItems = parseItems(intentSections["Active"] || "");
           const waitingItems = parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "");
-          const doneItems = [
+          const doneItems = sortDoneByCompletionDesc([
             ...parseItems(gateSections["처리 완료"] || gateSections["Resolved"] || "")
               .map(x => ({ ...x, source: "GATES.md" })),
             ...parseArchiveComments(intentSections["Active"] || ""),
-          ];
+          ]);
 
           renderColumn("inbox",   inboxItems,   "INTENTS.md");
           renderColumn("active",  activeItems,  "INTENTS.md");

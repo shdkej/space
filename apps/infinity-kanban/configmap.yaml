@@ -100,17 +100,18 @@ data:
           font-size: 13px;
         }
         .card .title { font-weight: 600; margin-bottom: 4px; word-break: break-word; }
-        .card--done {
-          background: var(--panel-2);
-          border-color: #334155;
-          opacity: 0.55;
+        .badge.b-approved, .badge.b-completed, .badge.b-done, .badge.b-archived, .badge.b-resolved, .badge.b-closed {
+          background: #14532d; color: #bbf7d0; border-color: #166534;
         }
-        .card--done .title { color: #94a3b8; font-weight: 500; }
-        .card--done .title::before {
-          content: "✓ "; color: #64748b;
+        .badge.b-rejected, .badge.b-canceled, .badge.b-cancelled, .badge.b-blocked, .badge.b-failed {
+          background: #7f1d1d; color: #fecaca; border-color: #991b1b;
         }
-        .card--done .snippet { color: #64748b; }
-        .card--done:hover { opacity: 1; }
+        .badge.b-pending, .badge.b-waiting, .badge.b-paused {
+          background: #78350f; color: #fde68a; border-color: #92400e;
+        }
+        .badge.b-in_progress, .badge.b-active, .badge.b-running {
+          background: #1e3a8a; color: #bfdbfe; border-color: #1d4ed8;
+        }
         .card .meta {
           color: var(--muted); font-size: 11px;
           display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;
@@ -599,12 +600,10 @@ data:
             cards.appendChild(e);
             return;
           }
-          const doneStatus = /^(done|completed|archived|resolved|closed|approved)$/i;
           for (const it of items) {
             const card = document.createElement("div");
             const st = it.meta.status || it.meta.decision || "";
-            const isDone = key === "done" || doneStatus.test(String(st).trim());
-            card.className = "card" + (isDone ? " card--done" : "");
+            card.className = "card";
             card.tabIndex = 0;
             card.setAttribute("role", "button");
             card.setAttribute("aria-label", "상세 보기");
@@ -628,7 +627,8 @@ data:
             metaEl.appendChild(src);
             if (st) {
               const b = document.createElement("span");
-              b.className = "badge";
+              const stKey = String(st).trim().toLowerCase().replace(/[-\s]+/g, "_");
+              b.className = "badge b-" + stKey;
               b.textContent = st;
               metaEl.appendChild(b);
             }

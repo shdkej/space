@@ -162,7 +162,21 @@ data:
           margin: 0; padding: 10px 12px; font-size: 13px;
           background: #1e293b; border-bottom: 1px solid var(--border);
           border-left: 4px solid var(--border);
+          display: flex; align-items: center; gap: 8px;
         }
+        .detail-block h3 .label {
+          flex: 0 0 auto;
+          font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+          padding: 2px 7px; border-radius: 999px;
+          background: rgba(255,255,255,.08); color: #e2e8f0;
+          border: 1px solid rgba(255,255,255,.12);
+        }
+        .detail-block h3 .title-text {
+          flex: 1 1 auto; min-width: 0;
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+          font-weight: 600;
+        }
+        .modal-body { row-gap: 18px; }
         .detail-block.kind-summary { border-color: #475569; }
         .detail-block.kind-summary h3 { background: #1f2937; border-left-color: #94a3b8; }
         .detail-block.kind-archive { border-color: #6366f1; }
@@ -373,11 +387,27 @@ data:
           }
         }
 
+        const KIND_LABELS = {
+          "kind-summary": "Summary",
+          "kind-archive": "Archive",
+          "kind-detail": "Detail",
+          "kind-artifact": "Artifact",
+          "kind-report": "Report",
+          "kind-empty": "Empty",
+        };
+
         function makeBlock(title, kindClass) {
           const block = document.createElement("section");
           block.className = "detail-block" + (kindClass ? " " + kindClass : "");
           const h = document.createElement("h3");
-          h.textContent = title;
+          const label = document.createElement("span");
+          label.className = "label";
+          label.textContent = KIND_LABELS[kindClass] || "Info";
+          const titleEl = document.createElement("span");
+          titleEl.className = "title-text";
+          titleEl.textContent = title;
+          h.appendChild(label);
+          h.appendChild(titleEl);
           block.appendChild(h);
           detailBody.appendChild(block);
           return block;

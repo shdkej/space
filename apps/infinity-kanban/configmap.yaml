@@ -284,6 +284,35 @@ data:
           return path.replace(/^`|`$/g, "").replace(/^\/+/, "");
         }
 
+        async function fetchArchiveIntent(id) {
+          if (!id) return null;
+          const path = "infinity/intents/archive/" + id + ".md";
+          const text = await fetchMaybeText(path);
+          return text ? { path, text } : null;
+        }
+
+        async function fetchArtifactsList(id) {
+          if (!id) return [];
+          try {
+            const dirUrl = SOURCES.apiBase + "infinity/artifacts/" + encodeURIComponent(id);
+            const r = await fetch(dirUrl + "?_=" + Date.now(), { cache: "no-store" });
+            if (!r.ok) return [];
+            const items = (await r.json())
+              .filter(x => x.type === "file" && /\.(md|txt|json|ya?ml)$/i.test(x.name))
+              .sort((a, b) => a.name.localeCompare(b.name));
+            const out = [];
+            for (const it of items) {
+              if (!it.download_url) continue;
+              try {
+                out.push({ name: it.name, text: await fetchText(it.download_url) });
+              } catch (e) { /* skip */ }
+            }
+            return out;
+          } catch (e) {
+            return [];
+          }
+        }
+
         async function fetchLatestReport(id) {
           if (!id) return null;
           try {
@@ -337,15 +366,23 @@ data:
           ].filter(Boolean).join("\n");
           addDetailBlock("카드 요약", summary + "\n\n" + (item.bodyLines || []).join("\n"));
 
+          const archive = await fetchArchiveIntent(item.id);
+          if (archive) addDetailBlock("Archive Intent: " + archive.path, archive.text);
+
           const detailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
           const detailText = detailPath ? await fetchMaybeText(detailPath) : null;
           if (detailText) addDetailBlock("상세 파일: " + detailPath, detailText);
 
+          const artifacts = await fetchArtifactsList(item.id);
+          for (const a of artifacts) {
+            addDetailBlock("Artifact: infinity/artifacts/" + item.id + "/" + a.name, a.text);
+          }
+
           const report = await fetchLatestReport(item.id);
           if (report) addDetailBlock("최근 리포트: infinity/reports/" + item.id + "/" + report.name, report.text);
 
-          if (!detailText && !report) {
-            addDetailBlock("추가 상세", "연결된 detail 파일이나 reports/" + (item.id || "") + " 리포트가 아직 없습니다.");
+          if (!archive && !detailText && !artifacts.length && !report) {
+            addDetailBlock("추가 상세", "연결된 archive intent / artifacts / reports가 아직 없습니다.");
           }
         }
 

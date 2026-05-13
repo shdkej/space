@@ -139,10 +139,15 @@ data:
           overflow: hidden;
         }
         .modal-head {
-          display: flex; gap: 12px; align-items: center;
+          display: flex; gap: 12px; align-items: center; flex-wrap: nowrap;
           padding: 14px 16px; border-bottom: 1px solid var(--border);
         }
-        .modal-title { font-weight: 700; font-size: 15px; line-height: 1.4; }
+        .modal-title {
+          font-weight: 700; font-size: 15px; line-height: 1.4;
+          flex: 1 1 auto; min-width: 0;
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .modal-close { flex: 0 0 auto; }
         .modal-body {
           padding: 14px 16px; overflow-y: auto; overflow-x: hidden;
           display: grid; gap: 14px;

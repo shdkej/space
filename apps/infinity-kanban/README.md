@@ -10,6 +10,7 @@ Infinity Intent/Gate 상태를 칸반으로 시각화하는 경량 대시보드.
 
 ## 동작
 브라우저가 GitHub raw URL에서 `INTENTS.md`, `GATES.md` 를 직접 fetch 하여 칸반으로 렌더링.
+카드를 클릭하면 연결된 `detail` 파일과 `infinity/reports/{id}/`의 최신 리포트를 모달로 보여준다.
 서버 측 캐시/빌드 없음. 새로 푸시한 변경은 GitHub raw 캐시(수 분) 후 반영.
 
 ## 배포

@@ -122,6 +122,48 @@ data:
           border-radius: 6px; font-size: 12px; margin: 10px 14px;
         }
         a, a:visited { color: var(--accent); }
+        .card { cursor: pointer; }
+        .card:hover { border-color: #475569; background: #182236; }
+        .modal-backdrop {
+          position: fixed; inset: 0; z-index: 50;
+          background: rgba(2, 6, 23, 0.78);
+          display: none; align-items: stretch; justify-content: center;
+          padding: 16px;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal {
+          width: min(980px, 100%); max-height: calc(100vh - 32px);
+          background: #0f172a; border: 1px solid var(--border);
+          border-radius: 14px; box-shadow: 0 24px 80px rgba(0,0,0,.45);
+          display: flex; flex-direction: column; overflow: hidden;
+        }
+        .modal-head {
+          display: flex; gap: 12px; align-items: center;
+          padding: 14px 16px; border-bottom: 1px solid var(--border);
+        }
+        .modal-title { font-weight: 700; font-size: 15px; line-height: 1.4; }
+        .modal-body {
+          padding: 14px 16px; overflow: auto;
+          display: grid; gap: 14px;
+        }
+        .detail-block {
+          border: 1px solid var(--border); border-radius: 10px;
+          background: #111827; overflow: hidden;
+        }
+        .detail-block h3 {
+          margin: 0; padding: 10px 12px; font-size: 13px;
+          background: #1e293b; border-bottom: 1px solid var(--border);
+        }
+        .detail-block pre {
+          margin: 0; padding: 12px; white-space: pre-wrap;
+          word-break: break-word; color: #dbeafe; font-size: 12px;
+          line-height: 1.55;
+        }
+        .modal-close {
+          border: 1px solid var(--border); background: #1e293b;
+          color: var(--text); border-radius: 8px; padding: 7px 10px;
+          cursor: pointer;
+        }
         footer {
           padding: 12px 18px 24px;
           color: var(--muted); font-size: 11px;
@@ -176,6 +218,16 @@ data:
           <div class="cards" data-cards></div>
         </section>
       </main>
+      <div class="modal-backdrop" id="detail-modal" aria-hidden="true">
+        <section class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+          <div class="modal-head">
+            <div class="modal-title" id="detail-title">상세 내용</div>
+            <span class="spacer"></span>
+            <button class="modal-close" id="detail-close">닫기</button>
+          </div>
+          <div class="modal-body" id="detail-body"></div>
+        </section>
+      </div>
       <footer>
         source:
         <a href="https://github.com/shdkej/prompt-archive/blob/main/infinity/INTENTS.md" target="_blank" rel="noopener">INTENTS.md</a>
@@ -187,12 +239,18 @@ data:
         const SOURCES = {
           intents: "https://raw.githubusercontent.com/shdkej/prompt-archive/main/infinity/INTENTS.md",
           gates:   "https://raw.githubusercontent.com/shdkej/prompt-archive/main/infinity/GATES.md",
+          rawBase: "https://raw.githubusercontent.com/shdkej/prompt-archive/main/",
+          apiBase: "https://api.github.com/repos/shdkej/prompt-archive/contents/",
         };
 
         const statusEl = document.getElementById("status");
         const errorHost = document.getElementById("error-host");
         const refreshBtn = document.getElementById("refresh");
         const intervalSel = document.getElementById("interval");
+        const detailModal = document.getElementById("detail-modal");
+        const detailTitle = document.getElementById("detail-title");
+        const detailBody = document.getElementById("detail-body");
+        const detailClose = document.getElementById("detail-close");
 
         let timer = null;
 
@@ -210,6 +268,80 @@ data:
           const r = await fetch(u, { cache: "no-store" });
           if (!r.ok) throw new Error(url + " → HTTP " + r.status);
           return await r.text();
+        }
+
+        async function fetchMaybeText(path) {
+          if (!path) return null;
+          try { return await fetchText(SOURCES.rawBase + path.replace(/^\/+/, "")); }
+          catch (e) { return null; }
+        }
+
+        function normalizePath(path) {
+          if (!path) return "";
+          return path.replace(/^`|`$/g, "").replace(/^\/+/, "");
+        }
+
+        async function fetchLatestReport(id) {
+          if (!id) return null;
+          try {
+            const dirUrl = SOURCES.apiBase + "infinity/reports/" + encodeURIComponent(id);
+            const r = await fetch(dirUrl + "?_=" + Date.now(), { cache: "no-store" });
+            if (!r.ok) return null;
+            const files = (await r.json())
+              .filter(x => x.type === "file" && /\.md$/i.test(x.name))
+              .sort((a, b) => a.name.localeCompare(b.name));
+            const latest = files[files.length - 1];
+            if (!latest || !latest.download_url) return null;
+            return {
+              name: latest.name,
+              text: await fetchText(latest.download_url),
+            };
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function addDetailBlock(title, text) {
+          const block = document.createElement("section");
+          block.className = "detail-block";
+          const h = document.createElement("h3");
+          h.textContent = title;
+          const pre = document.createElement("pre");
+          pre.textContent = text && text.trim() ? text.trim() : "내용 없음";
+          block.appendChild(h);
+          block.appendChild(pre);
+          detailBody.appendChild(block);
+        }
+
+        function closeDetailModal() {
+          detailModal.classList.remove("open");
+          detailModal.setAttribute("aria-hidden", "true");
+        }
+
+        async function openDetailModal(item, sourceLabel) {
+          detailTitle.textContent = item.id ? "[" + item.id + "] " + item.title : item.title;
+          detailBody.innerHTML = "";
+          detailModal.classList.add("open");
+          detailModal.setAttribute("aria-hidden", "false");
+
+          const summary = [
+            "source: " + (item.source || sourceLabel || ""),
+            item.meta.status ? "status: " + item.meta.status : "",
+            item.meta.decision ? "decision: " + item.meta.decision : "",
+            pickUpdated(item) ? "updated: " + pickUpdated(item) : "",
+          ].filter(Boolean).join("\n");
+          addDetailBlock("카드 요약", summary + "\n\n" + (item.bodyLines || []).join("\n"));
+
+          const detailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
+          const detailText = detailPath ? await fetchMaybeText(detailPath) : null;
+          if (detailText) addDetailBlock("상세 파일: " + detailPath, detailText);
+
+          const report = await fetchLatestReport(item.id);
+          if (report) addDetailBlock("최근 리포트: infinity/reports/" + item.id + "/" + report.name, report.text);
+
+          if (!detailText && !report) {
+            addDetailBlock("추가 상세", "연결된 detail 파일이나 reports/" + (item.id || "") + " 리포트가 아직 없습니다.");
+          }
         }
 
         // markdown 의 ## 헤더 단위로 잘라 { name: body } 맵 반환
@@ -315,6 +447,16 @@ data:
           for (const it of items) {
             const card = document.createElement("div");
             card.className = "card";
+            card.tabIndex = 0;
+            card.setAttribute("role", "button");
+            card.setAttribute("aria-label", "상세 보기");
+            card.addEventListener("click", () => openDetailModal(it, sourceLabel));
+            card.addEventListener("keydown", (ev) => {
+              if (ev.key === "Enter" || ev.key === " ") {
+                ev.preventDefault();
+                openDetailModal(it, sourceLabel);
+              }
+            });
             const titleEl = document.createElement("div");
             titleEl.className = "title";
             titleEl.textContent = it.id ? "[" + it.id + "] " + it.title : it.title;
@@ -389,6 +531,13 @@ data:
 
         refreshBtn.addEventListener("click", loadAndRender);
         intervalSel.addEventListener("change", rescheduleAuto);
+        detailClose.addEventListener("click", closeDetailModal);
+        detailModal.addEventListener("click", (ev) => {
+          if (ev.target === detailModal) closeDetailModal();
+        });
+        document.addEventListener("keydown", (ev) => {
+          if (ev.key === "Escape") closeDetailModal();
+        });
 
         loadAndRender();
         rescheduleAuto();

@@ -19,7 +19,7 @@ spec:
         - name: app
           image: node:22-alpine
           imagePullPolicy: IfNotPresent
-          workingDir: /app
+          workingDir: /tmp
           env:
             - name: NEXT_PUBLIC_SCORING_MODE
               value: mock

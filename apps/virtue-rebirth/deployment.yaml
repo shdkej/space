@@ -23,6 +23,10 @@ spec:
           env:
             - name: NEXT_PUBLIC_SCORING_MODE
               value: mock
+            - name: NEXT_PUBLIC_POSTHOG_KEY
+              value: phc_md5jBTe5oiybEc6WsziJS36ZmwLs9ie6jZjZyaoTutHd
+            - name: NEXT_PUBLIC_POSTHOG_HOST
+              value: https://us.i.posthog.com
             - name: NODE_ENV
               value: production
           ports:

@@ -260,7 +260,7 @@ data:
         </section>
         <section class="column" data-key="waiting">
           <div class="column-head">
-            <div class="column-title"><span class="dot waiting"></span>Waiting Gates</div>
+            <div class="column-title"><span class="dot waiting"></span>Waiting</div>
             <div class="count" data-count></div>
           </div>
           <div class="cards" data-cards></div>
@@ -716,16 +716,19 @@ data:
 
           const inboxItems = parseItems(intentSections["Inbox"] || "");
           const activeItems = parseItems(intentSections["Active"] || "");
-          const waitingItems = parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "");
+          const waitingItems = [
+            ...parseItems(intentSections["Waiting"] || "").map(x => ({ ...x, source: "INTENTS.md" })),
+            ...parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" })),
+          ];
           const doneItems = sortDoneByCompletionDesc([
             ...parseItems(gateSections["처리 완료"] || gateSections["Resolved"] || "")
               .map(x => ({ ...x, source: "GATES.md" })),
-            ...parseArchiveComments(intentSections["Active"] || ""),
+            ...parseArchiveComments(intentSections["Archive"] || intentSections["Active"] || ""),
           ]);
 
           renderColumn("inbox",   inboxItems,   "INTENTS.md");
           renderColumn("active",  activeItems,  "INTENTS.md");
-          renderColumn("waiting", waitingItems, "GATES.md");
+          renderColumn("waiting", waitingItems, "Waiting");
           renderColumn("done",    doneItems,    "GATES.md");
 
           statusEl.textContent = "업데이트: " + new Date().toLocaleString("ko-KR");

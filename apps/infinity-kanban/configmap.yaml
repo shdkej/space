@@ -267,7 +267,7 @@ data:
         </section>
         <section class="column" data-key="done">
           <div class="column-head">
-            <div class="column-title"><span class="dot done"></span>Completed / Archive</div>
+            <div class="column-title"><span class="dot done"></span>Archive</div>
             <div class="count" data-count></div>
           </div>
           <div class="cards" data-cards></div>
@@ -560,7 +560,7 @@ data:
           return items;
         }
 
-        // INTENTS.md Active 섹션 안의 `<!-- ... completed ... -->` 코멘트를 archive 항목으로 추출
+        // INTENTS.md Archive 섹션 안의 완료 코멘트를 archive 항목으로 추출
         function parseArchiveComments(activeBody) {
           if (!activeBody) return [];
           const re = /<!--\s*(.+?)\s*-->/g;
@@ -599,7 +599,7 @@ data:
               || "";
         }
 
-        // 완료 컬럼 정렬용: completed_at / resolved 를 updated 보다 우선
+        // Archive 컬럼 정렬용: completed_at / resolved 를 updated 보다 우선
         function pickCompleted(item) {
           return item.meta.completed_at
               || item.meta.resolved
@@ -623,7 +623,7 @@ data:
           return Date.UTC(+y, +mo - 1, +da, +(h || 0), +(mi || 0), +(se || 0));
         }
 
-        // 최신 완료가 위로 오도록 desc 정렬. 날짜 없으면 뒤로, 동률은 id/title/source 안정 fallback.
+        // 최신 archive 항목이 위로 오도록 desc 정렬. 날짜 없으면 뒤로, 동률은 id/title/source 안정 fallback.
         function sortDoneByCompletionDesc(items) {
           return items.slice().sort((a, b) => {
             const ta = parseDateMs(pickCompleted(a));

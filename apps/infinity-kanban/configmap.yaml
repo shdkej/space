@@ -581,6 +581,45 @@ data:
           return out;
         }
 
+        // INTENTS.md 의 Inbox/Active/Waiting 요약 코멘트를 카드로 추출
+        function parseIntentComments(body, lane) {
+          if (!body) return [];
+          const re = /<!--\s*(.+?)\s*-->/g;
+          const out = [];
+          let m;
+          while ((m = re.exec(body)) !== null) {
+            const text = m[1];
+            const idm = text.match(/^([a-z]+-\d+)\b/);
+            if (!idm) continue;
+            const dtm = text.match(/(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?Z?)?)/);
+            const pathm = text.match(/(?:→|->)\s*([^\s)]+\.md)/);
+            const titlem = text.match(/\(([^)]+)\)\s*$/);
+            out.push({
+              id: idm[1],
+              title: titlem ? titlem[1] : text,
+              bodyLines: [text],
+              meta: {
+                status: lane,
+                created: dtm ? dtm[1] : "",
+                detail: pathm ? pathm[1] : "",
+              },
+              source: "INTENTS.md comment",
+            });
+          }
+          return out;
+        }
+
+        function mergeById(primary, secondary) {
+          const seen = new Set(primary.map(x => x.id).filter(Boolean));
+          const merged = primary.slice();
+          for (const item of secondary) {
+            if (item.id && seen.has(item.id)) continue;
+            if (item.id) seen.add(item.id);
+            merged.push(item);
+          }
+          return merged;
+        }
+
         function snippetFromBody(lines) {
           const cleaned = lines
             .filter(l => l.trim() !== "")
@@ -714,10 +753,19 @@ data:
           const intentSections = splitSections(intentsText);
           const gateSections = splitSections(gatesText);
 
-          const inboxItems = parseItems(intentSections["Inbox"] || "");
-          const activeItems = parseItems(intentSections["Active"] || "");
+          const inboxItems = mergeById(
+            parseItems(intentSections["Inbox"] || ""),
+            parseIntentComments(intentSections["Inbox"] || "", "Inbox")
+          );
+          const activeItems = mergeById(
+            parseItems(intentSections["Active"] || ""),
+            parseIntentComments(intentSections["Active"] || "", "Active")
+          );
           const waitingItems = [
-            ...parseItems(intentSections["Waiting"] || "").map(x => ({ ...x, source: "INTENTS.md" })),
+            ...mergeById(
+              parseItems(intentSections["Waiting"] || ""),
+              parseIntentComments(intentSections["Waiting"] || "", "Waiting")
+            ).map(x => ({ ...x, source: x.source || "INTENTS.md" })),
             ...parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" })),
           ];
           const doneItems = sortDoneByCompletionDesc([

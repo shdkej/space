@@ -23,6 +23,8 @@ spec:
           env:
             - name: NEXT_PUBLIC_SCORING_MODE
               value: mock
+            - name: NEXT_PUBLIC_SHOW_DEMO
+              value: "0"
             - name: NEXT_PUBLIC_POSTHOG_KEY
               value: phc_md5jBTe5oiybEc6WsziJS36ZmwLs9ie6jZjZyaoTutHd
             - name: NEXT_PUBLIC_POSTHOG_HOST

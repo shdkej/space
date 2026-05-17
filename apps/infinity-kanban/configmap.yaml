@@ -228,7 +228,10 @@ data:
           background: #1e293b; border-bottom: 1px solid var(--border);
           border-left: 4px solid var(--border);
           display: flex; align-items: center; gap: 8px;
+          cursor: pointer;
+          user-select: none;
         }
+        .detail-block.kind-summary h3 { cursor: default; }
         .detail-block h3 .label {
           flex: 0 0 auto;
           font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
@@ -241,6 +244,13 @@ data:
           overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
           font-weight: 600;
         }
+        .detail-block h3 .collapse-icon {
+          flex: 0 0 auto;
+          color: var(--muted);
+          font-size: 12px;
+          line-height: 1;
+        }
+        .detail-block.collapsed > :not(h3) { display: none; }
         .modal-body { row-gap: 18px; }
         .detail-block.kind-summary { border-color: #475569; }
         .detail-block.kind-summary h3 { background: #1f2937; border-left-color: #94a3b8; }
@@ -486,15 +496,41 @@ data:
         function makeBlock(title, kindClass) {
           const block = document.createElement("section");
           block.className = "detail-block" + (kindClass ? " " + kindClass : "");
+          const collapsible = kindClass !== "kind-summary";
+          if (collapsible) block.classList.add("collapsed");
           const h = document.createElement("h3");
+          if (collapsible) {
+            h.setAttribute("role", "button");
+            h.tabIndex = 0;
+            h.setAttribute("aria-expanded", "false");
+          }
           const label = document.createElement("span");
           label.className = "label";
           label.textContent = KIND_LABELS[kindClass] || "Info";
           const titleEl = document.createElement("span");
           titleEl.className = "title-text";
           titleEl.textContent = title;
+          const icon = document.createElement("span");
+          icon.className = "collapse-icon";
+          icon.textContent = collapsible ? "펼치기" : "";
           h.appendChild(label);
           h.appendChild(titleEl);
+          h.appendChild(icon);
+          if (collapsible) {
+            const toggle = () => {
+              const nextCollapsed = !block.classList.contains("collapsed");
+              block.classList.toggle("collapsed", nextCollapsed);
+              h.setAttribute("aria-expanded", String(!nextCollapsed));
+              icon.textContent = nextCollapsed ? "펼치기" : "접기";
+            };
+            h.addEventListener("click", toggle);
+            h.addEventListener("keydown", (ev) => {
+              if (ev.key === "Enter" || ev.key === " ") {
+                ev.preventDefault();
+                toggle();
+              }
+            });
+          }
           block.appendChild(h);
           detailBody.appendChild(block);
           return block;

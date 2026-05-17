@@ -486,7 +486,7 @@ data:
 
         const KIND_LABELS = {
           "kind-summary": "Summary",
-          "kind-archive": "Archive",
+          "kind-archive": "Intent",
           "kind-detail": "Detail",
           "kind-artifact": "Artifact",
           "kind-report": "Report",
@@ -612,8 +612,12 @@ data:
 
           const { archive, detailPath, detailText, artifacts, report } = await loadDetailBundle(item);
 
-          if (archive) addDetailBlock("Archive Intent: " + archive.path, archive.text, "kind-archive");
-          if (detailText) addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
+          const archivePath = archive ? normalizePath(archive.path) : "";
+          const normalizedDetailPath = normalizePath(detailPath);
+          if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
+          if (detailText && normalizedDetailPath !== archivePath) {
+            addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
+          }
           for (const a of artifacts) {
             renderArtifactEntry("Artifact: infinity/artifacts/" + item.id + "/" + a.name, a, "kind-artifact");
           }

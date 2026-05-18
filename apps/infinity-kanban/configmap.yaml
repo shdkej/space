@@ -133,6 +133,59 @@ data:
           background: #7f1d1d; color: #fee2e2; padding: 8px 12px;
           border-radius: 6px; font-size: 12px; margin: 10px 14px;
         }
+        .summary-band {
+          display: flex; flex-wrap: wrap; gap: 8px;
+          padding: 12px 14px 0;
+        }
+        .summary-item {
+          background: var(--panel);
+          border: 1px solid #334155;
+          border-radius: 999px;
+          padding: 5px 12px;
+          display: inline-flex; align-items: center; gap: 6px;
+          font-size: 12px; color: var(--muted);
+        }
+        .summary-item .summary-label { display: inline-flex; align-items: center; gap: 6px; }
+        .summary-item .summary-value { font-weight: 700; font-size: 14px; color: var(--text); }
+        .summary-item.open { background: #1e3a8a; border-color: #1d4ed8; color: #dbeafe; }
+        .summary-item.open .summary-value { color: #ffffff; }
+        .summary-item.lane-inbox { border-color: #b45309; }
+        .summary-item.lane-active { border-color: #15803d; }
+        .summary-item.lane-waiting { border-color: #7c3aed; }
+        .summary-item.lane-done { border-color: #475569; }
+        .archive-filter {
+          padding: 0 6px 8px;
+        }
+        .archive-filter-input {
+          background: #0f1a2e;
+          color: var(--text);
+          border: 1px solid #334155;
+          border-radius: 6px;
+          padding: 4px 8px;
+          font-size: 12px;
+          width: 100%;
+        }
+        .archive-filter-input::placeholder { color: var(--muted); }
+        .archive-filter-input:focus { outline: none; border-color: var(--accent); }
+        .group-head {
+          font-size: 10px;
+          color: var(--muted);
+          padding: 8px 4px 2px;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+        .group-head:first-child { padding-top: 2px; }
+        .card.compact { padding: 6px 10px; font-size: 12px; }
+        .card.compact .title { font-weight: 500; font-size: 12px; margin-bottom: 2px; line-height: 1.35; }
+        .card.compact .meta { font-size: 10px; margin-bottom: 0; gap: 6px; }
+        .card.compact .badge { font-size: 10px; padding: 0 5px; }
+        .card.compact .snippet {
+          font-size: 11px; color: #94a3b8;
+          max-height: 2.6em;
+          display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+          overflow: hidden; white-space: normal;
+          margin-top: 4px;
+        }
         a, a:visited { color: var(--accent); }
         .card { cursor: pointer; }
         .card:hover { border-color: #475569; background: #182236; }
@@ -175,7 +228,10 @@ data:
           background: #1e293b; border-bottom: 1px solid var(--border);
           border-left: 4px solid var(--border);
           display: flex; align-items: center; gap: 8px;
+          cursor: pointer;
+          user-select: none;
         }
+        .detail-block.kind-summary h3 { cursor: default; }
         .detail-block h3 .label {
           flex: 0 0 auto;
           font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
@@ -188,6 +244,13 @@ data:
           overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
           font-weight: 600;
         }
+        .detail-block h3 .collapse-icon {
+          flex: 0 0 auto;
+          color: var(--muted);
+          font-size: 12px;
+          line-height: 1;
+        }
+        .detail-block.collapsed > :not(h3) { display: none; }
         .modal-body { row-gap: 18px; }
         .detail-block.kind-summary { border-color: #475569; }
         .detail-block.kind-summary h3 { background: #1f2937; border-left-color: #94a3b8; }
@@ -243,6 +306,28 @@ data:
         <button id="refresh">새로고침</button>
       </header>
       <div id="error-host"></div>
+      <div class="summary-band" id="summary-band" aria-label="lane summary">
+        <div class="summary-item open" title="Inbox + Active + Waiting">
+          <span class="summary-label">열린 루프</span>
+          <span class="summary-value" id="sum-open">–</span>
+        </div>
+        <div class="summary-item lane-inbox">
+          <span class="summary-label"><span class="dot inbox"></span>Inbox</span>
+          <span class="summary-value" id="sum-inbox">–</span>
+        </div>
+        <div class="summary-item lane-active">
+          <span class="summary-label"><span class="dot active"></span>Active</span>
+          <span class="summary-value" id="sum-active">–</span>
+        </div>
+        <div class="summary-item lane-waiting">
+          <span class="summary-label"><span class="dot waiting"></span>Waiting</span>
+          <span class="summary-value" id="sum-waiting">–</span>
+        </div>
+        <div class="summary-item lane-done">
+          <span class="summary-label"><span class="dot done"></span>Archive</span>
+          <span class="summary-value" id="sum-done">–</span>
+        </div>
+      </div>
       <main>
         <section class="column" data-key="inbox">
           <div class="column-head">
@@ -260,15 +345,18 @@ data:
         </section>
         <section class="column" data-key="waiting">
           <div class="column-head">
-            <div class="column-title"><span class="dot waiting"></span>Waiting Gates</div>
+            <div class="column-title"><span class="dot waiting"></span>Waiting</div>
             <div class="count" data-count></div>
           </div>
           <div class="cards" data-cards></div>
         </section>
         <section class="column" data-key="done">
           <div class="column-head">
-            <div class="column-title"><span class="dot done"></span>Completed / Archive</div>
+            <div class="column-title"><span class="dot done"></span>Archive</div>
             <div class="count" data-count></div>
+          </div>
+          <div class="archive-filter">
+            <input class="archive-filter-input" id="archive-filter-input" type="search" placeholder="필터 (id / 내용)" aria-label="Archive 필터" />
           </div>
           <div class="cards" data-cards></div>
         </section>
@@ -398,7 +486,7 @@ data:
 
         const KIND_LABELS = {
           "kind-summary": "Summary",
-          "kind-archive": "Archive",
+          "kind-archive": "Intent",
           "kind-detail": "Detail",
           "kind-artifact": "Artifact",
           "kind-report": "Report",
@@ -408,15 +496,41 @@ data:
         function makeBlock(title, kindClass) {
           const block = document.createElement("section");
           block.className = "detail-block" + (kindClass ? " " + kindClass : "");
+          const collapsible = kindClass !== "kind-summary";
+          if (collapsible) block.classList.add("collapsed");
           const h = document.createElement("h3");
+          if (collapsible) {
+            h.setAttribute("role", "button");
+            h.tabIndex = 0;
+            h.setAttribute("aria-expanded", "false");
+          }
           const label = document.createElement("span");
           label.className = "label";
           label.textContent = KIND_LABELS[kindClass] || "Info";
           const titleEl = document.createElement("span");
           titleEl.className = "title-text";
           titleEl.textContent = title;
+          const icon = document.createElement("span");
+          icon.className = "collapse-icon";
+          icon.textContent = collapsible ? "펼치기" : "";
           h.appendChild(label);
           h.appendChild(titleEl);
+          h.appendChild(icon);
+          if (collapsible) {
+            const toggle = () => {
+              const nextCollapsed = !block.classList.contains("collapsed");
+              block.classList.toggle("collapsed", nextCollapsed);
+              h.setAttribute("aria-expanded", String(!nextCollapsed));
+              icon.textContent = nextCollapsed ? "펼치기" : "접기";
+            };
+            h.addEventListener("click", toggle);
+            h.addEventListener("keydown", (ev) => {
+              if (ev.key === "Enter" || ev.key === " ") {
+                ev.preventDefault();
+                toggle();
+              }
+            });
+          }
           block.appendChild(h);
           detailBody.appendChild(block);
           return block;
@@ -498,8 +612,12 @@ data:
 
           const { archive, detailPath, detailText, artifacts, report } = await loadDetailBundle(item);
 
-          if (archive) addDetailBlock("Archive Intent: " + archive.path, archive.text, "kind-archive");
-          if (detailText) addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
+          const archivePath = archive ? normalizePath(archive.path) : "";
+          const normalizedDetailPath = normalizePath(detailPath);
+          if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
+          if (detailText && normalizedDetailPath !== archivePath) {
+            addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
+          }
           for (const a of artifacts) {
             renderArtifactEntry("Artifact: infinity/artifacts/" + item.id + "/" + a.name, a, "kind-artifact");
           }
@@ -560,25 +678,84 @@ data:
           return items;
         }
 
-        // INTENTS.md Active 섹션 안의 `<!-- ... completed ... -->` 코멘트를 archive 항목으로 추출
+        // INTENTS.md Archive 섹션 안의 완료 코멘트를 archive 항목으로 추출.
+        // 코멘트 포맷 예: "marketing-01 completed 2026-05-16T06:14Z → infinity/intents/archive/marketing-01.md (Virtue 배포/검증 완료)"
+        // 괄호 안의 outcome 텍스트를 카드 요약(title)으로 사용해 한눈에 결과가 보이도록 한다.
         function parseArchiveComments(activeBody) {
           if (!activeBody) return [];
           const re = /<!--\s*(.+?)\s*-->/g;
           const out = [];
           let m;
           while ((m = re.exec(activeBody)) !== null) {
-            const text = m[1];
+            const text = m[1].trim();
             const idm = text.match(/^([a-z]+-\d+)\b/);
-            const dtm = text.match(/(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2})?)/);
+            const dtm = text.match(/(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?Z?)?)/);
+            const statm = text.match(/\b(completed|resolved|done|archived|closed|canceled|cancelled|rejected|approved|failed)\b/i);
+            const pathm = text.match(/(?:→|->)\s*([^\s)]+\.md)/);
+            const parenm = text.match(/\(([^()]+)\)\s*$/);
+            const outcome = parenm ? parenm[1].trim() : "";
+            let cleaned = text
+              .replace(/^([a-z]+-\d+)\s*/, "")
+              .replace(/(?:→|->)\s*\S+/g, "")
+              .replace(/\([^()]+\)\s*$/, "")
+              .replace(/\b(completed|resolved|done|archived|closed|canceled|cancelled|rejected|approved|failed)\b/gi, "")
+              .replace(/\d{4}-\d{2}-\d{2}(?:[T\s]\d{2}:\d{2}(?::\d{2})?Z?)?/g, "")
+              .replace(/\s{2,}/g, " ")
+              .trim();
+            const title = outcome || cleaned || text;
             out.push({
               id: idm ? idm[1] : "",
-              title: text,
-              bodyLines: [],
-              meta: { updated: dtm ? dtm[1] : "" },
-              source: "INTENTS.md archive comment",
+              title,
+              bodyLines: [text],
+              meta: {
+                status: statm ? statm[1].toLowerCase() : "completed",
+                completed_at: dtm ? dtm[1] : "",
+                detail: pathm ? pathm[1] : "",
+                outcome,
+              },
+              source: "INTENTS.md archive",
             });
           }
           return out;
+        }
+
+        // INTENTS.md 의 Inbox/Active/Waiting 요약 코멘트를 카드로 추출
+        function parseIntentComments(body, lane) {
+          if (!body) return [];
+          const re = /<!--\s*(.+?)\s*-->/g;
+          const out = [];
+          let m;
+          while ((m = re.exec(body)) !== null) {
+            const text = m[1];
+            const idm = text.match(/^([a-z]+-\d+)\b/);
+            if (!idm) continue;
+            const dtm = text.match(/(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?Z?)?)/);
+            const pathm = text.match(/(?:→|->)\s*([^\s)]+\.md)/);
+            const titlem = text.match(/\(([^)]+)\)\s*$/);
+            out.push({
+              id: idm[1],
+              title: titlem ? titlem[1] : text,
+              bodyLines: [text],
+              meta: {
+                status: lane,
+                created: dtm ? dtm[1] : "",
+                detail: pathm ? pathm[1] : "",
+              },
+              source: "INTENTS.md comment",
+            });
+          }
+          return out;
+        }
+
+        function mergeById(primary, secondary) {
+          const seen = new Set(primary.map(x => x.id).filter(Boolean));
+          const merged = primary.slice();
+          for (const item of secondary) {
+            if (item.id && seen.has(item.id)) continue;
+            if (item.id) seen.add(item.id);
+            merged.push(item);
+          }
+          return merged;
         }
 
         function snippetFromBody(lines) {
@@ -599,11 +776,176 @@ data:
               || "";
         }
 
+        // Archive 컬럼 정렬용: completed_at / resolved 를 updated 보다 우선
+        function pickCompleted(item) {
+          return item.meta.completed_at
+              || item.meta.resolved
+              || item.meta.updated
+              || item.meta.created
+              || item.meta.requested
+              || "";
+        }
+
+        // "YYYY-MM-DD" / "YYYY-MM-DDTHH:mm" / "YYYY-MM-DD HH:mm" 등 허용.
+        // 파싱 실패 시 NaN 반환 → 비교에서 가장 뒤로 밀림.
+        function parseDateMs(s) {
+          if (!s) return NaN;
+          const t = String(s).trim().replace(/^["'`]|["'`]$/g, "");
+          const m = t.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2}))?)?/);
+          if (!m) {
+            const d = Date.parse(t);
+            return isNaN(d) ? NaN : d;
+          }
+          const [_, y, mo, da, h, mi, se] = m;
+          return Date.UTC(+y, +mo - 1, +da, +(h || 0), +(mi || 0), +(se || 0));
+        }
+
+        // 최신 archive 항목이 위로 오도록 desc 정렬. 날짜 없으면 뒤로, 동률은 id/title/source 안정 fallback.
+        function sortDoneByCompletionDesc(items) {
+          return items.slice().sort((a, b) => {
+            const ta = parseDateMs(pickCompleted(a));
+            const tb = parseDateMs(pickCompleted(b));
+            const aOk = !isNaN(ta), bOk = !isNaN(tb);
+            if (aOk && bOk && ta !== tb) return tb - ta;
+            if (aOk && !bOk) return -1;
+            if (!aOk && bOk) return 1;
+            return (a.id || "").localeCompare(b.id || "")
+                || (a.title || "").localeCompare(b.title || "")
+                || (a.source || "").localeCompare(b.source || "");
+          });
+        }
+
+        function buildCard(it, sourceLabel, opts) {
+          const compact = !!(opts && opts.compact);
+          const card = document.createElement("div");
+          const st = it.meta.status || it.meta.decision || "";
+          card.className = "card" + (compact ? " compact" : "");
+          card.tabIndex = 0;
+          card.setAttribute("role", "button");
+          card.setAttribute("aria-label", "상세 보기");
+          card.addEventListener("click", () => openDetailModal(it, sourceLabel));
+          card.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter" || ev.key === " ") {
+              ev.preventDefault();
+              openDetailModal(it, sourceLabel);
+            }
+          });
+          const titleEl = document.createElement("div");
+          titleEl.className = "title";
+          titleEl.textContent = it.id ? "[" + it.id + "] " + it.title : it.title;
+          card.appendChild(titleEl);
+
+          const metaEl = document.createElement("div");
+          metaEl.className = "meta";
+          const src = document.createElement("span");
+          src.className = "badge";
+          src.textContent = it.source || sourceLabel;
+          metaEl.appendChild(src);
+          if (st) {
+            const b = document.createElement("span");
+            const stKey = String(st).trim().toLowerCase().replace(/[-\s]+/g, "_");
+            b.className = "badge b-" + stKey;
+            b.textContent = st;
+            metaEl.appendChild(b);
+          }
+          const up = pickUpdated(it);
+          if (up) {
+            const t = document.createElement("span");
+            // 컴팩트(Archive)에서는 날짜만 노출해 가로 폭 절약
+            t.textContent = compact ? String(up).slice(0, 10) : up;
+            metaEl.appendChild(t);
+          }
+          card.appendChild(metaEl);
+
+          if (compact) {
+            // Archive: 결과(outcome)가 있으면 그것만 1~2줄로, 없으면 본문에서 추출
+            const summary = (it.meta && it.meta.outcome) || snippetFromBody(it.bodyLines);
+            if (summary && summary !== it.title) {
+              const s = document.createElement("div");
+              s.className = "snippet";
+              s.textContent = summary;
+              card.appendChild(s);
+            }
+          } else {
+            const snip = snippetFromBody(it.bodyLines);
+            if (snip) {
+              const s = document.createElement("div");
+              s.className = "snippet";
+              s.textContent = snip;
+              card.appendChild(s);
+            }
+          }
+          return card;
+        }
+
+        function appendGroupHeader(parent, label, n) {
+          const h = document.createElement("div");
+          h.className = "group-head";
+          h.textContent = label + " · " + n;
+          parent.appendChild(h);
+        }
+
+        const RECENT_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
+        function partitionRecent(items, nowMs) {
+          const cutoff = nowMs - RECENT_WINDOW_MS;
+          const recent = [], older = [];
+          for (const it of items) {
+            const t = parseDateMs(pickCompleted(it));
+            if (!isNaN(t) && t >= cutoff) recent.push(it);
+            else older.push(it);
+          }
+          return { recent, older };
+        }
+
+        function archiveFilterQuery() {
+          const el = document.getElementById("archive-filter-input");
+          return el ? el.value.trim().toLowerCase() : "";
+        }
+
+        function applyArchiveFilter(items) {
+          const q = archiveFilterQuery();
+          if (!q) return items;
+          return items.filter(it => {
+            const blob = [
+              it.id || "",
+              it.title || "",
+              (it.meta && it.meta.outcome) || "",
+              (it.bodyLines || []).join(" "),
+            ].join(" ").toLowerCase();
+            return blob.includes(q);
+          });
+        }
+
         function renderColumn(key, items, sourceLabel) {
           const col = document.querySelector('.column[data-key="' + key + '"]');
           const cards = col.querySelector("[data-cards]");
           const count = col.querySelector("[data-count]");
           cards.innerHTML = "";
+
+          if (key === "done") {
+            const filtered = applyArchiveFilter(items);
+            count.textContent = filtered.length === items.length
+              ? items.length + "개"
+              : filtered.length + " / " + items.length + "개";
+            if (filtered.length === 0) {
+              const e = document.createElement("div");
+              e.className = "empty";
+              e.textContent = items.length === 0 ? "비어 있음" : "일치 없음";
+              cards.appendChild(e);
+              return;
+            }
+            const { recent, older } = partitionRecent(filtered, Date.now());
+            if (recent.length) {
+              appendGroupHeader(cards, "지난 14일", recent.length);
+              for (const it of recent) cards.appendChild(buildCard(it, sourceLabel, { compact: true }));
+            }
+            if (older.length) {
+              appendGroupHeader(cards, "이전", older.length);
+              for (const it of older) cards.appendChild(buildCard(it, sourceLabel, { compact: true }));
+            }
+            return;
+          }
+
           count.textContent = items.length + "개";
           if (items.length === 0) {
             const e = document.createElement("div");
@@ -613,54 +955,17 @@ data:
             return;
           }
           for (const it of items) {
-            const card = document.createElement("div");
-            const st = it.meta.status || it.meta.decision || "";
-            card.className = "card";
-            card.tabIndex = 0;
-            card.setAttribute("role", "button");
-            card.setAttribute("aria-label", "상세 보기");
-            card.addEventListener("click", () => openDetailModal(it, sourceLabel));
-            card.addEventListener("keydown", (ev) => {
-              if (ev.key === "Enter" || ev.key === " ") {
-                ev.preventDefault();
-                openDetailModal(it, sourceLabel);
-              }
-            });
-            const titleEl = document.createElement("div");
-            titleEl.className = "title";
-            titleEl.textContent = it.id ? "[" + it.id + "] " + it.title : it.title;
-            card.appendChild(titleEl);
-
-            const metaEl = document.createElement("div");
-            metaEl.className = "meta";
-            const src = document.createElement("span");
-            src.className = "badge";
-            src.textContent = it.source || sourceLabel;
-            metaEl.appendChild(src);
-            if (st) {
-              const b = document.createElement("span");
-              const stKey = String(st).trim().toLowerCase().replace(/[-\s]+/g, "_");
-              b.className = "badge b-" + stKey;
-              b.textContent = st;
-              metaEl.appendChild(b);
-            }
-            const up = pickUpdated(it);
-            if (up) {
-              const t = document.createElement("span");
-              t.textContent = up;
-              metaEl.appendChild(t);
-            }
-            card.appendChild(metaEl);
-
-            const snip = snippetFromBody(it.bodyLines);
-            if (snip) {
-              const s = document.createElement("div");
-              s.className = "snippet";
-              s.textContent = snip;
-              card.appendChild(s);
-            }
-            cards.appendChild(card);
+            cards.appendChild(buildCard(it, sourceLabel, { compact: false }));
           }
+        }
+
+        function renderSummary(counts) {
+          const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
+          set("sum-inbox", counts.inbox);
+          set("sum-active", counts.active);
+          set("sum-waiting", counts.waiting);
+          set("sum-done", counts.done);
+          set("sum-open", counts.inbox + counts.active + counts.waiting);
         }
 
         async function loadAndRender() {
@@ -675,22 +980,48 @@ data:
           const intentSections = splitSections(intentsText);
           const gateSections = splitSections(gatesText);
 
-          const inboxItems = parseItems(intentSections["Inbox"] || "");
-          const activeItems = parseItems(intentSections["Active"] || "");
-          const waitingItems = parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "");
-          const doneItems = [
+          const inboxItems = mergeById(
+            parseItems(intentSections["Inbox"] || ""),
+            parseIntentComments(intentSections["Inbox"] || "", "Inbox")
+          );
+          const activeItems = mergeById(
+            parseItems(intentSections["Active"] || ""),
+            parseIntentComments(intentSections["Active"] || "", "Active")
+          );
+          const waitingItems = [
+            ...mergeById(
+              parseItems(intentSections["Waiting"] || ""),
+              parseIntentComments(intentSections["Waiting"] || "", "Waiting")
+            ).map(x => ({ ...x, source: x.source || "INTENTS.md" })),
+            ...parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" })),
+          ];
+          const doneItems = sortDoneByCompletionDesc([
             ...parseItems(gateSections["처리 완료"] || gateSections["Resolved"] || "")
               .map(x => ({ ...x, source: "GATES.md" })),
-            ...parseArchiveComments(intentSections["Active"] || ""),
-          ];
+            ...parseArchiveComments(intentSections["Archive"] || intentSections["Active"] || ""),
+          ]);
 
           renderColumn("inbox",   inboxItems,   "INTENTS.md");
           renderColumn("active",  activeItems,  "INTENTS.md");
-          renderColumn("waiting", waitingItems, "GATES.md");
+          renderColumn("waiting", waitingItems, "Waiting");
           renderColumn("done",    doneItems,    "GATES.md");
+
+          renderSummary({
+            inbox: inboxItems.length,
+            active: activeItems.length,
+            waiting: waitingItems.length,
+            done: doneItems.length,
+          });
+
+          // Archive 필터 재적용을 위해 최신 doneItems 보관
+          lastDoneItems = doneItems;
+          lastDoneSource = "GATES.md";
 
           statusEl.textContent = "업데이트: " + new Date().toLocaleString("ko-KR");
         }
+
+        let lastDoneItems = [];
+        let lastDoneSource = "GATES.md";
 
         function rescheduleAuto() {
           if (timer) { clearInterval(timer); timer = null; }
@@ -700,6 +1031,12 @@ data:
 
         refreshBtn.addEventListener("click", loadAndRender);
         intervalSel.addEventListener("change", rescheduleAuto);
+        const archiveFilterInput = document.getElementById("archive-filter-input");
+        if (archiveFilterInput) {
+          archiveFilterInput.addEventListener("input", () => {
+            renderColumn("done", lastDoneItems, lastDoneSource);
+          });
+        }
         detailClose.addEventListener("click", closeDetailModal);
         detailModal.addEventListener("click", (ev) => {
           if (ev.target === detailModal) closeDetailModal();

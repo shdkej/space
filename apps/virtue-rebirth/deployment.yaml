@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: virtue-rebirth
+  namespace: default
+  labels:
+    app: virtue-rebirth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: virtue-rebirth
+  template:
+    metadata:
+      labels:
+        app: virtue-rebirth
+    spec:
+      containers:
+        - name: app
+          image: node:22-alpine
+          imagePullPolicy: IfNotPresent
+          workingDir: /tmp
+          env:
+            - name: NEXT_PUBLIC_SCORING_MODE
+              value: ai
+            - name: NEXT_PUBLIC_SHOW_DEMO
+              value: "0"
+            - name: NEXT_PUBLIC_POSTHOG_KEY
+              value: phc_md5jBTe5oiybEc6WsziJS36ZmwLs9ie6jZjZyaoTutHd
+            - name: NEXT_PUBLIC_POSTHOG_HOST
+              value: https://us.i.posthog.com
+            - name: NODE_ENV
+              value: production
+            # 채점은 별도 Lambda(Gemini)가 처리. 키는 Lambda 쪽 SST Secret에 있음.
+            - name: SCORE_LAMBDA_URL
+              value: https://score.virtue.aws.shdkej.com/score
+          ports:
+            - containerPort: 8030
+              name: http
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              apk add --no-cache git
+              corepack enable
+              rm -rf /app
+              git clone --depth=1 --branch master https://github.com/shdkej/virtue-rebirth-app.git /app
+              cd /app
+              pnpm install --frozen-lockfile
+              NEXT_PUBLIC_SCORING_MODE=ai pnpm build
+              pnpm start
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 240
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 4
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

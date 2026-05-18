@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: virtue-rebirth
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/shdkej/space.git
+    targetRevision: HEAD
+    path: helm_chart_base
+    helm:
+      values: |
+        fullname: virtue-rebirth
+        image:
+          repository: ghcr.io/shdkej/virtue-rebirth-app
+          tag: latest
+        service:
+          port: 8030
+        env:
+          - name: SCORE_LAMBDA_URL
+            value: https://score.virtue.aws.shdkej.com/score
+          - name: NODE_ENV
+            value: production
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          hosts:
+            - host: virtue.oracle.shdkej.com
+              paths: [/]
+          tls:
+            - hosts: [virtue.oracle.shdkej.com]
+              secretName: virtue-rebirth-tls
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

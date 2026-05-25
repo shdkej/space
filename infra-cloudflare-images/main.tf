@@ -59,6 +59,11 @@ resource "cloudflare_workers_script" "uploader" {
       type = "plain_text"
       text = var.output_format
     },
+    {
+      name = "OUTPUT_QUALITY"
+      type = "plain_text"
+      text = tostring(var.output_quality)
+    },
   ]
 
   observability = {

@@ -57,10 +57,11 @@ async function extractImage(request) {
 async function resizeImage(stream, env) {
   const maxWidth = parseInt(env.MAX_WIDTH || "1600", 10);
   const format = env.OUTPUT_FORMAT || "image/webp";
+  const quality = parseInt(env.OUTPUT_QUALITY || "80", 10);
 
   const result = await env.IMAGES.input(stream)
     .transform({ width: maxWidth, fit: "scale-down" })
-    .output({ format });
+    .output({ format, quality });
 
   return {
     body: result.image(),

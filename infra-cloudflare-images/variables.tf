@@ -48,3 +48,9 @@ variable "output_format" {
   type        = string
   default     = "image/webp"
 }
+
+variable "output_quality" {
+  description = "저장 이미지 품질 1-100 (낮을수록 용량↓). 미지정 시 고품질로 커질 수 있음"
+  type        = number
+  default     = 80
+}

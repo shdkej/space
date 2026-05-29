@@ -69,24 +69,45 @@ resource "helm_release" "kube_prometheus_stack" {
   }
 
   # Grafana 설정
+  # NOTE: 85.x(Grafana 13)부터 대시보드/폴더를 자체 k8s apiserver(Unified Storage)
+  # + bleve 검색 인덱스로 관리하면서 메모리/CPU 사용이 증가했다.
+  # 82.x(Grafana 11) 시절의 256Mi/200m로는 self-apiserver 호출이 타임아웃나
+  # health probe가 503을 반환 → 재시작 루프에 빠진다. limit을 상향한다.
   set {
     name  = "grafana.resources.requests.cpu"
-    value = "25m"
+    value = "100m"
   }
 
   set {
     name  = "grafana.resources.requests.memory"
-    value = "64Mi"
+    value = "256Mi"
   }
 
   set {
     name  = "grafana.resources.limits.cpu"
-    value = "200m"
+    value = "500m"
   }
 
   set {
     name  = "grafana.resources.limits.memory"
-    value = "256Mi"
+    value = "768Mi"
+  }
+
+  # Grafana 13은 부팅/인덱싱 중 health 응답이 1초를 넘기는 경우가 있어
+  # readiness 기본 timeout(1s)으로는 not-ready가 깜빡인다. 완화한다.
+  set {
+    name  = "grafana.readinessProbe.httpGet.path"
+    value = "/api/health"
+  }
+
+  set {
+    name  = "grafana.readinessProbe.timeoutSeconds"
+    value = "5"
+  }
+
+  set {
+    name  = "grafana.readinessProbe.failureThreshold"
+    value = "5"
   }
 
   # Grafana 플러그인 설치

@@ -314,7 +314,7 @@ resource "helm_release" "yace" {
 
   set {
     name  = "serviceMonitor.interval"
-    value = "5m"
+    value = "15m"
   }
 
   set {

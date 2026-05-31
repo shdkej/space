@@ -32,8 +32,10 @@ spec:
             - name: NODE_ENV
               value: production
             # 채점은 별도 Lambda(Gemini)가 처리. 키는 Lambda 쪽 SST Secret에 있음.
+            # production 스테이지 미배포 상태라 dev 람다를 가리킨다 (임시).
+            # production 배포 후 score.virtue.aws.shdkej.com/score 로 되돌릴 것.
             - name: SCORE_LAMBDA_URL
-              value: https://score.virtue.aws.shdkej.com/score
+              value: https://score-dev.virtue.aws.shdkej.com/score
           ports:
             - containerPort: 8030
               name: http

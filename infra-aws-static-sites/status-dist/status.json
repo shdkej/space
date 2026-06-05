@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-06-05T14:50:16Z",
+  "overall": {
+    "state": "ok",
+    "label": "Status and Travel Ops boards are the active static apps",
+    "score": 96
+  },
+  "checks": [
+    {
+      "name": "Status board",
+      "url": "https://status.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 0,
+      "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
+    },
+    {
+      "name": "Travel Ops board",
+      "url": "https://travel.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 0,
+      "detail": "World travel planning board deployed as a separate static app"
+    }
+  ],
+  "deployments": [
+    {
+      "name": "status board",
+      "url": "https://status.aws.shdkej.com",
+      "bucket": "static-status-aws-shdkej-com",
+      "distribution": "E9GKZBY9S3VTW",
+      "updatedAt": "2026-06-05T13:48:37Z",
+      "state": "ok"
+    },
+    {
+      "name": "travel ops",
+      "url": "https://travel.aws.shdkej.com",
+      "bucket": "static-travel-aws-shdkej-com",
+      "distribution": "E1RZMVOTKJUBLQ",
+      "updatedAt": "2026-06-05T14:50:16Z",
+      "state": "ok"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Knowledge Lab hourly dig",
+      "state": "ok",
+      "detail": "Recovered after anti-idle prompt update"
+    },
+    {
+      "name": "Daily tool curation",
+      "state": "ok",
+      "detail": "Manual force run succeeded after cron prompt fix"
+    },
+    {
+      "name": "Static deploy lane",
+      "state": "ok",
+      "detail": "Root and sample are retired; status and travel are active"
+    }
+  ],
+  "apps": [
+    {
+      "name": "Status",
+      "url": "https://status.aws.shdkej.com",
+      "kind": "dashboard"
+    },
+    {
+      "name": "Travel Ops",
+      "url": "https://travel.aws.shdkej.com",
+      "kind": "dashboard"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+aws_region         = "ap-northeast-2"
+route53_zone_name  = "aws.shdkej.com"
+
+app_sites = {
+  status = {
+    domain_name = "status.aws.shdkej.com"
+  }
+
+  travel = {
+    domain_name = "travel.aws.shdkej.com"
+    # api_origins = [
+    #   {
+    #     origin_id    = "api"
+    #     domain_name  = "example.execute-api.ap-northeast-2.amazonaws.com"
+    #     origin_path  = "/prod"
+    #     path_pattern = "/api/*"
+    #   }
+    # ]
+  }
+}

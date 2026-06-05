@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Space Status</title>
+    <style>
+      :root {
+        --ink: #181b1f;
+        --muted: #667085;
+        --line: #d9dee7;
+        --paper: #f4f1ea;
+        --panel: #fffdf8;
+        --ok: #117a52;
+        --warn: #b76113;
+        --bad: #b42318;
+        --blue: #2952cc;
+        --shadow: 0 16px 50px rgb(38 32 24 / 10%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        width: 100%;
+        overflow-x: clip;
+      }
+
+      body {
+        margin: 0;
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: clip;
+        color: var(--ink);
+        background:
+          linear-gradient(90deg, rgb(24 27 31 / 4%) 1px, transparent 1px),
+          linear-gradient(rgb(24 27 31 / 4%) 1px, transparent 1px),
+          var(--paper);
+        background-size: 28px 28px;
+        font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", Menlo,
+          Consolas, monospace;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        width: min(1440px, calc(100vw - 32px));
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 28px 0 40px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: start;
+        margin-bottom: 22px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(40px, 7vw, 92px);
+        line-height: 0.92;
+        letter-spacing: 0;
+        max-width: 760px;
+      }
+
+      .clock {
+        min-width: 250px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .clock strong {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 6px;
+      }
+
+      .clock span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1.45fr 0.9fr;
+        gap: 16px;
+      }
+
+      .card {
+        min-width: 0;
+        border: 1px solid var(--line);
+        background: rgb(255 253 248 / 92%);
+        box-shadow: var(--shadow);
+      }
+
+      .card h2 {
+        margin: 0;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero-status {
+        min-height: 290px;
+        display: grid;
+        align-content: space-between;
+        padding: 18px;
+      }
+
+      .status-word {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(72px, 10vw, 140px);
+        line-height: 0.86;
+      }
+
+      .status-word.ok {
+        color: var(--ok);
+      }
+
+      .score-row {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .score {
+        font-size: 54px;
+        line-height: 0.9;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .list {
+        display: grid;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 12px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 14px 16px;
+        border-top: 1px solid var(--line);
+        min-width: 0;
+      }
+
+      .row > div {
+        min-width: 0;
+      }
+
+      .row:first-child {
+        border-top: 0;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--muted);
+      }
+
+      .dot.ok {
+        background: var(--ok);
+      }
+
+      .dot.warn {
+        background: var(--warn);
+      }
+
+      .dot.bad {
+        background: var(--bad);
+      }
+
+      .name {
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .detail {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .pill {
+        border: 1px solid var(--line);
+        padding: 5px 8px;
+        font-size: 11px;
+        background: #fff;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        white-space: nowrap;
+      }
+
+      .apps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        padding: 16px;
+        min-width: 0;
+      }
+
+      .app {
+        min-height: 96px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 12px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .app:hover {
+        border-color: var(--blue);
+      }
+
+      .app > * {
+        min-width: 0;
+      }
+
+      .span-2 {
+        grid-column: span 2;
+      }
+
+      .full {
+        grid-column: 1 / -1;
+      }
+
+      @supports not (overflow: clip) {
+        html,
+        body {
+          overflow-x: hidden;
+        }
+      }
+
+      @media (max-width: 980px) {
+        .topbar,
+        .grid {
+          grid-template-columns: 1fr;
+          display: grid;
+        }
+
+        .clock {
+          min-width: 0;
+        }
+
+        .span-2 {
+          grid-column: auto;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          width: 100%;
+          padding: 18px 12px 30px;
+        }
+
+        h1 {
+          font-size: clamp(36px, 12vw, 52px);
+        }
+
+        .status-word {
+          font-size: clamp(64px, 22vw, 96px);
+        }
+
+        .row {
+          grid-template-columns: 12px minmax(0, 1fr);
+          gap: 10px;
+          padding: 13px 12px;
+        }
+
+        .pill {
+          grid-column: 2;
+          justify-self: start;
+          white-space: normal;
+          text-align: left;
+        }
+
+        .score-row {
+          display: grid;
+        }
+
+        .apps {
+          grid-template-columns: 1fr;
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Space operations board</p>
+          <h1>Status that can stay open all day.</h1>
+        </div>
+        <aside class="clock">
+          <strong id="now">Loading...</strong>
+          <span id="generated">Waiting for status.json</span>
+        </aside>
+      </section>
+
+      <section class="grid">
+        <article class="card hero-status">
+          <div>
+            <p class="eyebrow">Overall</p>
+            <div id="overallState" class="status-word ok">OK</div>
+          </div>
+          <div class="score-row">
+            <div>
+              <div id="overallLabel">All core static surfaces are reachable</div>
+              <div class="detail">Static HTML + S3 JSON feed</div>
+            </div>
+            <div id="score" class="score">98</div>
+          </div>
+        </article>
+
+        <article class="card span-2">
+          <h2>Live checks</h2>
+          <div id="checks" class="list"></div>
+        </article>
+
+        <article class="card">
+          <h2>Agent lane</h2>
+          <div id="agents" class="list"></div>
+        </article>
+
+        <article class="card span-2">
+          <h2>Deployments</h2>
+          <div id="deployments" class="list"></div>
+        </article>
+
+        <article class="card full">
+          <h2>App launcher</h2>
+          <div id="apps" class="apps"></div>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      const stateClass = (state) =>
+        state === "ok" ? "ok" : state === "warn" ? "warn" : "bad";
+
+      const row = (item, right = "") => `
+        <div class="row">
+          <span class="dot ${stateClass(item.state)}"></span>
+          <div>
+            <div class="name">${item.name}</div>
+            <div class="detail">${item.detail || item.url || ""}</div>
+          </div>
+          <span class="pill">${right || item.state.toUpperCase()}</span>
+        </div>
+      `;
+
+      const render = (data) => {
+        document.getElementById("overallState").textContent =
+          data.overall.state.toUpperCase();
+        document.getElementById("overallState").className =
+          "status-word " + stateClass(data.overall.state);
+        document.getElementById("overallLabel").textContent = data.overall.label;
+        document.getElementById("score").textContent = data.overall.score;
+        document.getElementById("generated").textContent =
+          "Generated " + new Date(data.generatedAt).toLocaleString();
+
+        document.getElementById("checks").innerHTML = data.checks
+          .map((item) => row(item, item.latencyMs ? `${item.latencyMs}ms` : "boot"))
+          .join("");
+        document.getElementById("agents").innerHTML = data.agents
+          .map((item) => row(item))
+          .join("");
+        document.getElementById("deployments").innerHTML = data.deployments
+          .map((item) => row(item, item.distribution))
+          .join("");
+        document.getElementById("apps").innerHTML = data.apps
+          .map(
+            (app) => `
+              <a class="app" href="${app.url}">
+                <strong>${app.name}</strong>
+                <span class="detail">${app.kind}</span>
+                <span class="pill">${new URL(app.url).hostname}</span>
+              </a>
+            `,
+          )
+          .join("");
+      };
+
+      const tick = () => {
+        document.getElementById("now").textContent = new Date().toLocaleString();
+      };
+
+      tick();
+      setInterval(tick, 1000);
+
+      fetch("./status.json", { cache: "no-store" })
+        .then((response) => response.json())
+        .then(render)
+        .catch(() => {
+          document.getElementById("overallState").textContent = "BOOT";
+          document.getElementById("overallLabel").textContent =
+            "status.json is not available yet";
+        });
+    </script>
+  </body>
+</html>

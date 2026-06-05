@@ -1,0 +1,192 @@
+name: Deploy static site to AWS
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "infra-aws-static-sites/*-dist/**"
+  workflow_dispatch:
+    inputs:
+      app:
+        description: App name under aws.shdkej.com
+        required: true
+        default: status
+        type: string
+      build_dir:
+        description: Directory to upload. Defaults to infra-aws-static-sites/<app>-dist
+        required: false
+        type: string
+      domain_name:
+        description: Custom domain. Defaults to <app>.aws.shdkej.com
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-2
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      has_targets: ${{ steps.targets.outputs.has_targets }}
+      matrix: ${{ steps.targets.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed apps
+        id: targets
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
+          APP_INPUT: ${{ inputs.app }}
+          BUILD_DIR_INPUT: ${{ inputs.build_dir }}
+          DOMAIN_INPUT: ${{ inputs.domain_name }}
+        run: |
+          set -euo pipefail
+
+          targets_file="$(mktemp)"
+
+          add_target() {
+            local app="$1"
+            local build_dir="$2"
+            local domain="$3"
+
+            if [[ ! "$app" =~ ^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$ ]]; then
+              echo "::error::Invalid app name: $app"
+              exit 1
+            fi
+
+            if [ -z "$domain" ]; then
+              domain="${app}.aws.shdkej.com"
+            fi
+
+            if [[ ! "$domain" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$ ]]; then
+              echo "::error::Invalid domain name: $domain"
+              exit 1
+            fi
+
+            if [ -z "$build_dir" ]; then
+              build_dir="infra-aws-static-sites/${app}-dist"
+            fi
+
+            if [ ! -d "$build_dir" ]; then
+              echo "::error::Build directory does not exist: $build_dir"
+              exit 1
+            fi
+
+            printf '%s\t%s\t%s\n' "$app" "$build_dir" "$domain" >> "$targets_file"
+          }
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            add_target "$APP_INPUT" "$BUILD_DIR_INPUT" "$DOMAIN_INPUT"
+          else
+            base="$BEFORE_SHA"
+            if [[ "$base" =~ ^0+$ ]] || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+              base="HEAD~1"
+            fi
+
+            git diff --name-only "$base" "$CURRENT_SHA" -- 'infra-aws-static-sites/*-dist/**' \
+              | sed -nE 's#^infra-aws-static-sites/([a-z0-9-]+)-dist/.*#\1#p' \
+              | sort -u \
+              | while read -r app; do
+                  [ -n "$app" ] && add_target "$app" "" ""
+                done
+          fi
+
+          python3 - "$targets_file" <<'PY' > matrix.json
+          import json
+          import sys
+
+          targets = []
+          with open(sys.argv[1], "r", encoding="utf-8") as handle:
+              for line in handle:
+                  app, build_dir, domain = line.rstrip("\n").split("\t")
+                  targets.append({
+                      "app": app,
+                      "build_dir": build_dir,
+                      "domain": domain,
+                  })
+
+          print(json.dumps({"include": targets}, separators=(",", ":")))
+          PY
+
+          matrix="$(cat matrix.json)"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+          if grep -q '"app"' matrix.json; then
+            echo "has_targets=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_targets=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    needs: detect
+    if: needs.detect.outputs.has_targets == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.detect.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Resolve AWS resources
+        id: target
+        shell: bash
+        env:
+          DOMAIN_NAME: ${{ matrix.domain }}
+        run: |
+          set -euo pipefail
+
+          bucket="static-${DOMAIN_NAME//./-}"
+          distribution_id="$(
+            aws cloudfront list-distributions \
+              --query "DistributionList.Items[?Aliases.Items && contains(Aliases.Items, '${DOMAIN_NAME}')].Id | [0]" \
+              --output text
+          )"
+
+          if [ -z "$distribution_id" ] || [ "$distribution_id" = "None" ]; then
+            echo "::error::CloudFront distribution not found for alias: $DOMAIN_NAME"
+            exit 1
+          fi
+
+          echo "bucket=$bucket" >> "$GITHUB_OUTPUT"
+          echo "distribution_id=$distribution_id" >> "$GITHUB_OUTPUT"
+
+      - name: Sync S3
+        run: |
+          aws s3 sync "${{ matrix.build_dir }}/" \
+            "s3://${{ steps.target.outputs.bucket }}" \
+            --delete \
+            --cache-control "public,max-age=60"
+
+      - name: Invalidate CloudFront
+        run: |
+          invalidation_id="$(
+            aws cloudfront create-invalidation \
+              --distribution-id "${{ steps.target.outputs.distribution_id }}" \
+              --paths "/*" \
+              --query "Invalidation.Id" \
+              --output text
+          )"
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "${{ steps.target.outputs.distribution_id }}" \
+            --id "$invalidation_id"
+
+      - name: Summary
+        run: |
+          echo "Deployed https://${{ matrix.domain }}"

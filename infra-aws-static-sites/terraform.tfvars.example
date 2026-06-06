@@ -18,7 +18,7 @@ app_sites = {
     # ]
   }
 
-  card-news = {
-    domain_name = "card-news.aws.shdkej.com"
+  library = {
+    domain_name = "library.aws.shdkej.com"
   }
 }

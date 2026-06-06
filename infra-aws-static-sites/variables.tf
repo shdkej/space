@@ -31,8 +31,8 @@ variable "app_sites" {
     travel = {
       domain_name = "travel.aws.shdkej.com"
     }
-    card-news = {
-      domain_name = "card-news.aws.shdkej.com"
+    library = {
+      domain_name = "library.aws.shdkej.com"
     }
   }
 }

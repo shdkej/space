@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-05T14:50:16Z",
+  "generatedAt": "2026-06-06T10:47:15Z",
   "overall": {
     "state": "ok",
-    "label": "Status and Travel Ops boards are the active static apps",
-    "score": 96
+    "label": "Status, Travel Ops, and Card News Library are the active static apps",
+    "score": 98
   },
   "checks": [
     {
@@ -19,6 +19,13 @@
       "state": "ok",
       "latencyMs": 0,
       "detail": "World travel planning board deployed as a separate static app"
+    },
+    {
+      "name": "Card News Library",
+      "url": "https://library.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 134,
+      "detail": "Growing public archive for photo insight card-news sets"
     }
   ],
   "deployments": [
@@ -37,6 +44,14 @@
       "distribution": "E1RZMVOTKJUBLQ",
       "updatedAt": "2026-06-05T14:50:16Z",
       "state": "ok"
+    },
+    {
+      "name": "card news library",
+      "url": "https://library.aws.shdkej.com",
+      "bucket": "static-library-aws-shdkej-com",
+      "distribution": "E3H9I5GVQBIEUL",
+      "updatedAt": "2026-06-06T10:47:15Z",
+      "state": "ok"
     }
   ],
   "agents": [
@@ -53,7 +68,7 @@
     {
       "name": "Static deploy lane",
       "state": "ok",
-      "detail": "Root and sample are retired; status and travel are active"
+      "detail": "Root and sample are retired; status, travel, and library are active"
     }
   ],
   "apps": [
@@ -66,6 +81,11 @@
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "kind": "dashboard"
+    },
+    {
+      "name": "Card News Library",
+      "url": "https://library.aws.shdkej.com",
+      "kind": "archive"
     }
   ]
 }

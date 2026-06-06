@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-06T10:47:15Z",
+  "generatedAt": "2026-06-06T11:01:59Z",
   "overall": {
     "state": "ok",
     "label": "Status, Travel Ops, and Card News Library are the active static apps",
@@ -7,24 +7,24 @@
   },
   "checks": [
     {
-      "name": "Status board",
+      "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 0,
+      "latencyMs": 162,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
-      "name": "Travel Ops board",
+      "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 0,
+      "latencyMs": 117,
       "detail": "World travel planning board deployed as a separate static app"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 134,
+      "latencyMs": 124,
       "detail": "Growing public archive for photo insight card-news sets"
     }
   ],
@@ -34,7 +34,7 @@
       "url": "https://status.aws.shdkej.com",
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
-      "updatedAt": "2026-06-05T13:48:37Z",
+      "updatedAt": "2026-06-06T11:01:58Z",
       "state": "ok"
     },
     {
@@ -42,7 +42,7 @@
       "url": "https://travel.aws.shdkej.com",
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
-      "updatedAt": "2026-06-05T14:50:16Z",
+      "updatedAt": "2026-06-06T11:01:59Z",
       "state": "ok"
     },
     {
@@ -50,7 +50,7 @@
       "url": "https://library.aws.shdkej.com",
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
-      "updatedAt": "2026-06-06T10:47:15Z",
+      "updatedAt": "2026-06-06T11:01:59Z",
       "state": "ok"
     }
   ],
@@ -68,7 +68,7 @@
     {
       "name": "Static deploy lane",
       "state": "ok",
-      "detail": "Root and sample are retired; status, travel, and library are active"
+      "detail": "Static apps are registered under infra-aws-static-sites/sites"
     }
   ],
   "apps": [

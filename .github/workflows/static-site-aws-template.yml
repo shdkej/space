@@ -4,7 +4,8 @@ on:
   push:
     branches: [main, master]
     paths:
-      - "infra-aws-static-sites/*-dist/**"
+      - "infra-aws-static-sites/sites/**"
+      - "infra-aws-static-sites/scripts/build-status-json.py"
   workflow_dispatch:
     inputs:
       app:
@@ -13,7 +14,7 @@ on:
         default: status
         type: string
       build_dir:
-        description: Directory to upload. Defaults to infra-aws-static-sites/<app>-dist
+        description: Directory to upload. Defaults to infra-aws-static-sites/sites/<app>/dist
         required: false
         type: string
       domain_name:
@@ -75,7 +76,7 @@ jobs:
             fi
 
             if [ -z "$build_dir" ]; then
-              build_dir="infra-aws-static-sites/${app}-dist"
+              build_dir="infra-aws-static-sites/sites/${app}/dist"
             fi
 
             if [ ! -d "$build_dir" ]; then
@@ -94,12 +95,19 @@ jobs:
               base="HEAD~1"
             fi
 
-            git diff --name-only "$base" "$CURRENT_SHA" -- 'infra-aws-static-sites/*-dist/**' \
-              | sed -nE 's#^infra-aws-static-sites/([a-z0-9-]+)-dist/.*#\1#p' \
+            git diff --name-only "$base" "$CURRENT_SHA" -- 'infra-aws-static-sites/sites/*/dist/**' \
+              | sed -nE 's#^infra-aws-static-sites/sites/([a-z0-9-]+)/dist/.*#\1#p' \
               | sort -u \
               | while read -r app; do
                   [ -n "$app" ] && add_target "$app" "" ""
                 done
+
+            if git diff --name-only "$base" "$CURRENT_SHA" -- \
+              'infra-aws-static-sites/sites/registry.json' \
+              'infra-aws-static-sites/scripts/build-status-json.py' \
+              | grep -q .; then
+              add_target "status" "" ""
+            fi
           fi
 
           python3 - "$targets_file" <<'PY' > matrix.json
@@ -107,9 +115,13 @@ jobs:
           import sys
 
           targets = []
+          seen = set()
           with open(sys.argv[1], "r", encoding="utf-8") as handle:
               for line in handle:
                   app, build_dir, domain = line.rstrip("\n").split("\t")
+                  if app in seen:
+                      continue
+                  seen.add(app)
                   targets.append({
                       "app": app,
                       "build_dir": build_dir,
@@ -166,6 +178,14 @@ jobs:
 
           echo "bucket=$bucket" >> "$GITHUB_OUTPUT"
           echo "distribution_id=$distribution_id" >> "$GITHUB_OUTPUT"
+
+      - name: Build status feed
+        if: matrix.app == 'status'
+        run: |
+          python3 infra-aws-static-sites/scripts/build-status-json.py \
+            --root infra-aws-static-sites \
+            --resolve-aws \
+            --check
 
       - name: Sync S3
         run: |

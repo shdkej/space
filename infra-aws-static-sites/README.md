@@ -20,7 +20,7 @@ Default targets:
 - Route53 `A` and `AAAA` alias records
 - Optional SPA fallback
 - Optional `/api/*` style origin routing for API Gateway or Lambda Function URL
-- Additional app subdomains through `app_sites`
+- Additional app subdomains through `sites/registry.json`
 
 ## Usage
 
@@ -33,54 +33,74 @@ terraform plan
 terraform apply
 ```
 
-Deploy the status board:
+Static apps live under one path:
+
+```text
+infra-aws-static-sites/sites/<app>/dist/
+```
+
+The app registry lives at:
+
+```text
+infra-aws-static-sites/sites/registry.json
+```
+
+That registry is the source for Terraform app creation and the Status page's
+`status.json` feed. Add new static pages there so they are not forgotten by
+the Status board.
+
+Deploy the status board manually:
 
 ```bash
-aws s3 sync status-dist/ s3://static-status-aws-shdkej-com --delete
+python3 scripts/build-status-json.py --resolve-aws --check
+aws s3 sync sites/status/dist/ s3://static-status-aws-shdkej-com --delete
 aws cloudfront create-invalidation --distribution-id <status_distribution_id> --paths "/*"
 ```
 
 Deploy the travel ops board:
 
 ```bash
-aws s3 sync travel-dist/ s3://static-travel-aws-shdkej-com --delete
+aws s3 sync sites/travel/dist/ s3://static-travel-aws-shdkej-com --delete
 aws cloudfront create-invalidation --distribution-id <travel_distribution_id> --paths "/*"
 ```
 
 GitHub Actions automatically deploys changed app directories on pushes to
 `main` or `master`:
 
-- `app=status` uploads `infra-aws-static-sites/status-dist/`
-- `app=travel` uploads `infra-aws-static-sites/travel-dist/`
-- `app=library` uploads `infra-aws-static-sites/library-dist/`
-- `app=<new-app>` uploads `infra-aws-static-sites/<new-app>-dist/`
+- `app=status` uploads `infra-aws-static-sites/sites/status/dist/`
+- `app=travel` uploads `infra-aws-static-sites/sites/travel/dist/`
+- `app=library` uploads `infra-aws-static-sites/sites/library/dist/`
+- `app=<new-app>` uploads `infra-aws-static-sites/sites/<new-app>/dist/`
 
 The workflow derives the S3 bucket from the domain name, then finds the
 CloudFront distribution by the domain alias. It does not assume a top-level
 `dist/` folder unless `build_dir` is explicitly provided through manual
-dispatch.
+dispatch. When `app=status` deploys, the workflow rebuilds
+`sites/status/dist/status.json` from `sites/registry.json`.
 
 Adding a new app has two steps:
 
-1. Add the domain to `app_sites` and run Terraform.
+1. Add the app to `sites/registry.json` and run Terraform.
 
-```hcl
-app_sites = {
-  status = {
-    domain_name = "status.aws.shdkej.com"
-  }
-  travel = {
-    domain_name = "travel.aws.shdkej.com"
-  }
-  notes = {
-    domain_name = "notes.aws.shdkej.com"
-  }
+```json
+{
+  "app": "notes",
+  "name": "Notes",
+  "domain_name": "notes.aws.shdkej.com",
+  "kind": "archive",
+  "detail": "Static notes archive",
+  "deployment_name": "notes",
+  "spa_fallback": true
 }
 ```
 
-2. Add static files under `infra-aws-static-sites/notes-dist/`, then push.
-   The workflow detects `notes-dist` and deploys
+2. Add static files under `infra-aws-static-sites/sites/notes/dist/`, then push.
+   The workflow detects `sites/notes/dist` and deploys
    `notes.aws.shdkej.com`.
+
+Changing `sites/registry.json` also triggers a Status deploy, so the Status
+page automatically picks up the new app launcher/check entry after the new
+CloudFront distribution exists.
 
 For a custom directory or custom domain, set `build_dir` or `domain_name` in
 the workflow dispatch inputs.

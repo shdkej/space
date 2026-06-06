@@ -1,0 +1,48 @@
+{
+  "sites": [
+    {
+      "app": "status",
+      "name": "Status",
+      "domain_name": "status.aws.shdkej.com",
+      "kind": "dashboard",
+      "detail": "Static dashboard deployed through its own S3 + CloudFront slot",
+      "deployment_name": "status board",
+      "spa_fallback": true
+    },
+    {
+      "app": "travel",
+      "name": "Travel Ops",
+      "domain_name": "travel.aws.shdkej.com",
+      "kind": "dashboard",
+      "detail": "World travel planning board deployed as a separate static app",
+      "deployment_name": "travel ops",
+      "spa_fallback": true
+    },
+    {
+      "app": "library",
+      "name": "Card News Library",
+      "domain_name": "library.aws.shdkej.com",
+      "kind": "archive",
+      "detail": "Growing public archive for photo insight card-news sets",
+      "deployment_name": "card news library",
+      "spa_fallback": true
+    }
+  ],
+  "agents": [
+    {
+      "name": "Knowledge Lab hourly dig",
+      "state": "ok",
+      "detail": "Recovered after anti-idle prompt update"
+    },
+    {
+      "name": "Daily tool curation",
+      "state": "ok",
+      "detail": "Manual force run succeeded after cron prompt fix"
+    },
+    {
+      "name": "Static deploy lane",
+      "state": "ok",
+      "detail": "Static apps are registered under infra-aws-static-sites/sites"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ Default targets:
 
 - Status board: `status.aws.shdkej.com`
 - Travel Ops board: `travel.aws.shdkej.com`
+- Card News Library: `card-news.aws.shdkej.com`
 - S3 region: `ap-northeast-2`
 - ACM certificate region for CloudFront: `us-east-1`
 - DNS: Route53 hosted zone `aws.shdkej.com`
@@ -51,6 +52,7 @@ GitHub Actions automatically deploys changed app directories on pushes to
 
 - `app=status` uploads `infra-aws-static-sites/status-dist/`
 - `app=travel` uploads `infra-aws-static-sites/travel-dist/`
+- `app=card-news` uploads `infra-aws-static-sites/card-news-dist/`
 - `app=<new-app>` uploads `infra-aws-static-sites/<new-app>-dist/`
 
 The workflow derives the S3 bucket from the domain name, then finds the

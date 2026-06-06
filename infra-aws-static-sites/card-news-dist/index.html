@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#181512">
+  <title>Card News Library</title>
+  <style>
+    :root {
+      --ink: #211a14;
+      --night: #181512;
+      --paper: #f1e6d3;
+      --soft: #fff8eb;
+      --line: rgba(61, 45, 30, 0.18);
+      --copper: #a4562b;
+      --green: #38594b;
+      --blue: #284f68;
+      --shadow: 0 26px 70px rgba(28, 18, 10, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        radial-gradient(circle at 12% 15%, rgba(164, 86, 43, 0.2), transparent 28rem),
+        radial-gradient(circle at 88% 16%, rgba(56, 89, 75, 0.22), transparent 28rem),
+        linear-gradient(135deg, #17120e 0%, #2a2119 48%, #e7d5b8 48.2%, #f3eadc 100%);
+      background-size: 42px 42px, 42px 42px, auto, auto, auto;
+      color: var(--ink);
+      font-family: "Noto Serif KR", "Apple SD Gothic Neo", "Malgun Gothic", Georgia, serif;
+    }
+
+    a { color: inherit; }
+    .shell { width: min(1200px, calc(100% - 34px)); margin: 0 auto; }
+    .hero {
+      min-height: 86vh;
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.72fr);
+      gap: clamp(30px, 6vw, 80px);
+      align-items: center;
+      padding: 48px 0 84px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #f9dfb6;
+      font: 900 13px/1 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      margin-bottom: 26px;
+    }
+    .eyebrow::before { content: ""; width: 46px; height: 1px; background: #d6ac70; }
+    h1 {
+      margin: 0;
+      max-width: 820px;
+      color: #fff7e8;
+      font-size: clamp(48px, 8vw, 104px);
+      line-height: 1.02;
+      letter-spacing: 0;
+      word-break: keep-all;
+    }
+    .hero-copy {
+      margin: 28px 0 0;
+      max-width: 660px;
+      color: rgba(255, 247, 232, 0.82);
+      font-size: clamp(18px, 2.3vw, 25px);
+      line-height: 1.68;
+      word-break: keep-all;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 34px;
+      max-width: 620px;
+    }
+    .stat {
+      border: 1px solid rgba(255, 234, 198, 0.28);
+      background: rgba(255, 248, 233, 0.08);
+      color: #ffe8bf;
+      padding: 16px;
+      font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    .stat b { display: block; font-size: 24px; margin-bottom: 6px; }
+    .stat span { font-size: 12px; font-weight: 800; }
+    .hero-stack {
+      position: relative;
+      min-height: 560px;
+    }
+    .hero-stack img {
+      position: absolute;
+      width: min(360px, 76vw);
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      border: 10px solid #f6dfb8;
+      box-shadow: 0 34px 70px rgba(0,0,0,0.4);
+      background: #d7c1a2;
+    }
+    .hero-stack img:first-child { right: 30px; top: 10px; transform: rotate(4deg); z-index: 3; }
+    .hero-stack img:nth-child(2) { left: 0; bottom: 28px; transform: rotate(-7deg); z-index: 2; }
+    .hero-stack::after {
+      content: "LIBRARY";
+      position: absolute;
+      right: 2px;
+      bottom: 4px;
+      color: rgba(255, 238, 205, 0.18);
+      font: 900 56px/1 Georgia, serif;
+    }
+    .rail {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(247, 237, 220, 0.92);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .rail-inner {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .rail a { text-decoration: none; color: var(--green); }
+    main {
+      background: var(--paper);
+    }
+    .archive { padding: 78px 0 44px; }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(300px, 0.52fr);
+      gap: 34px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+    h2 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 64px);
+      line-height: 1.12;
+      letter-spacing: 0;
+      word-break: keep-all;
+    }
+    .section-head p {
+      margin: 0;
+      color: rgba(33, 26, 20, 0.72);
+      font-size: 17px;
+      line-height: 1.8;
+      word-break: keep-all;
+    }
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 22px;
+    }
+    .archive-card {
+      display: grid;
+      grid-template-columns: 0.86fr 1fr;
+      gap: 18px;
+      min-height: 310px;
+      padding: 14px;
+      background: rgba(255, 248, 235, 0.78);
+      border: 1px solid var(--line);
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      transition: transform 200ms ease, border-color 200ms ease;
+    }
+    .archive-card:hover {
+      transform: translateY(-4px);
+      border-color: color-mix(in srgb, var(--accent), #ffffff 30%);
+    }
+    .card-cover { position: relative; overflow: hidden; background: #2a2119; }
+    .card-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card-cover b {
+      position: absolute;
+      right: 10px;
+      bottom: 6px;
+      color: rgba(255,248,235,0.82);
+      font: 900 42px/1 Georgia, serif;
+    }
+    .card-copy { display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+    .meta {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font: 900 12px/1.4 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    h3 {
+      margin: 0 0 12px;
+      font-size: clamp(23px, 2.6vw, 34px);
+      line-height: 1.16;
+      letter-spacing: 0;
+      word-break: keep-all;
+    }
+    .card-copy p:not(.meta) {
+      margin: 0;
+      color: rgba(33, 26, 20, 0.72);
+      line-height: 1.72;
+      word-break: keep-all;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+    .tags span {
+      border: 1px solid rgba(33, 26, 20, 0.16);
+      background: rgba(255,255,255,0.34);
+      padding: 7px 9px;
+      font: 800 12px/1 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      color: rgba(33, 26, 20, 0.7);
+    }
+    .issue {
+      padding: 72px 0;
+      border-top: 1px solid var(--line);
+    }
+    .issue-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.74fr) minmax(300px, 0.46fr);
+      gap: 36px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+    .issue-note {
+      padding: 20px;
+      border-left: 4px solid var(--accent);
+      background: rgba(255, 248, 235, 0.64);
+    }
+    .issue-note p {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+    .issue-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
+      gap: 28px;
+      align-items: start;
+    }
+    .mini-gallery {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 12px;
+    }
+    .mini-card {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      background: #2a2119;
+      box-shadow: 0 16px 38px rgba(31,20,12,0.2);
+      text-decoration: none;
+    }
+    .mini-card img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+    .mini-card span {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--accent);
+      color: #fff7e8;
+      padding: 6px 8px;
+      font: 900 12px/1 Georgia, serif;
+    }
+    .thread-box {
+      background: #201915;
+      color: #fff2df;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .box-label {
+      margin: 0 0 16px;
+      color: #f6c683;
+      font: 900 12px/1 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    .thread-box p:not(.box-label):not(.local-path) {
+      margin: 0;
+      color: rgba(255, 242, 223, 0.82);
+      font-size: 16px;
+      line-height: 1.78;
+      word-break: keep-all;
+    }
+    .local-path {
+      margin: 20px 0 0;
+      color: rgba(255, 242, 223, 0.45);
+      font: 800 11px/1.5 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      overflow-wrap: anywhere;
+    }
+    footer {
+      padding: 32px 0 42px;
+      background: #181512;
+      color: rgba(255, 242, 223, 0.55);
+      font: 800 12px/1.5 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+
+    @media (max-width: 900px) {
+      .hero, .section-head, .issue-head, .issue-layout { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 34px; }
+      .hero-stack { min-height: 520px; }
+      .archive-card { grid-template-columns: 0.72fr 1fr; }
+      .mini-gallery { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 22px, 1200px); }
+      h1 { font-size: 42px; }
+      .stats { grid-template-columns: 1fr; }
+      .hero-stack { min-height: 430px; }
+      .hero-stack img { width: 270px; }
+      .hero-stack img:first-child { right: 0; }
+      .hero-stack img:nth-child(2) { left: 0; bottom: 20px; }
+      .rail-inner { align-items: flex-start; flex-direction: column; }
+      .archive-card { grid-template-columns: 1fr; }
+      .card-cover { min-height: 360px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero shell">
+    <div>
+      <div class="eyebrow">Accumulating Card News Archive</div>
+      <h1>Card News Library</h1>
+      <p class="hero-copy">사진에서 건진 인사이트를 카드뉴스와 작은 전시로 쌓아두는 아카이브</p>
+      <div class="stats" aria-label="라이브러리 상태">
+        <div class="stat"><b>2</b><span>card news sets</span></div>
+        <div class="stat"><b>10</b><span>image cards</span></div>
+        <div class="stat"><b>2026-06-06</b><span>last updated</span></div>
+      </div>
+    </div>
+    <div class="hero-stack" aria-label="최근 카드뉴스 미리보기">
+      <img src="https://img.shdkej.com/2026/06/06/dc58b9e4-8306-4df3-9c62-43f4b0301873.webp" alt="공공도서관은 생각보다 최근의 발명품이다" loading="eager">
+      <img src="https://img.shdkej.com/2026/06/06/eae750e0-fad5-476f-a7f7-188b347282ba.webp" alt="카드뉴스 아카이브 두 번째 미리보기" loading="eager">
+    </div>
+  </header>
+
+  <nav class="rail">
+    <div class="rail-inner shell">
+      <span>카드뉴스가 생길 때마다 여기에 누적</span>
+      <a href="#archive">전체 목록 보기</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="archive shell" id="archive">
+      <div class="section-head">
+        <h2>쌓이는 카드뉴스 선반</h2>
+        <p>사진 한 장에서 나온 인사이트를 5장 카드뉴스로 만들고, 발행 가능한 본문과 함께 한곳에 보관합니다. 새 세트는 원장 JSON에 추가한 뒤 이 페이지를 다시 빌드하면 됩니다.</p>
+      </div>
+      <div class="archive-grid">
+        
+      <a class="archive-card" href="#public-library-1850" style="--accent:#a4562b">
+        <div class="card-cover">
+          <img src="https://img.shdkej.com/2026/06/06/dc58b9e4-8306-4df3-9c62-43f4b0301873.webp" alt="공공도서관은 생각보다 최근의 발명품이다 대표 카드" loading="lazy">
+          <b>01</b>
+        </div>
+        <div class="card-copy">
+          <p class="meta">2026-06-06 · 제도와 일상</p>
+          <h3>공공도서관은 생각보다 최근의 발명품이다</h3>
+          <p>1850년이라는 숫자 하나가 지식 접근권의 역사를 다시 보게 만든다.</p>
+          <div class="tags"><span>공공도서관</span><span>인프라</span><span>연표</span><span>지식 접근권</span></div>
+        </div>
+      </a>
+    
+
+      <a class="archive-card" href="#korail-travel-observation" style="--accent:#38594b">
+        <div class="card-cover">
+          <img src="https://img.shdkej.com/2026/06/06/eae750e0-fad5-476f-a7f7-188b347282ba.webp" alt="장소는 예쁘게 묘사하는 데서 끝나지 않는다 대표 카드" loading="lazy">
+          <b>02</b>
+        </div>
+        <div class="card-copy">
+          <p class="meta">2026-06-06 · 여행 기록</p>
+          <h3>장소는 예쁘게 묘사하는 데서 끝나지 않는다</h3>
+          <p>행운 소비, 공간의 시간, 보이지 않는 마음을 여행 기록의 렌즈로 묶었다.</p>
+          <div class="tags"><span>여행</span><span>관찰</span><span>공간</span><span>행운</span></div>
+        </div>
+      </a>
+    
+      </div>
+    </section>
+
+    
+      <section class="issue" id="public-library-1850" style="--accent:#a4562b">
+        <div class="issue-head">
+          <div>
+            <p class="meta">Issue 01 · 도서관 타임라인 사진</p>
+            <h2>공공도서관은 생각보다 최근의 발명품이다</h2>
+          </div>
+          <div class="issue-note">
+            <p>책이 있다는 것과 누구나 들어가 읽을 수 있다는 것은 다른 일이다.</p>
+            <div class="tags"><span>공공도서관</span><span>인프라</span><span>연표</span><span>지식 접근권</span></div>
+          </div>
+        </div>
+        <div class="issue-layout">
+          <div class="mini-gallery">
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/dc58b9e4-8306-4df3-9c62-43f4b0301873.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/dc58b9e4-8306-4df3-9c62-43f4b0301873.webp" alt="공공도서관은 생각보다 최근의 발명품이다 카드 1" loading="lazy">
+            <span>01</span>
+          </a>
+        
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/7f85dbf0-a73d-40f7-bbe4-4bd49e2b46c9.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/7f85dbf0-a73d-40f7-bbe4-4bd49e2b46c9.webp" alt="공공도서관은 생각보다 최근의 발명품이다 카드 2" loading="lazy">
+            <span>02</span>
+          </a>
+        
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/8690e348-a429-40fc-a53a-fd61da24ba9e.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/8690e348-a429-40fc-a53a-fd61da24ba9e.webp" alt="공공도서관은 생각보다 최근의 발명품이다 카드 3" loading="lazy">
+            <span>03</span>
+          </a>
+        
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/891d3fa3-c2e8-4adb-9aac-edd57420d5ed.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/891d3fa3-c2e8-4adb-9aac-edd57420d5ed.webp" alt="공공도서관은 생각보다 최근의 발명품이다 카드 4" loading="lazy">
+            <span>04</span>
+          </a>
+        
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/37928dc0-45fe-4621-b975-d48661fd22eb.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/37928dc0-45fe-4621-b975-d48661fd22eb.webp" alt="공공도서관은 생각보다 최근의 발명품이다 카드 5" loading="lazy">
+            <span>05</span>
+          </a>
+        </div>
+          <div class="thread-box">
+            <p class="box-label">Threads draft</p>
+            <p>공공도서관은 훨씬 오래전부터 당연히 있었던 것처럼 느껴진다.<br><br>그런데 연표에서 “1850년 미국 보스턴 공공도서관 개관”을 보니 감각이 조금 바뀐다. 책이 있다는 것과, 누구나 들어가 읽을 수 있다는 것은 완전히 다른 일이었다.<br><br>당연한 일상은 사실 누군가 만든 인프라다. 도서관도, 기록도, 접근권도 그렇다.<br><br>오늘 사진에서 건진 기록 루틴: 숫자 하나에 멈추기 → 당연함을 의심하기 → 지금 누리는 인프라로 연결하기</p>
+            <p class="local-path">config · system/data/insight-card-templates/public-library-1850.json</p>
+          </div>
+        </div>
+      </section>
+    
+
+      <section class="issue" id="korail-travel-observation" style="--accent:#38594b">
+        <div class="issue-head">
+          <div>
+            <p class="meta">Issue 02 · 코레일 매거진 사진</p>
+            <h2>장소는 예쁘게 묘사하는 데서 끝나지 않는다</h2>
+          </div>
+          <div class="issue-note">
+            <p>보이는 디테일에 시간의 층과 사람의 마음을 붙이면 사진이 이야기로 바뀐다.</p>
+            <div class="tags"><span>여행</span><span>관찰</span><span>공간</span><span>행운</span></div>
+          </div>
+        </div>
+        <div class="issue-layout">
+          <div class="mini-gallery">
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/eae750e0-fad5-476f-a7f7-188b347282ba.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/eae750e0-fad5-476f-a7f7-188b347282ba.webp" alt="장소는 예쁘게 묘사하는 데서 끝나지 않는다 카드 1" loading="lazy">
+            <span>01</span>
+          </a>
+        
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/3538dadd-0a25-448d-ac14-2822e6a86df6.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/3538dadd-0a25-448d-ac14-2822e6a86df6.webp" alt="장소는 예쁘게 묘사하는 데서 끝나지 않는다 카드 2" loading="lazy">
+            <span>02</span>
+          </a>
+        
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/1acd0b93-3d42-41e1-bef3-6efc1cd76161.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/1acd0b93-3d42-41e1-bef3-6efc1cd76161.webp" alt="장소는 예쁘게 묘사하는 데서 끝나지 않는다 카드 3" loading="lazy">
+            <span>03</span>
+          </a>
+        
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/15015181-dc20-45d6-af1d-0b2738ecdd37.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/15015181-dc20-45d6-af1d-0b2738ecdd37.webp" alt="장소는 예쁘게 묘사하는 데서 끝나지 않는다 카드 4" loading="lazy">
+            <span>04</span>
+          </a>
+        
+          <a class="mini-card" href="https://img.shdkej.com/2026/06/06/1936f8a7-b004-43e4-bb9a-fc23d01e119b.webp" target="_blank" rel="noreferrer">
+            <img src="https://img.shdkej.com/2026/06/06/1936f8a7-b004-43e4-bb9a-fc23d01e119b.webp" alt="장소는 예쁘게 묘사하는 데서 끝나지 않는다 카드 5" loading="lazy">
+            <span>05</span>
+          </a>
+        </div>
+          <div class="thread-box">
+            <p class="box-label">Threads draft</p>
+            <p>장소는 예쁘게 묘사하는 데서 끝나지 않는다.<br><br>행운을 사는 사람들, 공간에 남은 시간, 보이지 않는 마음까지 읽어보면 사진이 기록이 되고, 기록이 이야기로 바뀐다.<br><br>오늘 코레일 잡지에서 건진 여행 기록 루틴: 보이는 디테일 → 시간의 층 → 그 안의 마음</p>
+            <p class="local-path">config · system/data/insight-card-templates/korail-test.json</p>
+          </div>
+        </div>
+      </section>
+    
+  </main>
+
+  <footer>
+    <div class="shell">Generated from system/data/card-news-library/items.json · build_card_news_library.py</div>
+  </footer>
+</body>
+</html>

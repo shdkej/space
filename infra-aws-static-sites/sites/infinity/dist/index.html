@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Infinity Kanban</title>
+  <!-- PostHog (pageview 자동 캡처) -->
+  <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_md5jBTe5oiybEc6WsziJS36ZmwLs9ie6jZjZyaoTutHd',{api_host:'https://us.i.posthog.com',person_profiles:'identified_only'})
+  </script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #273449;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --inbox: #f59e0b;
+      --active: #22c55e;
+      --waiting: #a855f7;
+      --done: #64748b;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      padding: 14px 18px;
+      background: rgba(15,23,42,.92);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid #1e293b;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    header h1 { font-size: 18px; margin: 0; }
+    header .spacer { flex: 1; }
+    header .meta { color: var(--muted); font-size: 12px; }
+    button {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid #334155;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    button:hover { background: #334155; }
+    main {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 14px;
+      padding: 14px;
+    }
+    @media (max-width: 1100px) {
+      main { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 640px) {
+      main { grid-template-columns: 1fr; }
+    }
+    .column {
+      background: var(--panel);
+      border-radius: 10px;
+      padding: 10px 10px 14px;
+      min-height: 200px;
+      display: flex; flex-direction: column;
+    }
+    .column-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 6px 10px;
+      border-bottom: 1px solid #334155;
+      margin-bottom: 10px;
+    }
+    .column-title { font-weight: 600; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot.inbox { background: var(--inbox); }
+    .dot.active { background: var(--active); }
+    .dot.waiting { background: var(--waiting); }
+    .dot.done { background: var(--done); }
+    .count { color: var(--muted); font-size: 12px; }
+    .cards { display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+    .card {
+      background: var(--panel-2);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+    .card .title { font-weight: 600; margin-bottom: 4px; word-break: break-word; }
+    .badge.b-approved, .badge.b-completed, .badge.b-done, .badge.b-archived, .badge.b-resolved, .badge.b-closed {
+      background: #14532d; color: #bbf7d0; border-color: #166534;
+    }
+    .badge.b-rejected, .badge.b-canceled, .badge.b-cancelled, .badge.b-blocked, .badge.b-failed {
+      background: #7f1d1d; color: #fecaca; border-color: #991b1b;
+    }
+    .badge.b-pending, .badge.b-waiting, .badge.b-paused {
+      background: #78350f; color: #fde68a; border-color: #92400e;
+    }
+    .badge.b-in_progress, .badge.b-active, .badge.b-running {
+      background: #1e3a8a; color: #bfdbfe; border-color: #1d4ed8;
+    }
+    .card .meta {
+      color: var(--muted); font-size: 11px;
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;
+    }
+    .tags {
+      display: flex; gap: 4px; flex-wrap: wrap;
+      margin: 4px 0 2px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 999px;
+      border: 1px solid #475569;
+      background: #172033;
+      color: #cbd5e1;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+    .tag.project { border-color: #0e7490; color: #a5f3fc; background: #083344; }
+    .tag.type { border-color: #92400e; color: #fde68a; background: #3b2507; }
+    .tag.topic { border-color: #475569; color: #cbd5e1; background: #172033; }
+    .card .snippet {
+      color: #cbd5e1; font-size: 12px;
+      white-space: pre-wrap; word-break: break-word;
+      max-height: 6.5em; overflow: hidden;
+      position: relative;
+    }
+    .badge {
+      display: inline-block; padding: 1px 6px; border-radius: 4px;
+      font-size: 11px; background: #334155; color: var(--text);
+    }
+    .empty {
+      color: var(--muted); font-size: 12px; padding: 12px 6px;
+    }
+    .error {
+      background: #7f1d1d; color: #fee2e2; padding: 8px 12px;
+      border-radius: 6px; font-size: 12px; margin: 10px 14px;
+    }
+    .summary-band {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 12px 14px 0;
+    }
+    .summary-item {
+      background: var(--panel);
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 5px 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--muted);
+    }
+    .summary-item .summary-label { display: inline-flex; align-items: center; gap: 6px; }
+    .summary-item .summary-value { font-weight: 700; font-size: 14px; color: var(--text); }
+    .summary-item.open { background: #1e3a8a; border-color: #1d4ed8; color: #dbeafe; }
+    .summary-item.open .summary-value { color: #ffffff; }
+    .summary-item.lane-inbox { border-color: #b45309; }
+    .summary-item.lane-active { border-color: #15803d; }
+    .summary-item.lane-waiting { border-color: #7c3aed; }
+    .summary-item.lane-done { border-color: #475569; }
+    .archive-filter {
+      padding: 0 6px 8px;
+    }
+    .archive-filter-input {
+      background: #0f1a2e;
+      color: var(--text);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      width: 100%;
+    }
+    .archive-filter-input::placeholder { color: var(--muted); }
+    .archive-filter-input:focus { outline: none; border-color: var(--accent); }
+    .tag-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 6px 0 0;
+    }
+    .tag-filter-button {
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 10px;
+      background: #172033;
+      border-color: #334155;
+      color: #cbd5e1;
+    }
+    .tag-filter-button.active {
+      background: #083344;
+      border-color: #0e7490;
+      color: #a5f3fc;
+    }
+    .group-head {
+      font-size: 10px;
+      color: var(--muted);
+      padding: 8px 4px 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .group-head:first-child { padding-top: 2px; }
+    .card.compact { padding: 6px 10px; font-size: 12px; }
+    .card.compact .title { font-weight: 500; font-size: 12px; margin-bottom: 2px; line-height: 1.35; }
+    .card.compact .meta { font-size: 10px; margin-bottom: 0; gap: 6px; }
+    .card.compact .badge { font-size: 10px; padding: 0 5px; }
+    .card.compact .snippet {
+      font-size: 11px; color: #94a3b8;
+      max-height: 2.6em;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden; white-space: normal;
+      margin-top: 4px;
+    }
+    a, a:visited { color: var(--accent); }
+    .card { cursor: pointer; }
+    .card:hover { border-color: #475569; background: #182236; }
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(2, 6, 23, 0.78);
+      display: none; align-items: flex-start; justify-content: center;
+      padding: 16px; overflow-y: auto; overscroll-behavior: contain;
+    }
+    .modal-backdrop.open { display: flex; }
+    body.modal-open { overflow: hidden; }
+    .modal {
+      width: min(980px, 100%); max-height: calc(100vh - 32px);
+      background: #0f172a; border: 1px solid var(--border);
+      border-radius: 14px; box-shadow: 0 24px 80px rgba(0,0,0,.45);
+      overflow: hidden;
+    }
+    .modal-head {
+      display: flex; gap: 12px; align-items: center; flex-wrap: nowrap;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-weight: 700; font-size: 15px; line-height: 1.4;
+      flex: 1 1 auto; min-width: 0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .modal-close { flex: 0 0 auto; }
+    .modal-body {
+      padding: 14px 16px; overflow-y: auto; overflow-x: hidden;
+      display: grid; gap: 14px;
+      max-height: calc(100vh - 110px);
+      -webkit-overflow-scrolling: touch;
+    }
+    .detail-block {
+      border: 1px solid var(--border); border-radius: 10px;
+      background: #111827; overflow: hidden;
+    }
+    .detail-block h3 {
+      margin: 0; padding: 10px 12px; font-size: 13px;
+      background: #1e293b; border-bottom: 1px solid var(--border);
+      border-left: 4px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .detail-block.kind-summary h3 { cursor: default; }
+    .detail-block h3 .label {
+      flex: 0 0 auto;
+      font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 999px;
+      background: rgba(255,255,255,.08); color: #e2e8f0;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .detail-block h3 .title-text {
+      flex: 1 1 auto; min-width: 0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-weight: 600;
+    }
+    .detail-block h3 .collapse-icon {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1;
+    }
+    .detail-block.collapsed > :not(h3) { display: none; }
+    .detail-loading { color: var(--muted); font-size: 13px; padding: 8px 2px; }
+    .modal-body { row-gap: 18px; }
+    .detail-block.kind-summary { border-color: #475569; }
+    .detail-block.kind-summary h3 { background: #1f2937; border-left-color: #94a3b8; }
+    .detail-block.kind-archive { border-color: #6366f1; }
+    .detail-block.kind-archive h3 { background: #1e1b4b; border-left-color: #818cf8; }
+    .detail-block.kind-detail { border-color: #14b8a6; }
+    .detail-block.kind-detail h3 { background: #042f2e; border-left-color: #2dd4bf; }
+    .detail-block.kind-artifact { border-color: #f59e0b; }
+    .detail-block.kind-artifact h3 { background: #3b2a08; border-left-color: #fbbf24; }
+    .detail-block.kind-report { border-color: #38bdf8; }
+    .detail-block.kind-report h3 { background: #0c2a3d; border-left-color: #7dd3fc; }
+    .detail-block.kind-empty { border-color: #475569; }
+    .detail-block.kind-empty h3 { background: #1f2937; border-left-color: #64748b; }
+    .detail-block pre {
+      margin: 0; padding: 12px; white-space: pre-wrap;
+      word-break: break-word; color: #dbeafe; font-size: 12px;
+      line-height: 1.55;
+    }
+    .detail-block img.preview {
+      display: block; max-width: 100%; height: auto;
+      background: #0b1220;
+    }
+    .detail-block iframe.preview {
+      display: block; width: 100%; height: 480px; border: 0;
+      background: #ffffff;
+    }
+    .modal-close {
+      border: 1px solid var(--border); background: #1e293b;
+      color: var(--text); border-radius: 8px; padding: 7px 10px;
+      cursor: pointer;
+    }
+    footer {
+      padding: 12px 18px 24px;
+      color: var(--muted); font-size: 11px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Infinity Kanban</h1>
+    <span class="meta" id="status">로딩 중...</span>
+    <span class="spacer"></span>
+    <label class="meta">
+      자동 새로고침
+      <select id="interval">
+        <option value="0">off</option>
+        <option value="30">30s</option>
+        <option value="60" selected>60s</option>
+        <option value="300">5m</option>
+      </select>
+    </label>
+    <button id="refresh">새로고침</button>
+  </header>
+  <div id="error-host"></div>
+  <div class="summary-band" id="summary-band" aria-label="lane summary">
+    <div class="summary-item open" title="Inbox + Active + Waiting">
+      <span class="summary-label">열린 루프</span>
+      <span class="summary-value" id="sum-open">–</span>
+    </div>
+    <div class="summary-item lane-inbox">
+      <span class="summary-label"><span class="dot inbox"></span>Inbox</span>
+      <span class="summary-value" id="sum-inbox">–</span>
+    </div>
+    <div class="summary-item lane-active">
+      <span class="summary-label"><span class="dot active"></span>Active</span>
+      <span class="summary-value" id="sum-active">–</span>
+    </div>
+    <div class="summary-item lane-waiting">
+      <span class="summary-label"><span class="dot waiting"></span>Waiting</span>
+      <span class="summary-value" id="sum-waiting">–</span>
+    </div>
+    <div class="summary-item lane-done">
+      <span class="summary-label"><span class="dot done"></span>Archive</span>
+      <span class="summary-value" id="sum-done">–</span>
+    </div>
+  </div>
+  <main>
+    <section class="column" data-key="inbox">
+      <div class="column-head">
+        <div class="column-title"><span class="dot inbox"></span>Inbox</div>
+        <div class="count" data-count></div>
+      </div>
+      <div class="cards" data-cards></div>
+    </section>
+    <section class="column" data-key="active">
+      <div class="column-head">
+        <div class="column-title"><span class="dot active"></span>Active</div>
+        <div class="count" data-count></div>
+      </div>
+      <div class="cards" data-cards></div>
+    </section>
+    <section class="column" data-key="waiting">
+      <div class="column-head">
+        <div class="column-title"><span class="dot waiting"></span>Waiting</div>
+        <div class="count" data-count></div>
+      </div>
+      <div class="cards" data-cards></div>
+    </section>
+    <section class="column" data-key="done">
+      <div class="column-head">
+        <div class="column-title"><span class="dot done"></span>Archive</div>
+        <div class="count" data-count></div>
+      </div>
+      <div class="archive-filter">
+        <input class="archive-filter-input" id="archive-filter-input" type="search" placeholder="필터 (id / 내용 / 태그)" aria-label="Archive 필터" />
+        <div class="tag-filter-row" id="archive-tag-filter" aria-label="Archive 태그 필터"></div>
+      </div>
+      <div class="cards" data-cards></div>
+    </section>
+  </main>
+  <div class="modal-backdrop" id="detail-modal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <div class="modal-head">
+        <div class="modal-title" id="detail-title">상세 내용</div>
+        <span class="spacer"></span>
+        <button class="modal-close" id="detail-close">닫기</button>
+      </div>
+      <div class="modal-body" id="detail-body"></div>
+    </section>
+  </div>
+  <footer>
+    source:
+    <a href="https://github.com/shdkej/infinity/blob/main/INTENTS.md" target="_blank" rel="noopener">INTENTS.md</a>
+    ·
+    <a href="https://github.com/shdkej/infinity/blob/main/GATES.md" target="_blank" rel="noopener">GATES.md</a>
+    — 클라이언트에서 GitHub raw URL을 직접 호출합니다 (수 분 캐시 지연 가능)
+  </footer>
+  <script>
+    const SOURCES = {
+      intents: "https://raw.githubusercontent.com/shdkej/infinity/main/INTENTS.md",
+      gates:   "https://raw.githubusercontent.com/shdkej/infinity/main/GATES.md",
+      rawBase: "https://raw.githubusercontent.com/shdkej/infinity/main/",
+      apiBase: "https://api.github.com/repos/shdkej/infinity/contents/",
+    };
+
+    const statusEl = document.getElementById("status");
+    const errorHost = document.getElementById("error-host");
+    const refreshBtn = document.getElementById("refresh");
+    const intervalSel = document.getElementById("interval");
+    const detailModal = document.getElementById("detail-modal");
+    const detailTitle = document.getElementById("detail-title");
+    const detailBody = document.getElementById("detail-body");
+    const detailClose = document.getElementById("detail-close");
+
+    let timer = null;
+
+    function showError(msg) {
+      const div = document.createElement("div");
+      div.className = "error";
+      div.textContent = msg;
+      errorHost.appendChild(div);
+    }
+    function clearErrors() { errorHost.innerHTML = ""; }
+
+    async function fetchText(url) {
+      // cache-bust to bypass intermediate caches
+      const u = url + (url.includes("?") ? "&" : "?") + "_=" + Date.now();
+      const r = await fetch(u, { cache: "no-store" });
+      if (!r.ok) throw new Error(url + " → HTTP " + r.status);
+      return await r.text();
+    }
+
+    async function fetchMaybeText(path) {
+      if (!path) return null;
+      try { return await fetchText(SOURCES.rawBase + path.replace(/^\/+/, "")); }
+      catch (e) { return null; }
+    }
+
+    function normalizePath(path) {
+      if (!path) return "";
+      return path.replace(/^`|`$/g, "").replace(/^\/+/, "");
+    }
+
+    async function fetchArchiveIntent(id) {
+      if (!id) return null;
+      const path = "intents/archive/" + id + ".md";
+      const text = await fetchMaybeText(path);
+      return text ? { path, text } : null;
+    }
+
+    function detectKind(name) {
+      if (/\.(png|jpe?g|gif|svg|webp|avif)$/i.test(name)) return "image";
+      if (/\.(html?|xhtml)$/i.test(name)) return "html";
+      if (/\.(md|txt|json|ya?ml|csv|log)$/i.test(name)) return "text";
+      return null;
+    }
+
+    let rateLimited = false;
+    async function ghDir(path) {
+      const dirUrl = SOURCES.apiBase + path + "?_=" + Date.now();
+      const r = await fetch(dirUrl, { cache: "no-store" });
+      if (r.status === 403 || r.status === 429) { rateLimited = true; return null; }
+      if (!r.ok) return null;
+      return await r.json();
+    }
+
+    async function fetchArtifactsList(id) {
+      if (!id) return [];
+      const listing = await ghDir("artifacts/" + encodeURIComponent(id));
+      if (!listing) return [];
+      const items = listing
+        .filter(x => x.type === "file" && detectKind(x.name))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      const tasks = items.map(async (it) => {
+        if (!it.download_url) return null;
+        const kind = detectKind(it.name);
+        try {
+          if (kind === "image") return { name: it.name, kind, url: it.download_url };
+          const text = await fetchText(it.download_url);
+          return { name: it.name, kind, text, url: it.download_url };
+        } catch (e) { return null; }
+      });
+      return (await Promise.all(tasks)).filter(Boolean);
+    }
+
+    async function fetchLatestReport(id) {
+      if (!id) return null;
+      const listing = await ghDir("reports/" + encodeURIComponent(id));
+      if (!listing) return null;
+      const files = listing
+        .filter(x => x.type === "file" && detectKind(x.name) && !/^_/.test(x.name))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      // 같은 시점 보고서가 .md / .html 로 함께 있으면 HTML 최종본을 우선 노출한다.
+      const htmlFiles = files.filter(x => detectKind(x.name) === "html");
+      const pool = htmlFiles.length ? htmlFiles : files;
+      const latest = pool[pool.length - 1];
+      if (!latest || !latest.download_url) return null;
+      const kind = detectKind(latest.name);
+      const entry = { name: latest.name, kind, url: latest.download_url };
+      if (kind !== "image") {
+        try { entry.text = await fetchText(latest.download_url); }
+        catch (e) { return null; }
+      }
+      return entry;
+    }
+
+    const KIND_LABELS = {
+      "kind-summary": "Summary",
+      "kind-archive": "Intent",
+      "kind-detail": "Detail",
+      "kind-artifact": "Artifact",
+      "kind-report": "Report",
+      "kind-empty": "Empty",
+    };
+
+    function makeBlock(title, kindClass, opts) {
+      opts = opts || {};
+      const block = document.createElement("section");
+      block.className = "detail-block" + (kindClass ? " " + kindClass : "");
+      const collapsible = kindClass !== "kind-summary";
+      const startCollapsed = collapsible && !opts.expanded;
+      if (startCollapsed) block.classList.add("collapsed");
+      const h = document.createElement("h3");
+      if (collapsible) {
+        h.setAttribute("role", "button");
+        h.tabIndex = 0;
+        h.setAttribute("aria-expanded", String(!!opts.expanded));
+      }
+      const label = document.createElement("span");
+      label.className = "label";
+      label.textContent = KIND_LABELS[kindClass] || "Info";
+      const titleEl = document.createElement("span");
+      titleEl.className = "title-text";
+      titleEl.textContent = title;
+      const icon = document.createElement("span");
+      icon.className = "collapse-icon";
+      icon.textContent = collapsible ? (startCollapsed ? "펼치기" : "접기") : "";
+      h.appendChild(label);
+      h.appendChild(titleEl);
+      h.appendChild(icon);
+      if (collapsible) {
+        const toggle = () => {
+          const nextCollapsed = !block.classList.contains("collapsed");
+          block.classList.toggle("collapsed", nextCollapsed);
+          h.setAttribute("aria-expanded", String(!nextCollapsed));
+          icon.textContent = nextCollapsed ? "펼치기" : "접기";
+        };
+        h.addEventListener("click", toggle);
+        h.addEventListener("keydown", (ev) => {
+          if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            toggle();
+          }
+        });
+      }
+      block.appendChild(h);
+      detailBody.appendChild(block);
+      return block;
+    }
+
+    function addDetailBlock(title, text, kindClass) {
+      const block = makeBlock(title, kindClass);
+      const pre = document.createElement("pre");
+      pre.textContent = text && text.trim() ? text.trim() : "내용 없음";
+      block.appendChild(pre);
+    }
+
+    function addImageBlock(title, url, kindClass) {
+      const block = makeBlock(title, kindClass);
+      const img = document.createElement("img");
+      img.className = "preview";
+      img.loading = "lazy";
+      img.alt = title;
+      img.src = url;
+      block.appendChild(img);
+    }
+
+    function addHtmlBlock(title, text, kindClass, opts) {
+      const block = makeBlock(title, kindClass, opts);
+      const frame = document.createElement("iframe");
+      frame.className = "preview";
+      frame.setAttribute("sandbox", "allow-same-origin");
+      frame.setAttribute("referrerpolicy", "no-referrer");
+      frame.srcdoc = text || "";
+      block.appendChild(frame);
+    }
+
+    function renderArtifactEntry(title, entry, kindClass, opts) {
+      if (!entry) return;
+      if (entry.kind === "image") addImageBlock(title, entry.url, kindClass);
+      else if (entry.kind === "html") addHtmlBlock(title, entry.text, kindClass, opts);
+      else addDetailBlock(title, entry.text, kindClass);
+    }
+
+    function closeDetailModal() {
+      detailModal.classList.remove("open");
+      detailModal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    }
+
+    const detailCache = new Map();
+    const DETAIL_CACHE_TTL = 5 * 60 * 1000;
+
+    async function loadDetailBundle(item) {
+      const key = (item.id || "") + "|" + (item.source || "") + "|" + (item.title || "");
+      const cached = detailCache.get(key);
+      if (cached && Date.now() - cached.t < DETAIL_CACHE_TTL) return cached.data;
+      const detailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
+      const [archive, detailText, artifacts, report] = await Promise.all([
+        fetchArchiveIntent(item.id),
+        detailPath ? fetchMaybeText(detailPath) : Promise.resolve(null),
+        fetchArtifactsList(item.id),
+        fetchLatestReport(item.id),
+      ]);
+      const data = { archive, detailPath, detailText, artifacts, report };
+      detailCache.set(key, { t: Date.now(), data });
+      return data;
+    }
+
+    async function openDetailModal(item, sourceLabel) {
+      detailTitle.textContent = item.id ? "[" + item.id + "] " + item.title : item.title;
+      detailBody.replaceChildren();
+      detailModal.classList.add("open");
+      detailModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+
+      const loadingEl = document.createElement("div");
+      loadingEl.className = "detail-loading";
+      loadingEl.textContent = "불러오는 중…";
+      detailBody.appendChild(loadingEl);
+
+      const { archive, detailPath, detailText, artifacts, report } = await loadDetailBundle(item);
+      detailBody.replaceChildren();
+
+      // 1) 결론 먼저 — 최신 HTML 리포트(결론 2축)를 맨 위에 펼친 채로 노출한다.
+      if (report) {
+        renderArtifactEntry("결론: reports/" + item.id + "/" + report.name, report, "kind-report", { expanded: true });
+      }
+
+      // 2) 카드 요약은 메타만. 긴 본문 덤프는 제거(원장/리포트에 이미 있음).
+      const summary = [
+        "source: " + (item.source || sourceLabel || ""),
+        item.meta.status ? "status: " + item.meta.status : "",
+        item.meta.decision ? "decision: " + item.meta.decision : "",
+        pickUpdated(item) ? "updated: " + pickUpdated(item) : "",
+      ].filter(Boolean).join("\n");
+      addDetailBlock("카드 요약", summary, "kind-summary");
+
+      // 3) 나머지(원장/상세/산출물)는 접어둔다.
+      const archivePath = archive ? normalizePath(archive.path) : "";
+      const normalizedDetailPath = normalizePath(detailPath);
+      if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
+      if (detailText && normalizedDetailPath !== archivePath) {
+        addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
+      }
+      for (const a of artifacts) {
+        renderArtifactEntry("Artifact: artifacts/" + item.id + "/" + a.name, a, "kind-artifact");
+      }
+
+      if (rateLimited) {
+        addDetailBlock("GitHub API 제한", "미인증 API 호출(60/시간) 한도에 도달했습니다. 잠시 후 다시 시도해주세요. (artifacts/reports 디렉토리 listing이 누락될 수 있습니다.)", "kind-empty");
+      } else if (!archive && !detailText && !artifacts.length && !report) {
+        addDetailBlock("추가 상세", "연결된 archive intent / artifacts / reports가 아직 없습니다.", "kind-empty");
+      }
+    }
+
+    // markdown 의 ## 헤더 단위로 잘라 { name: body } 맵 반환
+    function splitSections(md) {
+      const lines = md.split(/\r?\n/);
+      const sections = {};
+      let current = "__preamble__";
+      sections[current] = [];
+      for (const line of lines) {
+        const m = line.match(/^##\s+(.+?)\s*$/);
+        if (m) {
+          current = m[1].trim();
+          sections[current] = [];
+        } else {
+          sections[current].push(line);
+        }
+      }
+      for (const k of Object.keys(sections)) sections[k] = sections[k].join("\n");
+      return sections;
+    }
+
+    // ### [id] title 헤더 단위로 항목 추출
+    function parseItems(body) {
+      if (!body) return [];
+      const lines = body.split(/\r?\n/);
+      const items = [];
+      let cur = null;
+      for (const line of lines) {
+        const m = line.match(/^###\s+(.+?)\s*$/);
+        if (m) {
+          if (cur) items.push(cur);
+          const heading = m[1].trim();
+          const idm = heading.match(/^\[([^\]]+)\]\s*(.*)$/);
+          cur = {
+            id: idm ? idm[1] : "",
+            title: idm ? idm[2] : heading,
+            bodyLines: [],
+            meta: {},
+          };
+        } else if (cur) {
+          cur.bodyLines.push(line);
+          // bullet meta: "- key: value"
+          const bm = line.match(/^\s*-\s+([a-zA-Z_]+)\s*:\s*(.+?)\s*$/);
+          if (bm) cur.meta[bm[1].toLowerCase()] = bm[2];
+        }
+      }
+      if (cur) items.push(cur);
+      return items;
+    }
+
+    // INTENTS.md Archive 섹션 안의 완료 코멘트를 archive 항목으로 추출.
+    // 코멘트 포맷 예: "marketing-01 completed 2026-05-16T06:14Z → intents/archive/marketing-01.md (Virtue 배포/검증 완료)"
+    // 괄호 안의 outcome 텍스트를 카드 요약(title)으로 사용해 한눈에 결과가 보이도록 한다.
+    function parseArchiveComments(activeBody) {
+      if (!activeBody) return [];
+      const re = /<!--\s*([\s\S]+?)\s*-->/g;
+      const out = [];
+      let m;
+      while ((m = re.exec(activeBody)) !== null) {
+        const text = m[1].trim();
+        const idm = text.match(/^([a-z]+-\d+)\b/);
+        const dtm = text.match(/(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?Z?)?)/);
+        const statm = text.match(/\b(completed|resolved|done|archived|closed|canceled|cancelled|rejected|approved|failed)\b/i);
+        const pathm = text.match(/(?:→|->)\s*([^\s)]+\.md)/);
+        const parenm = text.match(/\(([^()]+)\)\s*$/);
+        const outcome = parenm ? parenm[1].trim() : "";
+        let cleaned = text
+          .replace(/^([a-z]+-\d+)\s*/, "")
+          .replace(/(?:→|->)\s*\S+/g, "")
+          .replace(/\([^()]+\)\s*$/, "")
+          .replace(/\b(completed|resolved|done|archived|closed|canceled|cancelled|rejected|approved|failed)\b/gi, "")
+          .replace(/\d{4}-\d{2}-\d{2}(?:[T\s]\d{2}:\d{2}(?::\d{2})?Z?)?/g, "")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+        const title = outcome || cleaned || text;
+        const tagMeta = { ...inferTagMeta(text, idm ? idm[1] : ""), ...extractTagMeta(text) };
+        out.push({
+          id: idm ? idm[1] : "",
+          title,
+          bodyLines: [text],
+          meta: {
+            status: statm ? statm[1].toLowerCase() : "completed",
+            completed_at: dtm ? dtm[1] : "",
+            detail: pathm ? pathm[1] : "",
+            outcome,
+            ...tagMeta,
+          },
+          source: "INTENTS.md archive",
+        });
+      }
+      return out;
+    }
+
+    // INTENTS.md 의 Inbox/Active/Waiting 요약 코멘트를 카드로 추출
+    function parseIntentComments(body, lane) {
+      if (!body) return [];
+      const re = /<!--\s*([\s\S]+?)\s*-->/g;
+      const out = [];
+      let m;
+      while ((m = re.exec(body)) !== null) {
+        const text = m[1];
+        const idm = text.match(/^([a-z]+-\d+)\b/);
+        if (!idm) continue;
+        const dtm = text.match(/(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?Z?)?)/);
+        const pathm = text.match(/(?:Report|Detail|상세|리포트)\s*:\s*([^\s)]+\.md)/i)
+          || text.match(/(?:→|->)\s*([^\s)]+\.md)/);
+        const titlem = text.match(/(?:^|\n)(?:제목|title)\s*:\s*(.+)/i)
+          || text.match(/\(([^)]+)\)\s*$/);
+        out.push({
+          id: idm[1],
+          title: titlem ? titlem[1].trim() : text,
+          bodyLines: [text],
+          meta: {
+            status: lane,
+            created: dtm ? dtm[1] : "",
+            detail: pathm ? pathm[1] : "",
+          },
+          source: "INTENTS.md comment",
+        });
+      }
+      return out;
+    }
+
+    function mergeById(primary, secondary) {
+      const seen = new Set(primary.map(x => x.id).filter(Boolean));
+      const merged = primary.slice();
+      for (const item of secondary) {
+        if (item.id && seen.has(item.id)) continue;
+        if (item.id) seen.add(item.id);
+        merged.push(item);
+      }
+      return merged;
+    }
+
+    function snippetFromBody(lines) {
+      const cleaned = lines
+        .filter(l => l.trim() !== "")
+        .filter(l => !/^\s*-\s+(id|status|priority|permission|created|completed_at|updated|resolved|requested|decision)\b/i.test(l))
+        .slice(0, 4)
+        .join("\n");
+      return cleaned;
+    }
+
+    function pickUpdated(item) {
+      return item.meta.updated
+          || item.meta.completed_at
+          || item.meta.resolved
+          || item.meta.created
+          || item.meta.requested
+          || "";
+    }
+
+    function splitTagList(value) {
+      if (!value) return [];
+      return String(value)
+        .replace(/^\[|\]$/g, "")
+        .split(/[,/]/)
+        .map(x => x.trim().replace(/^["'`]|["'`]$/g, ""))
+        .filter(Boolean);
+    }
+
+    function extractTagMeta(text) {
+      const meta = {};
+      const projects = text.match(/\bprojects?\s*:\s*([^\];)\n]+)/i);
+      const type = text.match(/\b(?:task_type|type)\s*:\s*([a-z0-9_-]+)/i);
+      const topics = text.match(/\btopics?\s*:\s*([^\];)\n]+)/i);
+      if (projects) meta.projects = splitTagList(projects[1]);
+      if (type) meta.task_type = type[1].trim();
+      if (topics) meta.topics = splitTagList(topics[1]);
+      return meta;
+    }
+
+    function inferTagMeta(text, id) {
+      const lower = String(text || "").toLowerCase();
+      const prefix = String(id || "").split("-")[0];
+      const projects = [];
+      const topics = [];
+      let task_type = "";
+
+      if (lower.includes("virtue") || lower.includes("덕 쌓기")) projects.push("virtue");
+      if (lower.includes("infinity")) projects.push("infinity");
+      if (lower.includes("agent-wiki") || lower.includes("agent wiki")) projects.push("agent-wiki");
+      if (lower.includes("knowledge lab") || lower.includes("knowledge-lab")) projects.push("knowledge-lab");
+      if (lower.includes("openclaw")) projects.push("openclaw");
+      if (lower.includes("github actions") || lower.includes("kubernetes") || lower.includes("배포")) projects.push("infrastructure");
+
+      if (prefix === "research") task_type = "research";
+      else if (prefix === "marketing") task_type = "strategy";
+      else if (prefix === "product" || prefix === "build" || prefix === "pages") task_type = "implementation";
+      else if (prefix === "wiki") task_type = "maintenance";
+      else if (prefix === "monitor") task_type = "monitoring";
+      else if (prefix === "maintenance") task_type = "maintenance";
+
+      if (prefix === "marketing") topics.push("marketing");
+      if (lower.includes("activation") || lower.includes("활성화")) topics.push("activation");
+      if (lower.includes("retention") || lower.includes("리텐션")) topics.push("retention");
+      if (lower.includes("analytics") || lower.includes("posthog") || lower.includes("계측")) topics.push("analytics");
+      if (lower.includes("workflow") || lower.includes("워크플로우")) topics.push("workflow");
+      if (lower.includes("dashboard") || lower.includes("대시보드")) topics.push("dashboard");
+      if (lower.includes("wiki")) topics.push("wiki");
+      if (lower.includes("ai ") || lower.includes("llm") || lower.includes("agent")) topics.push("ai-agents");
+
+      const uniq = xs => Array.from(new Set(xs)).slice(0, 3);
+      const meta = {};
+      const inferredProjects = uniq(projects);
+      const inferredTopics = uniq(topics);
+      if (inferredProjects.length) meta.projects = inferredProjects;
+      if (task_type) meta.task_type = task_type;
+      if (inferredTopics.length) meta.topics = inferredTopics;
+      return meta;
+    }
+
+    function allTags(item) {
+      const meta = item.meta || {};
+      return [
+        ...(Array.isArray(meta.projects) ? meta.projects : splitTagList(meta.projects)),
+        meta.task_type || "",
+        ...(Array.isArray(meta.topics) ? meta.topics : splitTagList(meta.topics)),
+      ].filter(Boolean);
+    }
+
+    // Archive 컬럼 정렬용: completed_at / resolved 를 updated 보다 우선
+    function pickCompleted(item) {
+      return item.meta.completed_at
+          || item.meta.resolved
+          || item.meta.updated
+          || item.meta.created
+          || item.meta.requested
+          || "";
+    }
+
+    // "YYYY-MM-DD" / "YYYY-MM-DDTHH:mm" / "YYYY-MM-DD HH:mm" 등 허용.
+    // 파싱 실패 시 NaN 반환 → 비교에서 가장 뒤로 밀림.
+    function parseDateMs(s) {
+      if (!s) return NaN;
+      const t = String(s).trim().replace(/^["'`]|["'`]$/g, "");
+      const m = t.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2}))?)?/);
+      if (!m) {
+        const d = Date.parse(t);
+        return isNaN(d) ? NaN : d;
+      }
+      const [_, y, mo, da, h, mi, se] = m;
+      return Date.UTC(+y, +mo - 1, +da, +(h || 0), +(mi || 0), +(se || 0));
+    }
+
+    // 최신 archive 항목이 위로 오도록 desc 정렬. 날짜 없으면 뒤로, 동률은 id/title/source 안정 fallback.
+    function sortDoneByCompletionDesc(items) {
+      return items.slice().sort((a, b) => {
+        const ta = parseDateMs(pickCompleted(a));
+        const tb = parseDateMs(pickCompleted(b));
+        const aOk = !isNaN(ta), bOk = !isNaN(tb);
+        if (aOk && bOk && ta !== tb) return tb - ta;
+        if (aOk && !bOk) return -1;
+        if (!aOk && bOk) return 1;
+        return (a.id || "").localeCompare(b.id || "")
+            || (a.title || "").localeCompare(b.title || "")
+            || (a.source || "").localeCompare(b.source || "");
+      });
+    }
+
+    function buildCard(it, sourceLabel, opts) {
+      const compact = !!(opts && opts.compact);
+      const card = document.createElement("div");
+      const st = it.meta.status || it.meta.decision || "";
+      card.className = "card" + (compact ? " compact" : "");
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", "상세 보기");
+      card.addEventListener("click", () => openDetailModal(it, sourceLabel));
+      card.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" || ev.key === " ") {
+          ev.preventDefault();
+          openDetailModal(it, sourceLabel);
+        }
+      });
+      const titleEl = document.createElement("div");
+      titleEl.className = "title";
+      titleEl.textContent = it.id ? "[" + it.id + "] " + it.title : it.title;
+      card.appendChild(titleEl);
+
+      const metaEl = document.createElement("div");
+      metaEl.className = "meta";
+      const src = document.createElement("span");
+      src.className = "badge";
+      src.textContent = it.source || sourceLabel;
+      metaEl.appendChild(src);
+      if (st) {
+        const b = document.createElement("span");
+        const stKey = String(st).trim().toLowerCase().replace(/[-\s]+/g, "_");
+        b.className = "badge b-" + stKey;
+        b.textContent = st;
+        metaEl.appendChild(b);
+      }
+      const up = pickUpdated(it);
+      if (up) {
+        const t = document.createElement("span");
+        // 컴팩트(Archive)에서는 날짜만 노출해 가로 폭 절약
+        t.textContent = compact ? String(up).slice(0, 10) : up;
+        metaEl.appendChild(t);
+      }
+      card.appendChild(metaEl);
+
+      const projects = Array.isArray(it.meta.projects) ? it.meta.projects : splitTagList(it.meta.projects);
+      const topics = Array.isArray(it.meta.topics) ? it.meta.topics : splitTagList(it.meta.topics);
+      if (projects.length || it.meta.task_type || topics.length) {
+        const tagsEl = document.createElement("div");
+        tagsEl.className = "tags";
+        for (const p of projects) {
+          const chip = document.createElement("span");
+          chip.className = "tag project";
+          chip.textContent = p;
+          tagsEl.appendChild(chip);
+        }
+        if (it.meta.task_type) {
+          const chip = document.createElement("span");
+          chip.className = "tag type";
+          chip.textContent = it.meta.task_type;
+          tagsEl.appendChild(chip);
+        }
+        for (const topic of topics) {
+          const chip = document.createElement("span");
+          chip.className = "tag topic";
+          chip.textContent = topic;
+          tagsEl.appendChild(chip);
+        }
+        card.appendChild(tagsEl);
+      }
+
+      if (compact) {
+        // Archive: 결과(outcome)가 있으면 그것만 1~2줄로, 없으면 본문에서 추출
+        const summary = (it.meta && it.meta.outcome) || snippetFromBody(it.bodyLines);
+        if (summary && summary !== it.title) {
+          const s = document.createElement("div");
+          s.className = "snippet";
+          s.textContent = summary;
+          card.appendChild(s);
+        }
+      } else {
+        const snip = snippetFromBody(it.bodyLines);
+        if (snip) {
+          const s = document.createElement("div");
+          s.className = "snippet";
+          s.textContent = snip;
+          card.appendChild(s);
+        }
+      }
+      return card;
+    }
+
+    function appendGroupHeader(parent, label, n) {
+      const h = document.createElement("div");
+      h.className = "group-head";
+      h.textContent = label + " · " + n;
+      parent.appendChild(h);
+    }
+
+    const RECENT_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
+    function partitionRecent(items, nowMs) {
+      const cutoff = nowMs - RECENT_WINDOW_MS;
+      const recent = [], older = [];
+      for (const it of items) {
+        const t = parseDateMs(pickCompleted(it));
+        if (!isNaN(t) && t >= cutoff) recent.push(it);
+        else older.push(it);
+      }
+      return { recent, older };
+    }
+
+    function archiveFilterQuery() {
+      const el = document.getElementById("archive-filter-input");
+      return el ? el.value.trim().toLowerCase() : "";
+    }
+
+    function applyArchiveFilter(items) {
+      const q = archiveFilterQuery();
+      const tag = activeArchiveTag;
+      return items.filter(it => {
+        const blob = [
+          it.id || "",
+          it.title || "",
+          (it.meta && it.meta.outcome) || "",
+          allTags(it).join(" "),
+          (it.bodyLines || []).join(" "),
+        ].join(" ").toLowerCase();
+        const qOk = !q || blob.includes(q);
+        const tagOk = !tag || allTags(it).map(x => String(x).toLowerCase()).includes(tag);
+        return qOk && tagOk;
+      });
+    }
+
+    function renderArchiveTagFilter(items) {
+      const host = document.getElementById("archive-tag-filter");
+      if (!host) return;
+      const counts = new Map();
+      for (const item of items) {
+        for (const tag of allTags(item)) {
+          const key = String(tag).toLowerCase();
+          counts.set(key, (counts.get(key) || 0) + 1);
+        }
+      }
+      if (activeArchiveTag && !counts.has(activeArchiveTag)) activeArchiveTag = "";
+      host.replaceChildren();
+      const tags = Array.from(counts.entries())
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .slice(0, 18);
+      if (!tags.length) return;
+      const allBtn = document.createElement("button");
+      allBtn.className = "tag-filter-button" + (!activeArchiveTag ? " active" : "");
+      allBtn.type = "button";
+      allBtn.textContent = "all";
+      allBtn.addEventListener("click", () => {
+        activeArchiveTag = "";
+        renderColumn("done", lastDoneItems, lastDoneSource);
+      });
+      host.appendChild(allBtn);
+      for (const [tag, count] of tags) {
+        const btn = document.createElement("button");
+        btn.className = "tag-filter-button" + (activeArchiveTag === tag ? " active" : "");
+        btn.type = "button";
+        btn.textContent = tag + " " + count;
+        btn.addEventListener("click", () => {
+          activeArchiveTag = activeArchiveTag === tag ? "" : tag;
+          renderColumn("done", lastDoneItems, lastDoneSource);
+        });
+        host.appendChild(btn);
+      }
+    }
+
+    function renderColumn(key, items, sourceLabel) {
+      const col = document.querySelector('.column[data-key="' + key + '"]');
+      const cards = col.querySelector("[data-cards]");
+      const count = col.querySelector("[data-count]");
+      cards.innerHTML = "";
+
+      if (key === "done") {
+        renderArchiveTagFilter(items);
+        const filtered = applyArchiveFilter(items);
+        count.textContent = filtered.length === items.length
+          ? items.length + "개"
+          : filtered.length + " / " + items.length + "개";
+        if (filtered.length === 0) {
+          const e = document.createElement("div");
+          e.className = "empty";
+          e.textContent = items.length === 0 ? "비어 있음" : "일치 없음";
+          cards.appendChild(e);
+          return;
+        }
+        const { recent, older } = partitionRecent(filtered, Date.now());
+        if (recent.length) {
+          appendGroupHeader(cards, "지난 14일", recent.length);
+          for (const it of recent) cards.appendChild(buildCard(it, sourceLabel, { compact: true }));
+        }
+        if (older.length) {
+          appendGroupHeader(cards, "이전", older.length);
+          for (const it of older) cards.appendChild(buildCard(it, sourceLabel, { compact: true }));
+        }
+        return;
+      }
+
+      count.textContent = items.length + "개";
+      if (items.length === 0) {
+        const e = document.createElement("div");
+        e.className = "empty";
+        e.textContent = "비어 있음";
+        cards.appendChild(e);
+        return;
+      }
+      for (const it of items) {
+        cards.appendChild(buildCard(it, sourceLabel, { compact: false }));
+      }
+    }
+
+    function renderSummary(counts) {
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
+      set("sum-inbox", counts.inbox);
+      set("sum-active", counts.active);
+      set("sum-waiting", counts.waiting);
+      set("sum-done", counts.done);
+      set("sum-open", counts.inbox + counts.active + counts.waiting);
+    }
+
+    async function loadAndRender() {
+      clearErrors();
+      statusEl.textContent = "로딩 중...";
+      let intentsText = "", gatesText = "";
+      try { intentsText = await fetchText(SOURCES.intents); }
+      catch (e) { showError("INTENTS.md 로드 실패: " + e.message); }
+      try { gatesText = await fetchText(SOURCES.gates); }
+      catch (e) { showError("GATES.md 로드 실패: " + e.message); }
+
+      const intentSections = splitSections(intentsText);
+      const gateSections = splitSections(gatesText);
+
+      const inboxItems = mergeById(
+        parseItems(intentSections["Inbox"] || ""),
+        parseIntentComments(intentSections["Inbox"] || "", "Inbox")
+      );
+      const activeItems = mergeById(
+        parseItems(intentSections["Active"] || ""),
+        parseIntentComments(intentSections["Active"] || "", "Active")
+      );
+      const waitingItems = [
+        ...mergeById(
+          parseItems(intentSections["Waiting"] || ""),
+          parseIntentComments(intentSections["Waiting"] || "", "Waiting")
+        ).map(x => ({ ...x, source: x.source || "INTENTS.md" })),
+        ...parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" })),
+      ];
+      const doneItems = sortDoneByCompletionDesc([
+        ...parseItems(gateSections["처리 완료"] || gateSections["Resolved"] || "")
+          .map(x => ({ ...x, source: "GATES.md" })),
+        ...parseArchiveComments(intentSections["Archive"] || intentSections["Active"] || ""),
+      ]);
+
+      renderColumn("inbox",   inboxItems,   "INTENTS.md");
+      renderColumn("active",  activeItems,  "INTENTS.md");
+      renderColumn("waiting", waitingItems, "Waiting");
+      renderColumn("done",    doneItems,    "GATES.md");
+
+      renderSummary({
+        inbox: inboxItems.length,
+        active: activeItems.length,
+        waiting: waitingItems.length,
+        done: doneItems.length,
+      });
+
+      // Archive 필터 재적용을 위해 최신 doneItems 보관
+      lastDoneItems = doneItems;
+      lastDoneSource = "GATES.md";
+
+      statusEl.textContent = "업데이트: " + new Date().toLocaleString("ko-KR");
+    }
+
+    let lastDoneItems = [];
+    let lastDoneSource = "GATES.md";
+    let activeArchiveTag = "";
+
+    function rescheduleAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+      const sec = parseInt(intervalSel.value, 10);
+      if (sec > 0) timer = setInterval(loadAndRender, sec * 1000);
+    }
+
+    refreshBtn.addEventListener("click", loadAndRender);
+    intervalSel.addEventListener("change", rescheduleAuto);
+    const archiveFilterInput = document.getElementById("archive-filter-input");
+    if (archiveFilterInput) {
+      archiveFilterInput.addEventListener("input", () => {
+        renderColumn("done", lastDoneItems, lastDoneSource);
+      });
+    }
+    detailClose.addEventListener("click", closeDetailModal);
+    detailModal.addEventListener("click", (ev) => {
+      if (ev.target === detailModal) closeDetailModal();
+    });
+    document.addEventListener("keydown", (ev) => {
+      if (ev.key === "Escape") closeDetailModal();
+    });
+
+    loadAndRender();
+    rescheduleAuto();
+  </script>
+</body>
+</html>

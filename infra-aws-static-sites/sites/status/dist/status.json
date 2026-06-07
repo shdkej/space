@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-06T11:01:59Z",
+  "generatedAt": "2026-06-07T10:51:08Z",
   "overall": {
     "state": "ok",
-    "label": "Status, Travel Ops, and Card News Library are the active static apps",
+    "label": "Status, Travel Ops, Card News Library, Infinity, and Virtue are the active static apps",
     "score": 98
   },
   "checks": [
@@ -10,22 +10,36 @@
       "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 162,
+      "latencyMs": 95,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 117,
+      "latencyMs": 159,
       "detail": "World travel planning board deployed as a separate static app"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 124,
+      "latencyMs": 99,
       "detail": "Growing public archive for photo insight card-news sets"
+    },
+    {
+      "name": "Infinity",
+      "url": "https://infinity.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 85,
+      "detail": "Intent dashboard for Infinity work queue and archive state"
+    },
+    {
+      "name": "Virtue",
+      "url": "https://virtue.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 16,
+      "detail": "Static mock-mode preview of the Virtue Rebirth web app"
     }
   ],
   "deployments": [
@@ -34,7 +48,7 @@
       "url": "https://status.aws.shdkej.com",
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
-      "updatedAt": "2026-06-06T11:01:58Z",
+      "updatedAt": "2026-06-07T10:51:07Z",
       "state": "ok"
     },
     {
@@ -42,7 +56,7 @@
       "url": "https://travel.aws.shdkej.com",
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
-      "updatedAt": "2026-06-06T11:01:59Z",
+      "updatedAt": "2026-06-07T10:51:08Z",
       "state": "ok"
     },
     {
@@ -50,7 +64,23 @@
       "url": "https://library.aws.shdkej.com",
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
-      "updatedAt": "2026-06-06T11:01:59Z",
+      "updatedAt": "2026-06-07T10:51:08Z",
+      "state": "ok"
+    },
+    {
+      "name": "infinity dashboard",
+      "url": "https://infinity.aws.shdkej.com",
+      "bucket": "static-infinity-aws-shdkej-com",
+      "distribution": "E3JYGTLQKF0AXX",
+      "updatedAt": "2026-06-07T10:51:08Z",
+      "state": "ok"
+    },
+    {
+      "name": "virtue web static",
+      "url": "https://virtue.aws.shdkej.com",
+      "bucket": "static-virtue-aws-shdkej-com",
+      "distribution": "EVCIL59LC6WJ6",
+      "updatedAt": "2026-06-07T10:51:08Z",
       "state": "ok"
     }
   ],
@@ -86,6 +116,16 @@
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "kind": "archive"
+    },
+    {
+      "name": "Infinity",
+      "url": "https://infinity.aws.shdkej.com",
+      "kind": "dashboard"
+    },
+    {
+      "name": "Virtue",
+      "url": "https://virtue.aws.shdkej.com",
+      "kind": "app"
     }
   ]
 }

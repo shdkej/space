@@ -41,7 +41,7 @@
       "name": "Virtue",
       "domain_name": "virtue.aws.shdkej.com",
       "kind": "app",
-      "detail": "Static mock-mode preview of the Virtue Rebirth web app",
+      "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring",
       "deployment_name": "virtue web static",
       "spa_fallback": true
     }

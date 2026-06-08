@@ -455,8 +455,8 @@
   </footer>
   <script>
     const SOURCES = {
-      intents: "https://raw.githubusercontent.com/shdkej/infinity/main/INTENTS.md",
-      gates:   "https://raw.githubusercontent.com/shdkej/infinity/main/GATES.md",
+      intents: "https://api.github.com/repos/shdkej/infinity/contents/INTENTS.md?ref=main",
+      gates:   "https://api.github.com/repos/shdkej/infinity/contents/GATES.md?ref=main",
       rawBase: "https://raw.githubusercontent.com/shdkej/infinity/main/",
       apiBase: "https://api.github.com/repos/shdkej/infinity/contents/",
     };
@@ -483,7 +483,10 @@
     async function fetchText(url) {
       // cache-bust to bypass intermediate caches
       const u = url + (url.includes("?") ? "&" : "?") + "_=" + Date.now();
-      const r = await fetch(u, { cache: "no-store" });
+      const headers = url.includes("api.github.com/repos/shdkej/infinity/contents/")
+        ? { "Accept": "application/vnd.github.raw" }
+        : {};
+      const r = await fetch(u, { cache: "no-store", headers });
       if (!r.ok) throw new Error(url + " → HTTP " + r.status);
       return await r.text();
     }

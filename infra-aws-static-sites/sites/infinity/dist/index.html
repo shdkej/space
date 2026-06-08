@@ -736,14 +736,14 @@
       let m;
       while ((m = re.exec(activeBody)) !== null) {
         const text = m[1].trim();
-        const idm = text.match(/^([a-z]+-\d+)\b/);
+        const idm = text.match(/^([a-z][a-z0-9]*(?:-[a-z0-9]+)*-\d+)\b/);
         const dtm = text.match(/(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?Z?)?)/);
         const statm = text.match(/\b(completed|resolved|done|archived|closed|canceled|cancelled|rejected|approved|failed)\b/i);
         const pathm = text.match(/(?:→|->)\s*([^\s)]+\.md)/);
         const parenm = text.match(/\(([^()]+)\)\s*$/);
         const outcome = parenm ? parenm[1].trim() : "";
         let cleaned = text
-          .replace(/^([a-z]+-\d+)\s*/, "")
+          .replace(/^([a-z][a-z0-9]*(?:-[a-z0-9]+)*-\d+)\s*/, "")
           .replace(/(?:→|->)\s*\S+/g, "")
           .replace(/\([^()]+\)\s*$/, "")
           .replace(/\b(completed|resolved|done|archived|closed|canceled|cancelled|rejected|approved|failed)\b/gi, "")
@@ -777,7 +777,7 @@
       let m;
       while ((m = re.exec(body)) !== null) {
         const text = m[1];
-        const idm = text.match(/^([a-z]+-\d+)\b/);
+        const idm = text.match(/^([a-z][a-z0-9]*(?:-[a-z0-9]+)*-\d+)\b/);
         if (!idm) continue;
         const dtm = text.match(/(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?Z?)?)/);
         const pathm = text.match(/(?:Report|Detail|상세|리포트)\s*:\s*([^\s)]+\.md)/i)

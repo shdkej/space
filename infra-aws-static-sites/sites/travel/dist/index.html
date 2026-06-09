@@ -886,7 +886,7 @@
         const booked = (data.bookedCosts || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
         const paid = Number(budget.travelLoggedKrw || budget.loggedKrw || 0);
         const total = paid + booked;
-        const pct = Number(budget.reservedPctMin || 0);
+        const pct = budget.targetMinKrw ? (total / Number(budget.targetMinKrw)) * 100 : Number(budget.reservedPctMin || 0);
         $("reservedTotal").textContent = `${shortWon(total)}원`;
         $("reservedPct").textContent = `${pct.toFixed(1)}%`;
 
@@ -909,7 +909,11 @@
         $("schengenDays").textContent = `${schengen.remainingDays ?? "--"}일`;
         $("schengenLine").textContent = `${schengen.status || "status pending"} / entry ${schengen.entryDate || "--"}`;
         $("budgetTarget").textContent = `${shortWon(budget.targetMinKrw)}-${shortWon(budget.targetMaxKrw)}원`;
-        $("budgetLine").textContent = `reserved ${Number(budget.reservedPctMin || 0).toFixed(1)}% / daily ${shortWon(budget.dailyBudgetMinKrw)}-${shortWon(budget.dailyBudgetMaxKrw)}원`;
+        const booked = (data.bookedCosts || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const paid = Number(budget.travelLoggedKrw || budget.loggedKrw || 0);
+        const total = paid + booked;
+        const pct = budget.targetMinKrw ? (total / Number(budget.targetMinKrw)) * 100 : Number(budget.reservedPctMin || 0);
+        $("budgetLine").textContent = `reserved ${pct.toFixed(1)}% / daily ${shortWon(budget.dailyBudgetMinKrw)}-${shortWon(budget.dailyBudgetMaxKrw)}원`;
         $("traceCount").textContent = `${locations.length}곳`;
         $("traceLine").textContent = locations.length
           ? locations.map((location) => location.name).join(" / ")

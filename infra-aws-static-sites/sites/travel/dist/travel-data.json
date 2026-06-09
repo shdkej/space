@@ -1,0 +1,675 @@
+{
+  "generatedAt": "2026-06-09T13:55:35.099998+00:00",
+  "calendar": {
+    "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
+    "name": "회고"
+  },
+  "launch": "2026-07-08",
+  "budget": {
+    "targetMinKrw": 30000000,
+    "targetMaxKrw": 40000000,
+    "loggedKrw": 1201440,
+    "travelLoggedKrw": 1201440,
+    "remainingMinKrw": 28798560,
+    "remainingMaxKrw": 38798560,
+    "reservedPctMin": 4.0,
+    "dailyBudgetMinKrw": 82192,
+    "dailyBudgetMaxKrw": 109589,
+    "reserveBurnKrw": 600720,
+    "firstTravelExpenseDate": "2026-06-08",
+    "planningDays": 365,
+    "mode": "travel"
+  },
+  "current": {
+    "date": "2026-06-09",
+    "location": "서울특별시",
+    "mapQuery": "서울특별시"
+  },
+  "categoryTotals": {
+    "stay": 1201440
+  },
+  "travelCategoryTotals": {
+    "stay": 1201440
+  },
+  "dailyTotals": [
+    {
+      "date": "2026-06-01",
+      "amount": 49500
+    },
+    {
+      "date": "2026-06-03",
+      "amount": 66260
+    },
+    {
+      "date": "2026-06-04",
+      "amount": 2600
+    },
+    {
+      "date": "2026-06-05",
+      "amount": 41000
+    },
+    {
+      "date": "2026-06-07",
+      "amount": 45600
+    },
+    {
+      "date": "2026-06-08",
+      "amount": 1227440
+    },
+    {
+      "date": "2026-06-09",
+      "amount": 335137
+    }
+  ],
+  "travelExpenses": [
+    {
+      "id": "_8kp48e9l6d234b9m8d0j8b9k8cqj2b9o892kab9k88ojidi18kojihi68k",
+      "date": "2026-06-08",
+      "time": "23:25",
+      "amount": 293605,
+      "merchant": "AIRBNB * HMQYWZCCWE",
+      "category": "stay",
+      "location": "과천시",
+      "travel": true
+    },
+    {
+      "id": "_6cq3ghi36oojcba46h1jcb9k6cs4ab9o612k6ba58h24ae1i8l248gpj6s",
+      "date": "2026-06-08",
+      "time": "23:20",
+      "amount": 345658,
+      "merchant": "AIRBNB * HM8J5Q8ANN",
+      "category": "stay",
+      "location": "과천시",
+      "travel": true
+    },
+    {
+      "id": "_69334e218os3ab9m8krj4b9k6ko3gba18crk6ba46h2jedpm6l136d1o68",
+      "date": "2026-06-08",
+      "time": "22:14",
+      "amount": 232136,
+      "merchant": "AIRBNB * HM8SKN5CSF",
+      "category": "stay",
+      "location": "과천시",
+      "travel": true
+    },
+    {
+      "id": "_84o4adhl8p1k8b9g6t13ib9k6113iba18orjcb9n70q3ggpl6513ih9j60",
+      "date": "2026-06-08",
+      "time": "21:40",
+      "amount": 330041,
+      "merchant": "Airbnb - 엔에이치엔케이씨피(주)",
+      "category": "stay",
+      "location": "과천시",
+      "travel": true
+    }
+  ],
+  "expenses": [
+    {
+      "id": "_6cp34cpg85248ba670okcb9k74s46ba16p23ab9n8l2j6ha28h2jih1m6o",
+      "date": "2026-06-09",
+      "time": "21:35",
+      "amount": 99983,
+      "merchant": "컬리_컬리페이 - 컬리페이_컬리",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_8cq3ae9o64q30ba68l0j2b9k6l23gb9p6gokcb9i70q30ha38oqj8h9h8c",
+      "date": "2026-06-09",
+      "time": "08:03",
+      "amount": 117577,
+      "merchant": "토스페이_컨텐츠 - (주)비바리퍼블리카",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_8h1jgca66cr3cb9m890k4b9k6l1j4ba1851jib9n691jac9h6d33ce1o8o",
+      "date": "2026-06-09",
+      "time": "08:03",
+      "amount": 117577,
+      "merchant": "토스페이_컨텐츠 - (주)비바리퍼블리카",
+      "category": "other",
+      "location": "과천시",
+      "travel": false
+    },
+    {
+      "id": "_8kp48e9l6d234b9m8d0j8b9k8cqj2b9o892kab9k88ojidi18kojihi68k",
+      "date": "2026-06-08",
+      "time": "23:25",
+      "amount": 293605,
+      "merchant": "AIRBNB * HMQYWZCCWE",
+      "category": "stay",
+      "location": "과천시",
+      "travel": true
+    },
+    {
+      "id": "_6cq3ghi36oojcba46h1jcb9k6cs4ab9o612k6ba58h24ae1i8l248gpj6s",
+      "date": "2026-06-08",
+      "time": "23:20",
+      "amount": 345658,
+      "merchant": "AIRBNB * HM8J5Q8ANN",
+      "category": "stay",
+      "location": "과천시",
+      "travel": true
+    },
+    {
+      "id": "_69334e218os3ab9m8krj4b9k6ko3gba18crk6ba46h2jedpm6l136d1o68",
+      "date": "2026-06-08",
+      "time": "22:14",
+      "amount": 232136,
+      "merchant": "AIRBNB * HM8SKN5CSF",
+      "category": "stay",
+      "location": "과천시",
+      "travel": true
+    },
+    {
+      "id": "_84o4adhl8p1k8b9g6t13ib9k6113iba18orjcb9n70q3ggpl6513ih9j60",
+      "date": "2026-06-08",
+      "time": "21:40",
+      "amount": 330041,
+      "merchant": "Airbnb - 엔에이치엔케이씨피(주)",
+      "category": "stay",
+      "location": "과천시",
+      "travel": true
+    },
+    {
+      "id": "_6133cghl8gsj4b9k84o42b9k8h0k8b9p65248b9l6gs48dq18crj6e9m88",
+      "date": "2026-06-08",
+      "time": "19:45",
+      "amount": 26000,
+      "merchant": "백무동",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_70q3aci16kqjcb9h6gok4b9k8ksjib9o60s36ba174rj2dpk88pj4c9l64",
+      "date": "2026-06-07",
+      "time": "17:53",
+      "amount": 25900,
+      "merchant": "우아한형제들 - (주)우아한형제들",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_8d248e1p8or3iba261136b9k8ko3eb9o74p3cba18gs4cea48op3ec9j6s",
+      "date": "2026-06-07",
+      "time": "17:39",
+      "amount": 12800,
+      "merchant": "KIS정보통신 - KIS정보통신",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_6gqjch246gpj2b9k6t33gb9k74r3cba26kqk4ba6692j2hho6123edhi8k",
+      "date": "2026-06-07",
+      "time": "13:21",
+      "amount": 6900,
+      "merchant": "신세계천안아산점FoodStreet아라리오",
+      "category": "food",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_6l1j0ha460ok2ba18l338b9k89236b9o8gsj4ba570o3cdpl60pjgha374",
+      "date": "2026-06-05",
+      "time": "20:23",
+      "amount": 5000,
+      "merchant": "코리아세븐구의파크점",
+      "category": "groceries",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_8d232ca169334b9m8oo3eb9k8h0jcba26l1jib9o6osj8cpi74qjie2688",
+      "date": "2026-06-05",
+      "time": "20:21",
+      "amount": 36000,
+      "merchant": "삼보전진",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_6gs4ce1g7113cb9k8d136b9k60o30b9o6l2j2ba584sj8ci48ks4ah266c",
+      "date": "2026-06-04",
+      "time": "00:06",
+      "amount": 2600,
+      "merchant": "아이스캔디자양점",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_68q3ih9k8cr3gb9g70qjeb9k8kqk8b9o8kp44ba28koj2gq374p3ed1g8g",
+      "date": "2026-06-03",
+      "time": "18:23",
+      "amount": 3000,
+      "merchant": "이마트24R광진아리수점",
+      "category": "groceries",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_6d0jghhp6t2jeb9j8gp48b9k74s30b9o70p44b9g84pjgda584rjcghi8o",
+      "date": "2026-06-03",
+      "time": "18:15",
+      "amount": 9000,
+      "merchant": "화이트리에광장점",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_8gqj8g9p712k8b9o8533ab9k70r42b9p6p2jcba5890kch228ko3agpl8g",
+      "date": "2026-06-03",
+      "time": "17:40",
+      "amount": 35700,
+      "merchant": "춘리",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_84p3ccph88o38b9k74s3ab9k8kpjib9p8cs3ib9p8or38h9k6114cg9i8o",
+      "date": "2026-06-03",
+      "time": "11:17",
+      "amount": 18560,
+      "merchant": "주식회사이랜드리테일구의점",
+      "category": "groceries",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_8h0j4d256l2jeba1692jgb9k64ojgb9p6cp48b9l8grkac2284o3eg9p6k",
+      "date": "2026-06-01",
+      "time": "20:06",
+      "amount": 4500,
+      "merchant": "파스퇴르밀크바구의이스트폴점",
+      "category": "cafe",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_891j8ghi8ks42ba485142b9k8opjcba28oq48ba474s30e9h6gs46d1p6k",
+      "date": "2026-06-01",
+      "time": "20:02",
+      "amount": 17900,
+      "merchant": "스트레인지플래닛",
+      "category": "other",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_74o3ic2484sjeba38oq36b9k60qjeb9p8crj0b9h6p230gi46d2jcd1g6c",
+      "date": "2026-06-01",
+      "time": "19:51",
+      "amount": 24000,
+      "merchant": "의정부정통부대찌개",
+      "category": "food",
+      "location": "서울특별시",
+      "travel": false
+    },
+    {
+      "id": "_6co3cdhk60pjib9j64pk2b9k8p0jib9p6913ib9g6cp32cpl8oojic9i6k",
+      "date": "2026-06-01",
+      "time": "01:34",
+      "amount": 3100,
+      "merchant": "티머니지하철",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": false
+    }
+  ],
+  "locations": [
+    {
+      "name": "서울특별시",
+      "count": 17,
+      "lat": 37.5665,
+      "lng": 126.978
+    },
+    {
+      "name": "과천시",
+      "count": 5,
+      "lat": 37.4292,
+      "lng": 126.9876
+    }
+  ],
+  "map": {
+    "points": [
+      {
+        "name": "서울특별시",
+        "count": 17,
+        "lat": 37.5665,
+        "lng": 126.978
+      },
+      {
+        "name": "과천시",
+        "count": 5,
+        "lat": 37.4292,
+        "lng": 126.9876
+      }
+    ],
+    "routePoints": [
+      {
+        "name": "Frankfurt, Germany",
+        "lat": 50.1109,
+        "lng": 8.6821
+      },
+      {
+        "name": "Cologne, Germany",
+        "lat": 50.9375,
+        "lng": 6.9603
+      },
+      {
+        "name": "Berlin, Germany",
+        "lat": 52.52,
+        "lng": 13.405
+      },
+      {
+        "name": "Prague, Czechia",
+        "lat": 50.0755,
+        "lng": 14.4378
+      },
+      {
+        "name": "Vienna, Austria",
+        "lat": 48.2082,
+        "lng": 16.3738
+      },
+      {
+        "name": "Budapest, Hungary",
+        "lat": 47.4979,
+        "lng": 19.0402
+      },
+      {
+        "name": "Zagreb, Croatia",
+        "lat": 45.815,
+        "lng": 15.9819
+      },
+      {
+        "name": "Split, Croatia",
+        "lat": 43.5081,
+        "lng": 16.4402
+      },
+      {
+        "name": "Dubrovnik, Croatia",
+        "lat": 42.6507,
+        "lng": 18.0944
+      },
+      {
+        "name": "Bari, Italy",
+        "lat": 41.1171,
+        "lng": 16.8719
+      }
+    ]
+  },
+  "accommodations": [
+    {
+      "name": "Airbnb - 엔에이치엔케이씨피(주)",
+      "city": "과천시",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 330041,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HM8SKN5CSF",
+      "city": "과천시",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 232136,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HM8J5Q8ANN",
+      "city": "과천시",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 345658,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMQYWZCCWE",
+      "city": "과천시",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 293605,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    }
+  ],
+  "route": [
+    {
+      "city": "Frankfurt",
+      "country": "Germany",
+      "status": "confirmed",
+      "note": "Booked arrival anchor",
+      "schengen": true,
+      "lat": 50.1109,
+      "lng": 8.6821
+    },
+    {
+      "city": "Cologne",
+      "country": "Germany",
+      "status": "planned",
+      "note": "Cathedral, city walks",
+      "schengen": true,
+      "lat": 50.9375,
+      "lng": 6.9603
+    },
+    {
+      "city": "Berlin",
+      "country": "Germany",
+      "status": "planned",
+      "note": "Libraries, culture, low-friction base",
+      "schengen": true,
+      "lat": 52.52,
+      "lng": 13.405
+    },
+    {
+      "city": "Prague",
+      "country": "Czechia",
+      "status": "planned",
+      "note": "Old town, cafes, transit hub",
+      "schengen": true,
+      "lat": 50.0755,
+      "lng": 14.4378
+    },
+    {
+      "city": "Vienna",
+      "country": "Austria",
+      "status": "planned",
+      "note": "Museums, libraries, slower days",
+      "schengen": true,
+      "lat": 48.2082,
+      "lng": 16.3738
+    },
+    {
+      "city": "Budapest",
+      "country": "Hungary",
+      "status": "planned",
+      "note": "Thermal baths, food, Danube",
+      "schengen": true,
+      "lat": 47.4979,
+      "lng": 19.0402
+    },
+    {
+      "city": "Zagreb",
+      "country": "Croatia",
+      "status": "candidate",
+      "note": "Schengen routing checkpoint",
+      "schengen": true,
+      "lat": 45.815,
+      "lng": 15.9819
+    },
+    {
+      "city": "Split",
+      "country": "Croatia",
+      "status": "candidate",
+      "note": "Coast, islands, Roman layers",
+      "schengen": true,
+      "lat": 43.5081,
+      "lng": 16.4402
+    },
+    {
+      "city": "Dubrovnik",
+      "country": "Croatia",
+      "status": "candidate",
+      "note": "Adriatic exit toward Bari",
+      "schengen": true,
+      "lat": 42.6507,
+      "lng": 18.0944
+    },
+    {
+      "city": "Bari",
+      "country": "Italy",
+      "status": "candidate",
+      "note": "Ferry or short flight option",
+      "schengen": true,
+      "lat": 41.1171,
+      "lng": 16.8719
+    }
+  ],
+  "schengen": {
+    "entryDate": "2026-07-08",
+    "asOf": "2026-06-09",
+    "limitDays": 90,
+    "usedDays": 0,
+    "remainingDays": 90,
+    "window": "180 days",
+    "status": "pre-trip"
+  },
+  "sleep": [
+    {
+      "date": "2026-06-01",
+      "sleepHours": 5.85,
+      "recharge": 73.0,
+      "balance": "5.85"
+    },
+    {
+      "date": "2026-06-03",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "5.97"
+    },
+    {
+      "date": "2026-06-04",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "5.50"
+    },
+    {
+      "date": "2026-06-05",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "5.40"
+    },
+    {
+      "date": "2026-06-07",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "5.76"
+    },
+    {
+      "date": "2026-06-08",
+      "sleepHours": 6.65,
+      "recharge": 83.0,
+      "balance": "6.16"
+    },
+    {
+      "date": "2026-06-09",
+      "sleepHours": 6.65,
+      "recharge": 83.0,
+      "balance": "6.16"
+    }
+  ],
+  "reflections": [
+    {
+      "id": "irifn68jn88e579iruihueipd8",
+      "date": "2026-06-02",
+      "title": "실제 흐름 / 세계여행 3축과 보안 점검 정렬",
+      "intent": "자동화 신호가 사용자 채팅, SAM inbox, 이메일, 로그, NO_REPLY 중 어디에 놓일지 먼저 고정한다.",
+      "did": "세계여행 프로젝트를 유튜브·앱·AI 워크샵 3축으로 정리하고, AX/Koco 보안·인프라 점검과 Virtue PLG Foundation gate 정리를 병행했다.",
+      "why": "마스터님이 직접 던진 중심 질문이 여행 프로젝트를 어떻게 잘 진행할 것인가였고, 자동화 점검은 그 질문을 받치는 보조 흐름이 됐다.",
+      "carry": "여행 입력은 SAM이 먼저 3축으로 분류하고, routine 자동화/마케팅 신호는 내부 inbox와 회고에서 선별한다.",
+      "drop": "내부 자동화 라벨을 하루 의미로 끌어올리는 방식, 여행 준비를 과한 체크리스트로 만드는 방식."
+    },
+    {
+      "id": "n8if01hj541eioqh2au5jpjjic",
+      "date": "2026-06-03",
+      "title": "실제 흐름 / 세계여행 유튜브 입력과 제목 검증",
+      "intent": "세계여행 준비를 체크리스트로 늘리지 않고, 유튜브 축의 가장 작은 입력 표면부터 만든다.",
+      "did": "입력 영상 소스 정의, speech 모드 테스트, workflow-master 점검, 세계여행 유튜브 제목/키워드 데이터 검증을 진행했다.",
+      "why": "기록 템플릿보다 영상이 살아날 플랫폼 언어와 유입 기준을 먼저 좁히는 일이 더 직접적인 병목이었다.",
+      "carry": "유튜브는 유튜브 데이터로, 검색/블로그는 네이버 데이터로 판단하는 분리 기준.",
+      "drop": "유튜브 제목을 네이버 검색량만 보고 고르는 방식."
+    },
+    {
+      "id": "kbhgh76n0jntkakpphiem93asg",
+      "date": "2026-06-04",
+      "title": "실제 흐름 / 여행 앱 공개빌드와 디자인 기준",
+      "intent": "세계여행 첫 영상이 검색량이 아니라 유튜브 소비 언어에서 출발하게 하고, 파일럿 제목 1개와 썸네일 카피 1개를 확정한다.",
+      "did": "여행 앱 제작 공유 루프, Sam Samuel 디자인 기준, 180일 진행도 시각화 시안, agent-wiki 정합성, 보안/인프라 문서 대응이 중심이 됐다.",
+      "why": "실제 병목이 제목 하나보다 여행 중 앱을 만들고 보여주는 방식과 Sam Samuel다운 디자인 기준 쪽으로 이동했다.",
+      "carry": "여행 관찰 -> 제품 인사이트 -> 앱 반영 -> 화면 변화 -> 다음 사용자 반응 루프.",
+      "drop": "180일 진행도를 장식형 오브젝트로 과하게 만드는 방향."
+    },
+    {
+      "id": "n5d7jcmd075ltfgvvi034eeifo",
+      "date": "2026-06-05",
+      "title": "실제 흐름 / 운영 인프라와 기록 표면 정리",
+      "intent": "D+037/180 한 줄과 60개 점 맵으로 여행/앱 공유 표면을 매일 붙일 수 있게 낮춘다.",
+      "did": "회사 인프라/보안, Knowledge Lab/Agent Wiki 로그 구조, 평가 recap, 크론 안정화, Virtue 넛지 경계, status.aws.shdkej.com 배포가 중심이 됐다.",
+      "why": "회사 실무와 운영 오류가 더 시급했고, 실제 대화가 공개 로그 정합성과 배포 가능한 인프라로 이동했다.",
+      "carry": "장식보다 재진입 가능한 상태 표면을 먼저 만든다.",
+      "drop": "한 번 예쁘게 만든 뒤 매일 갱신하기 어려운 장식형 표면."
+    },
+    {
+      "id": "omso37nm1k9rljhges8a1nj038",
+      "date": "2026-06-06",
+      "title": "실제 흐름 / 사진 인사이트와 카드뉴스 라이브러리 구축",
+      "intent": "새 표면마다 매일 갱신할 최소 상태 1개를 먼저 고정한다.",
+      "did": "사진 인사이트를 카드뉴스로 만들고, 라이브러리 정적 사이트와 registry 기반 배포 구조를 만들었다.",
+      "why": "마스터님이 인사이트를 메모가 아니라 즉시 Threads용 산출물로 만들길 원했고, 대화가 재현성·라이브러리·배포로 이동했다.",
+      "carry": "다음 입력도 카드 구성, 렌더링, 업로드, 검증, 라이브러리 등록까지 닫는 반복 파이프라인.",
+      "drop": "텍스트 해석만 하고 산출물·배포·등록을 놓치는 흐름."
+    },
+    {
+      "id": "q644fe0l1ffjrqpb2ha2g6cank",
+      "date": "2026-06-07",
+      "title": "실제 흐름 / 형식 판단과 Virtue 배포 정리",
+      "intent": "사진+인사이트가 들어오면 텍스트 해석이 아니라 반복 가능한 카드뉴스 출력 흐름으로 바로 닫는다.",
+      "did": "Infinity 형식/비틀기 리서치, Knowledge Lab output-bridge 진단, GPX 여행 기록 입력, Infinity/Virtue 정적 배포, Virtue Lambda AI 채점과 메모-only/사진첩 UX 수정을 진행했다.",
+      "why": "마스터님 질문이 개별 입력 처리에서 시스템이 실제 산출물에 영향을 주는지 확인하는 쪽으로 커졌다.",
+      "carry": "소스 -> 판단 기준 -> 산출물 -> 공개/재사용 위치까지 닫는 흐름.",
+      "drop": "좋은 소스와 리서치를 쌓아두고 다음 출력에서 다시 꺼내 쓰는 손잡이를 남기지 않는 흐름."
+    },
+    {
+      "id": "9vpdj7vtpq3rostdrd2kbompj0",
+      "date": "2026-06-08",
+      "title": "실제 흐름 / 배포 단순화와 판단 카드 고정",
+      "intent": "새 소스를 더 모으기보다, 최근 소스 1개가 실제 산출물로 이어지는 손잡이를 만든다.",
+      "did": "Koco/AX/Bubcar 배포와 인프라 단순화를 밀고, Infinity Waiting 판단 카드를 배포했으며, Naver read-only 세션 차단과 Virtue agent-led growth 경계를 정리했다.",
+      "why": "오늘의 실제 질문이 Knowledge Lab 소스 1건보다 \"무엇을 자동화하고 무엇을 사람이 판단해야 하는가\"로 커졌기 때문이다.",
+      "carry": "배포/자동화는 승인 직전까지 좁히고, 사용자 판단이 필요한 순간은 한 장짜리 선택 카드로 남긴다.",
+      "drop": "긴 로그와 구현 맥락을 사용자 판단 카드에 그대로 올리는 흐름."
+    },
+    {
+      "id": "diuppdedc91bgl2b4amjg8goeo",
+      "date": "2026-06-09",
+      "title": "내일 의도 / 배포·쇼핑·Virtue 판단 손잡이 1개씩 정리",
+      "intent": "새 일을 늘리기보다, 오늘 열린 배포·네이버쇼핑·Virtue 판단 중 사용자가 다시 봐야 할 손잡이만 줄인다.",
+      "did": null,
+      "why": null,
+      "carry": "Infinity/Naver/Virtue 중 사용자 결정이 필요한 카드 1개를 골라 질문·기본값·다음 행동만 남긴다.",
+      "drop": null
+    }
+  ]
+}

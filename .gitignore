@@ -4,6 +4,8 @@ join-command
 backend.hcl
 nodes
 .DS_Store
+__pycache__/
+*.pyc
 
 # tfstate (전역)
 *.tfstate
@@ -18,3 +20,6 @@ infra-oracle/.kubeconfig
 infra-oracle/.node-token
 
 .omc
+
+# public Travel dashboard keeps raw calendar/geocode state out of dist
+infra-aws-static-sites/sites/travel/data/*.json

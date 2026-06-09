@@ -355,7 +355,7 @@
         grid-row: 2 / 4;
         background: var(--paper);
         display: grid;
-        grid-template-rows: 310px auto auto;
+        grid-template-rows: 300px auto auto auto auto;
       }
 
       .map-wrap {
@@ -402,7 +402,9 @@
 
       .money-total small,
       .money-row small,
-      .stay-row small {
+      .signal small,
+      .axis-row small,
+      .expense-row small {
         display: block;
         color: var(--muted);
         font-size: 10px;
@@ -463,35 +465,82 @@
         font: 950 16px/1 Georgia, serif;
       }
 
-      .stays {
+      .signal-board,
+      .axis-board,
+      .expense-board {
         padding: 18px;
+        border-bottom: 2px solid var(--line);
       }
 
-      .stay-row {
+      .expense-board {
+        border-bottom: 0;
+      }
+
+      .signal-grid {
         display: grid;
-        grid-template-columns: 58px 1fr auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        border-top: 2px solid var(--line);
+        border-left: 2px solid var(--line);
+      }
+
+      .signal {
+        min-height: 96px;
+        padding: 12px;
+        border-right: 2px solid var(--line);
+        border-bottom: 2px solid var(--line);
+        background: var(--paper-2);
+      }
+
+      .signal b {
+        display: block;
+        margin-top: 7px;
+        font: 950 24px/0.95 Georgia, serif;
+        overflow-wrap: anywhere;
+      }
+
+      .signal span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        line-height: 1.35;
+      }
+
+      .axis-row,
+      .expense-row {
+        display: grid;
+        grid-template-columns: 74px 1fr auto;
         gap: 10px;
         align-items: baseline;
         border-top: 1px solid var(--line);
         padding: 10px 0;
       }
 
-      .stay-row b {
+      .axis-row b,
+      .expense-row b {
         display: block;
         font-size: 14px;
         overflow-wrap: anywhere;
       }
 
-      .stay-row span {
+      .axis-row span,
+      .expense-row span {
         color: var(--muted);
         font-size: 11px;
         font-weight: 750;
+        line-height: 1.35;
       }
 
-      .stay-row strong {
+      .axis-row strong,
+      .expense-row strong {
         font: 950 15px/1 Georgia, serif;
         white-space: nowrap;
       }
+
+      .axis-row.video strong { color: var(--red); }
+      .axis-row.app strong { color: var(--blue); }
+      .axis-row.workshop strong { color: #5b7600; }
 
       @media (max-width: 1120px) {
         .ledger {
@@ -542,8 +591,15 @@
 
       @media (max-width: 720px) {
         .title { padding: 22px 16px; }
-        h1 { font-size: clamp(42px, 16vw, 72px); }
+        h1 { font-size: clamp(40px, 14vw, 64px); }
         .subline { width: 100%; }
+        .mast::after {
+          right: -132px;
+          top: -42px;
+          width: 240px;
+          height: 240px;
+          opacity: 0.7;
+        }
 
         .section-head {
           grid-template-columns: 1fr;
@@ -595,11 +651,17 @@
           font-size: 28px;
         }
 
-        .stay-row {
-          grid-template-columns: 52px 1fr;
+        .signal-grid {
+          grid-template-columns: 1fr;
         }
 
-        .stay-row strong {
+        .axis-row,
+        .expense-row {
+          grid-template-columns: 62px 1fr;
+        }
+
+        .axis-row strong,
+        .expense-row strong {
           grid-column: 2;
         }
       }
@@ -657,14 +719,69 @@
           <div id="moneyRows"></div>
         </section>
 
-        <section class="stays">
+        <section class="signal-board">
           <div class="section-head" style="padding: 0 0 13px; min-height: auto; border-bottom: 0;">
             <div>
-              <h2 style="font-size: 30px;">Stay Stack</h2>
-              <p>숙소 중심으로 예약 상태와 금액을 다시 확인합니다.</p>
+              <h2 style="font-size: 30px;">Trip Signals</h2>
+              <p>기존에 보던 현재 위치, 쉥겐, 예산 기준을 복구했습니다.</p>
             </div>
           </div>
-          <div id="stayRows"></div>
+          <div class="signal-grid">
+            <div class="signal">
+              <small>current</small>
+              <b id="currentLocation">--</b>
+              <span>정확한 주소 없이 지역 단위만 표시합니다.</span>
+            </div>
+            <div class="signal">
+              <small>schengen</small>
+              <b id="schengenDays">--</b>
+              <span id="schengenLine">--</span>
+            </div>
+            <div class="signal">
+              <small>budget target</small>
+              <b id="budgetTarget">--</b>
+              <span id="budgetLine">--</span>
+            </div>
+            <div class="signal">
+              <small>local traces</small>
+              <b id="traceCount">--</b>
+              <span id="traceLine">--</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="axis-board">
+          <div class="section-head" style="padding: 0 0 13px; min-height: auto; border-bottom: 0;">
+            <div>
+              <h2 style="font-size: 30px;">3 Work Axes</h2>
+              <p>여행이 단순 이동이 아니라 기록, 앱, 워크샵으로 이어지는 축입니다.</p>
+            </div>
+          </div>
+          <div class="axis-row video">
+            <small>video</small>
+            <div><b>기록을 영상 기억으로 전환</b><span>도시별 체류와 감정 장면을 촬영 후보로 남깁니다.</span></div>
+            <strong>memory</strong>
+          </div>
+          <div class="axis-row app">
+            <small>app</small>
+            <div><b>여행 중 마찰을 제품 후보로 수집</b><span>숙소, 이동, 결제, 사람 만남에서 앱 아이디어를 뽑습니다.</span></div>
+            <strong>insight</strong>
+          </div>
+          <div class="axis-row workshop">
+            <small>workshop</small>
+            <div><b>만나는 사람에게 AI 미니 워크샵</b><span>현지 대화와 도움 요청을 작은 세션으로 연결합니다.</span></div>
+            <strong>people</strong>
+          </div>
+        </section>
+
+        <section class="expense-board">
+          <div class="section-head" style="padding: 0 0 13px; min-height: auto; border-bottom: 0;">
+            <div>
+              <h2 style="font-size: 30px;">Recent Spend</h2>
+              <p>예약금 외에 실제 결제된 여행 지출을 따로 봅니다.</p>
+            </div>
+          </div>
+          <div id="expenseRows"></div>
         </section>
       </aside>
     </main>
@@ -783,18 +900,36 @@
         `).join("");
       }
 
-      function renderStays(data) {
-        const stays = (data.plannedAccommodations || []).slice(0, 8);
-        $("stayRows").innerHTML = stays.map((stay) => `
-          <div class="stay-row">
-            <small>${dateLabel(stay.checkIn, stay.checkOut)}</small>
-            <div>
-              <b>${stay.city} · ${stay.name}</b>
-              <span>${stay.status || "planned"} / ${stay.source || stay.country}</span>
+      function renderSignals(data) {
+        const budget = data.budget || {};
+        const schengen = data.schengen || {};
+        const current = data.current || {};
+        const locations = data.locations || [];
+        $("currentLocation").textContent = current.location || "미정";
+        $("schengenDays").textContent = `${schengen.remainingDays ?? "--"}일`;
+        $("schengenLine").textContent = `${schengen.status || "status pending"} / entry ${schengen.entryDate || "--"}`;
+        $("budgetTarget").textContent = `${shortWon(budget.targetMinKrw)}-${shortWon(budget.targetMaxKrw)}원`;
+        $("budgetLine").textContent = `reserved ${Number(budget.reservedPctMin || 0).toFixed(1)}% / daily ${shortWon(budget.dailyBudgetMinKrw)}-${shortWon(budget.dailyBudgetMaxKrw)}원`;
+        $("traceCount").textContent = `${locations.length}곳`;
+        $("traceLine").textContent = locations.length
+          ? locations.map((location) => location.name).join(" / ")
+          : "아직 공개 가능한 지역 흔적이 없습니다.";
+      }
+
+      function renderExpenses(data) {
+        const expenses = (data.travelExpenses || data.expenses || []).slice(0, 6);
+        $("expenseRows").innerHTML = expenses.length
+          ? expenses.map((expense) => `
+            <div class="expense-row">
+              <small>${String(expense.date || "").slice(5).replace("-", ".") || "--"}</small>
+              <div>
+                <b>${expense.merchant || expense.title || "travel spend"}</b>
+                <span>${categoryNames[expense.category] || expense.category || "기타"} / ${expense.location || "지역 미상"}</span>
+              </div>
+              <strong>${shortWon(expense.amount)}원</strong>
             </div>
-            <strong>${stay.amount ? `${shortWon(stay.amount)}원` : "미정"}</strong>
-          </div>
-        `).join("");
+          `).join("")
+          : `<div class="expense-row"><small>empty</small><div><b>최근 여행 지출 없음</b><span>예약금 외 결제가 생기면 여기에 표시됩니다.</span></div><strong>0원</strong></div>`;
       }
 
       function renderMap(data) {
@@ -854,7 +989,8 @@
           $("syncLabel").textContent = `sync ${String(data.generatedAt || "").slice(5, 16).replace("T", " ")}`;
           renderSchedule(data.route);
           renderMoney(data);
-          renderStays(data);
+          renderSignals(data);
+          renderExpenses(data);
           renderMap(data);
         })
         .catch((error) => {

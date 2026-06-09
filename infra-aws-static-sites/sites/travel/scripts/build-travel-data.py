@@ -16,12 +16,99 @@ SCHENGEN_LIMIT = 90
 BUDGET_PLANNING_DAYS = 365
 
 ROUTE = [
-    {"city": "Frankfurt", "country": "Germany", "status": "confirmed", "note": "Booked arrival anchor", "schengen": True, "lat": 50.1109, "lng": 8.6821},
-    {"city": "Cologne", "country": "Germany", "status": "planned", "note": "Cathedral, city walks", "schengen": True, "lat": 50.9375, "lng": 6.9603},
-    {"city": "Berlin", "country": "Germany", "status": "planned", "note": "Libraries, culture, low-friction base", "schengen": True, "lat": 52.52, "lng": 13.405},
-    {"city": "Prague", "country": "Czechia", "status": "planned", "note": "Old town, cafes, transit hub", "schengen": True, "lat": 50.0755, "lng": 14.4378},
-    {"city": "Vienna", "country": "Austria", "status": "planned", "note": "Museums, libraries, slower days", "schengen": True, "lat": 48.2082, "lng": 16.3738},
-    {"city": "Budapest", "country": "Hungary", "status": "planned", "note": "Thermal baths, food, Danube", "schengen": True, "lat": 47.4979, "lng": 19.0402},
+    {
+        "city": "Incheon Airport",
+        "country": "South Korea",
+        "status": "booked",
+        "startDate": "2026-07-07",
+        "endDate": "2026-07-08",
+        "lodging": "Darakhyu Incheon Airport",
+        "source": "official site",
+        "note": "Pre-departure airport stay",
+        "schengen": False,
+    },
+    {
+        "city": "Frankfurt",
+        "country": "Germany",
+        "status": "booked",
+        "startDate": "2026-07-08",
+        "endDate": "2026-07-09",
+        "lodging": "IntercityHotel",
+        "source": "HanaTour",
+        "note": "Arrival anchor",
+        "schengen": True,
+        "lat": 50.1109,
+        "lng": 8.6821,
+    },
+    {
+        "city": "Cologne",
+        "country": "Germany",
+        "status": "booked",
+        "startDate": "2026-07-09",
+        "endDate": "2026-07-11",
+        "lodging": "Schiltz Airbnb",
+        "source": "hostel-style home",
+        "amount": 330000,
+        "note": "Cathedral, city walks",
+        "schengen": True,
+        "lat": 50.9375,
+        "lng": 6.9603,
+    },
+    {
+        "city": "Berlin",
+        "country": "Germany",
+        "status": "hosted",
+        "startDate": "2026-07-11",
+        "endDate": "2026-07-14",
+        "lodging": "다은언니",
+        "source": "friend stay",
+        "note": "Libraries, culture, low-friction base",
+        "schengen": True,
+        "lat": 52.52,
+        "lng": 13.405,
+    },
+    {
+        "city": "Prague",
+        "country": "Czechia",
+        "status": "booked",
+        "startDate": "2026-07-14",
+        "endDate": "2026-07-17",
+        "lodging": "Central Station Airbnb",
+        "source": "hostel, shared kitchen/bath",
+        "amount": 220000,
+        "note": "Old town, cafes, transit hub",
+        "schengen": True,
+        "lat": 50.0755,
+        "lng": 14.4378,
+    },
+    {
+        "city": "Vienna",
+        "country": "Austria",
+        "status": "booked",
+        "startDate": "2026-07-17",
+        "endDate": "2026-07-20",
+        "lodging": "Airbnb",
+        "source": "Airbnb",
+        "amount": 330000,
+        "note": "Museums, libraries, slower days",
+        "schengen": True,
+        "lat": 48.2082,
+        "lng": 16.3738,
+    },
+    {
+        "city": "Budapest",
+        "country": "Hungary",
+        "status": "booked",
+        "startDate": "2026-07-20",
+        "endDate": "2026-07-23",
+        "lodging": "Airbnb",
+        "source": "Airbnb",
+        "amount": 300000,
+        "note": "Thermal baths, food, Danube",
+        "schengen": True,
+        "lat": 47.4979,
+        "lng": 19.0402,
+    },
     {"city": "Zagreb", "country": "Croatia", "status": "candidate", "note": "Schengen routing checkpoint", "schengen": True, "lat": 45.815, "lng": 15.9819},
     {"city": "Split", "country": "Croatia", "status": "candidate", "note": "Coast, islands, Roman layers", "schengen": True, "lat": 43.5081, "lng": 16.4402},
     {"city": "Dubrovnik", "country": "Croatia", "status": "candidate", "note": "Adriatic exit toward Bari", "schengen": True, "lat": 42.6507, "lng": 18.0944},
@@ -371,6 +458,37 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             item.update(public_point)
         places.append(item)
 
+    planned_stays = [
+        {
+            "name": stop.get("lodging") or f"{stop['city']} stay",
+            "city": stop["city"],
+            "country": stop["country"],
+            "status": stop.get("status", "planned"),
+            "checkIn": stop.get("startDate"),
+            "checkOut": stop.get("endDate"),
+            "amount": stop.get("amount"),
+            "source": stop.get("source"),
+            "note": stop.get("note"),
+        }
+        for stop in ROUTE
+        if stop.get("lodging")
+    ]
+    booked_costs = [
+        {
+            "id": f"manual-stay-{stop['city'].lower().replace(' ', '-')}",
+            "date": stop.get("startDate"),
+            "time": "",
+            "amount": stop.get("amount"),
+            "merchant": f"{stop['city']} · {stop.get('lodging')}",
+            "category": "stay",
+            "location": stop["city"],
+            "travel": True,
+            "source": stop.get("source"),
+        }
+        for stop in ROUTE
+        if stop.get("amount")
+    ]
+
     return {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "calendar": {"id": CALENDAR_ID, "name": "회고"},
@@ -398,6 +516,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
         "categoryTotals": dict(sorted(category_totals.items(), key=lambda item: item[1], reverse=True)),
         "travelCategoryTotals": dict(sorted(travel_category_totals.items(), key=lambda item: item[1], reverse=True)),
         "dailyTotals": [{"date": day, "amount": amount} for day, amount in sorted(daily_total.items())],
+        "bookedCosts": booked_costs,
         "travelExpenses": sorted(travel_expenses, key=lambda item: (item["date"], item["time"]), reverse=True),
         "expenses": sorted(expenses, key=lambda item: (item["date"], item["time"]), reverse=True),
         "locations": places,
@@ -415,6 +534,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
                 "note": "회고 캘린더에 숙소/호텔/Airbnb/Booking 키워드가 들어오면 자동 분류 가능",
             }
         ],
+        "plannedAccommodations": planned_stays,
         "route": ROUTE,
         "schengen": schengen_summary(today),
         "sleep": sleep_logs[-14:],

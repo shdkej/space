@@ -3,693 +3,798 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Travel Atlas Cockpit</title>
+    <title>Travel Ledger Studio</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
       :root {
-        --void: #080806;
-        --black: #0d0e0a;
-        --ink: #f4efe1;
-        --soft: #b8b09d;
-        --dim: #7a7465;
-        --line: rgb(244 239 225 / 0.18);
-        --acid: #d7ff34;
-        --flare: #ff4f38;
-        --cyan: #77d9ff;
-        --violet: #8d7cff;
-        --shadow: 0 40px 120px rgb(0 0 0 / 0.5);
+        --paper: #f3efe4;
+        --paper-2: #fffaf0;
+        --ink: #15130f;
+        --muted: #6d665b;
+        --faint: #d8d0c0;
+        --line: #1b1914;
+        --red: #e6381f;
+        --blue: #1657d8;
+        --green: #a6d914;
+        --yellow: #f5c84b;
+        --violet: #7054d6;
+        --shadow: 0 26px 70px rgb(21 19 15 / 0.18);
       }
 
       * { box-sizing: border-box; }
 
-      html { background: var(--void); }
+      html {
+        background: var(--ink);
+      }
 
       body {
         margin: 0;
         min-height: 100vh;
         color: var(--ink);
         background:
-          radial-gradient(circle at 72% 10%, rgb(215 255 52 / 0.14), transparent 34%),
-          radial-gradient(circle at 18% 78%, rgb(255 79 56 / 0.13), transparent 28%),
-          linear-gradient(115deg, #15130d 0%, #080806 48%, #10120e 100%);
-        font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-        overflow-x: hidden;
+          linear-gradient(90deg, rgb(21 19 15 / 0.05) 1px, transparent 1px),
+          linear-gradient(0deg, rgb(21 19 15 / 0.04) 1px, transparent 1px),
+          radial-gradient(circle at 88% 14%, rgb(22 87 216 / 0.12), transparent 28%),
+          radial-gradient(circle at 8% 76%, rgb(230 56 31 / 0.14), transparent 24%),
+          var(--paper);
+        background-size: 28px 28px, 28px 28px, auto, auto, auto;
+        font-family: "Avenir Next", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
       }
 
       body::before {
         content: "";
         position: fixed;
         inset: 0;
+        z-index: -1;
+        background:
+          repeating-linear-gradient(90deg, transparent 0 11px, rgb(21 19 15 / 0.025) 11px 12px),
+          linear-gradient(180deg, transparent, rgb(21 19 15 / 0.08));
         pointer-events: none;
-        opacity: 0.34;
-        background-image:
-          linear-gradient(rgb(244 239 225 / 0.06) 1px, transparent 1px),
-          linear-gradient(90deg, rgb(244 239 225 / 0.045) 1px, transparent 1px),
-          repeating-linear-gradient(90deg, transparent 0 11px, rgb(0 0 0 / 0.17) 11px 12px);
-        background-size: 64px 64px, 64px 64px, 100% 100%;
-        mix-blend-mode: screen;
       }
 
       button, input { font: inherit; }
 
-      .atlas {
+      .ledger {
+        width: min(1540px, calc(100vw - 24px));
         min-height: 100vh;
-        width: min(1500px, 100vw);
         margin: 0 auto;
         display: grid;
-        grid-template-columns: 84px minmax(0, 1fr) 336px;
-        grid-template-rows: minmax(610px, 72vh) minmax(220px, auto);
-        gap: 0;
-        position: relative;
-        isolation: isolate;
+        grid-template-columns: 92px minmax(570px, 1fr) minmax(410px, 0.72fr);
+        grid-template-rows: auto minmax(430px, 48vh) auto;
+        border-left: 2px solid var(--line);
+        border-right: 2px solid var(--line);
+        background: rgb(255 250 240 / 0.42);
+        box-shadow: var(--shadow);
       }
 
-      .rail {
-        grid-row: 1 / 3;
-        border-right: 1px solid var(--line);
-        min-height: 100vh;
+      .spine {
+        grid-row: 1 / 4;
+        border-right: 2px solid var(--line);
+        background:
+          linear-gradient(180deg, var(--red) 0 19%, transparent 19% 21%, var(--blue) 21% 62%, transparent 62% 64%, var(--green) 64% 100%);
         display: grid;
         grid-template-rows: 1fr auto 1fr;
-        align-items: center;
         justify-items: center;
-        padding: 24px 0;
-        background: rgb(8 8 6 / 0.72);
+        align-items: center;
+        color: var(--paper-2);
       }
 
-      .rail span,
-      .rail small {
+      .spine span,
+      .spine small {
         writing-mode: vertical-rl;
         text-orientation: mixed;
-        color: var(--dim);
-        font: 700 11px/1.2 "Avenir Next", "Helvetica Neue", sans-serif;
-        letter-spacing: 0.16em;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.2em;
         text-transform: uppercase;
       }
 
-      .rail strong {
-        color: var(--acid);
-        font: 900 clamp(38px, 6vw, 76px)/0.84 Georgia, serif;
+      .spine strong {
+        color: var(--ink);
+        background: var(--paper-2);
+        border: 2px solid var(--line);
+        padding: 10px 8px;
+        font: 950 clamp(34px, 4vw, 58px)/0.86 Georgia, serif;
         transform: rotate(-90deg);
         white-space: nowrap;
-        text-shadow: 0 0 26px rgb(215 255 52 / 0.22);
+        box-shadow: 8px 8px 0 rgb(21 19 15 / 0.25);
       }
 
-      .stage {
-        grid-column: 2 / 3;
-        grid-row: 1 / 2;
+      .mast {
+        grid-column: 2 / 4;
+        border-bottom: 2px solid var(--line);
+        min-height: 210px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 360px;
         position: relative;
         overflow: hidden;
-        min-height: 610px;
-        background: #10110d;
+        background:
+          linear-gradient(118deg, rgb(255 250 240 / 0.96) 0 58%, rgb(21 19 15 / 0.05) 58% 100%),
+          var(--paper-2);
+      }
+
+      .mast::after {
+        content: "";
+        position: absolute;
+        right: -80px;
+        top: -36px;
+        width: 340px;
+        height: 340px;
+        border: 2px solid var(--line);
+        border-radius: 999px;
+        background:
+          conic-gradient(from -40deg, var(--blue) 0 26deg, transparent 26deg 116deg, var(--red) 116deg 143deg, transparent 143deg 250deg, var(--green) 250deg 276deg, transparent 276deg),
+          transparent;
+        opacity: 0.9;
+      }
+
+      .title {
+        padding: 28px clamp(24px, 4vw, 48px) 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 950;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font: 950 clamp(48px, 7.8vw, 118px)/0.82 Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+        max-width: 920px;
+      }
+
+      .subline {
+        width: min(720px, 88%);
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.65;
+        font-weight: 650;
+      }
+
+      .launch-box {
+        border-left: 2px solid var(--line);
+        padding: 26px 28px;
+        position: relative;
+        z-index: 1;
+        display: grid;
+        align-content: end;
+        background: rgb(245 200 75 / 0.12);
+      }
+
+      .launch-box small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 950;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .launch-box b {
+        display: block;
+        margin-top: 10px;
+        font: 950 58px/0.86 Georgia, serif;
+      }
+
+      .launch-box em {
+        display: block;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+        font-style: normal;
+        font-weight: 700;
+      }
+
+      .timeline {
+        grid-column: 2 / 3;
+        grid-row: 2 / 4;
+        border-right: 2px solid var(--line);
+        min-height: 680px;
+        background:
+          linear-gradient(90deg, transparent 0 calc(100% - 1px), rgb(21 19 15 / 0.08) calc(100% - 1px)),
+          var(--paper-2);
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .section-head {
+        min-height: 82px;
+        border-bottom: 2px solid var(--line);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: end;
+        padding: 18px 22px 16px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font: 950 clamp(26px, 3vw, 42px)/0.92 Georgia, serif;
+      }
+
+      .section-head p {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .stamp {
+        border: 2px solid var(--line);
+        padding: 9px 12px;
+        background: var(--green);
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 950;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        transform: rotate(-2deg);
+        white-space: nowrap;
+      }
+
+      .schedule {
+        display: grid;
+        grid-template-columns: 104px minmax(160px, 0.8fr) minmax(220px, 1fr) 112px 126px;
+        align-content: start;
+      }
+
+      .schedule-row {
+        display: contents;
+      }
+
+      .schedule > div {
+        min-height: 74px;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        align-content: center;
+        padding: 11px 12px;
+      }
+
+      .schedule > .schedule-row {
+        display: contents;
+        min-height: initial;
+        border-bottom: 0;
+        padding: 0;
+      }
+
+      .schedule-row > div {
+        min-height: 74px;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        align-content: center;
+        padding: 11px 12px;
+      }
+
+      .schedule .head {
+        min-height: 40px;
+        background: var(--ink);
+        color: var(--paper-2);
+        font-size: 10px;
+        font-weight: 950;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .date-cell {
+        font-family: Georgia, serif;
+        font-weight: 950;
+        font-size: 18px;
+        line-height: 0.95;
+        color: var(--red);
+      }
+
+      .date-cell small {
+        margin-top: 8px;
+        color: var(--muted);
+        font: 850 10px/1.2 "Avenir Next", sans-serif;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .city-cell b,
+      .stay-cell b {
+        display: block;
+        font-size: 18px;
+        line-height: 1.08;
+        overflow-wrap: anywhere;
+      }
+
+      .city-cell small,
+      .stay-cell small,
+      .status-cell small {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.28;
+        font-weight: 750;
+      }
+
+      .amount-cell {
+        justify-items: end;
+        text-align: right;
+        font: 950 18px/1 Georgia, serif;
+      }
+
+      .amount-cell small {
+        display: block;
+        margin-top: 7px;
+        color: var(--muted);
+        font: 850 10px/1 "Avenir Next", sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .status-pill {
+        width: fit-content;
+        border: 2px solid var(--line);
+        padding: 6px 8px;
+        color: var(--paper-2);
+        background: var(--blue);
+        font-size: 10px;
+        font-weight: 950;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .status-pill.hosted { background: var(--green); color: var(--ink); }
+      .status-pill.candidate { background: transparent; color: var(--ink); }
+      .status-pill.planned { background: var(--yellow); color: var(--ink); }
+
+      .dashboard {
+        grid-column: 3 / 4;
+        grid-row: 2 / 4;
+        background: var(--paper);
+        display: grid;
+        grid-template-rows: 310px auto auto;
+      }
+
+      .map-wrap {
+        position: relative;
+        border-bottom: 2px solid var(--line);
+        overflow: hidden;
       }
 
       #map {
         position: absolute;
         inset: 0;
-        z-index: 0;
-        filter: saturate(0.35) contrast(1.12) brightness(0.68);
+        filter: saturate(0.58) contrast(1.08) brightness(0.98);
       }
 
-      .leaflet-container { background: #171914; }
+      .leaflet-container { background: var(--paper); }
       .leaflet-control-attribution { display: none; }
-      .leaflet-marker-icon { filter: hue-rotate(70deg) saturate(0.7) brightness(1.1); }
 
-      .stage::before {
-        content: "";
+      .map-label {
         position: absolute;
-        inset: -12%;
-        z-index: 1;
-        pointer-events: none;
-        background:
-          linear-gradient(105deg, rgb(8 8 6 / 0.92) 0 26%, transparent 50%),
-          radial-gradient(circle at 52% 45%, transparent 0 28%, rgb(8 8 6 / 0.34) 66%, rgb(8 8 6 / 0.84) 100%);
-      }
-
-      .stage::after {
-        content: "";
-        position: absolute;
-        left: -18%;
-        right: -18%;
-        top: 47%;
-        height: 118px;
-        z-index: 2;
-        pointer-events: none;
-        border-top: 1px solid rgb(215 255 52 / 0.62);
-        border-bottom: 1px solid rgb(255 79 56 / 0.46);
-        background:
-          repeating-linear-gradient(90deg, rgb(244 239 225 / 0.08) 0 3px, transparent 3px 42px),
-          linear-gradient(90deg, rgb(215 255 52 / 0.18), transparent 28%, rgb(255 79 56 / 0.16));
-        transform: rotate(-12deg);
-        mix-blend-mode: screen;
-      }
-
-      .title-block {
-        position: absolute;
-        z-index: 4;
-        left: clamp(26px, 5vw, 82px);
-        bottom: clamp(34px, 8vh, 84px);
-        max-width: min(760px, calc(100vw - 470px));
-      }
-
-      .kicker {
-        margin: 0 0 16px;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--soft);
-        font: 800 12px/1 "Avenir Next", "Helvetica Neue", sans-serif;
-        letter-spacing: 0.18em;
+        left: 16px;
+        bottom: 16px;
+        z-index: 500;
+        border: 2px solid var(--line);
+        background: rgb(255 250 240 / 0.9);
+        padding: 9px 11px;
+        font-size: 11px;
+        font-weight: 950;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
       }
 
-      .kicker::before {
-        content: "";
-        width: 46px;
-        height: 2px;
-        background: var(--acid);
-        box-shadow: 0 0 18px rgb(215 255 52 / 0.45);
+      .money-board {
+        border-bottom: 2px solid var(--line);
+        padding: 18px;
       }
 
-      h1 {
-        margin: 0;
-        font-size: clamp(58px, 9.4vw, 146px);
-        line-height: 0.78;
-        letter-spacing: 0;
-        max-width: 940px;
-      }
-
-      .subtitle {
-        width: min(560px, 78vw);
-        margin: 24px 0 0;
-        color: rgb(244 239 225 / 0.75);
-        font: 500 16px/1.7 "Avenir Next", "Helvetica Neue", sans-serif;
-      }
-
-      .map-tape {
-        position: absolute;
-        z-index: 5;
-        right: clamp(20px, 4vw, 68px);
-        top: clamp(24px, 5vh, 64px);
-        width: min(320px, 34vw);
-        padding: 12px 12px 12px 48px;
-        border-left: 1px solid rgb(215 255 52 / 0.78);
-        background: rgb(8 8 6 / 0.58);
-        backdrop-filter: blur(10px);
-        box-shadow: var(--shadow);
-      }
-
-      .route-stop {
-        position: relative;
-        min-height: 42px;
-        padding: 0 0 18px;
-      }
-
-      .route-stop::before {
-        content: "";
-        position: absolute;
-        left: -32px;
-        top: 5px;
-        width: 9px;
-        height: 9px;
-        border: 1px solid var(--acid);
-        border-radius: 999px;
-        background: var(--black);
-        box-shadow: 0 0 14px rgb(215 255 52 / 0.5);
-      }
-
-      .route-stop::after {
-        content: "";
-        position: absolute;
-        left: -28px;
-        top: 18px;
-        bottom: 0;
-        width: 1px;
-        background: rgb(244 239 225 / 0.22);
-      }
-
-      .route-stop:last-child::after { display: none; }
-      .route-stop b { display: block; font: 800 14px/1.2 "Avenir Next", sans-serif; }
-      .route-stop small { color: var(--dim); font: 700 10px/1.4 "Avenir Next", sans-serif; letter-spacing: 0.1em; text-transform: uppercase; }
-
-      .side {
-        grid-column: 3 / 4;
-        grid-row: 1 / 3;
-        min-height: 100vh;
-        border-left: 1px solid var(--line);
-        background:
-          linear-gradient(180deg, rgb(244 239 225 / 0.08), transparent 18%),
-          rgb(10 10 8 / 0.88);
-        padding: 22px;
+      .money-total {
         display: grid;
-        align-content: start;
-        gap: 18px;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 12px;
+        margin-bottom: 16px;
       }
 
-      .meter-stack {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-
-      .meter {
-        border-top: 1px solid var(--line);
-        padding: 15px 0 4px;
-        min-height: 94px;
-      }
-
-      .meter small,
-      .section-label {
+      .money-total small,
+      .money-row small,
+      .stay-row small {
         display: block;
-        color: var(--dim);
-        font: 800 10px/1.1 "Avenir Next", "Helvetica Neue", sans-serif;
-        letter-spacing: 0.16em;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 950;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
       }
 
-      .meter b {
+      .money-total b {
         display: block;
-        margin-top: 8px;
-        color: var(--ink);
-        font: 900 34px/0.94 Georgia, serif;
+        margin-top: 6px;
+        font: 950 clamp(36px, 4.5vw, 58px)/0.9 Georgia, serif;
       }
 
-      .meter em {
-        display: block;
-        margin-top: 8px;
-        color: var(--soft);
-        font: 500 13px/1.45 "Avenir Next", sans-serif;
+      .money-total em {
+        color: var(--red);
+        font: 950 32px/0.9 Georgia, serif;
         font-style: normal;
-      }
-
-      .compass {
-        aspect-ratio: 1;
-        border: 1px solid rgb(244 239 225 / 0.22);
-        border-radius: 999px;
-        display: grid;
-        place-items: center;
-        position: relative;
-        margin: 8px 28px 4px;
-        background:
-          conic-gradient(from -34deg, transparent 0 22deg, rgb(215 255 52 / 0.18) 22deg 24deg, transparent 24deg 112deg, rgb(255 79 56 / 0.18) 112deg 114deg, transparent 114deg);
-      }
-
-      .compass::before,
-      .compass::after {
-        content: "";
-        position: absolute;
-        inset: 16%;
-        border: 1px solid rgb(244 239 225 / 0.12);
-        border-radius: 999px;
-      }
-
-      .compass::after {
-        inset: 38%;
-        background: var(--acid);
-        box-shadow: 0 0 30px rgb(215 255 52 / 0.55);
-      }
-
-      .compass span {
-        position: absolute;
-        color: var(--soft);
-        font: 800 10px/1 "Avenir Next", sans-serif;
-        letter-spacing: 0.12em;
-      }
-      .compass .n { top: 12px; }
-      .compass .s { bottom: 12px; }
-      .compass .e { right: 12px; }
-      .compass .w { left: 12px; }
-
-      .reel {
-        grid-column: 2 / 3;
-        grid-row: 2 / 3;
-        min-height: 220px;
-        display: grid;
-        grid-template-columns: 1.05fr 1fr 0.95fr;
-        border-top: 1px solid var(--line);
-        background:
-          repeating-linear-gradient(90deg, rgb(244 239 225 / 0.06) 0 1px, transparent 1px 80px),
-          rgb(8 8 6 / 0.78);
-      }
-
-      .film {
-        position: relative;
-        padding: 22px 24px 24px;
-        overflow: hidden;
-        border-right: 1px solid var(--line);
-        min-height: 220px;
-      }
-
-      .film:last-child { border-right: 0; }
-
-      .film::before {
-        content: "";
-        position: absolute;
-        left: 18px;
-        right: 18px;
-        top: 12px;
-        height: 8px;
-        background: repeating-linear-gradient(90deg, rgb(244 239 225 / 0.22) 0 10px, transparent 10px 22px);
-        opacity: 0.5;
-      }
-
-      .film .number {
-        position: absolute;
-        right: 18px;
-        bottom: 10px;
-        color: rgb(244 239 225 / 0.12);
-        font: 900 96px/0.8 Georgia, serif;
-      }
-
-      .film h2 {
-        margin: 34px 0 12px;
-        max-width: 250px;
-        font: 900 clamp(26px, 3vw, 42px)/0.9 Georgia, serif;
-        letter-spacing: 0;
-      }
-
-      .film p {
-        max-width: 330px;
-        margin: 0;
-        color: rgb(244 239 225 / 0.72);
-        font: 500 14px/1.55 "Avenir Next", sans-serif;
-      }
-
-      .film.video { background: linear-gradient(135deg, rgb(215 255 52 / 0.13), transparent 48%); }
-      .film.apps { background: linear-gradient(135deg, rgb(119 217 255 / 0.13), transparent 48%); }
-      .film.workshop { background: linear-gradient(135deg, rgb(255 79 56 / 0.12), transparent 48%); }
-
-      .manifest {
-        border-top: 1px solid var(--line);
-        padding-top: 14px;
-      }
-
-      .manifest-row {
-        display: grid;
-        grid-template-columns: 74px 1fr auto;
-        gap: 10px;
-        align-items: baseline;
-        padding: 11px 0;
-        border-bottom: 1px solid rgb(244 239 225 / 0.1);
-        font-family: "Avenir Next", "Helvetica Neue", sans-serif;
-      }
-
-      .manifest-row time {
-        color: var(--dim);
-        font: 800 10px/1.3 "Avenir Next", sans-serif;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .manifest-row b {
-        font-size: 13px;
-        color: rgb(244 239 225 / 0.86);
-        overflow-wrap: anywhere;
-      }
-
-      .manifest-row strong {
-        color: var(--acid);
-        font-size: 13px;
         white-space: nowrap;
       }
 
-      .places {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 12px;
+      .money-row {
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr) 86px;
+        gap: 10px;
+        align-items: center;
+        min-height: 43px;
+        border-top: 1px solid var(--line);
+        padding: 9px 0;
       }
 
-      .place {
-        border: 1px solid rgb(244 239 225 / 0.16);
-        padding: 8px 10px;
-        color: var(--soft);
-        font: 800 11px/1 "Avenir Next", sans-serif;
-        letter-spacing: 0.05em;
+      .money-row b {
+        font-size: 13px;
+        font-weight: 950;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        background: rgb(244 239 225 / 0.035);
       }
 
-      .progress-line {
-        margin-top: 12px;
-        height: 7px;
-        border: 1px solid rgb(244 239 225 / 0.18);
-        background: rgb(244 239 225 / 0.06);
+      .bar {
+        height: 14px;
+        border: 2px solid var(--line);
+        background: var(--paper-2);
         overflow: hidden;
       }
 
-      .progress-line span {
+      .bar span {
         display: block;
+        width: 0;
         height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, var(--acid), var(--flare));
-        box-shadow: 0 0 18px rgb(215 255 52 / 0.42);
+        background: var(--blue);
       }
 
-      .sync {
-        color: var(--dim);
-        font: 700 11px/1.4 "Avenir Next", sans-serif;
+      .money-row:nth-child(3n) .bar span { background: var(--red); }
+      .money-row:nth-child(4n) .bar span { background: var(--green); }
+
+      .money-row strong {
+        text-align: right;
+        font: 950 16px/1 Georgia, serif;
       }
 
-      @media (max-width: 980px) {
-        .atlas {
-          display: block;
+      .stays {
+        padding: 18px;
+      }
+
+      .stay-row {
+        display: grid;
+        grid-template-columns: 58px 1fr auto;
+        gap: 10px;
+        align-items: baseline;
+        border-top: 1px solid var(--line);
+        padding: 10px 0;
+      }
+
+      .stay-row b {
+        display: block;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+      }
+
+      .stay-row span {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+      }
+
+      .stay-row strong {
+        font: 950 15px/1 Georgia, serif;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 1120px) {
+        .ledger {
           width: 100%;
+          display: block;
+          border-left: 0;
+          border-right: 0;
         }
 
-        .rail {
-          min-height: auto;
-          height: 74px;
+        .spine {
+          min-height: 72px;
           grid-template-columns: 1fr auto 1fr;
           grid-template-rows: auto;
           border-right: 0;
-          border-bottom: 1px solid var(--line);
-          padding: 0 16px;
+          border-bottom: 2px solid var(--line);
+          padding: 0 14px;
         }
 
-        .rail span,
-        .rail small {
+        .spine span,
+        .spine small {
           writing-mode: initial;
           justify-self: start;
         }
 
-        .rail small { justify-self: end; }
-        .rail strong { transform: none; font-size: 44px; }
+        .spine small { justify-self: end; }
+        .spine strong { transform: none; font-size: 42px; }
 
-        .stage { min-height: 72vh; }
-
-        .title-block {
-          left: 18px;
-          right: 18px;
-          bottom: 24px;
-          max-width: none;
+        .mast {
+          grid-template-columns: 1fr;
         }
 
-        h1 { font-size: clamp(54px, 18vw, 86px); }
-
-        .subtitle {
-          width: auto;
-          font-size: 14px;
-        }
-
-        .map-tape {
-          top: 18px;
-          right: 16px;
-          width: min(300px, calc(100vw - 32px));
-          max-height: 230px;
-          overflow: hidden;
-          opacity: 0.92;
-        }
-
-        .side {
-          min-height: auto;
+        .launch-box {
           border-left: 0;
-          border-top: 1px solid var(--line);
+          border-top: 2px solid var(--line);
+          padding: 18px 22px;
         }
 
-        .meter-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .compass { display: none; }
-
-        .reel {
+        .timeline,
+        .dashboard {
           display: block;
           min-height: auto;
+          border-right: 0;
         }
 
-        .film {
-          border-right: 0;
-          border-bottom: 1px solid var(--line);
-        }
+        .dashboard { border-top: 2px solid var(--line); }
+        .map-wrap { height: 300px; }
       }
 
-      @media (max-width: 560px) {
-        .stage { min-height: 670px; }
-        .map-tape {
-          position: relative;
-          top: auto;
-          right: auto;
-          margin: 14px 14px 0 auto;
-          z-index: 6;
+      @media (max-width: 720px) {
+        .title { padding: 22px 16px; }
+        h1 { font-size: clamp(42px, 16vw, 72px); }
+        .subline { width: 100%; }
+
+        .section-head {
+          grid-template-columns: 1fr;
+          align-items: start;
         }
 
-        .title-block { bottom: 34px; }
-        .meter-stack { grid-template-columns: 1fr; }
-        .manifest-row { grid-template-columns: 58px 1fr; }
-        .manifest-row strong { grid-column: 2; }
+        .stamp { width: fit-content; }
+
+        .schedule {
+          display: block;
+        }
+
+        .schedule .head { display: none; }
+
+        .schedule > div,
+        .schedule-row > div {
+          border-bottom: 0;
+          min-height: auto;
+          padding: 5px 14px;
+        }
+
+        .schedule > .schedule-row {
+          display: grid;
+          grid-template-columns: 76px minmax(0, 1fr);
+          border-bottom: 2px solid var(--line);
+          padding: 13px 0;
+        }
+
+        .schedule-row .amount-cell {
+          grid-column: 2;
+          justify-items: start;
+          text-align: left;
+        }
+
+        .schedule-row .date-cell {
+          grid-row: span 4;
+        }
+
+        .schedule-row .stay-cell,
+        .schedule-row .status-cell {
+          grid-column: 2;
+        }
+
+        .money-total {
+          grid-template-columns: 1fr;
+        }
+
+        .money-total em {
+          font-size: 28px;
+        }
+
+        .stay-row {
+          grid-template-columns: 52px 1fr;
+        }
+
+        .stay-row strong {
+          grid-column: 2;
+        }
       }
     </style>
   </head>
   <body>
-    <main class="atlas">
-      <aside class="rail" aria-label="출발 계기판">
-        <span>launch 2026.07.08</span>
+    <main class="ledger">
+      <aside class="spine">
+        <span>departure ledger</span>
         <strong id="daysLeft">D--</strong>
         <small id="syncLabel">sync --</small>
       </aside>
 
-      <section class="stage" aria-label="여행 지도 조종석">
-        <div id="map"></div>
-        <div class="map-tape" id="routeTape" aria-label="경로 테이프"></div>
-        <div class="title-block">
-          <p class="kicker">Travel Atlas Cockpit</p>
-          <h1>길 위에서<br />만드는<br />세 개의 작업</h1>
-          <p class="subtitle">
-            여행 준비표가 아니라 출발 전부터 굴러가는 기록 장치입니다.
-            지도는 동선, 필름은 기억, 계기판은 비용과 쉥겐 리듬만 남깁니다.
+      <header class="mast">
+        <div class="title">
+          <p class="eyebrow">Travel Ledger Studio</p>
+          <h1>일정과 돈이<br />같은 판에<br />보이게</h1>
+          <p class="subline">
+            지도 포스터보다 지금 필요한 것은 읽히는 장부입니다.
+            도시별 체류, 숙소, 예약 금액, 분야별 합계를 한 화면에서 비교합니다.
           </p>
         </div>
+        <div class="launch-box">
+          <small>launch</small>
+          <b>2026.07.08</b>
+          <em id="launchLine">출발 전 일정과 지출을 동기화하는 중</em>
+        </div>
+      </header>
+
+      <section class="timeline" aria-label="여행 일정 장부">
+        <div class="section-head">
+          <div>
+            <h2>Itinerary Ledger</h2>
+            <p>도시 이동, 숙소, 예약 금액을 날짜 순서대로 봅니다.</p>
+          </div>
+          <span class="stamp" id="scheduleStamp">-- stops</span>
+        </div>
+        <div class="schedule" id="schedule"></div>
       </section>
 
-      <section class="side" aria-label="운영 계기판">
-        <div class="compass" aria-hidden="true">
-          <span class="n">N</span><span class="e">E</span><span class="s">S</span><span class="w">W</span>
+      <aside class="dashboard" aria-label="금액과 지도">
+        <div class="map-wrap">
+          <div id="map"></div>
+          <div class="map-label" id="mapLabel">route map</div>
         </div>
 
-        <div class="meter-stack">
-          <div class="meter">
-            <small>reserved</small>
-            <b id="reserved">--</b>
-            <div class="progress-line"><span id="reservedBar"></span></div>
-            <em id="budgetLine">budget loading</em>
+        <section class="money-board">
+          <div class="money-total">
+            <div>
+              <small>reserved / paid</small>
+              <b id="reservedTotal">--</b>
+            </div>
+            <em id="reservedPct">--</em>
           </div>
-          <div class="meter">
-            <small>schengen window</small>
-            <b id="schengen">--</b>
-            <em id="schengenLine">pre-trip</em>
-          </div>
-          <div class="meter">
-            <small>current fix</small>
-            <b id="current">--</b>
-            <em>정확한 주소 없이 지역 단위만 표시</em>
-          </div>
-          <div class="meter">
-            <small>first anchor</small>
-            <b id="anchor">--</b>
-            <em id="anchorLine">route loading</em>
-          </div>
-        </div>
+          <div id="moneyRows"></div>
+        </section>
 
-        <div class="manifest">
-          <span class="section-label">expense manifest</span>
-          <div id="expenses"></div>
-        </div>
-
-        <div class="manifest">
-          <span class="section-label">local traces</span>
-          <div class="places" id="places"></div>
-        </div>
-      </section>
-
-      <section class="reel" aria-label="여행 3축 필름">
-        <article class="film video">
-          <span class="number">01</span>
-          <h2>영상은 기억을 다시 여는 문</h2>
-          <p>장소 설명보다 그날의 감각, 이동, 시행착오를 짧은 장면으로 남깁니다.</p>
-        </article>
-        <article class="film apps">
-          <span class="number">02</span>
-          <h2>앱은 여행 중 발견한 불편에서 시작</h2>
-          <p>매일의 관찰을 제품 후보로 낮추고, 작은 화면 변화로 검증합니다.</p>
-        </article>
-        <article class="film workshop">
-          <span class="number">03</span>
-          <h2>AI 워크샵은 사람을 만나는 방식</h2>
-          <p>각 도시에서 도움 되는 미니 세션을 열고, 언어와 문제를 기록합니다.</p>
-        </article>
-      </section>
+        <section class="stays">
+          <div class="section-head" style="padding: 0 0 13px; min-height: auto; border-bottom: 0;">
+            <div>
+              <h2 style="font-size: 30px;">Stay Stack</h2>
+              <p>숙소 중심으로 예약 상태와 금액을 다시 확인합니다.</p>
+            </div>
+          </div>
+          <div id="stayRows"></div>
+        </section>
+      </aside>
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
+      const categoryNames = {
+        stay: "숙소",
+        flight: "항공",
+        transit: "이동",
+        food: "식비",
+        tool: "도구",
+        other: "기타"
+      };
+
+      const colors = ["#1657d8", "#e6381f", "#a6d914", "#f5c84b", "#7054d6"];
+
       const won = (value) => new Intl.NumberFormat("ko-KR").format(Math.round(value || 0));
       const shortWon = (value) => {
         const number = Number(value || 0);
+        if (!number) return "미정";
         if (number >= 100000000) return `${(number / 100000000).toFixed(1)}억`;
         if (number >= 10000) return `${Math.round(number / 10000)}만`;
         return won(number);
       };
 
-      const trimMerchant = (text) =>
-        String(text || "unknown")
-          .replace(/\s+-\s+.*$/, "")
-          .replace(/_/g, " ")
-          .slice(0, 34);
+      const daysBetween = (start, end) => {
+        if (!start || !end) return "";
+        const diff = Math.max(1, Math.round((new Date(end) - new Date(start)) / 86400000));
+        return `${diff}박`;
+      };
+
+      const dateLabel = (start, end) => {
+        if (!start) return "TBD";
+        const s = start.slice(5).replace("-", ".");
+        const e = end ? end.slice(5).replace("-", ".") : "";
+        return e ? `${s}-${e}` : s;
+      };
 
       function setLaunch(launch) {
         const today = new Date();
         const target = new Date(`${launch}T00:00:00+09:00`);
         const days = Math.ceil((target - today) / 86400000);
         $("daysLeft").textContent = days >= 0 ? `D-${days}` : `D+${Math.abs(days)}`;
+        $("launchLine").textContent = `${launch} 출발 / D-${Math.max(0, days)} 기준`;
       }
 
-      function renderRoute(route) {
-        const stops = (route || []).slice(0, 7);
-        $("routeTape").innerHTML = stops
-          .map((stop, index) => `
-            <div class="route-stop">
-              <small>${String(index + 1).padStart(2, "0")} / ${stop.status || "planned"}</small>
-              <b>${stop.city}, ${stop.country}</b>
-            </div>
-          `)
-          .join("");
-
-        const first = stops[0];
-        if (first) {
-          $("anchor").textContent = first.city;
-          $("anchorLine").textContent = `${first.country} / ${first.note || first.status || "arrival"}`;
-        }
+      function routeRows(route) {
+        return (route || []).map((stop) => ({
+          city: stop.city,
+          country: stop.country,
+          status: stop.status || "planned",
+          startDate: stop.startDate,
+          endDate: stop.endDate,
+          lodging: stop.lodging || (stop.status === "candidate" ? "숙소 후보 필요" : "숙소 미정"),
+          source: stop.source || stop.note || "",
+          amount: stop.amount,
+          schengen: stop.schengen,
+          lat: stop.lat,
+          lng: stop.lng
+        }));
       }
 
-      function renderMeters(data) {
+      function renderSchedule(route) {
+        const rows = routeRows(route);
+        $("scheduleStamp").textContent = `${rows.length} stops`;
+        const header = `
+          <div class="head">date</div>
+          <div class="head">city</div>
+          <div class="head">stay / note</div>
+          <div class="head">status</div>
+          <div class="head">amount</div>
+        `;
+        const body = rows.map((row) => `
+          <div class="schedule-row">
+            <div class="date-cell">${dateLabel(row.startDate, row.endDate)}<small>${daysBetween(row.startDate, row.endDate)}</small></div>
+            <div class="city-cell"><b>${row.city}</b><small>${row.country}${row.schengen ? " / Schengen" : ""}</small></div>
+            <div class="stay-cell"><b>${row.lodging}</b><small>${row.source || "source pending"}</small></div>
+            <div class="status-cell"><span class="status-pill ${row.status}">${row.status}</span><small>${row.startDate ? "dated" : "undated"}</small></div>
+            <div class="amount-cell">${row.amount ? `${shortWon(row.amount)}원` : "미정"}<small>${row.amount ? "booked" : "needs check"}</small></div>
+          </div>
+        `).join("");
+        $("schedule").innerHTML = header + body;
+      }
+
+      function buildMoneyRows(data) {
+        const totals = { ...(data.travelCategoryTotals || {}) };
+        (data.bookedCosts || []).forEach((item) => {
+          if (!item.amount) return;
+          totals[item.category || "other"] = (totals[item.category || "other"] || 0) + Number(item.amount);
+        });
+        const rows = Object.entries(totals)
+          .filter(([, value]) => value > 0)
+          .sort((a, b) => b[1] - a[1]);
+        const max = Math.max(...rows.map(([, value]) => value), 1);
+        return rows.map(([key, value], index) => ({ key, value, pct: Math.round((value / max) * 100), color: colors[index % colors.length] }));
+      }
+
+      function renderMoney(data) {
         const budget = data.budget || {};
-        const reservedPct = Math.max(0, Math.min(100, Number(budget.reservedPctMin || 0)));
-        $("reserved").textContent = `${reservedPct.toFixed(1)}%`;
-        $("reservedBar").style.width = `${reservedPct}%`;
-        $("budgetLine").textContent = `${shortWon(budget.loggedKrw)}원 기록 / 목표 ${shortWon(budget.targetMinKrw)}-${shortWon(budget.targetMaxKrw)}원`;
+        const booked = (data.bookedCosts || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const paid = Number(budget.travelLoggedKrw || budget.loggedKrw || 0);
+        const total = paid + booked;
+        const pct = Number(budget.reservedPctMin || 0);
+        $("reservedTotal").textContent = `${shortWon(total)}원`;
+        $("reservedPct").textContent = `${pct.toFixed(1)}%`;
 
-        const schengen = data.schengen || {};
-        $("schengen").textContent = `${schengen.remainingDays ?? "--"}일`;
-        $("schengenLine").textContent = `${schengen.status || "pre-trip"} / entry ${schengen.entryDate || data.launch}`;
-
-        $("current").textContent = data.current?.location || "--";
+        const rows = buildMoneyRows(data);
+        $("moneyRows").innerHTML = rows.map((row) => `
+          <div class="money-row">
+            <b>${categoryNames[row.key] || row.key}</b>
+            <div class="bar"><span style="width:${row.pct}%; background:${row.color};"></span></div>
+            <strong>${shortWon(row.value)}원</strong>
+          </div>
+        `).join("");
       }
 
-      function renderExpenses(expenses) {
-        $("expenses").innerHTML = (expenses || [])
-          .slice(0, 6)
-          .map((item) => `
-            <div class="manifest-row">
-              <time>${item.date?.slice(5) || "--"} ${item.time || ""}</time>
-              <b>${trimMerchant(item.merchant)}<br><small>${item.location || ""} / ${item.category || "other"}</small></b>
-              <strong>${shortWon(item.amount)}원</strong>
+      function renderStays(data) {
+        const stays = (data.plannedAccommodations || []).slice(0, 8);
+        $("stayRows").innerHTML = stays.map((stay) => `
+          <div class="stay-row">
+            <small>${dateLabel(stay.checkIn, stay.checkOut)}</small>
+            <div>
+              <b>${stay.city} · ${stay.name}</b>
+              <span>${stay.status || "planned"} / ${stay.source || stay.country}</span>
             </div>
-          `)
-          .join("");
-      }
-
-      function renderPlaces(locations) {
-        $("places").innerHTML = (locations || [])
-          .map((place) => `<span class="place">${place.name} ${place.count || 0}</span>`)
-          .join("");
+            <strong>${stay.amount ? `${shortWon(stay.amount)}원` : "미정"}</strong>
+          </div>
+        `).join("");
       }
 
       function renderMap(data) {
@@ -701,28 +806,25 @@
           attributionControl: false
         });
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 18
-        }).addTo(map);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(map);
 
         if (route.length) {
           const routeLatLngs = route.map((p) => [p.lat, p.lng]);
           L.polyline(routeLatLngs, {
-            color: "#d7ff34",
-            weight: 3,
-            opacity: 0.9,
-            dashArray: "10 12"
+            color: "#e6381f",
+            weight: 4,
+            opacity: 0.88
           }).addTo(map);
 
           route.forEach((point, index) => {
             L.circleMarker([point.lat, point.lng], {
               radius: index === 0 ? 8 : 5,
-              color: index === 0 ? "#ff4f38" : "#d7ff34",
-              fillColor: "#080806",
-              fillOpacity: 0.9,
+              color: "#15130f",
+              fillColor: point.status === "candidate" ? "#f5c84b" : "#1657d8",
+              fillOpacity: 0.95,
               weight: 2
             })
-              .bindTooltip(`${point.city}, ${point.country}`, { direction: "top" })
+              .bindTooltip(`${point.city} / ${point.status}`, { direction: "top" })
               .addTo(map);
           });
         }
@@ -730,18 +832,19 @@
         logged.forEach((point) => {
           L.circleMarker([point.lat, point.lng], {
             radius: Math.min(10, 4 + Number(point.count || 1)),
-            color: "#77d9ff",
-            fillColor: "#77d9ff",
-            fillOpacity: 0.35,
+            color: "#15130f",
+            fillColor: "#a6d914",
+            fillOpacity: 0.58,
             weight: 1.5
           })
-            .bindTooltip(`${point.name} / ${point.count} traces`, { direction: "top" })
+            .bindTooltip(`${point.name} / ${point.count}`, { direction: "top" })
             .addTo(map);
         });
 
         const all = [...route, ...logged].map((p) => [p.lat, p.lng]);
-        if (all.length) map.fitBounds(all, { padding: [42, 42] });
+        if (all.length) map.fitBounds(all, { padding: [34, 34] });
         else map.setView([48.8566, 2.3522], 4);
+        $("mapLabel").textContent = `${route.length} route points / ${logged.length} local traces`;
       }
 
       fetch("travel-data.json", { cache: "no-store" })
@@ -749,10 +852,9 @@
         .then((data) => {
           setLaunch(data.launch || "2026-07-08");
           $("syncLabel").textContent = `sync ${String(data.generatedAt || "").slice(5, 16).replace("T", " ")}`;
-          renderRoute(data.route);
-          renderMeters(data);
-          renderExpenses(data.expenses);
-          renderPlaces(data.locations);
+          renderSchedule(data.route);
+          renderMoney(data);
+          renderStays(data);
           renderMap(data);
         })
         .catch((error) => {

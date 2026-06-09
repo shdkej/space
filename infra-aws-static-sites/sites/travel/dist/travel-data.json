@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T13:55:35.099998+00:00",
+  "generatedAt": "2026-06-09T14:52:10.328711+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 4.0,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 600720,
+    "reserveBurnKrw": 400480,
     "firstTravelExpenseDate": "2026-06-08",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-06-09",
+    "date": "2026-06-10",
     "location": "서울특별시",
     "mapQuery": "서울특별시"
   },
@@ -59,6 +59,52 @@
     {
       "date": "2026-06-09",
       "amount": 335137
+    }
+  ],
+  "bookedCosts": [
+    {
+      "id": "manual-stay-cologne",
+      "date": "2026-07-09",
+      "time": "",
+      "amount": 330000,
+      "merchant": "Cologne · Schiltz Airbnb",
+      "category": "stay",
+      "location": "Cologne",
+      "travel": true,
+      "source": "hostel-style home"
+    },
+    {
+      "id": "manual-stay-prague",
+      "date": "2026-07-14",
+      "time": "",
+      "amount": 220000,
+      "merchant": "Prague · Central Station Airbnb",
+      "category": "stay",
+      "location": "Prague",
+      "travel": true,
+      "source": "hostel, shared kitchen/bath"
+    },
+    {
+      "id": "manual-stay-vienna",
+      "date": "2026-07-17",
+      "time": "",
+      "amount": 330000,
+      "merchant": "Vienna · Airbnb",
+      "category": "stay",
+      "location": "Vienna",
+      "travel": true,
+      "source": "Airbnb"
+    },
+    {
+      "id": "manual-stay-budapest",
+      "date": "2026-07-20",
+      "time": "",
+      "amount": 300000,
+      "merchant": "Budapest · Airbnb",
+      "category": "stay",
+      "location": "Budapest",
+      "travel": true,
+      "source": "Airbnb"
     }
   ],
   "travelExpenses": [
@@ -445,12 +491,106 @@
       "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
+  "plannedAccommodations": [
+    {
+      "name": "Darakhyu Incheon Airport",
+      "city": "Incheon Airport",
+      "country": "South Korea",
+      "status": "booked",
+      "checkIn": "2026-07-07",
+      "checkOut": "2026-07-08",
+      "amount": null,
+      "source": "official site",
+      "note": "Pre-departure airport stay"
+    },
+    {
+      "name": "IntercityHotel",
+      "city": "Frankfurt",
+      "country": "Germany",
+      "status": "booked",
+      "checkIn": "2026-07-08",
+      "checkOut": "2026-07-09",
+      "amount": null,
+      "source": "HanaTour",
+      "note": "Arrival anchor"
+    },
+    {
+      "name": "Schiltz Airbnb",
+      "city": "Cologne",
+      "country": "Germany",
+      "status": "booked",
+      "checkIn": "2026-07-09",
+      "checkOut": "2026-07-11",
+      "amount": 330000,
+      "source": "hostel-style home",
+      "note": "Cathedral, city walks"
+    },
+    {
+      "name": "다은언니",
+      "city": "Berlin",
+      "country": "Germany",
+      "status": "hosted",
+      "checkIn": "2026-07-11",
+      "checkOut": "2026-07-14",
+      "amount": null,
+      "source": "friend stay",
+      "note": "Libraries, culture, low-friction base"
+    },
+    {
+      "name": "Central Station Airbnb",
+      "city": "Prague",
+      "country": "Czechia",
+      "status": "booked",
+      "checkIn": "2026-07-14",
+      "checkOut": "2026-07-17",
+      "amount": 220000,
+      "source": "hostel, shared kitchen/bath",
+      "note": "Old town, cafes, transit hub"
+    },
+    {
+      "name": "Airbnb",
+      "city": "Vienna",
+      "country": "Austria",
+      "status": "booked",
+      "checkIn": "2026-07-17",
+      "checkOut": "2026-07-20",
+      "amount": 330000,
+      "source": "Airbnb",
+      "note": "Museums, libraries, slower days"
+    },
+    {
+      "name": "Airbnb",
+      "city": "Budapest",
+      "country": "Hungary",
+      "status": "booked",
+      "checkIn": "2026-07-20",
+      "checkOut": "2026-07-23",
+      "amount": 300000,
+      "source": "Airbnb",
+      "note": "Thermal baths, food, Danube"
+    }
+  ],
   "route": [
+    {
+      "city": "Incheon Airport",
+      "country": "South Korea",
+      "status": "booked",
+      "startDate": "2026-07-07",
+      "endDate": "2026-07-08",
+      "lodging": "Darakhyu Incheon Airport",
+      "source": "official site",
+      "note": "Pre-departure airport stay",
+      "schengen": false
+    },
     {
       "city": "Frankfurt",
       "country": "Germany",
-      "status": "confirmed",
-      "note": "Booked arrival anchor",
+      "status": "booked",
+      "startDate": "2026-07-08",
+      "endDate": "2026-07-09",
+      "lodging": "IntercityHotel",
+      "source": "HanaTour",
+      "note": "Arrival anchor",
       "schengen": true,
       "lat": 50.1109,
       "lng": 8.6821
@@ -458,7 +598,12 @@
     {
       "city": "Cologne",
       "country": "Germany",
-      "status": "planned",
+      "status": "booked",
+      "startDate": "2026-07-09",
+      "endDate": "2026-07-11",
+      "lodging": "Schiltz Airbnb",
+      "source": "hostel-style home",
+      "amount": 330000,
       "note": "Cathedral, city walks",
       "schengen": true,
       "lat": 50.9375,
@@ -467,7 +612,11 @@
     {
       "city": "Berlin",
       "country": "Germany",
-      "status": "planned",
+      "status": "hosted",
+      "startDate": "2026-07-11",
+      "endDate": "2026-07-14",
+      "lodging": "다은언니",
+      "source": "friend stay",
       "note": "Libraries, culture, low-friction base",
       "schengen": true,
       "lat": 52.52,
@@ -476,7 +625,12 @@
     {
       "city": "Prague",
       "country": "Czechia",
-      "status": "planned",
+      "status": "booked",
+      "startDate": "2026-07-14",
+      "endDate": "2026-07-17",
+      "lodging": "Central Station Airbnb",
+      "source": "hostel, shared kitchen/bath",
+      "amount": 220000,
       "note": "Old town, cafes, transit hub",
       "schengen": true,
       "lat": 50.0755,
@@ -485,7 +639,12 @@
     {
       "city": "Vienna",
       "country": "Austria",
-      "status": "planned",
+      "status": "booked",
+      "startDate": "2026-07-17",
+      "endDate": "2026-07-20",
+      "lodging": "Airbnb",
+      "source": "Airbnb",
+      "amount": 330000,
       "note": "Museums, libraries, slower days",
       "schengen": true,
       "lat": 48.2082,
@@ -494,7 +653,12 @@
     {
       "city": "Budapest",
       "country": "Hungary",
-      "status": "planned",
+      "status": "booked",
+      "startDate": "2026-07-20",
+      "endDate": "2026-07-23",
+      "lodging": "Airbnb",
+      "source": "Airbnb",
+      "amount": 300000,
       "note": "Thermal baths, food, Danube",
       "schengen": true,
       "lat": 47.4979,
@@ -539,7 +703,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-06-09",
+    "asOf": "2026-06-10",
     "limitDays": 90,
     "usedDays": 0,
     "remainingDays": 90,
@@ -664,11 +828,21 @@
     {
       "id": "diuppdedc91bgl2b4amjg8goeo",
       "date": "2026-06-09",
-      "title": "내일 의도 / 배포·쇼핑·Virtue 판단 손잡이 1개씩 정리",
-      "intent": "새 일을 늘리기보다, 오늘 열린 배포·네이버쇼핑·Virtue 판단 중 사용자가 다시 봐야 할 손잡이만 줄인다.",
+      "title": "실제 흐름 / 구매 언어 검증과 운영 지식 자산화",
+      "intent": "배포·쇼핑·Virtue 판단 중 사용자가 다시 봐야 할 손잡이를 줄인다.",
+      "did": "네이버쇼핑 가설은 트래블러스노트 속지 피벗으로 좁히고, KOCO/AX/운영 문서와 Travel 대시보드, Asana·버티컬 위키 자산화를 함께 밀었다.",
+      "why": "오늘의 중심 질문이 선택 카드 1장보다, 실제 구매 언어와 반복 가능한 운영 지식을 어떻게 남길지로 넓어졌다.",
+      "carry": "큰 검색량보다 구매 맥락을 먼저 보고, 운영 경험은 팀원이 다시 쓸 수 있는 문서·위키·가이드로 낮춘다.",
+      "drop": "검색량이 큰 단어를 곧바로 상품 제목이나 실행 우선순위로 올리는 흐름."
+    },
+    {
+      "id": "q1dth9vrn8ac2e8ifk22012ka8",
+      "date": "2026-06-10",
+      "title": "내일 의도 / 여행 속지 가설을 등록 전 검증표로 낮추기",
+      "intent": "상품을 바로 키우기보다, 트래블러스노트 속지 피벗이 등록 전 검증표 수준에서 충분히 좁아졌는지 본다.",
       "did": null,
       "why": null,
-      "carry": "Infinity/Naver/Virtue 중 사용자 결정이 필요한 카드 1개를 골라 질문·기본값·다음 행동만 남긴다.",
+      "carry": "제목 리드, 규격, 콘텐츠 차별점, 남은 차단 2개만 한 표로 정리한다.",
       "drop": null
     }
   ]

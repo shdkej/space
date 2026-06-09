@@ -3,42 +3,49 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Travel Ledger Studio</title>
+    <title>Travel Operations Ledger</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
-        --paper: #f3efe4;
-        --paper-2: #fffaf0;
-        --ink: #15130f;
-        --muted: #6d665b;
-        --faint: #d8d0c0;
-        --line: #1b1914;
-        --red: #e6381f;
-        --blue: #1657d8;
-        --green: #a6d914;
-        --yellow: #f5c84b;
-        --violet: #7054d6;
-        --shadow: 0 26px 70px rgb(21 19 15 / 0.18);
+        --paper: #f1ecdf;
+        --paper-2: #fbf6ea;
+        --ink: #14120d;
+        --muted: #6c6557;
+        --faint: #d6cdb9;
+        --line: #1a1812;
+        --red: #d4341c;
+        --blue: #1a4ccb;
+        --green: #5d8b2b;
+        --gold: #d99a2b;
+        --violet: #5b46b8;
+        --shadow: 0 28px 80px rgb(20 18 13 / 0.2);
+        --mono: "DM Mono", ui-monospace, "SFMono-Regular", monospace;
+        --sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+        --serif: "Fraunces", Georgia, "Times New Roman", serif;
       }
 
       * { box-sizing: border-box; }
 
-      html {
-        background: var(--ink);
-      }
+      html { background: var(--ink); }
 
       body {
         margin: 0;
         min-height: 100vh;
         color: var(--ink);
+        font-family: var(--sans);
         background:
-          linear-gradient(90deg, rgb(21 19 15 / 0.05) 1px, transparent 1px),
-          linear-gradient(0deg, rgb(21 19 15 / 0.04) 1px, transparent 1px),
-          radial-gradient(circle at 88% 14%, rgb(22 87 216 / 0.12), transparent 28%),
-          radial-gradient(circle at 8% 76%, rgb(230 56 31 / 0.14), transparent 24%),
+          linear-gradient(90deg, rgb(20 18 13 / 0.045) 1px, transparent 1px),
+          linear-gradient(0deg, rgb(20 18 13 / 0.035) 1px, transparent 1px),
+          radial-gradient(circle at 90% 10%, rgb(26 76 203 / 0.1), transparent 30%),
+          radial-gradient(circle at 6% 82%, rgb(212 52 28 / 0.12), transparent 26%),
           var(--paper);
-        background-size: 28px 28px, 28px 28px, auto, auto, auto;
-        font-family: "Avenir Next", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+        background-size: 30px 30px, 30px 30px, auto, auto, auto;
       }
 
       body::before {
@@ -47,195 +54,266 @@
         inset: 0;
         z-index: -1;
         background:
-          repeating-linear-gradient(90deg, transparent 0 11px, rgb(21 19 15 / 0.025) 11px 12px),
-          linear-gradient(180deg, transparent, rgb(21 19 15 / 0.08));
+          repeating-linear-gradient(90deg, transparent 0 11px, rgb(20 18 13 / 0.022) 11px 12px),
+          linear-gradient(180deg, transparent, rgb(20 18 13 / 0.07));
         pointer-events: none;
       }
 
       button, input { font: inherit; }
 
       .ledger {
-        width: min(1540px, calc(100vw - 24px));
+        width: min(1560px, calc(100vw - 24px));
         min-height: 100vh;
         margin: 0 auto;
         display: grid;
-        grid-template-columns: 92px minmax(570px, 1fr) minmax(410px, 0.72fr);
-        grid-template-rows: auto minmax(430px, 48vh) auto;
+        grid-template-columns: 86px minmax(540px, 1fr) minmax(432px, 0.74fr);
+        grid-template-rows: auto minmax(620px, 1fr) auto;
         border-left: 2px solid var(--line);
         border-right: 2px solid var(--line);
-        background: rgb(255 250 240 / 0.42);
+        background: rgb(251 246 234 / 0.5);
         box-shadow: var(--shadow);
       }
 
+      /* ---------------- spine ---------------- */
       .spine {
         grid-row: 1 / 4;
+        grid-column: 1;
         border-right: 2px solid var(--line);
         background:
-          linear-gradient(180deg, var(--red) 0 19%, transparent 19% 21%, var(--blue) 21% 62%, transparent 62% 64%, var(--green) 64% 100%);
+          linear-gradient(180deg, var(--red) 0 16%, transparent 16% 18%, var(--blue) 18% 58%, transparent 58% 60%, var(--green) 60% 100%);
         display: grid;
-        grid-template-rows: 1fr auto 1fr;
+        grid-template-rows: 1fr auto auto 1fr;
         justify-items: center;
         align-items: center;
+        gap: 14px;
+        padding: 22px 0;
         color: var(--paper-2);
       }
 
       .spine span,
-      .spine small {
+      .spine small,
+      .spine .pos {
         writing-mode: vertical-rl;
         text-orientation: mixed;
+        font-family: var(--mono);
         font-size: 11px;
-        font-weight: 900;
-        letter-spacing: 0.2em;
+        font-weight: 500;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
       }
+
+      .spine .pos { color: var(--ink); font-weight: 500; }
 
       .spine strong {
         color: var(--ink);
         background: var(--paper-2);
         border: 2px solid var(--line);
-        padding: 10px 8px;
-        font: 950 clamp(34px, 4vw, 58px)/0.86 Georgia, serif;
+        padding: 12px 9px;
+        font: 900 clamp(30px, 3.4vw, 50px)/0.84 var(--serif);
         transform: rotate(-90deg);
         white-space: nowrap;
-        box-shadow: 8px 8px 0 rgb(21 19 15 / 0.25);
+        box-shadow: 7px 7px 0 rgb(20 18 13 / 0.28);
       }
 
+      /* ---------------- mast ---------------- */
       .mast {
         grid-column: 2 / 4;
+        grid-row: 1;
         border-bottom: 2px solid var(--line);
-        min-height: 210px;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 360px;
+        grid-template-columns: minmax(0, 1fr) 332px;
+        grid-template-rows: 1fr auto;
         position: relative;
         overflow: hidden;
         background:
-          linear-gradient(118deg, rgb(255 250 240 / 0.96) 0 58%, rgb(21 19 15 / 0.05) 58% 100%),
+          linear-gradient(116deg, rgb(251 246 234 / 0.97) 0 60%, rgb(20 18 13 / 0.04) 60% 100%),
           var(--paper-2);
       }
 
       .mast::after {
         content: "";
         position: absolute;
-        right: -80px;
-        top: -36px;
-        width: 340px;
-        height: 340px;
+        right: -96px;
+        top: -56px;
+        width: 320px;
+        height: 320px;
         border: 2px solid var(--line);
         border-radius: 999px;
         background:
-          conic-gradient(from -40deg, var(--blue) 0 26deg, transparent 26deg 116deg, var(--red) 116deg 143deg, transparent 143deg 250deg, var(--green) 250deg 276deg, transparent 276deg),
-          transparent;
-        opacity: 0.9;
+          conic-gradient(from -40deg, var(--blue) 0 24deg, transparent 24deg 116deg, var(--red) 116deg 142deg, transparent 142deg 250deg, var(--green) 250deg 274deg, transparent 274deg);
+        opacity: 0.85;
+        pointer-events: none;
       }
 
       .title {
-        padding: 28px clamp(24px, 4vw, 48px) 24px;
+        padding: 26px clamp(22px, 3.5vw, 44px) 18px;
         position: relative;
         z-index: 1;
       }
 
       .eyebrow {
-        margin: 0 0 12px;
+        margin: 0 0 14px;
         color: var(--blue);
-        font-size: 12px;
-        font-weight: 950;
-        letter-spacing: 0.18em;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.2em;
         text-transform: uppercase;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 26px;
+        height: 2px;
+        background: var(--blue);
       }
 
       h1 {
         margin: 0;
-        font: 950 clamp(48px, 7.8vw, 118px)/0.82 Georgia, "Times New Roman", serif;
-        letter-spacing: 0;
-        max-width: 920px;
+        font: 900 clamp(42px, 6.6vw, 96px)/0.84 var(--serif);
+        letter-spacing: -0.015em;
+        max-width: 860px;
       }
 
       .subline {
-        width: min(720px, 88%);
-        margin: 18px 0 0;
+        width: min(660px, 92%);
+        margin: 16px 0 0;
         color: var(--muted);
-        font-size: 15px;
-        line-height: 1.65;
-        font-weight: 650;
+        font-size: 14px;
+        line-height: 1.6;
+        font-weight: 500;
       }
 
       .launch-box {
         border-left: 2px solid var(--line);
-        padding: 26px 28px;
+        padding: 24px 26px;
         position: relative;
         z-index: 1;
         display: grid;
         align-content: end;
-        background: rgb(245 200 75 / 0.12);
+        gap: 6px;
+        background: rgb(217 154 43 / 0.12);
       }
 
       .launch-box small {
-        display: block;
         color: var(--muted);
+        font-family: var(--mono);
         font-size: 11px;
-        font-weight: 950;
-        letter-spacing: 0.18em;
+        font-weight: 500;
+        letter-spacing: 0.2em;
         text-transform: uppercase;
       }
 
       .launch-box b {
-        display: block;
-        margin-top: 10px;
-        font: 950 58px/0.86 Georgia, serif;
+        font: 900 clamp(42px, 3.3vw, 48px)/0.84 var(--serif);
+        font-variant-numeric: tabular-nums;
       }
 
       .launch-box em {
-        display: block;
-        margin-top: 12px;
+        margin-top: 8px;
         color: var(--muted);
-        font-size: 13px;
-        line-height: 1.45;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.5;
         font-style: normal;
-        font-weight: 700;
       }
 
+      /* ---------------- readout strip ---------------- */
+      .readouts {
+        grid-column: 1 / 3;
+        grid-row: 2;
+        border-top: 2px solid var(--line);
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        position: relative;
+        z-index: 2;
+        background: rgb(20 18 13 / 0.92);
+        color: var(--paper-2);
+      }
+
+      .readout {
+        padding: 13px 18px;
+        border-left: 1px solid rgb(251 246 234 / 0.16);
+        display: grid;
+        gap: 5px;
+        align-content: center;
+      }
+
+      .readout:first-child { border-left: 0; }
+
+      .readout small {
+        color: rgb(251 246 234 / 0.6);
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .readout b {
+        font: 900 19px/1 var(--serif);
+        font-variant-numeric: tabular-nums;
+        overflow-wrap: anywhere;
+      }
+
+      .readout b .unit {
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 400;
+        color: rgb(251 246 234 / 0.62);
+        margin-left: 4px;
+      }
+
+      .readout.accent b { color: var(--gold); }
+
+      /* ---------------- timeline ---------------- */
       .timeline {
-        grid-column: 2 / 3;
-        grid-row: 2 / 4;
+        grid-column: 2;
+        grid-row: 2;
         border-right: 2px solid var(--line);
-        min-height: 680px;
         background:
-          linear-gradient(90deg, transparent 0 calc(100% - 1px), rgb(21 19 15 / 0.08) calc(100% - 1px)),
+          linear-gradient(90deg, transparent 0 calc(100% - 1px), rgb(20 18 13 / 0.07) calc(100% - 1px)),
           var(--paper-2);
         display: grid;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: auto 1fr auto;
+        min-width: 0;
       }
 
       .section-head {
-        min-height: 82px;
         border-bottom: 2px solid var(--line);
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 14px;
         align-items: end;
-        padding: 18px 22px 16px;
+        padding: 18px 22px 15px;
       }
 
       .section-head h2 {
         margin: 0;
-        font: 950 clamp(26px, 3vw, 42px)/0.92 Georgia, serif;
+        font: 900 clamp(24px, 2.6vw, 38px)/0.92 var(--serif);
+        letter-spacing: -0.01em;
       }
 
       .section-head p {
         margin: 7px 0 0;
         color: var(--muted);
-        font-size: 13px;
-        font-weight: 700;
+        font-size: 12.5px;
+        font-weight: 500;
       }
 
       .stamp {
         border: 2px solid var(--line);
-        padding: 9px 12px;
+        padding: 8px 12px;
         background: var(--green);
-        color: var(--ink);
+        color: var(--paper-2);
+        font-family: var(--mono);
         font-size: 11px;
-        font-weight: 950;
-        letter-spacing: 0.12em;
+        font-weight: 500;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
         transform: rotate(-2deg);
         white-space: nowrap;
@@ -243,121 +321,195 @@
 
       .schedule {
         display: grid;
-        grid-template-columns: 104px minmax(160px, 0.8fr) minmax(220px, 1fr) 112px 126px;
+        grid-template-columns: 112px minmax(150px, 0.85fr) minmax(180px, 1fr) 120px 122px;
         align-content: start;
       }
 
-      .schedule-row {
-        display: contents;
-      }
-
-      .schedule > div {
-        min-height: 74px;
-        border-bottom: 1px solid var(--line);
-        display: grid;
-        align-content: center;
-        padding: 11px 12px;
-      }
-
-      .schedule > .schedule-row {
-        display: contents;
-        min-height: initial;
-        border-bottom: 0;
-        padding: 0;
-      }
-
-      .schedule-row > div {
-        min-height: 74px;
-        border-bottom: 1px solid var(--line);
-        display: grid;
-        align-content: center;
-        padding: 11px 12px;
-      }
-
       .schedule .head {
-        min-height: 40px;
         background: var(--ink);
-        color: var(--paper-2);
+        color: rgb(251 246 234 / 0.85);
+        font-family: var(--mono);
         font-size: 10px;
-        font-weight: 950;
+        font-weight: 500;
         letter-spacing: 0.14em;
         text-transform: uppercase;
+        padding: 9px 13px;
+        position: sticky;
+        top: 0;
+        z-index: 3;
       }
 
+      .schedule-row { display: contents; }
+
+      .schedule-row > div {
+        min-height: 72px;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        align-content: center;
+        padding: 11px 13px;
+      }
+
+      .schedule-row:hover > div { background: rgb(217 154 43 / 0.1); }
+
+      .schedule-row.next > div { background: rgb(26 76 203 / 0.07); }
+
       .date-cell {
-        font-family: Georgia, serif;
-        font-weight: 950;
-        font-size: 18px;
-        line-height: 0.95;
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 17px;
+        line-height: 1.05;
         color: var(--red);
+        font-variant-numeric: tabular-nums;
       }
 
       .date-cell small {
-        margin-top: 8px;
+        margin-top: 7px;
         color: var(--muted);
-        font: 850 10px/1.2 "Avenir Next", sans-serif;
-        letter-spacing: 0.09em;
+        font: 400 10px/1.2 var(--mono);
+        letter-spacing: 0.06em;
         text-transform: uppercase;
       }
 
-      .city-cell b,
-      .stay-cell b {
+      .city-cell b {
         display: block;
-        font-size: 18px;
-        line-height: 1.08;
+        font: 700 19px/1.05 var(--sans);
         overflow-wrap: anywhere;
       }
 
       .city-cell small,
-      .stay-cell small,
-      .status-cell small {
+      .stay-cell small {
         display: block;
         margin-top: 6px;
         color: var(--muted);
         font-size: 11px;
-        line-height: 1.28;
-        font-weight: 750;
+        line-height: 1.3;
+        font-weight: 500;
       }
 
-      .amount-cell {
-        justify-items: end;
-        text-align: right;
-        font: 950 18px/1 Georgia, serif;
-      }
-
-      .amount-cell small {
+      .stay-cell b {
         display: block;
+        font: 600 14.5px/1.12 var(--sans);
+        overflow-wrap: anywhere;
+      }
+
+      .schengen-tag {
+        display: inline-block;
         margin-top: 7px;
-        color: var(--muted);
-        font: 850 10px/1 "Avenir Next", sans-serif;
+        font-family: var(--mono);
+        font-size: 9.5px;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        color: var(--blue);
+        border: 1px solid var(--blue);
+        padding: 1px 5px;
       }
 
       .status-pill {
         width: fit-content;
         border: 2px solid var(--line);
-        padding: 6px 8px;
+        padding: 5px 8px;
         color: var(--paper-2);
         background: var(--blue);
+        font-family: var(--mono);
         font-size: 10px;
-        font-weight: 950;
-        letter-spacing: 0.1em;
+        font-weight: 500;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
-      .status-pill.hosted { background: var(--green); color: var(--ink); }
-      .status-pill.candidate { background: transparent; color: var(--ink); }
-      .status-pill.planned { background: var(--yellow); color: var(--ink); }
+      .status-pill.hosted { background: var(--green); }
+      .status-pill.candidate { background: transparent; color: var(--ink); border-style: dashed; }
+      .status-pill.planned { background: var(--gold); color: var(--ink); }
 
-      .dashboard {
-        grid-column: 3 / 4;
-        grid-row: 2 / 4;
-        background: var(--paper);
-        display: grid;
-        grid-template-rows: 300px auto auto auto auto;
+      .status-cell small {
+        display: block;
+        margin-top: 7px;
+        color: var(--muted);
+        font: 400 10px/1.2 var(--mono);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
       }
 
+      .amount-cell {
+        justify-items: end;
+        text-align: right;
+        font: 500 18px/1 var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .amount-cell.muted { color: var(--muted); font-size: 13px; }
+
+      .amount-cell small {
+        display: block;
+        margin-top: 7px;
+        color: var(--muted);
+        font: 400 9.5px/1 var(--mono);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .schedule-foot {
+        border-top: 2px solid var(--line);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 15px 22px;
+        background: rgb(20 18 13 / 0.04);
+      }
+
+      .schedule-foot span {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .schedule-foot b {
+        font: 500 24px/1 var(--mono);
+        color: var(--red);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ---------------- dashboard ---------------- */
+      .dashboard {
+        grid-column: 3;
+        grid-row: 2;
+        background: var(--paper);
+        display: grid;
+        grid-template-rows: 268px auto auto auto;
+        min-width: 0;
+      }
+
+      .block {
+        border-bottom: 2px solid var(--line);
+        padding: 18px 20px;
+      }
+
+      .block-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .block-head h3 {
+        margin: 0;
+        font: 900 21px/0.95 var(--serif);
+        letter-spacing: -0.01em;
+      }
+
+      .block-head span {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      /* map */
       .map-wrap {
         position: relative;
         border-bottom: 2px solid var(--line);
@@ -367,85 +519,188 @@
       #map {
         position: absolute;
         inset: 0;
-        filter: saturate(0.58) contrast(1.08) brightness(0.98);
+        filter: saturate(0.55) contrast(1.08) brightness(0.99);
       }
 
-      .leaflet-container { background: var(--paper); }
+      .leaflet-container { background: var(--paper); font-family: var(--mono); }
       .leaflet-control-attribution { display: none; }
 
       .map-label {
         position: absolute;
-        left: 16px;
-        bottom: 16px;
+        left: 14px;
+        bottom: 14px;
         z-index: 500;
         border: 2px solid var(--line);
-        background: rgb(255 250 240 / 0.9);
-        padding: 9px 11px;
-        font-size: 11px;
-        font-weight: 950;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-
-      .money-board {
-        border-bottom: 2px solid var(--line);
-        padding: 18px;
-      }
-
-      .money-total {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: end;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-
-      .money-total small,
-      .money-row small,
-      .signal small,
-      .axis-row small,
-      .expense-row small {
-        display: block;
-        color: var(--muted);
-        font-size: 10px;
-        font-weight: 950;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
-
-      .money-total b {
-        display: block;
-        margin-top: 6px;
-        font: 950 clamp(36px, 4.5vw, 58px)/0.9 Georgia, serif;
-      }
-
-      .money-total em {
-        color: var(--red);
-        font: 950 32px/0.9 Georgia, serif;
-        font-style: normal;
-        white-space: nowrap;
-      }
-
-      .money-row {
-        display: grid;
-        grid-template-columns: 86px minmax(0, 1fr) 86px;
-        gap: 10px;
-        align-items: center;
-        min-height: 43px;
-        border-top: 1px solid var(--line);
-        padding: 9px 0;
-      }
-
-      .money-row b {
-        font-size: 13px;
-        font-weight: 950;
+        background: rgb(251 246 234 / 0.92);
+        padding: 8px 11px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        font-weight: 500;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
-      .bar {
-        height: 14px;
+      .map-pos {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        z-index: 500;
         border: 2px solid var(--line);
+        background: var(--ink);
+        color: var(--paper-2);
+        padding: 7px 10px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      /* schengen meter */
+      .meter {
+        height: 22px;
+        border: 2px solid var(--line);
+        background: var(--paper-2);
+        display: flex;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .meter span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--blue);
+        transition: width 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      .meter.schengen span { background: repeating-linear-gradient(45deg, var(--blue) 0 6px, #2a5cd8 6px 12px); }
+
+      .meter-foot {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.04em;
+      }
+
+      .meter-foot b { color: var(--ink); }
+
+      .schengen-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        margin-top: 15px;
+        border: 1px solid var(--line);
+      }
+
+      .schengen-grid div {
+        padding: 9px 11px;
+        border-left: 1px solid var(--line);
+      }
+
+      .schengen-grid div:first-child { border-left: 0; }
+
+      .schengen-grid small {
+        display: block;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .schengen-grid b {
+        display: block;
+        margin-top: 5px;
+        font: 500 17px/1 var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* budget */
+      .budget-top {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .budget-top small {
+        display: block;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .budget-top b {
+        display: block;
+        margin-top: 6px;
+        font: 900 clamp(30px, 3.4vw, 42px)/0.9 var(--serif);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .budget-top em {
+        font: 500 14px/1 var(--mono);
+        font-style: normal;
+        color: var(--red);
+        white-space: nowrap;
+      }
+
+      .budget-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        margin-top: 15px;
+        border: 1px solid var(--line);
+      }
+
+      .budget-stats div {
+        padding: 9px 10px;
+        border-left: 1px solid var(--line);
+      }
+
+      .budget-stats div:first-child { border-left: 0; }
+
+      .budget-stats small {
+        display: block;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+
+      .budget-stats b {
+        display: block;
+        margin-top: 5px;
+        font: 500 14px/1.1 var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* category bars */
+      .cat-row {
+        display: grid;
+        grid-template-columns: 64px minmax(0, 1fr) 78px;
+        gap: 11px;
+        align-items: center;
+        min-height: 38px;
+        border-top: 1px solid var(--faint);
+        padding: 7px 0;
+      }
+
+      .cat-row:first-of-type { border-top: 0; }
+
+      .cat-row b {
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .bar {
+        height: 13px;
+        border: 1.5px solid var(--line);
         background: var(--paper-2);
         overflow: hidden;
       }
@@ -454,95 +709,209 @@
         display: block;
         width: 0;
         height: 100%;
-        background: var(--blue);
+        transition: width 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
       }
 
-      .money-row:nth-child(3n) .bar span { background: var(--red); }
-      .money-row:nth-child(4n) .bar span { background: var(--green); }
-
-      .money-row strong {
+      .cat-row strong {
         text-align: right;
-        font: 950 16px/1 Georgia, serif;
+        font: 500 14px/1 var(--mono);
+        font-variant-numeric: tabular-nums;
       }
 
-      .signal-board,
-      .axis-board,
-      .expense-board {
-        padding: 18px;
-        border-bottom: 2px solid var(--line);
-      }
-
-      .expense-board {
-        border-bottom: 0;
-      }
-
-      .signal-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      /* ---------------- ops footer ---------------- */
+      .ops {
+        grid-column: 2 / 4;
+        grid-row: 3;
         border-top: 2px solid var(--line);
-        border-left: 2px solid var(--line);
-      }
-
-      .signal {
-        min-height: 96px;
-        padding: 12px;
-        border-right: 2px solid var(--line);
-        border-bottom: 2px solid var(--line);
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 0.78fr);
         background: var(--paper-2);
       }
 
-      .signal b {
-        display: block;
-        margin-top: 7px;
-        font: 950 24px/0.95 Georgia, serif;
-        overflow-wrap: anywhere;
+      .ops > section {
+        border-left: 2px solid var(--line);
+        padding: 18px 20px 20px;
+        min-width: 0;
       }
 
-      .signal span {
-        display: block;
-        margin-top: 8px;
+      .ops > section:first-child { border-left: 0; }
+
+      .ops h3 {
+        margin: 0 0 4px;
+        font: 900 20px/0.95 var(--serif);
+        letter-spacing: -0.01em;
+      }
+
+      .ops .ops-sub {
+        margin: 0 0 16px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
         color: var(--muted);
-        font-size: 11px;
-        font-weight: 750;
-        line-height: 1.35;
       }
 
-      .axis-row,
-      .expense-row {
+      /* axes */
+      .axis {
         display: grid;
-        grid-template-columns: 74px 1fr auto;
+        grid-template-columns: 30px 1fr;
+        gap: 12px;
+        padding: 11px 0;
+        border-top: 1px solid var(--faint);
+      }
+
+      .axis:first-of-type { border-top: 0; }
+
+      .axis i {
+        font: 900 20px/1 var(--serif);
+        font-style: normal;
+        color: var(--paper-2);
+        background: var(--ink);
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+      }
+
+      .axis.a1 i { background: var(--red); }
+      .axis.a2 i { background: var(--blue); }
+      .axis.a3 i { background: var(--green); }
+
+      .axis b {
+        display: block;
+        font: 700 14px/1.1 var(--sans);
+      }
+
+      .axis span {
+        display: block;
+        margin-top: 4px;
+        font-size: 11.5px;
+        line-height: 1.4;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .thread {
+        margin-top: 14px;
+        border-top: 2px solid var(--line);
+        padding-top: 12px;
+      }
+
+      .thread small {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--blue);
+      }
+
+      .thread p {
+        margin: 6px 0 0;
+        font-size: 12.5px;
+        line-height: 1.45;
+        font-weight: 500;
+      }
+
+      /* recent ledger */
+      .led-row {
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr) auto;
         gap: 10px;
         align-items: baseline;
-        border-top: 1px solid var(--line);
-        padding: 10px 0;
+        border-top: 1px solid var(--faint);
+        padding: 8px 0;
       }
 
-      .axis-row b,
-      .expense-row b {
-        display: block;
-        font-size: 14px;
+      .led-row:first-of-type { border-top: 0; }
+
+      .led-row .d {
+        font: 400 11px/1.2 var(--mono);
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .led-row .m {
+        font-size: 13px;
+        font-weight: 600;
         overflow-wrap: anywhere;
       }
 
-      .axis-row span,
-      .expense-row span {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 750;
-        line-height: 1.35;
+      .led-row .m em {
+        display: inline-block;
+        margin-left: 6px;
+        font-family: var(--mono);
+        font-size: 8.5px;
+        font-style: normal;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--red);
+        border: 1px solid var(--red);
+        padding: 0 4px;
+        vertical-align: 1px;
       }
 
-      .axis-row strong,
-      .expense-row strong {
-        font: 950 15px/1 Georgia, serif;
+      .led-row .m small {
+        display: block;
+        margin-top: 3px;
+        font-size: 10.5px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .led-row .a {
+        font: 500 14px/1 var(--mono);
+        font-variant-numeric: tabular-nums;
         white-space: nowrap;
       }
 
-      .axis-row.video strong { color: var(--red); }
-      .axis-row.app strong { color: var(--blue); }
-      .axis-row.workshop strong { color: #5b7600; }
+      /* traces */
+      .trace-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 10px;
+        border-top: 1px solid var(--faint);
+        padding: 10px 0;
+      }
 
-      @media (max-width: 1120px) {
+      .trace-row:first-of-type { border-top: 0; }
+
+      .trace-row b { font: 700 15px/1 var(--sans); }
+
+      .trace-row .dots {
+        display: flex;
+        gap: 3px;
+        margin-top: 6px;
+      }
+
+      .trace-row .dots i {
+        width: 6px;
+        height: 6px;
+        background: var(--green);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+      }
+
+      .trace-row strong {
+        font: 500 18px/1 var(--mono);
+        color: var(--green);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .trace-foot {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 2px solid var(--line);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      /* ---------------- responsive ---------------- */
+      @media (max-width: 1140px) {
         .ledger {
           width: 100%;
           display: block;
@@ -551,119 +920,67 @@
         }
 
         .spine {
-          min-height: 72px;
-          grid-template-columns: 1fr auto 1fr;
           grid-template-rows: auto;
+          grid-auto-flow: column;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 16px;
           border-right: 0;
           border-bottom: 2px solid var(--line);
-          padding: 0 14px;
         }
 
         .spine span,
-        .spine small {
-          writing-mode: initial;
-          justify-self: start;
-        }
+        .spine small,
+        .spine .pos { writing-mode: initial; }
 
-        .spine small { justify-self: end; }
-        .spine strong { transform: none; font-size: 42px; }
+        .spine strong { transform: none; font-size: 34px; padding: 6px 12px; }
 
-        .mast {
-          grid-template-columns: 1fr;
-        }
+        .mast { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
+        .launch-box { border-left: 0; border-top: 2px solid var(--line); }
+        .readouts { grid-column: 1; }
 
-        .launch-box {
-          border-left: 0;
-          border-top: 2px solid var(--line);
-          padding: 18px 22px;
-        }
+        .timeline, .dashboard { border-right: 0; }
+        .dashboard { border-top: 2px solid var(--line); grid-template-rows: 280px auto auto auto; }
 
-        .timeline,
-        .dashboard {
-          display: block;
-          min-height: auto;
-          border-right: 0;
-        }
-
-        .dashboard { border-top: 2px solid var(--line); }
-        .map-wrap { height: 300px; }
+        .ops { grid-template-columns: 1fr; }
+        .ops > section { border-left: 0; border-top: 2px solid var(--line); }
+        .ops > section:first-child { border-top: 0; }
       }
 
       @media (max-width: 720px) {
-        .title { padding: 22px 16px; }
-        h1 { font-size: clamp(40px, 14vw, 64px); }
+        .title { padding: 22px 16px 14px; }
         .subline { width: 100%; }
-        .mast::after {
-          right: -132px;
-          top: -42px;
-          width: 240px;
-          height: 240px;
-          opacity: 0.7;
-        }
+        .mast::after { opacity: 0.18; right: -120px; top: 20px; }
 
-        .section-head {
-          grid-template-columns: 1fr;
-          align-items: start;
-        }
+        .readouts { grid-auto-flow: row; grid-auto-columns: initial; }
+        .readout { border-left: 0; border-top: 1px solid rgb(251 246 234 / 0.16); }
+        .readout:first-child { border-top: 0; }
 
+        .section-head { grid-template-columns: 1fr; align-items: start; }
         .stamp { width: fit-content; }
 
-        .schedule {
-          display: block;
-        }
-
+        .schedule { display: block; }
         .schedule .head { display: none; }
 
-        .schedule > div,
         .schedule-row > div {
           border-bottom: 0;
           min-height: auto;
-          padding: 5px 14px;
+          padding: 4px 16px;
         }
 
-        .schedule > .schedule-row {
+        .schedule-row {
           display: grid;
-          grid-template-columns: 76px minmax(0, 1fr);
+          grid-template-columns: 84px minmax(0, 1fr);
           border-bottom: 2px solid var(--line);
-          padding: 13px 0;
+          padding: 12px 0;
         }
 
-        .schedule-row .amount-cell {
-          grid-column: 2;
-          justify-items: start;
-          text-align: left;
-        }
+        .schedule-row .date-cell { grid-row: span 4; padding-top: 8px; }
+        .schedule-row .amount-cell { justify-items: start; text-align: left; }
 
-        .schedule-row .date-cell {
-          grid-row: span 4;
-        }
-
-        .schedule-row .stay-cell,
-        .schedule-row .status-cell {
-          grid-column: 2;
-        }
-
-        .money-total {
-          grid-template-columns: 1fr;
-        }
-
-        .money-total em {
-          font-size: 28px;
-        }
-
-        .signal-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .axis-row,
-        .expense-row {
-          grid-template-columns: 62px 1fr;
-        }
-
-        .axis-row strong,
-        .expense-row strong {
-          grid-column: 2;
-        }
+        .budget-stats, .schengen-grid { grid-template-columns: 1fr 1fr; }
+        .budget-stats div:nth-child(3), .schengen-grid div:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
       }
     </style>
   </head>
@@ -672,144 +989,168 @@
       <aside class="spine">
         <span>departure ledger</span>
         <strong id="daysLeft">D--</strong>
+        <span class="pos" id="posLabel">현재 위치 --</span>
         <small id="syncLabel">sync --</small>
       </aside>
 
       <header class="mast">
         <div class="title">
-          <p class="eyebrow">Travel Ledger Studio</p>
-          <h1>일정과 돈이<br />같은 판에<br />보이게</h1>
+          <p class="eyebrow">Travel Operations Ledger</p>
+          <h1>일정과 돈을<br />한 판에서<br />운영한다</h1>
           <p class="subline">
-            지도 포스터보다 지금 필요한 것은 읽히는 장부입니다.
-            도시별 체류, 숙소, 예약 금액, 분야별 합계를 한 화면에서 비교합니다.
+            지도 포스터가 아니라 매일 다시 붙일 수 있는 운영판입니다.
+            도시 이동·숙소·예약 금액·분야별 지출·Schengen 잔여를 한 화면에서 비교합니다.
           </p>
         </div>
         <div class="launch-box">
           <small>launch</small>
-          <b>2026.07.08</b>
+          <b id="launchDate">2026.07.08</b>
           <em id="launchLine">출발 전 일정과 지출을 동기화하는 중</em>
         </div>
+        <div class="readouts" id="readouts"></div>
       </header>
 
       <section class="timeline" aria-label="여행 일정 장부">
         <div class="section-head">
           <div>
             <h2>Itinerary Ledger</h2>
-            <p>도시 이동, 숙소, 예약 금액을 날짜 순서대로 봅니다.</p>
+            <p>도시 이동·숙소·예약 금액을 날짜 순서대로. 숙소는 행마다 한 번만 표기합니다.</p>
           </div>
           <span class="stamp" id="scheduleStamp">-- stops</span>
         </div>
         <div class="schedule" id="schedule"></div>
+        <div class="schedule-foot">
+          <span>booked stays subtotal</span>
+          <b id="bookedSubtotal">--</b>
+        </div>
       </section>
 
-      <aside class="dashboard" aria-label="금액과 지도">
+      <aside class="dashboard" aria-label="지도·예산·지출">
         <div class="map-wrap">
           <div id="map"></div>
+          <div class="map-pos" id="mapPos">현재 위치 --</div>
           <div class="map-label" id="mapLabel">route map</div>
         </div>
 
-        <section class="money-board">
-          <div class="money-total">
+        <section class="block">
+          <div class="block-head">
+            <h3>Schengen 잔여</h3>
+            <span id="schengenWindow">180-day window</span>
+          </div>
+          <div class="meter schengen"><span id="schengenBar"></span></div>
+          <div class="meter-foot">
+            <span>used <b id="schengenUsed">0</b> / 90</span>
+            <span>entry <b id="schengenEntry">--</b></span>
+          </div>
+          <div class="schengen-grid">
+            <div><small>remaining</small><b id="schengenRemain">-- d</b></div>
+            <div><small>limit</small><b>90 d</b></div>
+            <div><small>status</small><b id="schengenStatus">--</b></div>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="block-head">
+            <h3>예산 운영</h3>
+            <span id="budgetMode">travel mode</span>
+          </div>
+          <div class="budget-top">
             <div>
               <small>reserved / paid</small>
               <b id="reservedTotal">--</b>
             </div>
             <em id="reservedPct">--</em>
           </div>
-          <div id="moneyRows"></div>
-        </section>
-
-        <section class="signal-board">
-          <div class="section-head" style="padding: 0 0 13px; min-height: auto; border-bottom: 0;">
-            <div>
-              <h2 style="font-size: 30px;">Trip Signals</h2>
-              <p>기존에 보던 현재 위치, 쉥겐, 예산 기준을 복구했습니다.</p>
-            </div>
+          <div class="meter"><span id="budgetBar"></span></div>
+          <div class="meter-foot">
+            <span>target band</span>
+            <span><b id="targetBand">--</b></span>
           </div>
-          <div class="signal-grid">
-            <div class="signal">
-              <small>current</small>
-              <b id="currentLocation">--</b>
-              <span>정확한 주소 없이 지역 단위만 표시합니다.</span>
-            </div>
-            <div class="signal">
-              <small>schengen</small>
-              <b id="schengenDays">--</b>
-              <span id="schengenLine">--</span>
-            </div>
-            <div class="signal">
-              <small>budget target</small>
-              <b id="budgetTarget">--</b>
-              <span id="budgetLine">--</span>
-            </div>
-            <div class="signal">
-              <small>local traces</small>
-              <b id="traceCount">--</b>
-              <span id="traceLine">--</span>
-            </div>
+          <div class="budget-stats">
+            <div><small>reserve burn</small><b id="reserveBurn">--</b></div>
+            <div><small>daily min</small><b id="dailyMin">--</b></div>
+            <div><small>daily max</small><b id="dailyMax">--</b></div>
           </div>
         </section>
 
-        <section class="axis-board">
-          <div class="section-head" style="padding: 0 0 13px; min-height: auto; border-bottom: 0;">
-            <div>
-              <h2 style="font-size: 30px;">3 Work Axes</h2>
-              <p>여행이 단순 이동이 아니라 기록, 앱, 워크샵으로 이어지는 축입니다.</p>
-            </div>
+        <section class="block" style="border-bottom: 0;">
+          <div class="block-head">
+            <h3>분야별 지출</h3>
+            <span id="catTotal">--</span>
           </div>
-          <div class="axis-row video">
-            <small>video</small>
-            <div><b>기록을 영상 기억으로 전환</b><span>도시별 체류와 감정 장면을 촬영 후보로 남깁니다.</span></div>
-            <strong>memory</strong>
-          </div>
-          <div class="axis-row app">
-            <small>app</small>
-            <div><b>여행 중 마찰을 제품 후보로 수집</b><span>숙소, 이동, 결제, 사람 만남에서 앱 아이디어를 뽑습니다.</span></div>
-            <strong>insight</strong>
-          </div>
-          <div class="axis-row workshop">
-            <small>workshop</small>
-            <div><b>만나는 사람에게 AI 미니 워크샵</b><span>현지 대화와 도움 요청을 작은 세션으로 연결합니다.</span></div>
-            <strong>people</strong>
-          </div>
-        </section>
-
-        <section class="expense-board">
-          <div class="section-head" style="padding: 0 0 13px; min-height: auto; border-bottom: 0;">
-            <div>
-              <h2 style="font-size: 30px;">Recent Spend</h2>
-              <p>예약금 외에 실제 결제된 여행 지출을 따로 봅니다.</p>
-            </div>
-          </div>
-          <div id="expenseRows"></div>
+          <div id="catRows"></div>
         </section>
       </aside>
+
+      <section class="ops" aria-label="운영 보드">
+        <section>
+          <h3>여행 3축</h3>
+          <p class="ops-sub">video · app · ai workshop</p>
+          <div id="axes"></div>
+          <div class="thread">
+            <small id="threadLabel">today's thread</small>
+            <p id="threadText">--</p>
+          </div>
+        </section>
+
+        <section>
+          <h3>최근 지출</h3>
+          <p class="ops-sub" id="ledgerSub">recent ledger · travel tagged</p>
+          <div id="ledger"></div>
+        </section>
+
+        <section>
+          <h3>Local Traces</h3>
+          <p class="ops-sub">출발 전 활동 좌표</p>
+          <div id="traces"></div>
+          <div class="trace-foot" id="traceFoot">--</div>
+        </section>
+      </section>
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
+
       const categoryNames = {
         stay: "숙소",
         flight: "항공",
         transit: "이동",
+        transport: "교통",
         food: "식비",
+        groceries: "장보기",
+        cafe: "카페",
         tool: "도구",
         other: "기타"
       };
-
-      const colors = ["#1657d8", "#e6381f", "#a6d914", "#f5c84b", "#7054d6"];
-
-      const won = (value) => new Intl.NumberFormat("ko-KR").format(Math.round(value || 0));
-      const shortWon = (value) => {
-        const number = Number(value || 0);
-        if (!number) return "미정";
-        if (number >= 100000000) return `${(number / 100000000).toFixed(1)}억`;
-        if (number >= 10000) return `${Math.round(number / 10000)}만`;
-        return won(number);
+      const catColors = {
+        stay: "#1a4ccb",
+        flight: "#5b46b8",
+        transit: "#5b46b8",
+        transport: "#5b46b8",
+        food: "#d4341c",
+        groceries: "#5d8b2b",
+        cafe: "#d99a2b",
+        tool: "#6c6557",
+        other: "#6c6557"
       };
 
-      const daysBetween = (start, end) => {
+      const axesData = [
+        { cls: "a1", mark: "1", name: "영상 / Video", text: "여행 관찰을 유튜브 소비 언어로. 검색량이 아니라 플랫폼 언어에서 제목을 연다." },
+        { cls: "a2", mark: "2", name: "앱 / App", text: "여행 중 앱을 만들고 화면 변화로 보여주기. 관찰 → 인사이트 → 반영 루프." },
+        { cls: "a3", mark: "3", name: "AI 워크샵 / AI Workshop", text: "사람 판단 + AI 실행을 한 판에. 자동화는 승인 직전까지, 판단은 한 장 카드로." }
+      ];
+
+      const won = (v) => new Intl.NumberFormat("ko-KR").format(Math.round(v || 0));
+      const manWon = (v) => {
+        const n = Number(v || 0);
+        if (!n) return "미정";
+        if (n >= 100000000) return `${(n / 100000000).toFixed(1)}억`;
+        if (n >= 10000) return `${won(Math.round(n / 10000))}만`;
+        return won(n);
+      };
+
+      const nights = (start, end) => {
         if (!start || !end) return "";
         const diff = Math.max(1, Math.round((new Date(end) - new Date(start)) / 86400000));
         return `${diff}박`;
@@ -819,187 +1160,235 @@
         if (!start) return "TBD";
         const s = start.slice(5).replace("-", ".");
         const e = end ? end.slice(5).replace("-", ".") : "";
-        return e ? `${s}-${e}` : s;
+        return e ? `${s}–${e}` : s;
       };
 
-      function setLaunch(launch) {
-        const today = new Date();
+      // privacy: collapse merchant codes / transaction hashes, never expose addresses
+      const maskMerchant = (raw) => {
+        if (!raw) return "지출";
+        if (/airbnb/i.test(raw)) return "Airbnb 숙소";
+        let s = raw.split(" - ")[0].split("*")[0];
+        s = s.replace(/[_]+/g, " ").replace(/\([주유사]\)/g, "").replace(/\s+/g, " ").trim();
+        s = s.replace(/\b[A-Z0-9]{8,}\b/g, "").trim();
+        return s || "지출";
+      };
+
+      function setLaunch(launch, currentDate) {
+        const base = currentDate ? new Date(`${currentDate}T00:00:00+09:00`) : new Date();
         const target = new Date(`${launch}T00:00:00+09:00`);
-        const days = Math.ceil((target - today) / 86400000);
+        const days = Math.ceil((target - base) / 86400000);
         $("daysLeft").textContent = days >= 0 ? `D-${days}` : `D+${Math.abs(days)}`;
-        $("launchLine").textContent = `${launch} 출발 / D-${Math.max(0, days)} 기준`;
+        $("launchDate").textContent = launch.replace(/-/g, ".");
+        $("launchLine").textContent = `${launch} 출발 · D-${Math.max(0, days)} 기준`;
+        return days;
       }
 
-      function routeRows(route) {
-        return (route || []).map((stop) => ({
-          city: stop.city,
-          country: stop.country,
-          status: stop.status || "planned",
-          startDate: stop.startDate,
-          endDate: stop.endDate,
-          lodging: stop.lodging || (stop.status === "candidate" ? "숙소 후보 필요" : "숙소 미정"),
-          source: stop.source || stop.note || "",
-          amount: stop.amount,
-          schengen: stop.schengen,
-          lat: stop.lat,
-          lng: stop.lng
-        }));
+      function renderReadouts(data, dDay) {
+        const b = data.budget || {};
+        const sc = data.schengen || {};
+        const items = [
+          { label: "departure", value: dDay >= 0 ? `D-${dDay}` : `D+${Math.abs(dDay)}`, unit: data.launch },
+          { label: "current position", value: (data.current && data.current.location) || "--", unit: (data.current && data.current.date) || "" },
+          { label: "schengen left", value: `${sc.remainingDays != null ? sc.remainingDays : "--"}`, unit: `/ ${sc.limitDays || 90} d`, accent: true },
+          { label: "budget target", value: `${manWon(b.targetMinKrw)}–${manWon(b.targetMaxKrw)}`, unit: "krw" },
+          { label: "route stops", value: `${(data.route || []).length}`, unit: "cities" }
+        ];
+        $("readouts").innerHTML = items.map((it) => `
+          <div class="readout${it.accent ? " accent" : ""}">
+            <small>${it.label}</small>
+            <b>${it.value}${it.unit ? `<span class="unit">${it.unit}</span>` : ""}</b>
+          </div>
+        `).join("");
       }
 
-      function renderSchedule(route) {
-        const rows = routeRows(route);
+      function renderSchedule(route, currentDate) {
+        const rows = route || [];
         $("scheduleStamp").textContent = `${rows.length} stops`;
+        const today = currentDate ? new Date(`${currentDate}T00:00:00+09:00`) : new Date();
+        const nextIdx = rows.findIndex((r) => r.startDate && new Date(r.startDate) >= today);
+
         const header = `
           <div class="head">date</div>
           <div class="head">city</div>
-          <div class="head">stay / note</div>
+          <div class="head">stay · note</div>
           <div class="head">status</div>
           <div class="head">amount</div>
         `;
-        const body = rows.map((row) => `
-          <div class="schedule-row">
-            <div class="date-cell">${dateLabel(row.startDate, row.endDate)}<small>${daysBetween(row.startDate, row.endDate)}</small></div>
-            <div class="city-cell"><b>${row.city}</b><small>${row.country}${row.schengen ? " / Schengen" : ""}</small></div>
-            <div class="stay-cell"><b>${row.lodging}</b><small>${row.source || "source pending"}</small></div>
-            <div class="status-cell"><span class="status-pill ${row.status}">${row.status}</span><small>${row.startDate ? "dated" : "undated"}</small></div>
-            <div class="amount-cell">${row.amount ? `${shortWon(row.amount)}원` : "미정"}<small>${row.amount ? "booked" : "needs check"}</small></div>
-          </div>
-        `).join("");
+        const body = rows.map((row, i) => {
+          const status = row.status || "planned";
+          const lodging = row.lodging || (status === "candidate" ? "숙소 후보 검토" : "숙소 미정");
+          const amount = row.amount;
+          return `
+          <div class="schedule-row${i === nextIdx ? " next" : ""}">
+            <div class="date-cell">${dateLabel(row.startDate, row.endDate)}<small>${nights(row.startDate, row.endDate) || "undated"}</small></div>
+            <div class="city-cell"><b>${row.city}</b><small>${row.country || ""}</small>${row.schengen ? '<span class="schengen-tag">schengen</span>' : ""}</div>
+            <div class="stay-cell"><b>${lodging}</b><small>${row.source || row.note || "source pending"}</small></div>
+            <div class="status-cell"><span class="status-pill ${status}">${status}</span><small>${row.startDate ? "dated" : "tbd"}</small></div>
+            <div class="amount-cell${amount ? "" : " muted"}">${amount ? `${manWon(amount)}원` : "미정"}<small>${amount ? "booked" : "needs check"}</small></div>
+          </div>`;
+        }).join("");
         $("schedule").innerHTML = header + body;
+
+        const subtotal = rows.reduce((s, r) => s + Number(r.amount || 0), 0);
+        $("bookedSubtotal").textContent = `${won(subtotal)}원`;
       }
 
-      function buildMoneyRows(data) {
-        const totals = { ...(data.travelCategoryTotals || {}) };
-        (data.bookedCosts || []).forEach((item) => {
-          if (!item.amount) return;
-          totals[item.category || "other"] = (totals[item.category || "other"] || 0) + Number(item.amount);
+      function renderSchengen(data) {
+        const sc = data.schengen || {};
+        const used = Number(sc.usedDays || 0);
+        const limit = Number(sc.limitDays || 90);
+        requestAnimationFrame(() => { $("schengenBar").style.width = `${Math.min(100, (used / limit) * 100)}%`; });
+        $("schengenUsed").textContent = used;
+        $("schengenEntry").textContent = sc.entryDate ? sc.entryDate.slice(5).replace("-", ".") : "--";
+        $("schengenRemain").textContent = `${sc.remainingDays != null ? sc.remainingDays : "--"} d`;
+        $("schengenStatus").textContent = sc.status || "--";
+        $("schengenWindow").textContent = sc.window ? `${sc.window} window` : "180-day window";
+      }
+
+      function renderBudget(data) {
+        const b = data.budget || {};
+        const booked = (data.bookedCosts || []).reduce((s, it) => s + Number(it.amount || 0), 0);
+        const paid = Number(b.travelLoggedKrw || b.loggedKrw || 0);
+        const reserved = paid + booked;
+        const targetMin = Number(b.targetMinKrw || 0);
+        const targetMax = Number(b.targetMaxKrw || 0);
+
+        $("reservedTotal").textContent = `${manWon(reserved)}원`;
+        const pct = targetMin ? (reserved / targetMin) * 100 : 0;
+        $("reservedPct").textContent = `${pct.toFixed(1)}% of min`;
+        $("budgetBar").style.background = "var(--red)";
+        requestAnimationFrame(() => { $("budgetBar").style.width = `${Math.min(100, pct)}%`; });
+        $("targetBand").textContent = `${manWon(targetMin)}–${manWon(targetMax)}원`;
+        $("reserveBurn").textContent = `${manWon(b.reserveBurnKrw)}원`;
+        $("dailyMin").textContent = `${manWon(b.dailyBudgetMinKrw)}원`;
+        $("dailyMax").textContent = `${manWon(b.dailyBudgetMaxKrw)}원`;
+        $("budgetMode").textContent = `${b.mode || "travel"} mode`;
+      }
+
+      function renderCategories(data) {
+        const totals = {};
+        (data.expenses || []).forEach((e) => {
+          const key = e.category || "other";
+          totals[key] = (totals[key] || 0) + Number(e.amount || 0);
         });
-        const rows = Object.entries(totals)
-          .filter(([, value]) => value > 0)
-          .sort((a, b) => b[1] - a[1]);
-        const max = Math.max(...rows.map(([, value]) => value), 1);
-        return rows.map(([key, value], index) => ({ key, value, pct: Math.round((value / max) * 100), color: colors[index % colors.length] }));
+        const rows = Object.entries(totals).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+        const sum = rows.reduce((s, [, v]) => s + v, 0);
+        const max = Math.max(...rows.map(([, v]) => v), 1);
+        $("catTotal").textContent = `${manWon(sum)}원`;
+        $("catRows").innerHTML = rows.map(([key, value]) => `
+          <div class="cat-row">
+            <b>${categoryNames[key] || key}</b>
+            <div class="bar"><span data-w="${Math.round((value / max) * 100)}" style="background:${catColors[key] || "#6c6557"};"></span></div>
+            <strong>${manWon(value)}원</strong>
+          </div>
+        `).join("");
+        requestAnimationFrame(() => {
+          document.querySelectorAll(".bar span[data-w]").forEach((el) => { el.style.width = `${el.dataset.w}%`; });
+        });
       }
 
-      function renderMoney(data) {
-        const budget = data.budget || {};
-        const booked = (data.bookedCosts || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
-        const paid = Number(budget.travelLoggedKrw || budget.loggedKrw || 0);
-        const total = paid + booked;
-        const pct = budget.targetMinKrw ? (total / Number(budget.targetMinKrw)) * 100 : Number(budget.reservedPctMin || 0);
-        $("reservedTotal").textContent = `${shortWon(total)}원`;
-        $("reservedPct").textContent = `${pct.toFixed(1)}%`;
+      function renderAxes(data) {
+        $("axes").innerHTML = axesData.map((a) => `
+          <div class="axis ${a.cls}">
+            <i>${a.mark}</i>
+            <div><b>${a.name}</b><span>${a.text}</span></div>
+          </div>
+        `).join("");
+        const refs = (data.reflections || []).filter((r) => r.intent);
+        const latest = refs[refs.length - 1];
+        if (latest) {
+          $("threadLabel").textContent = `thread · ${latest.date}`;
+          $("threadText").textContent = `${latest.title.replace(/^실제 흐름 \/ |^내일 의도 \/ /, "")} — ${latest.intent}`;
+        }
+      }
 
-        const rows = buildMoneyRows(data);
-        $("moneyRows").innerHTML = rows.map((row) => `
-          <div class="money-row">
-            <b>${categoryNames[row.key] || row.key}</b>
-            <div class="bar"><span style="width:${row.pct}%; background:${row.color};"></span></div>
-            <strong>${shortWon(row.value)}원</strong>
+      function renderLedger(data) {
+        const travel = (data.travelExpenses || []).map((e) => ({ ...e, travel: true }));
+        const others = (data.expenses || []).filter((e) => !e.travel);
+        const merged = [...travel, ...others]
+          .sort((a, b) => `${b.date} ${b.time || ""}`.localeCompare(`${a.date} ${a.time || ""}`))
+          .slice(0, 7);
+        $("ledger").innerHTML = merged.map((e) => `
+          <div class="led-row">
+            <span class="d">${(e.date || "").slice(5).replace("-", ".")}</span>
+            <span class="m">${maskMerchant(e.merchant)}${e.travel ? '<em>travel</em>' : ""}<small>${e.location || ""} · ${categoryNames[e.category] || e.category || ""}</small></span>
+            <span class="a">${won(e.amount)}</span>
           </div>
         `).join("");
       }
 
-      function renderSignals(data) {
-        const budget = data.budget || {};
-        const schengen = data.schengen || {};
-        const current = data.current || {};
-        const locations = data.locations || [];
-        $("currentLocation").textContent = current.location || "미정";
-        $("schengenDays").textContent = `${schengen.remainingDays ?? "--"}일`;
-        $("schengenLine").textContent = `${schengen.status || "status pending"} / entry ${schengen.entryDate || "--"}`;
-        $("budgetTarget").textContent = `${shortWon(budget.targetMinKrw)}-${shortWon(budget.targetMaxKrw)}원`;
-        const booked = (data.bookedCosts || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
-        const paid = Number(budget.travelLoggedKrw || budget.loggedKrw || 0);
-        const total = paid + booked;
-        const pct = budget.targetMinKrw ? (total / Number(budget.targetMinKrw)) * 100 : Number(budget.reservedPctMin || 0);
-        $("budgetLine").textContent = `reserved ${pct.toFixed(1)}% / daily ${shortWon(budget.dailyBudgetMinKrw)}-${shortWon(budget.dailyBudgetMaxKrw)}원`;
-        $("traceCount").textContent = `${locations.length}곳`;
-        $("traceLine").textContent = locations.length
-          ? locations.map((location) => location.name).join(" / ")
-          : "아직 공개 가능한 지역 흔적이 없습니다.";
-      }
-
-      function renderExpenses(data) {
-        const expenses = (data.travelExpenses || data.expenses || []).slice(0, 6);
-        $("expenseRows").innerHTML = expenses.length
-          ? expenses.map((expense) => `
-            <div class="expense-row">
-              <small>${String(expense.date || "").slice(5).replace("-", ".") || "--"}</small>
-              <div>
-                <b>${expense.merchant || expense.title || "travel spend"}</b>
-                <span>${categoryNames[expense.category] || expense.category || "기타"} / ${expense.location || "지역 미상"}</span>
-              </div>
-              <strong>${shortWon(expense.amount)}원</strong>
-            </div>
-          `).join("")
-          : `<div class="expense-row"><small>empty</small><div><b>최근 여행 지출 없음</b><span>예약금 외 결제가 생기면 여기에 표시됩니다.</span></div><strong>0원</strong></div>`;
+      function renderTraces(data) {
+        const locs = (data.locations || []).slice().sort((a, b) => b.count - a.count);
+        const max = Math.max(...locs.map((l) => l.count), 1);
+        $("traces").innerHTML = locs.map((l) => {
+          const dots = Array.from({ length: Math.min(8, Math.round((l.count / max) * 8) || 1) }, () => "<i></i>").join("");
+          return `
+          <div class="trace-row">
+            <div><b>${l.name}</b><div class="dots">${dots}</div></div>
+            <strong>${l.count}</strong>
+          </div>`;
+        }).join("");
+        const sum = locs.reduce((s, l) => s + Number(l.count || 0), 0);
+        $("traceFoot").textContent = `${locs.length} cities · ${sum} traces · synced ${String(data.generatedAt || "").slice(0, 10)}`;
       }
 
       function renderMap(data) {
         const route = (data.route || []).filter((p) => p.lat && p.lng);
         const logged = (data.locations || []).filter((p) => p.lat && p.lng);
-        const map = L.map("map", {
-          zoomControl: false,
-          scrollWheelZoom: false,
-          attributionControl: false
-        });
-
+        const map = L.map("map", { zoomControl: false, scrollWheelZoom: false, attributionControl: false });
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(map);
 
         if (route.length) {
-          const routeLatLngs = route.map((p) => [p.lat, p.lng]);
-          L.polyline(routeLatLngs, {
-            color: "#e6381f",
-            weight: 4,
-            opacity: 0.88
-          }).addTo(map);
-
-          route.forEach((point, index) => {
-            L.circleMarker([point.lat, point.lng], {
-              radius: index === 0 ? 8 : 5,
-              color: "#15130f",
-              fillColor: point.status === "candidate" ? "#f5c84b" : "#1657d8",
+          L.polyline(route.map((p) => [p.lat, p.lng]), { color: "#d4341c", weight: 3.5, opacity: 0.85 }).addTo(map);
+          route.forEach((p, i) => {
+            L.circleMarker([p.lat, p.lng], {
+              radius: i === 0 ? 8 : 5,
+              color: "#14120d",
+              fillColor: p.status === "candidate" ? "#d99a2b" : "#1a4ccb",
               fillOpacity: 0.95,
               weight: 2
-            })
-              .bindTooltip(`${point.city} / ${point.status}`, { direction: "top" })
-              .addTo(map);
+            }).bindTooltip(`${p.city} · ${p.status}`, { direction: "top" }).addTo(map);
           });
         }
-
-        logged.forEach((point) => {
-          L.circleMarker([point.lat, point.lng], {
-            radius: Math.min(10, 4 + Number(point.count || 1)),
-            color: "#15130f",
-            fillColor: "#a6d914",
-            fillOpacity: 0.58,
+        logged.forEach((p) => {
+          L.circleMarker([p.lat, p.lng], {
+            radius: Math.min(11, 4 + Number(p.count || 1)),
+            color: "#14120d",
+            fillColor: "#5d8b2b",
+            fillOpacity: 0.55,
             weight: 1.5
-          })
-            .bindTooltip(`${point.name} / ${point.count}`, { direction: "top" })
-            .addTo(map);
+          }).bindTooltip(`${p.name} · ${p.count}`, { direction: "top" }).addTo(map);
         });
 
         const all = [...route, ...logged].map((p) => [p.lat, p.lng]);
-        if (all.length) map.fitBounds(all, { padding: [34, 34] });
+        if (all.length) map.fitBounds(all, { padding: [36, 36] });
         else map.setView([48.8566, 2.3522], 4);
-        $("mapLabel").textContent = `${route.length} route points / ${logged.length} local traces`;
+        $("mapLabel").textContent = `${route.length} route · ${logged.length} local traces`;
       }
 
       fetch("travel-data.json", { cache: "no-store" })
-        .then((response) => response.json())
+        .then((r) => r.json())
         .then((data) => {
-          setLaunch(data.launch || "2026-07-08");
+          const currentDate = data.current && data.current.date;
+          const dDay = setLaunch(data.launch || "2026-07-08", currentDate);
+          const pos = (data.current && data.current.location) || "--";
+          $("posLabel").textContent = `현재 위치 ${pos}`;
+          $("mapPos").textContent = `현재 위치 ${pos}`;
           $("syncLabel").textContent = `sync ${String(data.generatedAt || "").slice(5, 16).replace("T", " ")}`;
-          renderSchedule(data.route);
-          renderMoney(data);
-          renderSignals(data);
-          renderExpenses(data);
+
+          renderReadouts(data, dDay);
+          renderSchedule(data.route, currentDate);
+          renderSchengen(data);
+          renderBudget(data);
+          renderCategories(data);
+          renderAxes(data);
+          renderLedger(data);
+          renderTraces(data);
           renderMap(data);
         })
-        .catch((error) => {
+        .catch((err) => {
           $("syncLabel").textContent = "sync failed";
-          console.error(error);
+          console.error(err);
         });
     </script>
   </body>

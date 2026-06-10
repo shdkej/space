@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T23:28:41Z",
+  "generatedAt": "2026-06-10T23:36:35Z",
   "overall": {
     "state": "ok",
     "label": "Status, Travel Ops, Card News Library, Infinity, and Virtue are the active static apps",
@@ -10,35 +10,35 @@
       "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 127,
+      "latencyMs": 102,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 64,
+      "latencyMs": 62,
       "detail": "World travel planning board deployed as a separate static app"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 98,
+      "latencyMs": 65,
       "detail": "Growing public archive for photo insight card-news sets"
     },
     {
       "name": "Infinity",
       "url": "https://infinity.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 94,
+      "latencyMs": 52,
       "detail": "Intent dashboard for Infinity work queue and archive state"
     },
     {
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 76,
+      "latencyMs": 98,
       "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring"
     }
   ],
@@ -48,7 +48,7 @@
       "url": "https://status.aws.shdkej.com",
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
-      "updatedAt": "2026-06-10T23:28:41Z",
+      "updatedAt": "2026-06-10T23:36:34Z",
       "state": "ok"
     },
     {
@@ -56,7 +56,7 @@
       "url": "https://travel.aws.shdkej.com",
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
-      "updatedAt": "2026-06-10T23:28:41Z",
+      "updatedAt": "2026-06-10T23:36:34Z",
       "state": "ok"
     },
     {
@@ -64,7 +64,7 @@
       "url": "https://library.aws.shdkej.com",
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
-      "updatedAt": "2026-06-10T23:28:41Z",
+      "updatedAt": "2026-06-10T23:36:35Z",
       "state": "ok"
     },
     {
@@ -72,7 +72,7 @@
       "url": "https://infinity.aws.shdkej.com",
       "bucket": "static-infinity-aws-shdkej-com",
       "distribution": "E3JYGTLQKF0AXX",
-      "updatedAt": "2026-06-10T23:28:41Z",
+      "updatedAt": "2026-06-10T23:36:35Z",
       "state": "ok"
     },
     {
@@ -80,7 +80,7 @@
       "url": "https://virtue.aws.shdkej.com",
       "bucket": "static-virtue-aws-shdkej-com",
       "distribution": "EVCIL59LC6WJ6",
-      "updatedAt": "2026-06-10T23:28:41Z",
+      "updatedAt": "2026-06-10T23:36:35Z",
       "state": "ok"
     }
   ],
@@ -99,6 +99,21 @@
       "name": "Infinity intent local Claude router",
       "state": "warn",
       "detail": "Routes Infinity intents to local Claude; watch recent stopped-before-confirming failures"
+    },
+    {
+      "name": "Marketing agent growth review",
+      "state": "ok",
+      "detail": "Runs 07:00/19:00 KST growth review; routine signals stay internal"
+    },
+    {
+      "name": "Narae work loop",
+      "state": "warn",
+      "detail": "08:30 KST silent Naver work loop; watch git-status failure x2"
+    },
+    {
+      "name": "Narae 09:00 KST report",
+      "state": "ok",
+      "detail": "Visible Narae morning report; commerce actions remain approval-gated"
     },
     {
       "name": "Static deploy lane",

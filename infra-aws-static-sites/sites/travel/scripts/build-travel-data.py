@@ -249,6 +249,25 @@ TRAVEL_MERCHANT_WORDS = [
     "ita airways",
 ]
 
+TRAVEL_PAYMENT_OVERRIDES = [
+    {
+        "date": "2026-05-29",
+        "match": "한국정보통신",
+        "merchant": "Incheon Airport · Darakhyu",
+        "category": "stay",
+        "location": "Incheon Airport",
+        "note": "Mapped from 한국정보통신/SK네트웍스 payment",
+    },
+    {
+        "date": "2026-05-29",
+        "match": "하나투어",
+        "merchant": "Frankfurt · IntercityHotel",
+        "category": "stay",
+        "location": "Frankfurt",
+        "note": "Mapped from 하나투어/온라인 payment",
+    },
+]
+
 GEOCODE_OVERRIDES = {
     "대한민국, 서울특별시, 아차산로58가길 15, 05049": {"lat": 37.5374, "lng": 127.0832},
     "대한민국, 서울특별시, 구의동 590-7, 05049": {"lat": 37.5387, "lng": 127.0861},
@@ -327,6 +346,14 @@ def is_travel_expense(merchant, category, location):
     if location and "대한민국" not in location:
         return True
     return False
+
+
+def travel_payment_override(day, merchant):
+    lowered = (merchant or "").lower()
+    for override in TRAVEL_PAYMENT_OVERRIDES:
+        if override["date"] == day and override["match"].lower() in lowered:
+            return override
+    return None
 
 
 def clean_location(location):
@@ -481,27 +508,30 @@ def build(events, geocode_cache=None, geocode_enabled=True):
         if match:
             amount = int(match.group(1).replace(",", ""))
             merchant = match.group(2).strip()
-            category = category_for(merchant)
-            travel = is_travel_expense(merchant, category, location)
+            override = travel_payment_override(day, merchant)
+            display_merchant = override.get("merchant") if override else merchant
+            display_location = override.get("location") if override else public_location_label(location)
+            category = override.get("category") if override else category_for(merchant)
+            travel = True if override else is_travel_expense(merchant, category, location)
             expenses.append({
                 "id": event.get("id"),
                 "date": day,
                 "time": start_dt.strftime("%H:%M") if start_dt else "",
                 "amount": amount,
-                "merchant": merchant,
+                "merchant": display_merchant,
                 "category": category,
-                "location": public_location_label(location),
+                "location": display_location,
                 "travel": travel,
             })
             if category == "stay":
                 accommodations.append({
-                    "name": merchant,
-                    "city": public_location_label(location) or "Location pending",
+                    "name": display_merchant,
+                    "city": display_location or "Location pending",
                     "status": "paid",
                     "checkIn": None,
                     "checkOut": None,
                     "amount": amount,
-                    "note": "Calendar payment record; add dates later when booking details are logged",
+                    "note": override.get("note") if override else "Calendar payment record; add dates later when booking details are logged",
                 })
             if travel:
                 daily_total[day] += amount

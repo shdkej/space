@@ -58,6 +58,11 @@
       "detail": "Manual force run succeeded after cron prompt fix"
     },
     {
+      "name": "Infinity intent local Claude router",
+      "state": "warn",
+      "detail": "Routes Infinity intents to local Claude; watch recent stopped-before-confirming failures"
+    },
+    {
       "name": "Static deploy lane",
       "state": "ok",
       "detail": "Static apps are registered under infra-aws-static-sites/sites"

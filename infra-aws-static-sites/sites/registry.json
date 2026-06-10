@@ -59,8 +59,8 @@
     },
     {
       "name": "Infinity intent local Claude router",
-      "state": "warn",
-      "detail": "Routes Infinity intents to local Claude; watch recent stopped-before-confirming failures"
+      "state": "ok",
+      "detail": "Routes Infinity intents with bounded triage; manual recovery run succeeded"
     },
     {
       "name": "Marketing agent growth review",
@@ -69,8 +69,8 @@
     },
     {
       "name": "Narae work loop",
-      "state": "warn",
-      "detail": "08:30 KST silent Naver work loop; watch git-status failure x2"
+      "state": "ok",
+      "detail": "08:30 KST silent Naver work loop; git sync/status checks disabled after recovery"
     },
     {
       "name": "Static deploy lane",

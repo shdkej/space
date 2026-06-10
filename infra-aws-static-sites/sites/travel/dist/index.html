@@ -37,7 +37,7 @@
       body {
         margin: 0;
         min-height: 100vh;
-        padding-bottom: 88px;
+        padding-bottom: 64px;
         color: var(--ink);
         font-family: var(--sans);
         background:
@@ -919,12 +919,12 @@
       .float-nav {
         position: fixed;
         left: 50%;
-        bottom: max(14px, env(safe-area-inset-bottom));
+        bottom: max(10px, env(safe-area-inset-bottom));
         z-index: 1200;
-        width: min(760px, calc(100vw - 24px));
+        width: min(680px, calc(100vw - 24px));
         border: 2px solid var(--line);
         background: rgb(20 18 13 / 0.94);
-        box-shadow: 8px 8px 0 rgb(20 18 13 / 0.18), 0 18px 52px rgb(20 18 13 / 0.26);
+        box-shadow: 6px 6px 0 rgb(20 18 13 / 0.18), 0 14px 38px rgb(20 18 13 / 0.22);
         transform: translateX(-50%);
         overflow-x: auto;
         overscroll-behavior-x: contain;
@@ -936,21 +936,21 @@
       .float-nav__track {
         display: grid;
         grid-auto-flow: column;
-        grid-auto-columns: minmax(78px, 1fr);
+        grid-auto-columns: minmax(68px, 1fr);
         min-width: max-content;
       }
 
       .float-nav a {
-        min-height: 54px;
-        padding: 8px 11px;
+        min-height: 42px;
+        padding: 6px 9px;
         border-left: 1px solid rgb(251 246 234 / 0.18);
         color: rgb(251 246 234 / 0.72);
         text-decoration: none;
         display: grid;
         place-items: center;
-        gap: 2px;
+        gap: 1px;
         font-family: var(--mono);
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 500;
         letter-spacing: 0.08em;
         text-transform: uppercase;
@@ -962,19 +962,18 @@
 
       .float-nav a::before {
         content: attr(data-mark);
-        width: 22px;
-        height: 22px;
+        width: 18px;
+        height: 18px;
         border: 1.5px solid currentColor;
         display: grid;
         place-items: center;
-        font: 700 10px/1 var(--mono);
+        font: 700 9px/1 var(--mono);
         letter-spacing: 0;
       }
 
-      .float-nav a:hover,
-      .float-nav a.active {
+      .float-nav a:hover {
         color: var(--paper-2);
-        background: var(--red);
+        background: rgb(251 246 234 / 0.1);
       }
 
       /* ---------------- responsive ---------------- */
@@ -1051,15 +1050,15 @@
 
         .float-nav {
           width: calc(100vw - 16px);
-          bottom: max(8px, env(safe-area-inset-bottom));
+          bottom: max(6px, env(safe-area-inset-bottom));
         }
 
-        .float-nav__track { grid-auto-columns: 74px; }
+        .float-nav__track { grid-auto-columns: 62px; }
 
         .float-nav a {
-          min-height: 50px;
-          padding: 7px 9px;
-          font-size: 9px;
+          min-height: 40px;
+          padding: 5px 7px;
+          font-size: 8.5px;
         }
       }
     </style>
@@ -1203,7 +1202,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
-      const navLinks = Array.from(document.querySelectorAll(".float-nav a"));
 
       const categoryNames = {
         stay: "숙소",
@@ -1458,32 +1456,6 @@
         $("mapLabel").textContent = `${route.length} route · ${logged.length} local traces`;
       }
 
-      function bindFloatingNav() {
-        const sections = navLinks
-          .map((link) => ({ link, section: $(link.dataset.target) }))
-          .filter((item) => item.section);
-
-        const setActive = (activeLink) => {
-          navLinks.forEach((link) => link.classList.toggle("active", link === activeLink));
-          activeLink.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
-        };
-
-        navLinks.forEach((link) => {
-          link.addEventListener("click", () => setActive(link));
-        });
-
-        const observer = new IntersectionObserver((entries) => {
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-          if (!visible) return;
-          const item = sections.find((candidate) => candidate.section === visible.target);
-          if (item) setActive(item.link);
-        }, { rootMargin: "-16% 0px -58% 0px", threshold: [0.12, 0.24, 0.5] });
-
-        sections.forEach((item) => observer.observe(item.section));
-      }
-
       fetch("travel-data.json", { cache: "no-store" })
         .then((r) => r.json())
         .then((data) => {
@@ -1503,7 +1475,6 @@
           renderLedger(data);
           renderTraces(data);
           renderMap(data);
-          bindFloatingNav();
         })
         .catch((err) => {
           $("syncLabel").textContent = "sync failed";

@@ -168,6 +168,21 @@
         min-width: 0;
       }
 
+      a.row {
+        transition:
+          border-color 160ms ease,
+          background 160ms ease,
+          transform 160ms ease;
+      }
+
+      a.row:hover,
+      a.row:focus-visible {
+        background: #fff;
+        border-color: var(--blue);
+        outline: none;
+        transform: translateX(3px);
+      }
+
       .row > div {
         min-width: 0;
       }
@@ -350,16 +365,6 @@
           <h2>Agent lane</h2>
           <div id="agents" class="list"></div>
         </article>
-
-        <article class="card span-2">
-          <h2>Deployments</h2>
-          <div id="deployments" class="list"></div>
-        </article>
-
-        <article class="card full">
-          <h2>App launcher</h2>
-          <div id="apps" class="apps"></div>
-        </article>
       </section>
     </main>
 
@@ -367,16 +372,20 @@
       const stateClass = (state) =>
         state === "ok" ? "ok" : state === "warn" ? "warn" : "bad";
 
-      const row = (item, right = "") => `
-        <div class="row">
+      const row = (item, right = "", href = "") => {
+        const tag = href ? "a" : "div";
+        const attrs = href ? ` href="${href}" target="_blank" rel="noopener noreferrer"` : "";
+        return `
+        <${tag} class="row"${attrs}>
           <span class="dot ${stateClass(item.state)}"></span>
           <div>
             <div class="name">${item.name}</div>
             <div class="detail">${item.detail || item.url || ""}</div>
           </div>
           <span class="pill">${right || item.state.toUpperCase()}</span>
-        </div>
+        </${tag}>
       `;
+      };
 
       const render = (data) => {
         document.getElementById("overallState").textContent =
@@ -389,24 +398,10 @@
           "Generated " + new Date(data.generatedAt).toLocaleString();
 
         document.getElementById("checks").innerHTML = data.checks
-          .map((item) => row(item, item.latencyMs ? `${item.latencyMs}ms` : "boot"))
+          .map((item) => row(item, item.url ? new URL(item.url).hostname : "open", item.url))
           .join("");
         document.getElementById("agents").innerHTML = data.agents
           .map((item) => row(item))
-          .join("");
-        document.getElementById("deployments").innerHTML = data.deployments
-          .map((item) => row(item, item.distribution))
-          .join("");
-        document.getElementById("apps").innerHTML = data.apps
-          .map(
-            (app) => `
-              <a class="app" href="${app.url}">
-                <strong>${app.name}</strong>
-                <span class="detail">${app.kind}</span>
-                <span class="pill">${new URL(app.url).hostname}</span>
-              </a>
-            `,
-          )
           .join("");
       };
 

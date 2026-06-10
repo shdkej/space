@@ -73,11 +73,6 @@
       "detail": "08:30 KST silent Naver work loop; watch git-status failure x2"
     },
     {
-      "name": "Narae 09:00 KST report",
-      "state": "ok",
-      "detail": "Visible Narae morning report; commerce actions remain approval-gated"
-    },
-    {
       "name": "Static deploy lane",
       "state": "ok",
       "detail": "Static apps are registered under infra-aws-static-sites/sites"

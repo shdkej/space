@@ -1095,7 +1095,7 @@
 
         <section>
           <h3>최근 지출</h3>
-          <p class="ops-sub" id="ledgerSub">recent ledger · travel tagged</p>
+          <p class="ops-sub" id="ledgerSub">recent ledger · travel only</p>
           <div id="ledger"></div>
         </section>
 
@@ -1266,22 +1266,20 @@
       }
 
       function renderCategories(data) {
-        const totals = {};
-        (data.expenses || []).forEach((e) => {
-          const key = e.category || "other";
-          totals[key] = (totals[key] || 0) + Number(e.amount || 0);
-        });
+        const totals = Object.keys(data.travelCategoryTotals || {}).length
+          ? data.travelCategoryTotals
+          : (data.categoryTotals || {});
         const rows = Object.entries(totals).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
         const sum = rows.reduce((s, [, v]) => s + v, 0);
         const max = Math.max(...rows.map(([, v]) => v), 1);
         $("catTotal").textContent = `${manWon(sum)}원`;
-        $("catRows").innerHTML = rows.map(([key, value]) => `
+        $("catRows").innerHTML = rows.length ? rows.map(([key, value]) => `
           <div class="cat-row">
             <b>${categoryNames[key] || key}</b>
             <div class="bar"><span data-w="${Math.round((value / max) * 100)}" style="background:${catColors[key] || "#6c6557"};"></span></div>
             <strong>${manWon(value)}원</strong>
           </div>
-        `).join("");
+        `).join("") : '<div class="cat-row"><b>여행 지출 없음</b><div class="bar"><span data-w="0"></span></div><strong>0원</strong></div>';
         requestAnimationFrame(() => {
           document.querySelectorAll(".bar span[data-w]").forEach((el) => { el.style.width = `${el.dataset.w}%`; });
         });
@@ -1303,18 +1301,19 @@
       }
 
       function renderLedger(data) {
-        const travel = (data.travelExpenses || []).map((e) => ({ ...e, travel: true }));
-        const others = (data.expenses || []).filter((e) => !e.travel);
-        const merged = [...travel, ...others]
+        const travel = ((data.travelExpenses && data.travelExpenses.length ? data.travelExpenses : data.expenses) || [])
+          .filter((e) => e.travel !== false)
+          .map((e) => ({ ...e, travel: true }));
+        const merged = travel
           .sort((a, b) => `${b.date} ${b.time || ""}`.localeCompare(`${a.date} ${a.time || ""}`))
           .slice(0, 7);
-        $("ledger").innerHTML = merged.map((e) => `
+        $("ledger").innerHTML = merged.length ? merged.map((e) => `
           <div class="led-row">
             <span class="d">${(e.date || "").slice(5).replace("-", ".")}</span>
             <span class="m">${maskMerchant(e.merchant)}${e.travel ? '<em>travel</em>' : ""}<small>${e.location || ""} · ${categoryNames[e.category] || e.category || ""}</small></span>
             <span class="a">${won(e.amount)}</span>
           </div>
-        `).join("");
+        `).join("") : '<div class="led-row"><span class="d">--</span><span class="m">여행 지출 없음<small>travel only</small></span><span class="a">0</span></div>';
       }
 
       function renderTraces(data) {

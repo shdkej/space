@@ -222,7 +222,7 @@ ROUTE = [
 ]
 
 CATEGORY_RULES = [
-    ("transport", ["티머니", "지하철", "버스", "택시", "uber", "bolt", "rail", "train", "항공", "flight", "ferry"]),
+    ("transport", ["티머니", "지하철", "버스", "택시", "uber", "bolt", "rail", "train", "항공", "flight", "ferry", "db vertrieb", "deutsche bahn", "bahn", "ice"]),
     ("food", ["찌개", "식당", "restaurant", "food", "김밥", "국밥", "맥도날드", "버거", "분식", "고기"]),
     ("cafe", ["카페", "coffee", "커피", "스타벅스", "투썸", "밀크바", "bakery", "베이커리"]),
     ("groceries", ["마트", "이마트", "홈플러스", "편의점", "cu", "gs25", "세븐", "리테일"]),
@@ -241,6 +241,9 @@ TRAVEL_MERCHANT_WORDS = [
     "ferry",
     "rail",
     "train",
+    "db vertrieb",
+    "deutsche bahn",
+    "bahn",
     "jadrolinija",
     "ryanair",
     "ita airways",
@@ -500,7 +503,8 @@ def build(events, geocode_cache=None, geocode_enabled=True):
                     "amount": amount,
                     "note": "Calendar payment record; add dates later when booking details are logged",
                 })
-            daily_total[day] += amount
+            if travel:
+                daily_total[day] += amount
             continue
 
         if summary.strip().startswith("{"):
@@ -529,19 +533,18 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             })
 
     travel_expenses = [expense for expense in expenses if expense["travel"]]
-    display_expenses = travel_expenses or expenses
 
     category_totals = defaultdict(int)
     travel_category_totals = defaultdict(int)
-    for expense in display_expenses:
+    for expense in travel_expenses:
         category_totals[expense["category"]] += expense["amount"]
     for expense in travel_expenses:
         travel_category_totals[expense["category"]] += expense["amount"]
 
     latest_location = next((clean_location(event.get("location")) for event in reversed(raw_events) if event.get("location")), None)
     latest_location = latest_location or "Frankfurt, Germany"
-    total_spend = sum(expense["amount"] for expense in display_expenses)
     travel_spend = sum(expense["amount"] for expense in travel_expenses)
+    total_spend = travel_spend
     latest_day = raw_events[-1].get("startLocal", "")[:10] if raw_events else date.today().isoformat()
     today = date.fromisoformat(latest_day)
     travel_dates = [date.fromisoformat(expense["date"]) for expense in travel_expenses if expense.get("date")]
@@ -612,7 +615,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             "reserveBurnKrw": reserve_burn,
             "firstTravelExpenseDate": first_travel_date,
             "planningDays": BUDGET_PLANNING_DAYS,
-            "mode": "travel" if travel_expenses else "all",
+            "mode": "travel",
         },
         "current": {
             "date": latest_day,
@@ -624,7 +627,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
         "dailyTotals": [{"date": day, "amount": amount} for day, amount in sorted(daily_total.items())],
         "bookedCosts": booked_costs,
         "travelExpenses": sorted(travel_expenses, key=lambda item: (item["date"], item["time"]), reverse=True),
-        "expenses": sorted(expenses, key=lambda item: (item["date"], item["time"]), reverse=True),
+        "expenses": sorted(travel_expenses, key=lambda item: (item["date"], item["time"]), reverse=True),
         "locations": places,
         "map": {
             "points": [place for place in places if place.get("lat") and place.get("lng")],

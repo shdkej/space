@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T23:18:32.442197+00:00",
+  "generatedAt": "2026-06-10T23:24:52.313970+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -533,9 +533,9 @@
       "endDate": "2026-07-08",
       "lodging": "Darakhyu Incheon Airport",
       "source": "official site",
-      "amount": 94000,
       "note": "Pre-departure airport stay",
-      "schengen": false
+      "schengen": false,
+      "amount": 94000
     },
     {
       "city": "Frankfurt",
@@ -545,12 +545,12 @@
       "endDate": "2026-07-09",
       "lodging": "IntercityHotel",
       "source": "HanaTour",
-      "amount": 77132,
       "note": "Arrival anchor; 7/9 Frankfurt -> Cologne by DB ICE",
       "transportOut": "2026-07-09 DB ICE: Frankfurt -> Cologne",
       "schengen": true,
       "lat": 50.1109,
-      "lng": 8.6821
+      "lng": 8.6821,
+      "amount": 77132
     },
     {
       "city": "Cologne",

@@ -24,7 +24,6 @@ ROUTE = [
         "endDate": "2026-07-08",
         "lodging": "Darakhyu Incheon Airport",
         "source": "official site",
-        "amount": 94000,
         "note": "Pre-departure airport stay",
         "schengen": False,
     },
@@ -36,7 +35,6 @@ ROUTE = [
         "endDate": "2026-07-09",
         "lodging": "IntercityHotel",
         "source": "HanaTour",
-        "amount": 77132,
         "note": "Arrival anchor; 7/9 Frankfurt -> Cologne by DB ICE",
         "transportOut": "2026-07-09 DB ICE: Frankfurt -> Cologne",
         "schengen": True,
@@ -358,6 +356,41 @@ def travel_payment_override(day, merchant):
     return None
 
 
+def normalize_match_text(value):
+    return re.sub(r"[^0-9a-z가-힣]+", "", (value or "").lower())
+
+
+def mapped_amount_for_stop(stop, travel_expenses):
+    if stop.get("amount"):
+        return stop.get("amount")
+    if not stop.get("lodging"):
+        return None
+
+    city_key = normalize_match_text(stop.get("city"))
+    lodging_key = normalize_match_text(stop.get("lodging"))
+    for expense in travel_expenses:
+        if expense.get("category") != "stay":
+            continue
+        merchant_key = normalize_match_text(expense.get("merchant"))
+        location_key = normalize_match_text(expense.get("location"))
+        if city_key and city_key in location_key:
+            return expense.get("amount")
+        if lodging_key and lodging_key in merchant_key:
+            return expense.get("amount")
+    return None
+
+
+def route_with_mapped_amounts(travel_expenses):
+    route = []
+    for stop in ROUTE:
+        item = dict(stop)
+        mapped_amount = mapped_amount_for_stop(item, travel_expenses)
+        if mapped_amount:
+            item["amount"] = mapped_amount
+        route.append(item)
+    return route
+
+
 def clean_location(location):
     if not location:
         return None
@@ -565,6 +598,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             })
 
     travel_expenses = [expense for expense in expenses if expense["travel"]]
+    route = route_with_mapped_amounts(travel_expenses)
 
     category_totals = defaultdict(int)
     travel_category_totals = defaultdict(int)
@@ -611,7 +645,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             "source": stop.get("source"),
             "note": stop.get("note"),
         }
-        for stop in ROUTE
+        for stop in route
         if stop.get("lodging")
     ]
     booked_costs = [
@@ -626,7 +660,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             "travel": True,
             "source": stop.get("source"),
         }
-        for stop in ROUTE
+        for stop in route
         if stop.get("amount")
     ]
 
@@ -663,7 +697,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
         "locations": places,
         "map": {
             "points": [place for place in places if place.get("lat") and place.get("lng")],
-            "routePoints": [{"name": f"{stop['city']}, {stop['country']}", "lat": stop["lat"], "lng": stop["lng"]} for stop in ROUTE if stop.get("lat") and stop.get("lng")],
+            "routePoints": [{"name": f"{stop['city']}, {stop['country']}", "lat": stop["lat"], "lng": stop["lng"]} for stop in route if stop.get("lat") and stop.get("lng")],
         },
         "accommodations": accommodations or [
             {
@@ -676,7 +710,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             }
         ],
         "plannedAccommodations": planned_stays,
-        "route": ROUTE,
+        "route": route,
         "schengen": schengen_summary(today),
         "sleep": sleep_logs[-14:],
         "reflections": reflections[-12:],

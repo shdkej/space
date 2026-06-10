@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T23:13:27.712506+00:00",
+  "generatedAt": "2026-06-10T23:18:32.442197+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -48,6 +48,28 @@
     }
   ],
   "bookedCosts": [
+    {
+      "id": "manual-stay-incheon-airport",
+      "date": "2026-07-07",
+      "time": "",
+      "amount": 94000,
+      "merchant": "Incheon Airport · Darakhyu Incheon Airport",
+      "category": "stay",
+      "location": "Incheon Airport",
+      "travel": true,
+      "source": "official site"
+    },
+    {
+      "id": "manual-stay-frankfurt",
+      "date": "2026-07-08",
+      "time": "",
+      "amount": 77132,
+      "merchant": "Frankfurt · IntercityHotel",
+      "category": "stay",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "HanaTour"
+    },
     {
       "id": "manual-stay-cologne",
       "date": "2026-07-09",
@@ -398,7 +420,7 @@
       "status": "booked",
       "checkIn": "2026-07-07",
       "checkOut": "2026-07-08",
-      "amount": null,
+      "amount": 94000,
       "source": "official site",
       "note": "Pre-departure airport stay"
     },
@@ -409,7 +431,7 @@
       "status": "booked",
       "checkIn": "2026-07-08",
       "checkOut": "2026-07-09",
-      "amount": null,
+      "amount": 77132,
       "source": "HanaTour",
       "note": "Arrival anchor; 7/9 Frankfurt -> Cologne by DB ICE"
     },
@@ -511,6 +533,7 @@
       "endDate": "2026-07-08",
       "lodging": "Darakhyu Incheon Airport",
       "source": "official site",
+      "amount": 94000,
       "note": "Pre-departure airport stay",
       "schengen": false
     },
@@ -522,6 +545,7 @@
       "endDate": "2026-07-09",
       "lodging": "IntercityHotel",
       "source": "HanaTour",
+      "amount": 77132,
       "note": "Arrival anchor; 7/9 Frankfurt -> Cologne by DB ICE",
       "transportOut": "2026-07-09 DB ICE: Frankfurt -> Cologne",
       "schengen": true,

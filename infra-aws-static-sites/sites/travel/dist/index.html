@@ -37,6 +37,7 @@
       body {
         margin: 0;
         min-height: 100vh;
+        padding-bottom: 88px;
         color: var(--ink);
         font-family: var(--sans);
         background:
@@ -60,6 +61,10 @@
       }
 
       button, input { font: inherit; }
+
+      html { scroll-behavior: smooth; }
+
+      [id] { scroll-margin-top: 18px; }
 
       .ledger {
         width: min(1560px, calc(100vw - 24px));
@@ -910,6 +915,68 @@
         line-height: 1.6;
       }
 
+      /* ---------------- floating nav ---------------- */
+      .float-nav {
+        position: fixed;
+        left: 50%;
+        bottom: max(14px, env(safe-area-inset-bottom));
+        z-index: 1200;
+        width: min(760px, calc(100vw - 24px));
+        border: 2px solid var(--line);
+        background: rgb(20 18 13 / 0.94);
+        box-shadow: 8px 8px 0 rgb(20 18 13 / 0.18), 0 18px 52px rgb(20 18 13 / 0.26);
+        transform: translateX(-50%);
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+      }
+
+      .float-nav::-webkit-scrollbar { display: none; }
+
+      .float-nav__track {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(78px, 1fr);
+        min-width: max-content;
+      }
+
+      .float-nav a {
+        min-height: 54px;
+        padding: 8px 11px;
+        border-left: 1px solid rgb(251 246 234 / 0.18);
+        color: rgb(251 246 234 / 0.72);
+        text-decoration: none;
+        display: grid;
+        place-items: center;
+        gap: 2px;
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+
+      .float-nav a:first-child { border-left: 0; }
+
+      .float-nav a::before {
+        content: attr(data-mark);
+        width: 22px;
+        height: 22px;
+        border: 1.5px solid currentColor;
+        display: grid;
+        place-items: center;
+        font: 700 10px/1 var(--mono);
+        letter-spacing: 0;
+      }
+
+      .float-nav a:hover,
+      .float-nav a.active {
+        color: var(--paper-2);
+        background: var(--red);
+      }
+
       /* ---------------- responsive ---------------- */
       @media (max-width: 1140px) {
         .ledger {
@@ -981,11 +1048,24 @@
 
         .budget-stats, .schengen-grid { grid-template-columns: 1fr 1fr; }
         .budget-stats div:nth-child(3), .schengen-grid div:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+
+        .float-nav {
+          width: calc(100vw - 16px);
+          bottom: max(8px, env(safe-area-inset-bottom));
+        }
+
+        .float-nav__track { grid-auto-columns: 74px; }
+
+        .float-nav a {
+          min-height: 50px;
+          padding: 7px 9px;
+          font-size: 9px;
+        }
       }
     </style>
   </head>
   <body>
-    <main class="ledger">
+    <main class="ledger" id="top">
       <aside class="spine">
         <span>departure ledger</span>
         <strong id="daysLeft">D--</strong>
@@ -1010,7 +1090,7 @@
         <div class="readouts" id="readouts"></div>
       </header>
 
-      <section class="timeline" aria-label="여행 일정 장부">
+      <section class="timeline" id="itinerary" aria-label="여행 일정 장부">
         <div class="section-head">
           <div>
             <h2>Itinerary Ledger</h2>
@@ -1026,13 +1106,13 @@
       </section>
 
       <aside class="dashboard" aria-label="지도·예산·지출">
-        <div class="map-wrap">
+        <div class="map-wrap" id="route-map">
           <div id="map"></div>
           <div class="map-pos" id="mapPos">현재 위치 --</div>
           <div class="map-label" id="mapLabel">route map</div>
         </div>
 
-        <section class="block">
+        <section class="block" id="schengen">
           <div class="block-head">
             <h3>Schengen 잔여</h3>
             <span id="schengenWindow">180-day window</span>
@@ -1049,7 +1129,7 @@
           </div>
         </section>
 
-        <section class="block">
+        <section class="block" id="budget">
           <div class="block-head">
             <h3>예산 운영</h3>
             <span id="budgetMode">travel mode</span>
@@ -1073,7 +1153,7 @@
           </div>
         </section>
 
-        <section class="block" style="border-bottom: 0;">
+        <section class="block" id="spending" style="border-bottom: 0;">
           <div class="block-head">
             <h3>분야별 지출</h3>
             <span id="catTotal">--</span>
@@ -1093,7 +1173,7 @@
           </div>
         </section>
 
-        <section>
+        <section id="recent-ledger">
           <h3>최근 지출</h3>
           <p class="ops-sub" id="ledgerSub">recent ledger · travel only</p>
           <div id="ledger"></div>
@@ -1108,9 +1188,22 @@
       </section>
     </main>
 
+    <nav class="float-nav" aria-label="대시보드 바로가기">
+      <div class="float-nav__track">
+        <a href="#top" data-mark="↑" data-target="top">Top</a>
+        <a href="#itinerary" data-mark="01" data-target="itinerary">일정</a>
+        <a href="#route-map" data-mark="02" data-target="route-map">지도</a>
+        <a href="#schengen" data-mark="03" data-target="schengen">쉥겐</a>
+        <a href="#budget" data-mark="04" data-target="budget">예산</a>
+        <a href="#spending" data-mark="05" data-target="spending">지출</a>
+        <a href="#recent-ledger" data-mark="06" data-target="recent-ledger">최근</a>
+      </div>
+    </nav>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
+      const navLinks = Array.from(document.querySelectorAll(".float-nav a"));
 
       const categoryNames = {
         stay: "숙소",
@@ -1365,6 +1458,32 @@
         $("mapLabel").textContent = `${route.length} route · ${logged.length} local traces`;
       }
 
+      function bindFloatingNav() {
+        const sections = navLinks
+          .map((link) => ({ link, section: $(link.dataset.target) }))
+          .filter((item) => item.section);
+
+        const setActive = (activeLink) => {
+          navLinks.forEach((link) => link.classList.toggle("active", link === activeLink));
+          activeLink.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+        };
+
+        navLinks.forEach((link) => {
+          link.addEventListener("click", () => setActive(link));
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (!visible) return;
+          const item = sections.find((candidate) => candidate.section === visible.target);
+          if (item) setActive(item.link);
+        }, { rootMargin: "-16% 0px -58% 0px", threshold: [0.12, 0.24, 0.5] });
+
+        sections.forEach((item) => observer.observe(item.section));
+      }
+
       fetch("travel-data.json", { cache: "no-store" })
         .then((r) => r.json())
         .then((data) => {
@@ -1384,6 +1503,7 @@
           renderLedger(data);
           renderTraces(data);
           renderMap(data);
+          bindFloatingNav();
         })
         .catch((err) => {
           $("syncLabel").textContent = "sync failed";

@@ -25,6 +25,17 @@ ROUTE = [
         "lodging": "Darakhyu Incheon Airport",
         "source": "official site",
         "note": "Pre-departure airport stay",
+        "arrivalTransfer": {
+            "title": "Incheon Airport T1 -> Darakhyu",
+            "route": "Terminal 1 public area -> Transportation Center 1F",
+            "duration": "inside airport / walking transfer",
+            "steps": [
+                "Follow Terminal 1 signs toward the Transportation Center.",
+                "Darakhyu is on the 1st floor of the Transportation Center in the normal/public area.",
+            ],
+            "sourceName": "Darakhyu official map",
+            "sourceUrl": "https://www.walkerhill.com/darakhyu/t1/en/about/Map.jsp",
+        },
         "schengen": False,
     },
     {
@@ -37,6 +48,24 @@ ROUTE = [
         "source": "HanaTour",
         "note": "Arrival anchor; 7/9 Frankfurt -> Cologne by DB ICE",
         "transportOut": "2026-07-09 DB ICE: Frankfurt -> Cologne",
+        "arrivalTransfer": {
+            "title": "FRA -> IntercityHotel",
+            "route": "Frankfurt Airport Regional Station -> Frankfurt Hbf -> IntercityHotel Hauptbahnhof Sud",
+            "duration": "S-Bahn about 12 min + short walk",
+            "steps": [
+                "Take S8 or S9 between Frankfurt Airport Regional Station and Frankfurt Hauptbahnhof.",
+                "Exit at Frankfurt Hbf; the hotel is on the south side of the main station.",
+            ],
+            "sourceName": "DB / Frankfurt Airport / H Rewards",
+            "sourceUrl": "https://www.bahnhof.de/en/frankfurt-main-hbf/journey-to-frankfurt-airport",
+        },
+        "transportOutPayment": {
+            "status": "paid",
+            "amount": 71351,
+            "paidDate": "2026-06-09",
+            "merchant": "DB Vertrieb GmbH",
+            "note": "Actual rail payment logged in the travel ledger.",
+        },
         "schengen": True,
         "lat": 50.1109,
         "lng": 8.6821,

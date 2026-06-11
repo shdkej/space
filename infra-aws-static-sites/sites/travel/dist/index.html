@@ -326,7 +326,7 @@
 
       .schedule {
         display: grid;
-        grid-template-columns: 112px minmax(150px, 0.85fr) minmax(180px, 1fr) 120px 122px;
+        grid-template-columns: 112px minmax(140px, 0.78fr) minmax(172px, 0.95fr) minmax(190px, 1.05fr) 118px 122px;
         align-content: start;
       }
 
@@ -395,6 +395,71 @@
         display: block;
         font: 600 14.5px/1.12 var(--sans);
         overflow-wrap: anywhere;
+      }
+
+      .transport-cell b {
+        display: block;
+        font: 600 13.5px/1.2 var(--sans);
+        overflow-wrap: anywhere;
+      }
+
+      .pay-chip {
+        width: fit-content;
+        margin-top: 7px;
+        border: 1.5px solid var(--line);
+        padding: 2px 6px;
+        background: var(--paper-2);
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .pay-chip.paid {
+        background: var(--green);
+        color: var(--paper-2);
+      }
+
+      .pay-chip.unpaid {
+        border-style: dashed;
+      }
+
+      .move-detail {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.4;
+      }
+
+      .move-detail summary {
+        width: fit-content;
+        cursor: pointer;
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .move-detail p {
+        margin: 6px 0 0;
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .move-detail ul {
+        margin: 6px 0 0;
+        padding-left: 16px;
+      }
+
+      .move-detail li { margin-top: 3px; }
+
+      .move-detail small {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 10px;
       }
 
       .schengen-tag {
@@ -1042,7 +1107,7 @@
           padding: 12px 0;
         }
 
-        .schedule-row .date-cell { grid-row: span 4; padding-top: 8px; }
+        .schedule-row .date-cell { grid-row: span 5; padding-top: 8px; }
         .schedule-row .amount-cell { justify-items: start; text-align: left; }
 
         .budget-stats, .schengen-grid { grid-template-columns: 1fr 1fr; }
@@ -1302,6 +1367,7 @@
           <div class="head">date</div>
           <div class="head">city</div>
           <div class="head">stay · note</div>
+          <div class="head">movement · pay</div>
           <div class="head">status</div>
           <div class="head">amount</div>
         `;
@@ -1309,11 +1375,29 @@
           const status = row.status || "planned";
           const lodging = row.lodging || (status === "candidate" ? "숙소 후보 검토" : "숙소 미정");
           const amount = row.amount;
+          const transfer = row.arrivalTransfer;
+          const transport = row.transportOut || row.transportIn || "";
+          const payment = row.transportOutPayment || (transport ? { status: "unpaid" } : null);
+          const paid = payment && payment.status === "paid";
+          const paymentLabel = payment
+            ? (paid ? `실제 결제 · ${manWon(payment.amount)}원` : "미결제 / 확인 필요")
+            : "교통 없음";
+          const movementTitle = transfer ? transfer.title : (transport || "이동정보 대기");
+          const movementDetail = transfer ? `
+            <details class="move-detail">
+              <summary>상세</summary>
+              <p>${transfer.route || ""}</p>
+              <small>${transfer.duration || ""}</small>
+              ${(transfer.steps || []).length ? `<ul>${transfer.steps.map((step) => `<li>${step}</li>`).join("")}</ul>` : ""}
+              <small>source · ${transfer.sourceName || "checked"}</small>
+            </details>
+          ` : "";
           return `
           <div class="schedule-row${i === nextIdx ? " next" : ""}">
             <div class="date-cell">${dateLabel(row.startDate, row.endDate)}<small>${nights(row.startDate, row.endDate) || "undated"}</small></div>
             <div class="city-cell"><b>${row.city}</b><small>${row.country || ""}</small>${row.schengen ? '<span class="schengen-tag">schengen</span>' : ""}</div>
             <div class="stay-cell"><b>${lodging}</b><small>${row.source || row.note || "source pending"}</small></div>
+            <div class="transport-cell"><b>${movementTitle}</b><span class="pay-chip ${paid ? "paid" : (payment ? "unpaid" : "")}">${paymentLabel}</span>${movementDetail}</div>
             <div class="status-cell"><span class="status-pill ${status}">${status}</span><small>${row.startDate ? "dated" : "tbd"}</small></div>
             <div class="amount-cell${amount ? "" : " muted"}">${amount ? `${manWon(amount)}원` : "미정"}<small>${amount ? "booked" : "needs check"}</small></div>
           </div>`;

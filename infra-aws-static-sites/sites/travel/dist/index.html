@@ -397,22 +397,33 @@
         overflow-wrap: anywhere;
       }
 
-      .transport-cell b {
-        display: block;
+      .transport-line {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .transport-line b {
         font: 600 13.5px/1.2 var(--sans);
+        min-width: 0;
         overflow-wrap: anywhere;
       }
 
       .pay-chip {
-        width: fit-content;
-        margin-top: 7px;
-        border: 1.5px solid var(--line);
-        padding: 2px 6px;
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+        min-width: 52px;
+        justify-content: center;
+        border: 1.5px solid currentColor;
+        padding: 2px 5px;
         background: var(--paper-2);
         color: var(--muted);
         font-family: var(--mono);
         font-size: 9px;
-        letter-spacing: 0.08em;
+        line-height: 1.2;
+        letter-spacing: 0.04em;
         text-transform: uppercase;
       }
 
@@ -422,44 +433,124 @@
       }
 
       .pay-chip.unpaid {
+        background: rgb(212 52 28 / 0.08);
+        color: var(--red);
+      }
+
+      .pay-chip.none {
+        background: transparent;
+        color: var(--muted);
         border-style: dashed;
       }
 
-      .move-detail {
-        margin-top: 8px;
-        color: var(--muted);
-        font-size: 11px;
-        line-height: 1.4;
-      }
-
-      .move-detail summary {
+      .detail-trigger {
         width: fit-content;
-        cursor: pointer;
+        margin-top: 7px;
+        border: 0;
+        border-bottom: 1px solid currentColor;
+        padding: 0;
+        background: transparent;
         color: var(--blue);
+        cursor: pointer;
         font-family: var(--mono);
         font-size: 9.5px;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
-      .move-detail p {
-        margin: 6px 0 0;
+      .detail-trigger:hover { color: var(--red); }
+
+      .transfer-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: none;
+        place-items: center;
+        padding: 24px;
+        background: rgb(20 18 13 / 0.48);
+      }
+
+      .transfer-modal.open { display: grid; }
+
+      .transfer-dialog {
+        width: min(520px, calc(100vw - 32px));
+        max-height: calc(100vh - 48px);
+        overflow: auto;
+        border: 2px solid var(--line);
+        background: var(--paper-2);
         color: var(--ink);
-        font-weight: 600;
+        box-shadow: 14px 14px 0 rgb(20 18 13 / 0.3);
       }
 
-      .move-detail ul {
-        margin: 6px 0 0;
-        padding-left: 16px;
+      .transfer-dialog header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: start;
+        border-bottom: 2px solid var(--line);
+        padding: 16px 18px 13px;
+        background: rgb(26 76 203 / 0.08);
       }
 
-      .move-detail li { margin-top: 3px; }
-
-      .move-detail small {
+      .transfer-dialog small {
         display: block;
-        margin-top: 6px;
         color: var(--muted);
+        font: 500 10px/1.2 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .transfer-dialog h3 {
+        margin: 5px 0 0;
+        font: 900 27px/0.95 var(--serif);
+        overflow-wrap: anywhere;
+      }
+
+      .transfer-close {
+        width: 32px;
+        height: 32px;
+        border: 2px solid var(--line);
+        background: var(--ink);
+        color: var(--paper-2);
+        cursor: pointer;
+        font-family: var(--mono);
+      }
+
+      .transfer-body { padding: 16px 18px 18px; }
+
+      .transfer-route {
+        margin: 0;
+        font: 700 15px/1.35 var(--sans);
+      }
+
+      .transfer-duration {
+        display: inline-block;
+        margin-top: 9px;
+        border: 1.5px solid var(--line);
+        padding: 4px 7px;
+        background: var(--gold);
+        color: var(--ink);
+        font-family: var(--mono);
         font-size: 10px;
+      }
+
+      .transfer-steps {
+        margin: 14px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 12.5px;
+        line-height: 1.5;
+      }
+
+      .transfer-steps li { margin-top: 5px; }
+
+      .transfer-source {
+        display: block;
+        margin-top: 15px;
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 10px;
+        overflow-wrap: anywhere;
       }
 
       .schengen-tag {
@@ -1264,9 +1355,23 @@
       </div>
     </nav>
 
+    <div class="transfer-modal" id="transferModal" role="dialog" aria-modal="true" aria-labelledby="transferTitle">
+      <div class="transfer-dialog">
+        <header>
+          <div>
+            <small id="transferKicker">movement detail</small>
+            <h3 id="transferTitle">이동정보</h3>
+          </div>
+          <button class="transfer-close" type="button" id="transferClose" aria-label="닫기">×</button>
+        </header>
+        <div class="transfer-body" id="transferBody"></div>
+      </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
+      let scheduleRows = [];
 
       const categoryNames = {
         stay: "숙소",
@@ -1319,6 +1424,14 @@
         return e ? `${s}–${e}` : s;
       };
 
+      const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char]));
+
       // privacy: collapse merchant codes / transaction hashes, never expose addresses
       const maskMerchant = (raw) => {
         if (!raw) return "지출";
@@ -1359,6 +1472,7 @@
 
       function renderSchedule(route, currentDate) {
         const rows = route || [];
+        scheduleRows = rows;
         $("scheduleStamp").textContent = `${rows.length} stops`;
         const today = currentDate ? new Date(`${currentDate}T00:00:00+09:00`) : new Date();
         const nextIdx = rows.findIndex((r) => r.startDate && new Date(r.startDate) >= today);
@@ -1379,34 +1493,63 @@
           const transport = row.transportOut || row.transportIn || "";
           const payment = row.transportOutPayment || (transport ? { status: "unpaid" } : null);
           const paid = payment && payment.status === "paid";
-          const paymentLabel = payment
+          const paymentLabel = payment ? (paid ? "결제완료" : "미결제") : "없음";
+          const paymentTitle = payment
             ? (paid ? `실제 결제 · ${manWon(payment.amount)}원` : "미결제 / 확인 필요")
             : "교통 없음";
+          const paymentClass = paid ? "paid" : (payment ? "unpaid" : "none");
           const movementTitle = transfer ? transfer.title : (transport || "이동정보 대기");
-          const movementDetail = transfer ? `
-            <details class="move-detail">
-              <summary>상세</summary>
-              <p>${transfer.route || ""}</p>
-              <small>${transfer.duration || ""}</small>
-              ${(transfer.steps || []).length ? `<ul>${transfer.steps.map((step) => `<li>${step}</li>`).join("")}</ul>` : ""}
-              <small>source · ${transfer.sourceName || "checked"}</small>
-            </details>
-          ` : "";
+          const movementDetail = transfer ? `<button class="detail-trigger" type="button" data-transfer-index="${i}">상세</button>` : "";
           return `
           <div class="schedule-row${i === nextIdx ? " next" : ""}">
             <div class="date-cell">${dateLabel(row.startDate, row.endDate)}<small>${nights(row.startDate, row.endDate) || "undated"}</small></div>
             <div class="city-cell"><b>${row.city}</b><small>${row.country || ""}</small>${row.schengen ? '<span class="schengen-tag">schengen</span>' : ""}</div>
             <div class="stay-cell"><b>${lodging}</b><small>${row.source || row.note || "source pending"}</small></div>
-            <div class="transport-cell"><b>${movementTitle}</b><span class="pay-chip ${paid ? "paid" : (payment ? "unpaid" : "")}">${paymentLabel}</span>${movementDetail}</div>
+            <div class="transport-cell"><div class="transport-line"><b>${movementTitle}</b><span class="pay-chip ${paymentClass}" title="${paymentTitle}">${paymentLabel}</span></div>${movementDetail}</div>
             <div class="status-cell"><span class="status-pill ${status}">${status}</span><small>${row.startDate ? "dated" : "tbd"}</small></div>
             <div class="amount-cell${amount ? "" : " muted"}">${amount ? `${manWon(amount)}원` : "미정"}<small>${amount ? "booked" : "needs check"}</small></div>
           </div>`;
         }).join("");
         $("schedule").innerHTML = header + body;
+        document.querySelectorAll("[data-transfer-index]").forEach((button) => {
+          button.addEventListener("click", () => openTransferModal(Number(button.dataset.transferIndex)));
+        });
 
         const subtotal = rows.reduce((s, r) => s + Number(r.amount || 0), 0);
         $("bookedSubtotal").textContent = `${won(subtotal)}원`;
       }
+
+      function openTransferModal(index) {
+        const row = scheduleRows[index] || {};
+        const transfer = row.arrivalTransfer;
+        if (!transfer) return;
+        $("transferKicker").textContent = `${dateLabel(row.startDate, row.endDate)} · ${row.city || "movement"}`;
+        $("transferTitle").textContent = transfer.title || "이동정보";
+        const steps = (transfer.steps || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("");
+        const source = transfer.sourceUrl
+          ? `<a class="transfer-source" href="${escapeHtml(transfer.sourceUrl)}" target="_blank" rel="noreferrer">source · ${escapeHtml(transfer.sourceName || transfer.sourceUrl)}</a>`
+          : `<span class="transfer-source">source · ${escapeHtml(transfer.sourceName || "checked")}</span>`;
+        $("transferBody").innerHTML = `
+          <p class="transfer-route">${escapeHtml(transfer.route || "")}</p>
+          ${transfer.duration ? `<span class="transfer-duration">${escapeHtml(transfer.duration)}</span>` : ""}
+          ${steps ? `<ul class="transfer-steps">${steps}</ul>` : ""}
+          ${source}
+        `;
+        $("transferModal").classList.add("open");
+        $("transferClose").focus();
+      }
+
+      function closeTransferModal() {
+        $("transferModal").classList.remove("open");
+      }
+
+      $("transferClose").addEventListener("click", closeTransferModal);
+      $("transferModal").addEventListener("click", (event) => {
+        if (event.target === $("transferModal")) closeTransferModal();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeTransferModal();
+      });
 
       function renderSchengen(data) {
         const sc = data.schengen || {};

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T23:24:52.313970+00:00",
+  "generatedAt": "2026-06-11T23:51:07.022853+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 4.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 103137,
+    "reserveBurnKrw": 96262,
     "firstTravelExpenseDate": "2026-05-29",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-06-11",
+    "date": "2026-06-12",
     "location": "서울특별시",
     "mapQuery": "서울특별시"
   },
@@ -262,7 +262,7 @@
   "locations": [
     {
       "name": "서울특별시",
-      "count": 33,
+      "count": 35,
       "lat": 37.5665,
       "lng": 126.978
     },
@@ -277,7 +277,7 @@
     "points": [
       {
         "name": "서울특별시",
-        "count": 33,
+        "count": 35,
         "lat": 37.5665,
         "lng": 126.978
       },
@@ -535,14 +535,16 @@
       "source": "official site",
       "note": "Pre-departure airport stay",
       "arrivalTransfer": {
-        "title": "Incheon Airport T1 -> Darakhyu",
-        "route": "Terminal 1 public area -> Transportation Center 1F",
-        "duration": "inside airport / walking transfer",
+        "title": "인천공항 T1 -> 다락휴",
+        "route": "제1여객터미널 일반구역 -> 교통센터 1층 다락휴",
+        "duration": "공항 내부 도보 이동",
+        "statusNote": "다락휴 T1은 출국장 안이 아니라 일반구역 교통센터 1층에 있음.",
+        "nextCheck": "전날 체크인 시간과 다음날 항공편 터미널 동선을 한 번 더 맞춘다.",
         "steps": [
-          "Follow Terminal 1 signs toward the Transportation Center.",
-          "Darakhyu is on the 1st floor of the Transportation Center in the normal/public area."
+          "제1여객터미널에서 교통센터 표지를 따라 이동한다.",
+          "다락휴는 교통센터 1층 일반구역에 있으므로 보안검색 전 접근 가능하다."
         ],
-        "sourceName": "Darakhyu official map",
+        "sourceName": "다락휴 공식 위치 안내",
         "sourceUrl": "https://www.walkerhill.com/darakhyu/t1/en/about/Map.jsp"
       },
       "schengen": false,
@@ -557,14 +559,16 @@
       "lodging": "IntercityHotel",
       "source": "HanaTour",
       "note": "Arrival anchor; 7/9 Frankfurt -> Cologne by DB ICE",
-      "transportOut": "2026-07-09 DB ICE: Frankfurt -> Cologne",
+      "transportOut": "2026-07-09 DB ICE: 프랑크푸르트 -> 쾰른",
       "arrivalTransfer": {
-        "title": "FRA -> IntercityHotel",
+        "title": "프랑크푸르트 공항 -> IntercityHotel",
         "route": "Frankfurt Airport Regional Station -> Frankfurt Hbf -> IntercityHotel Hauptbahnhof Sud",
-        "duration": "S-Bahn about 12 min + short walk",
+        "duration": "S-Bahn 약 12분 + 중앙역 남쪽 도보",
+        "statusNote": "공항 Regional Station에서 S8/S9로 Frankfurt Hbf까지 이동 가능.",
+        "nextCheck": "도착 항공편 시간 기준으로 S-Bahn 막차/지연 시 택시 대안을 같이 본다.",
         "steps": [
-          "Take S8 or S9 between Frankfurt Airport Regional Station and Frankfurt Hauptbahnhof.",
-          "Exit at Frankfurt Hbf; the hotel is on the south side of the main station."
+          "공항 Regional Station에서 S8 또는 S9를 타고 Frankfurt Hauptbahnhof로 간다.",
+          "Frankfurt Hbf에서 내려 중앙역 남쪽 출구 방향으로 호텔까지 짧게 걷는다."
         ],
         "sourceName": "DB / Frankfurt Airport / H Rewards",
         "sourceUrl": "https://www.bahnhof.de/en/frankfurt-main-hbf/journey-to-frankfurt-airport"
@@ -591,8 +595,21 @@
       "source": "7/9 DB ICE from Frankfurt",
       "amount": 330000,
       "note": "Cathedral, city walks; 7/11 Cologne -> Berlin by DB ICE",
-      "transportIn": "2026-07-09 DB ICE: Frankfurt -> Cologne",
-      "transportOut": "2026-07-11 DB ICE: Cologne -> Berlin",
+      "transportIn": "2026-07-09 DB ICE: 프랑크푸르트 -> 쾰른",
+      "transportOut": "2026-07-11 DB ICE: 쾰른 -> 베를린",
+      "arrivalTransfer": {
+        "title": "프랑크푸르트 -> 쾰른",
+        "route": "Frankfurt Main Hbf -> Koeln Hbf",
+        "duration": "DB ICE 약 1시간대 구간, 실제 예매편 기준 재확인 필요",
+        "statusNote": "2026-06-09 DB 결제 71,351원은 프랑크푸르트 -> 쾰른 철도 이동으로 기록됨.",
+        "nextCheck": "DB 앱/메일에서 열차번호, 좌석, 출발역을 확정해 상세에 붙인다.",
+        "steps": [
+          "Frankfurt Main Hbf에서 DB ICE 탑승.",
+          "Koeln Hbf 도착 후 숙소 체크인 동선을 별도 확인한다."
+        ],
+        "sourceName": "DB 결제 기록 / 여행 원장",
+        "sourceUrl": "https://int.bahn.de/en"
+      },
       "schengen": true,
       "lat": 50.9375,
       "lng": 6.9603
@@ -606,8 +623,21 @@
       "lodging": "다은언니",
       "source": "7/11 DB ICE from Cologne",
       "note": "Libraries, culture, low-friction base; 7/14 Berlin -> Prague by EC train or FlixBus alt",
-      "transportIn": "2026-07-11 DB ICE: Cologne -> Berlin",
-      "transportOut": "2026-07-14 EC train: Berlin -> Prague; FlixBus alternative recommended by 다은언니",
+      "transportIn": "2026-07-11 DB ICE: 쾰른 -> 베를린",
+      "transportOut": "2026-07-14 EC 열차 또는 FlixBus: 베를린 -> 프라하",
+      "arrivalTransfer": {
+        "title": "쾰른 -> 베를린",
+        "route": "Koeln Hbf -> Berlin Hbf",
+        "duration": "직행 열차 약 4시간 50분 전후",
+        "statusNote": "Cologne Hbf와 Berlin Hbf를 잇는 직행 열차가 있으며, 평균 4시간대 후반으로 잡는다.",
+        "nextCheck": "7/11 실제 DB ICE 시간표와 베를린 도착 후 숙소/만남 장소를 확정한다.",
+        "steps": [
+          "Koeln Hbf에서 Berlin Hbf행 장거리 열차를 탄다.",
+          "Berlin Hbf 도착 후 S-Bahn/U-Bahn 또는 택시로 숙소/만남 장소 이동."
+        ],
+        "sourceName": "Omio / DB route reference",
+        "sourceUrl": "https://www.omio.com/trains/cologne/berlin"
+      },
       "schengen": true,
       "lat": 52.52,
       "lng": 13.405
@@ -622,8 +652,21 @@
       "source": "7/14 EC train or FlixBus from Berlin",
       "amount": 220000,
       "note": "Old town, cafes, transit hub; 7/17 Prague -> Vienna by RegioJet or OBB",
-      "transportIn": "2026-07-14 EC train or FlixBus: Berlin -> Prague",
-      "transportOut": "2026-07-17 RegioJet or OBB: Prague -> Vienna",
+      "transportIn": "2026-07-14 EC 열차 또는 FlixBus: 베를린 -> 프라하",
+      "transportOut": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
+      "arrivalTransfer": {
+        "title": "베를린 -> 프라하",
+        "route": "Berlin Hbf -> Praha hl.n.",
+        "duration": "직행 열차 약 4시간 20분",
+        "statusNote": "DB 안내 기준 베를린-프라하 직행 열차가 있고 환승 없이 이동 가능.",
+        "nextCheck": "EC 열차와 FlixBus 가격/시간을 비교하고, 짐이 있으면 좌석 예약을 우선 검토한다.",
+        "steps": [
+          "Berlin Hbf에서 Praha hl.n.행 직행 열차를 우선 후보로 본다.",
+          "가격이나 시간대가 나쁘면 FlixBus 대안을 비교한다."
+        ],
+        "sourceName": "DB Berlin-Prague route page",
+        "sourceUrl": "https://int.bahn.de/en/destinations/berlin/prague"
+      },
       "schengen": true,
       "lat": 50.0755,
       "lng": 14.4378
@@ -638,8 +681,21 @@
       "source": "7/17 RegioJet or OBB from Prague",
       "amount": 330000,
       "note": "Museums, libraries, slower days; 7/20 Vienna -> Budapest by EuroCity",
-      "transportIn": "2026-07-17 RegioJet or OBB: Prague -> Vienna",
-      "transportOut": "2026-07-20 EuroCity: Vienna -> Budapest",
+      "transportIn": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
+      "transportOut": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
+      "arrivalTransfer": {
+        "title": "프라하 -> 빈",
+        "route": "Praha hl.n. -> Wien Hbf",
+        "duration": "RegioJet/철도 약 3시간 56분 전후",
+        "statusNote": "RegioJet/Rail Europe 기준 프라하-빈 철도 구간은 약 4시간으로 잡을 수 있음.",
+        "nextCheck": "RegioJet과 OBB 가격, 수하물/좌석 조건을 비교해 예매 후보를 고른다.",
+        "steps": [
+          "Praha hl.n.에서 Wien Hbf행 직행 열차를 우선 확인한다.",
+          "도착 후 Wien Hbf 기준 숙소 이동 수단을 붙인다."
+        ],
+        "sourceName": "Rail Europe RegioJet route reference",
+        "sourceUrl": "https://www.raileurope.com/en-us/trains/regiojet"
+      },
       "schengen": true,
       "lat": 48.2082,
       "lng": 16.3738
@@ -654,8 +710,21 @@
       "source": "7/20 EuroCity from Vienna",
       "amount": 300000,
       "note": "Thermal baths, food, Danube; 7/23 Budapest -> Zagreb -> Plitvice by linked FlixBus legs",
-      "transportIn": "2026-07-20 EuroCity: Vienna -> Budapest",
-      "transportOut": "2026-07-23 FlixBus: Budapest -> Zagreb -> Plitvice",
+      "transportIn": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
+      "transportOut": "2026-07-23 FlixBus: 부다페스트 -> 자그레브 -> 플리트비체",
+      "arrivalTransfer": {
+        "title": "빈 -> 부다페스트",
+        "route": "Wien Hbf -> Budapest Keleti",
+        "duration": "Railjet/EuroCity 약 2시간 24분-2시간 55분",
+        "statusNote": "OBB는 빈과 부다페스트 사이 Railjet/EuroCity가 정기 운행된다고 안내.",
+        "nextCheck": "Budapest Keleti 도착 기준 숙소 위치와 야간 이동 여부를 함께 본다.",
+        "steps": [
+          "Wien Hbf에서 Budapest Keleti행 Railjet 또는 EuroCity 탑승.",
+          "Budapest Keleti 도착 후 지하철/택시로 숙소 이동."
+        ],
+        "sourceName": "OBB Hungary / Austrian Railways",
+        "sourceUrl": "https://www.oebb.at/en/tickets-kundenkarten/oesterreich-europa/sparschiene/sparschiene-europa/ungarn"
+      },
       "schengen": true,
       "lat": 47.4979,
       "lng": 19.0402
@@ -668,8 +737,21 @@
       "endDate": "2026-07-23",
       "source": "7/23 FlixBus transfer checkpoint",
       "note": "Budapest -> Zagreb morning/early leg, then Zagreb -> Plitvice onward bus",
-      "transportIn": "2026-07-23 FlixBus: Budapest -> Zagreb",
-      "transportOut": "2026-07-23 FlixBus: Zagreb -> Plitvice",
+      "transportIn": "2026-07-23 FlixBus: 부다페스트 -> 자그레브",
+      "transportOut": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
+      "arrivalTransfer": {
+        "title": "부다페스트 -> 자그레브",
+        "route": "Budapest bus station -> Zagreb bus station",
+        "duration": "FlixBus 최단 약 4시간 15분",
+        "statusNote": "부다페스트-자그레브 버스 구간은 FlixBus 기준 약 4시간대.",
+        "nextCheck": "같은 날 자그레브->플리트비체 환승 시간이 충분한지 먼저 본다.",
+        "steps": [
+          "부다페스트에서 자그레브행 FlixBus 탑승.",
+          "자그레브 버스 터미널에서 플리트비체행 버스로 환승."
+        ],
+        "sourceName": "FlixBus Budapest-Zagreb",
+        "sourceUrl": "https://www.flixbus.com/bus-routes/bus-budapest-zagreb"
+      },
       "schengen": true,
       "lat": 45.815,
       "lng": 15.9819
@@ -683,8 +765,21 @@
       "lodging": "Park entrance B&B / guesthouse",
       "source": "7/23 FlixBus from Zagreb",
       "note": "1 night near national park entrance for early morning entry; book budget B&B or hotel",
-      "transportIn": "2026-07-23 FlixBus: Zagreb -> Plitvice",
-      "transportOut": "2026-07-24 FlixBus: Plitvice -> Split",
+      "transportIn": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
+      "transportOut": "2026-07-24 FlixBus 또는 버스: 플리트비체 -> 스플리트",
+      "arrivalTransfer": {
+        "title": "자그레브 -> 플리트비체",
+        "route": "Zagreb bus station -> Plitvice Lakes",
+        "duration": "FlixBus 최단 약 1시간 50분",
+        "statusNote": "자그레브-플리트비체 버스는 FlixBus 기준 약 1시간 50분.",
+        "nextCheck": "플리트비체 하차 지점이 Entrance 1/2 중 어디인지 숙소 위치와 맞춘다.",
+        "steps": [
+          "자그레브에서 Plitvice Lakes행 버스를 탄다.",
+          "도착 후 숙소가 입구에서 도보/셔틀 가능한지 확인한다."
+        ],
+        "sourceName": "FlixBus Zagreb-Plitvice",
+        "sourceUrl": "https://www.flixbus.com/bus-routes/bus-zagreb-plitvice-lakes-plitvicka-jezera"
+      },
       "schengen": true,
       "lat": 44.8806,
       "lng": 15.6168
@@ -698,8 +793,21 @@
       "lodging": "Split stay TBD",
       "source": "7/24 FlixBus from Plitvice",
       "note": "2 nights; peak season coastal stay, book quickly",
-      "transportIn": "2026-07-24 FlixBus: Plitvice -> Split",
-      "transportOut": "2026-07-26 Kapetan Luka ferry or bus: Split -> Dubrovnik",
+      "transportIn": "2026-07-24 FlixBus 또는 버스: 플리트비체 -> 스플리트",
+      "transportOut": "2026-07-26 Kapetan Luka 또는 TP Line 페리: 스플리트 -> 두브로브니크",
+      "arrivalTransfer": {
+        "title": "플리트비체 -> 스플리트",
+        "route": "Plitvice Lakes -> Split",
+        "duration": "직행/환승 버스 시간표 확인 필요",
+        "statusNote": "FlixBus는 Plitvice Lakes에서 Split을 도달 가능 목적지로 표시함.",
+        "nextCheck": "7/24 실제 직행 여부, 자그레브/자다르 환승 여부, 숙소 체크인 가능 시간을 함께 본다.",
+        "steps": [
+          "Plitvice Lakes 출발 버스 시간표에서 Split 도착편을 확인한다.",
+          "직행이 없거나 시간이 나쁘면 Zagreb/Zadar 환승안을 비교한다."
+        ],
+        "sourceName": "FlixBus Plitvice destination list",
+        "sourceUrl": "https://www.flixbus.com/bus/plitvice-lakes-plitvicka-jezera"
+      },
       "schengen": true,
       "lat": 43.5081,
       "lng": 16.4402
@@ -713,8 +821,21 @@
       "lodging": "Dubrovnik stay TBD",
       "source": "7/26 ferry or bus from Split",
       "note": "2 nights; reserve peak-season stay and 7/28 Ryanair DBV -> FCO with baggage",
-      "transportIn": "2026-07-26 Kapetan Luka ferry or bus: Split -> Dubrovnik",
-      "transportOut": "2026-07-28 Ryanair direct: Dubrovnik DBV -> Rome FCO; add baggage",
+      "transportIn": "2026-07-26 Kapetan Luka 또는 TP Line 페리: 스플리트 -> 두브로브니크",
+      "transportOut": "2026-07-28 Ryanair 직항: 두브로브니크 DBV -> 로마 FCO, 수하물 추가 필요",
+      "arrivalTransfer": {
+        "title": "스플리트 -> 두브로브니크",
+        "route": "Split ferry port -> Dubrovnik ferry port",
+        "duration": "고속선 약 4시간 30분-5시간 10분",
+        "statusNote": "Split-Dubrovnik 페리는 4-10월 매일 운항 후보가 있고 Kapetan Luka-Krilo/TP Line이 주요 후보.",
+        "nextCheck": "7/26 운항편, 바람/결항 리스크, 숙소까지 항구 이동을 같이 본다.",
+        "steps": [
+          "Split 항구에서 Dubrovnik행 고속선 탑승.",
+          "Dubrovnik 항구 도착 후 숙소 위치에 따라 버스/택시 이동."
+        ],
+        "sourceName": "Ferryhopper Split-Dubrovnik",
+        "sourceUrl": "https://www.ferryhopper.com/en/ferry-routes/direct/split-dubrovnik"
+      },
       "schengen": true,
       "lat": 42.6507,
       "lng": 18.0944
@@ -727,8 +848,21 @@
       "endDate": "2026-08-03",
       "source": "7/28 Ryanair DBV -> FCO",
       "note": "Italy bridge leg; reach Naples for 8/3 overnight ferry to Sicily",
-      "transportIn": "2026-07-28 Ryanair direct: Dubrovnik DBV -> Rome FCO; baggage required",
-      "transportOut": "2026-08-03 Tirrenia or GNV night ferry cabin: Naples -> Palermo",
+      "transportIn": "2026-07-28 Ryanair 직항: 두브로브니크 DBV -> 로마 FCO, 수하물 필요",
+      "transportOut": "2026-08-03 Tirrenia 또는 GNV 야간페리: 나폴리 -> 팔레르모",
+      "arrivalTransfer": {
+        "title": "두브로브니크 -> 로마 / 나폴리",
+        "route": "Dubrovnik DBV -> Rome FCO -> Napoli Centrale",
+        "duration": "DBV-FCO 직항 약 1시간 20분 + 공항-나폴리 철도 약 3시간대",
+        "statusNote": "DBV-FCO 직항은 약 1시간 20분, Fiumicino-나폴리 철도는 약 3시간대 후보.",
+        "nextCheck": "Ryanair 수하물 포함가, FCO 도착 후 당일 나폴리 이동 여부를 확정한다.",
+        "steps": [
+          "Dubrovnik 공항에서 Rome Fiumicino행 직항 탑승.",
+          "FCO 도착 후 Roma Termini 환승 또는 직행편으로 Napoli Centrale 이동."
+        ],
+        "sourceName": "Skyscanner / ItaliaRail",
+        "sourceUrl": "https://www.skyscanner.com/routes/dbv/fco/dubrovnik-to-rome-fiumicino.html"
+      },
       "schengen": true,
       "lat": 41.9028,
       "lng": 12.4964
@@ -741,8 +875,21 @@
       "endDate": "2026-08-06",
       "source": "8/3 overnight ferry cabin from Naples",
       "note": "Sicily leg; depart Catania CTA to Athens on 8/6",
-      "transportIn": "2026-08-03 Tirrenia or GNV night ferry cabin: Naples -> Palermo",
-      "transportOut": "2026-08-06 Aegean or Ryanair direct: Catania CTA -> Athens ATH",
+      "transportIn": "2026-08-03 Tirrenia 또는 GNV 야간페리: 나폴리 -> 팔레르모",
+      "transportOut": "2026-08-06 Aegean 또는 Ryanair 직항: 카타니아 CTA -> 아테네 ATH",
+      "arrivalTransfer": {
+        "title": "나폴리 -> 팔레르모 / 카타니아",
+        "route": "Naples port -> Palermo port -> Catania",
+        "duration": "야간페리 약 8시간 30분-12시간, 팔레르모-카타니아 이동 별도",
+        "statusNote": "나폴리-팔레르모 페리는 Tirrenia/GNV/Grimaldi 후보가 있고 야간 이동 가능.",
+        "nextCheck": "선실 포함가, 도착항-카타니아 이동, 8/6 항공편과의 여유 시간을 확인한다.",
+        "steps": [
+          "Naples 항구에서 Palermo행 야간페리 탑승.",
+          "Palermo 도착 후 Catania 이동편을 별도로 연결한다."
+        ],
+        "sourceName": "Tirrenia / Ferryhopper",
+        "sourceUrl": "https://en.tirrenia.it/ferry-sicily/naples-palermo/"
+      },
       "schengen": true,
       "lat": 38.1157,
       "lng": 13.3615
@@ -754,7 +901,20 @@
       "startDate": "2026-08-06",
       "source": "8/6 CTA -> ATH direct flight",
       "note": "Aegean or Ryanair direct from Catania",
-      "transportIn": "2026-08-06 Aegean or Ryanair direct: Catania CTA -> Athens ATH",
+      "transportIn": "2026-08-06 Aegean 또는 Ryanair 직항: 카타니아 CTA -> 아테네 ATH",
+      "arrivalTransfer": {
+        "title": "카타니아 -> 아테네",
+        "route": "Catania CTA -> Athens ATH",
+        "duration": "직항 약 1시간 35분",
+        "statusNote": "Catania-Athens 직항은 Aegean/Ryanair 후보가 있고 약 1시간 35분으로 잡힘.",
+        "nextCheck": "8/6 실제 운항 요일, 수하물 포함가, 아테네 도착 후 숙소 이동을 확정한다.",
+        "steps": [
+          "Catania Fontanarossa 공항에서 Athens행 직항 탑승.",
+          "Athens ATH 도착 후 시내/숙소 이동 수단을 붙인다."
+        ],
+        "sourceName": "FlightsFrom / FlightConnections",
+        "sourceUrl": "https://www.flightsfrom.com/CTA-ATH"
+      },
       "schengen": true,
       "lat": 37.9838,
       "lng": 23.7275
@@ -762,7 +922,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-06-11",
+    "asOf": "2026-06-12",
     "limitDays": 90,
     "usedDays": 0,
     "remainingDays": 90,
@@ -835,6 +995,12 @@
       "sleepHours": 6.65,
       "recharge": 83.0,
       "balance": "6.16"
+    },
+    {
+      "date": "2026-06-11",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.75"
     }
   ],
   "reflections": [
@@ -927,6 +1093,16 @@
       "why": "회사 보안·배포·문서 작업의 실제 책임이 컸고, 상품 쪽은 증거 없는 승격을 막는 판단이 더 중요했다.",
       "carry": "후보별 구매 언어, 사용 장면, 증거 부족, 승인 경계를 한 표로 낮춘다.",
       "drop": "검색량이나 그럴듯한 콘셉트만 보고 등록 후보로 올리는 흐름."
+    },
+    {
+      "id": "u0fanurjdfe6r1d6b1keuuctek",
+      "date": "2026-06-12",
+      "title": "내일 의도 / KOCO 보안 대응을 먼저 닫기",
+      "intent": "KOCO SDK/보안성검토 잔여를 새 후보보다 먼저 닫는다.",
+      "did": null,
+      "why": null,
+      "carry": "검토의견 잔여 항목과 SDK production/E2E 중 지금 막힌 1개만 먼저 잡는다.",
+      "drop": null
     }
   ]
 }

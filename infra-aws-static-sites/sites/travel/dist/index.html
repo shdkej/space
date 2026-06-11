@@ -534,6 +534,38 @@
         font-size: 10px;
       }
 
+      .transfer-notes {
+        display: grid;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .transfer-note {
+        border-left: 4px solid var(--blue);
+        padding: 8px 10px;
+        background: rgb(26 76 203 / 0.06);
+      }
+
+      .transfer-note.next {
+        border-left-color: var(--red);
+        background: rgb(212 52 28 / 0.06);
+      }
+
+      .transfer-note b {
+        display: block;
+        margin-bottom: 4px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .transfer-note span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
       .transfer-steps {
         margin: 14px 0 0;
         padding-left: 18px;
@@ -1526,12 +1558,17 @@
         $("transferKicker").textContent = `${dateLabel(row.startDate, row.endDate)} · ${row.city || "movement"}`;
         $("transferTitle").textContent = transfer.title || "이동정보";
         const steps = (transfer.steps || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("");
+        const notes = [
+          transfer.statusNote ? `<div class="transfer-note"><b>기존 확인</b><span>${escapeHtml(transfer.statusNote)}</span></div>` : "",
+          transfer.nextCheck ? `<div class="transfer-note next"><b>앞으로 확인</b><span>${escapeHtml(transfer.nextCheck)}</span></div>` : ""
+        ].filter(Boolean).join("");
         const source = transfer.sourceUrl
-          ? `<a class="transfer-source" href="${escapeHtml(transfer.sourceUrl)}" target="_blank" rel="noreferrer">source · ${escapeHtml(transfer.sourceName || transfer.sourceUrl)}</a>`
-          : `<span class="transfer-source">source · ${escapeHtml(transfer.sourceName || "checked")}</span>`;
+          ? `<a class="transfer-source" href="${escapeHtml(transfer.sourceUrl)}" target="_blank" rel="noreferrer">출처 · ${escapeHtml(transfer.sourceName || transfer.sourceUrl)}</a>`
+          : `<span class="transfer-source">출처 · ${escapeHtml(transfer.sourceName || "checked")}</span>`;
         $("transferBody").innerHTML = `
           <p class="transfer-route">${escapeHtml(transfer.route || "")}</p>
           ${transfer.duration ? `<span class="transfer-duration">${escapeHtml(transfer.duration)}</span>` : ""}
+          ${notes ? `<div class="transfer-notes">${notes}</div>` : ""}
           ${steps ? `<ul class="transfer-steps">${steps}</ul>` : ""}
           ${source}
         `;

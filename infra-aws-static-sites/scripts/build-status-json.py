@@ -83,6 +83,8 @@ def build_status(registry, outputs, resolve_aws=False, check=False, timeout=5):
         domain = site["domain_name"]
         url = "https://" + domain
         output = outputs.get(app, {})
+        hosting = site.get("hosting", "s3 cloudfront")
+        static_hosting = hosting == "s3 cloudfront"
 
         distribution_id = output.get("cloudfront_distribution_id", "")
         if resolve_aws and not distribution_id:
@@ -106,8 +108,9 @@ def build_status(registry, outputs, resolve_aws=False, check=False, timeout=5):
             {
                 "name": site.get("deployment_name", site.get("name", app).lower()),
                 "url": url,
-                "bucket": output.get("bucket_name", bucket_for_domain(domain)),
-                "distribution": distribution_id or "unresolved",
+                "bucket": output.get("bucket_name", bucket_for_domain(domain) if static_hosting else ""),
+                "distribution": distribution_id or (site.get("distribution", "") if not static_hosting else "unresolved"),
+                "hosting": hosting,
                 "updatedAt": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
                 "state": state,
             }
@@ -128,7 +131,7 @@ def build_status(registry, outputs, resolve_aws=False, check=False, timeout=5):
         "generatedAt": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "overall": {
             "state": "ok" if all_ok else "warn",
-            "label": f"{label} are the active static apps",
+            "label": f"{label} are the active surfaces",
             "score": 98 if all_ok else 82,
         },
         "checks": checks,

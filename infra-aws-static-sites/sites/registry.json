@@ -44,6 +44,16 @@
       "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring",
       "deployment_name": "virtue web static",
       "spa_fallback": true
+    },
+    {
+      "app": "control-center-cms",
+      "name": "Control Center CMS",
+      "domain_name": "cms.oracle.shdkej.com",
+      "kind": "cms",
+      "detail": "shadcn/ui operations CMS for Status composition and surface registry management",
+      "deployment_name": "control center cms",
+      "hosting": "kubernetes ingress",
+      "spa_fallback": false
     }
   ],
   "agents": [

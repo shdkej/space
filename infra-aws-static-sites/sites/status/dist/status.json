@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-12T14:10:57Z",
+  "generatedAt": "2026-06-12T14:18:37Z",
   "overall": {
     "state": "ok",
-    "label": "Status, Travel Ops, Card News Library, Infinity, and Virtue are the active static apps",
+    "label": "Status, Travel Ops, Card News Library, Infinity, Virtue, and Control Center CMS are the active surfaces",
     "score": 98
   },
   "checks": [
@@ -10,36 +10,43 @@
       "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 230,
+      "latencyMs": 124,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 137,
+      "latencyMs": 148,
       "detail": "World travel planning board deployed as a separate static app"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 162,
+      "latencyMs": 119,
       "detail": "Growing public archive for photo insight card-news sets"
     },
     {
       "name": "Infinity",
       "url": "https://infinity.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 162,
+      "latencyMs": 91,
       "detail": "Intent dashboard for Infinity work queue and archive state"
     },
     {
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 163,
+      "latencyMs": 63,
       "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring"
+    },
+    {
+      "name": "Control Center CMS",
+      "url": "https://cms.oracle.shdkej.com",
+      "state": "ok",
+      "latencyMs": 22,
+      "detail": "shadcn/ui operations CMS for Status composition and surface registry management"
     }
   ],
   "deployments": [
@@ -48,7 +55,8 @@
       "url": "https://status.aws.shdkej.com",
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
-      "updatedAt": "2026-06-12T14:10:56Z",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-06-12T14:18:35Z",
       "state": "ok"
     },
     {
@@ -56,7 +64,8 @@
       "url": "https://travel.aws.shdkej.com",
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
-      "updatedAt": "2026-06-12T14:10:56Z",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-06-12T14:18:35Z",
       "state": "ok"
     },
     {
@@ -64,7 +73,8 @@
       "url": "https://library.aws.shdkej.com",
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
-      "updatedAt": "2026-06-12T14:10:57Z",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-06-12T14:18:35Z",
       "state": "ok"
     },
     {
@@ -72,7 +82,8 @@
       "url": "https://infinity.aws.shdkej.com",
       "bucket": "static-infinity-aws-shdkej-com",
       "distribution": "E3JYGTLQKF0AXX",
-      "updatedAt": "2026-06-12T14:10:57Z",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-06-12T14:18:35Z",
       "state": "ok"
     },
     {
@@ -80,7 +91,17 @@
       "url": "https://virtue.aws.shdkej.com",
       "bucket": "static-virtue-aws-shdkej-com",
       "distribution": "EVCIL59LC6WJ6",
-      "updatedAt": "2026-06-12T14:10:57Z",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-06-12T14:18:35Z",
+      "state": "ok"
+    },
+    {
+      "name": "control center cms",
+      "url": "https://cms.oracle.shdkej.com",
+      "bucket": "",
+      "distribution": "",
+      "hosting": "kubernetes ingress",
+      "updatedAt": "2026-06-12T14:18:37Z",
       "state": "ok"
     }
   ],
@@ -141,6 +162,11 @@
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "kind": "app"
+    },
+    {
+      "name": "Control Center CMS",
+      "url": "https://cms.oracle.shdkej.com",
+      "kind": "cms"
     }
   ]
 }

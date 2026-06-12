@@ -18,6 +18,13 @@ def bucket_for_domain(domain):
     return "static-" + domain.replace(".", "-")
 
 
+def url_for_check(url, site):
+    health_path = site.get("health_path")
+    if not health_path:
+        return url
+    return url.rstrip("/") + "/" + health_path.lstrip("/")
+
+
 def state_outputs(root):
     try:
         raw = subprocess.check_output(
@@ -93,7 +100,7 @@ def build_status(registry, outputs, resolve_aws=False, check=False, timeout=5):
         state = "ok"
         latency_ms = 0
         if check:
-            state, latency_ms = check_url(url, timeout)
+            state, latency_ms = check_url(url_for_check(url, site), timeout)
 
         checks.append(
             {

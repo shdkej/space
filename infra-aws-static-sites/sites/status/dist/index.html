@@ -259,6 +259,16 @@
         min-width: 0;
       }
 
+      .quicklink {
+        display: inline-block;
+        margin-top: 14px;
+        border: 1px solid var(--ink);
+        background: var(--panel);
+        padding: 9px 11px;
+        box-shadow: 4px 4px 0 rgb(24 27 31 / 12%);
+        font-size: 12px;
+      }
+
       .span-2 {
         grid-column: span 2;
       }
@@ -334,6 +344,7 @@
         <div>
           <p class="eyebrow">Space operations board</p>
           <h1>Status that can stay open all day.</h1>
+          <a class="quicklink" href="./control-center/">Open Control Center</a>
         </div>
         <aside class="clock">
           <strong id="now">Loading...</strong>

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard Control Center</title>
+    <style>
+      :root {
+        --ink: #182026;
+        --muted: #66717d;
+        --line: #d7dde5;
+        --paper: #f4f1ea;
+        --panel: #fffdf8;
+        --panel-2: #fbfaf5;
+        --green: #117a52;
+        --amber: #b76113;
+        --blue: #2952cc;
+        --red: #b42318;
+        --shadow: 0 18px 48px rgb(30 32 36 / 9%);
+      }
+      * { box-sizing: border-box; }
+      html { overflow-x: clip; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          linear-gradient(90deg, rgb(24 32 38 / 4%) 1px, transparent 1px),
+          linear-gradient(rgb(24 32 38 / 4%) 1px, transparent 1px),
+          var(--paper);
+        background-size: 28px 28px;
+        font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", Menlo, Consolas, monospace;
+      }
+      a { color: inherit; text-decoration: none; }
+      button, input { font: inherit; }
+      .shell { width: min(1520px, calc(100vw - 28px)); margin: 0 auto; padding: 22px 0 42px; }
+      .topbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: end;
+        padding-bottom: 18px;
+        border-bottom: 2px solid var(--ink);
+      }
+      .eyebrow { margin: 0 0 8px; color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+      h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(34px, 5vw, 72px); line-height: .94; letter-spacing: 0; }
+      .tools { display: flex; flex-wrap: wrap; gap: 8px; justify-content: end; }
+      .tool {
+        min-height: 34px;
+        padding: 8px 10px;
+        border: 1px solid var(--ink);
+        background: var(--panel);
+        box-shadow: 4px 4px 0 rgb(24 32 38 / 12%);
+      }
+      .tool:hover, .tool:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+      .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+      .metric, .section, .panel { border: 1px solid var(--line); background: rgb(255 253 248 / 94%); box-shadow: var(--shadow); }
+      .metric { min-height: 116px; padding: 14px; display: grid; align-content: space-between; }
+      .metric-label { color: var(--muted); font-size: 12px; }
+      .metric-value { font-size: clamp(28px, 4vw, 48px); line-height: 1; }
+      .metric-note { color: #8a95a3; font-size: 11px; overflow-wrap: anywhere; }
+      .layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(320px, .95fr); gap: 14px; }
+      .section, .panel { min-width: 0; }
+      .section + .section, .panel + .panel { margin-top: 14px; }
+      .section-head, .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      h2 { margin: 0; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+      .updated { color: var(--muted); font-size: 11px; text-align: right; }
+      .table { display: grid; }
+      .row {
+        display: grid;
+        grid-template-columns: 130px 92px minmax(0, 1fr) minmax(0, 1.2fr) 118px;
+        gap: 12px;
+        align-items: center;
+        padding: 13px 14px;
+        border-top: 1px solid var(--line);
+        min-height: 66px;
+      }
+      .row:first-child { border-top: 0; }
+      .row.header { min-height: 40px; color: var(--muted); font-size: 11px; text-transform: uppercase; background: var(--panel-2); }
+      .name { font-weight: 800; }
+      .detail { color: var(--muted); font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+      .mono { color: #344150; font-size: 12px; overflow-wrap: anywhere; }
+      .state { justify-self: start; padding: 5px 7px; border: 1px solid var(--line); background: #fff; font-size: 11px; white-space: nowrap; }
+      .state.ok { border-color: rgb(17 122 82 / 40%); color: var(--green); }
+      .state.manual { border-color: rgb(183 97 19 / 45%); color: var(--amber); }
+      .state.locked { border-color: rgb(180 35 24 / 42%); color: var(--red); }
+      .stack { display: grid; gap: 10px; padding: 14px; }
+      .line { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--line); }
+      .line:last-child { border-bottom: 0; padding-bottom: 0; }
+      .key { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+      .value { font-size: 12px; line-height: 1.45; }
+      .flow { display: grid; gap: 8px; padding: 14px; }
+      .step { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; }
+      .num { width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid var(--ink); background: #fff; font-size: 11px; }
+      .search { width: 260px; max-width: 100%; border: 1px solid var(--line); background: #fff; min-height: 34px; padding: 8px 10px; }
+      @media (max-width: 1060px) {
+        .layout, .topbar, .summary { grid-template-columns: 1fr; }
+        .tools { justify-content: start; }
+        .row, .row.header { grid-template-columns: 1fr; gap: 6px; }
+        .row.header { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Internal static ops</p>
+          <h1>Dashboard Control Center</h1>
+        </div>
+        <nav class="tools" aria-label="quick links">
+          <a class="tool" href="../">Status</a>
+          <a class="tool" href="https://travel.aws.shdkej.com">Travel</a>
+          <a class="tool" href="https://infinity.aws.shdkej.com">Infinity</a>
+          <a class="tool" href="https://library.aws.shdkej.com">Library</a>
+        </nav>
+      </section>
+
+      <section class="summary" aria-label="summary">
+        <article class="metric"><div class="metric-label">Registered surfaces</div><div class="metric-value" id="surfaceCount">6</div><div class="metric-note">status / travel / library / infinity / virtue / family</div></article>
+        <article class="metric"><div class="metric-label">Current mode</div><div class="metric-value">Read</div><div class="metric-note">쓰기 API와 배포 버튼은 아직 닫혀 있음</div></article>
+        <article class="metric"><div class="metric-label">Default deploy lane</div><div class="metric-value">S3</div><div class="metric-note">existing status static site, no Terraform</div></article>
+        <article class="metric"><div class="metric-label">Last loaded</div><div class="metric-value" id="clock">...</div><div class="metric-note" id="statusGenerated">status.json 대기 중</div></article>
+      </section>
+
+      <section class="layout">
+        <div>
+          <section class="section">
+            <div class="section-head"><h2>Surface Registry</h2><input id="filter" class="search" type="search" placeholder="filter surfaces" /></div>
+            <div class="table" id="surfaceTable"></div>
+          </section>
+          <section class="section">
+            <div class="section-head"><h2>Change Log Model</h2><span class="updated">completion = visible URL verified</span></div>
+            <div class="flow">
+              <div class="step"><span class="num">1</span><div><strong>Request</strong><div class="detail">사용자 요청, affected surface, 승인 경계를 먼저 기록한다.</div></div></div>
+              <div class="step"><span class="num">2</span><div><strong>Data or file edit</strong><div class="detail">원장 파일과 dist 파일을 분리해서 기록하고, 승인된 범위만 수정한다.</div></div></div>
+              <div class="step"><span class="num">3</span><div><strong>Build and scoped commit</strong><div class="detail">로컬 생성/검증 후 관련 파일만 stage, unrelated dirty는 보존한다.</div></div></div>
+              <div class="step"><span class="num">4</span><div><strong>Push, deploy, verify</strong><div class="detail">원격 raw, GitHub Actions/S3, 공개 URL 키워드 확인까지 닫는다.</div></div></div>
+            </div>
+          </section>
+        </div>
+        <aside>
+          <section class="panel">
+            <div class="panel-head"><h2>Approval Boundary</h2></div>
+            <div class="stack">
+              <div class="line"><span class="key">Allowed</span><span class="value">읽기 전용 상태 확인, 로컬 HTML/JSON 수정, scoped commit/push, 공개 URL 검증</span></div>
+              <div class="line"><span class="key">Ask first</span><span class="value">쓰기 API, auth/permission, Terraform/AWS 리소스, 프로덕션 앱 동작, 비용 발생, 외부 발송</span></div>
+              <div class="line"><span class="key">Current</span><span class="value">이 페이지는 read-only MVP다. 배포 버튼은 명령 표시 수준으로만 남긴다.</span></div>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h2>Deploy State</h2><span class="updated" id="deployUpdated">loading</span></div>
+            <div class="stack" id="deployList"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h2>First Editable Lanes</h2></div>
+            <div class="stack">
+              <div class="line"><span class="key">Travel</span><span class="value"><code>raw-events-private.json</code> to <code>travel-data.json</code> to public keyword check</span></div>
+              <div class="line"><span class="key">Status</span><span class="value"><code>sites/registry.json</code> to <code>status.json</code> to status page check</span></div>
+              <div class="line"><span class="key">Infinity</span><span class="value"><code>INTENTS.md</code> + reports/artifacts to raw GitHub + dashboard check</span></div>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <script>
+      const fallbackSurfaces = [
+        { name: "Status", kind: "dashboard", url: "https://status.aws.shdkej.com", source: "sites/registry.json, sites/status/dist/status.json", build: "python3 scripts/build-status-json.py --resolve-aws --check", state: "ok" },
+        { name: "Travel Ops", kind: "dashboard", url: "https://travel.aws.shdkej.com", source: "sites/travel/data/raw-events-private.json, dist/travel-data.json", build: "python3 sites/travel/scripts/build-travel-data.py", state: "ok" },
+        { name: "Card News Library", kind: "archive", url: "https://library.aws.shdkej.com", source: "system/data/card-news-library/items.json", build: "rebuild card-news library static HTML", state: "manual" },
+        { name: "Infinity", kind: "dashboard", url: "https://infinity.aws.shdkej.com", source: "INTENTS.md, intents/*, reports/*, artifacts/*", build: "static dashboard reads GitHub raw/API", state: "ok" },
+        { name: "Virtue", kind: "app", url: "https://virtue.aws.shdkej.com", source: "Virtue export dist", build: "app export pipeline", state: "locked" },
+        { name: "Family Wedding", kind: "static page", url: "https://shdkej.com/family-wedding-2026-06-27/", source: "shdkej.github.io static/public family-wedding-2026-06-27", build: "Gatsby/static publish", state: "manual" },
+      ];
+      const stateLabel = (state) => state === "ok" ? "verified" : state === "locked" ? "approval" : "manual";
+      const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[ch]);
+      const surfaceRow = (surface) => `
+        <a class="row" href="${escapeHtml(surface.url)}" target="_blank" rel="noopener noreferrer" data-search="${escapeHtml([surface.name, surface.kind, surface.source, surface.url].join(" ").toLowerCase())}">
+          <div><div class="name">${escapeHtml(surface.name)}</div><div class="detail">${escapeHtml(surface.kind)}</div></div>
+          <span class="state ${escapeHtml(surface.state)}">${stateLabel(surface.state)}</span>
+          <div class="mono">${escapeHtml(surface.source)}</div>
+          <div class="mono">${escapeHtml(surface.build)}</div>
+          <div class="detail">${escapeHtml(new URL(surface.url).hostname)}</div>
+        </a>`;
+      const renderSurfaces = (surfaces) => {
+        document.getElementById("surfaceCount").textContent = surfaces.length;
+        document.getElementById("surfaceTable").innerHTML = `<div class="row header"><span>Surface</span><span>State</span><span>Source</span><span>Build</span><span>Verify</span></div>${surfaces.map(surfaceRow).join("")}`;
+      };
+      const renderDeploys = (data) => {
+        const deployments = data.deployments || [];
+        document.getElementById("deployUpdated").textContent = data.generatedAt ? new Date(data.generatedAt).toLocaleString() : "manual";
+        document.getElementById("statusGenerated").textContent = data.generatedAt ? "status.json " + new Date(data.generatedAt).toLocaleString() : "fallback registry";
+        document.getElementById("deployList").innerHTML = deployments.slice(0, 6).map((item) => `<div class="line"><span class="key">${escapeHtml(item.state || "state")}</span><span class="value"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.name)}</a><br><span class="detail">${escapeHtml(item.bucket || item.distribution || "")}</span></span></div>`).join("") || `<div class="line"><span class="key">manual</span><span class="value">status.json deploy list unavailable</span></div>`;
+      };
+      const boot = async () => {
+        let surfaces = fallbackSurfaces;
+        try {
+          const response = await fetch("../status.json", { cache: "no-store" });
+          const data = await response.json();
+          renderDeploys(data);
+          const appMap = new Map(fallbackSurfaces.map((item) => [item.name.toLowerCase(), item]));
+          surfaces = (data.apps || fallbackSurfaces).map((app) => ({ ...(appMap.get(String(app.name || "").toLowerCase()) || {}), ...app, source: (appMap.get(String(app.name || "").toLowerCase()) || {}).source || "registry.json", build: (appMap.get(String(app.name || "").toLowerCase()) || {}).build || "static deploy lane", state: "ok" }));
+          if (!surfaces.find((item) => item.name === "Family Wedding")) surfaces.push(fallbackSurfaces.find((item) => item.name === "Family Wedding"));
+        } catch (error) {
+          renderDeploys({ deployments: [], generatedAt: "" });
+        }
+        renderSurfaces(surfaces.filter(Boolean));
+      };
+      document.getElementById("filter").addEventListener("input", (event) => {
+        const q = event.target.value.trim().toLowerCase();
+        document.querySelectorAll("[data-search]").forEach((row) => { row.style.display = !q || row.dataset.search.includes(q) ? "grid" : "none"; });
+      });
+      const tick = () => {
+        document.getElementById("clock").textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      };
+      tick();
+      setInterval(tick, 1000);
+      boot();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: control-center-cms
+  namespace: default
+  labels:
+    app: control-center-cms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: control-center-cms
+  template:
+    metadata:
+      labels:
+        app: control-center-cms
+    spec:
+      containers:
+        - name: app
+          image: node:22-alpine
+          imagePullPolicy: IfNotPresent
+          workingDir: /tmp
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+            - name: SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: control-center-cms-env
+                  key: SUPABASE_URL
+            - name: SUPABASE_SERVICE_ROLE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: control-center-cms-env
+                  key: SUPABASE_SERVICE_ROLE_KEY
+          ports:
+            - containerPort: 3000
+              name: http
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              apk add --no-cache git
+              corepack enable
+              rm -rf /app
+              git clone --depth=1 --branch master https://github.com/shdkej/space.git /repo
+              cp -R /repo/apps/control-center-cms /app
+              cd /app
+              pnpm install --frozen-lockfile=false
+              pnpm build
+              pnpm start
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 180
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 4
+          resources:
+            requests:
+              cpu: 150m
+              memory: 384Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

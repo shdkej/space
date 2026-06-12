@@ -9,6 +9,8 @@ spec:
     repoURL: https://github.com/shdkej/space.git
     targetRevision: HEAD
     path: apps/control-center-cms
+    directory:
+      include: '{deployment.yaml,service.yaml,ingress.yaml}'
   destination:
     server: https://kubernetes.default.svc
     namespace: default

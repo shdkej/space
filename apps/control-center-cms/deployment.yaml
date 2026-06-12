@@ -35,6 +35,16 @@ spec:
                 secretKeyRef:
                   name: control-center-cms-env
                   key: SUPABASE_SERVICE_ROLE_KEY
+            - name: CMS_AUTH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: control-center-cms-env
+                  key: CMS_AUTH_USER
+            - name: CMS_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: control-center-cms-env
+                  key: CMS_AUTH_PASSWORD
           ports:
             - containerPort: 3000
               name: http
@@ -53,7 +63,7 @@ spec:
               pnpm start
           readinessProbe:
             httpGet:
-              path: /
+              path: /api/health
               port: http
             initialDelaySeconds: 90
             periodSeconds: 10
@@ -61,7 +71,7 @@ spec:
             failureThreshold: 12
           livenessProbe:
             httpGet:
-              path: /
+              path: /api/health
               port: http
             initialDelaySeconds: 180
             periodSeconds: 30

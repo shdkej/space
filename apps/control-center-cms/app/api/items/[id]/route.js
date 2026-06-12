@@ -1,22 +1,12 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getServiceClient, logActivity } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const TABLE = "control_center_items";
+const COLS = "id,surface,field_key,value,status,created_at,updated_at";
 const allowedStatuses = new Set(["draft", "ready", "published"]);
-
-function getClient() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error("Supabase server credentials are not configured");
-  }
-  return createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 
 function normalizePatch(input) {
   const data = {};
@@ -46,19 +36,22 @@ export async function PATCH(request, context) {
   try {
     const { id } = await context.params;
     const payload = normalizePatch(await request.json());
-    if (payload.error) {
-      return NextResponse.json({ error: payload.error }, { status: 400 });
-    }
+    if (payload.error) return NextResponse.json({ error: payload.error }, { status: 400 });
 
-    const supabase = getClient();
+    const supabase = getServiceClient();
     const { data, error } = await supabase
       .from(TABLE)
       .update(payload.data)
       .eq("id", id)
-      .select("id,surface,field_key,value,status,created_at,updated_at")
+      .select(COLS)
       .single();
-
     if (error) throw error;
+
+    await logActivity(supabase, {
+      entity: "item",
+      action: "update",
+      summary: `record 수정 — ${data.surface}/${data.field_key} (${data.status})`
+    });
     return NextResponse.json({ item: data });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -68,9 +61,20 @@ export async function PATCH(request, context) {
 export async function DELETE(_request, context) {
   try {
     const { id } = await context.params;
-    const supabase = getClient();
+    const supabase = getServiceClient();
+    const { data: existing } = await supabase
+      .from(TABLE)
+      .select("surface,field_key")
+      .eq("id", id)
+      .single();
     const { error } = await supabase.from(TABLE).delete().eq("id", id);
     if (error) throw error;
+
+    await logActivity(supabase, {
+      entity: "item",
+      action: "delete",
+      summary: `record 삭제 — ${existing?.surface || "?"}/${existing?.field_key || id}`
+    });
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

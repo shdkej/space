@@ -3,433 +3,493 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Space Status</title>
+    <title>Space Status — Studio</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
     <style>
       :root {
-        --ink: #181b1f;
-        --muted: #667085;
-        --line: #d9dee7;
-        --paper: #f4f1ea;
-        --panel: #fffdf8;
-        --ok: #117a52;
-        --warn: #b76113;
-        --bad: #b42318;
-        --blue: #2952cc;
-        --shadow: 0 16px 50px rgb(38 32 24 / 10%);
+        --bg: #fafbfc;
+        --surface: #fefeff;
+        --surface-2: #eff0f2;
+        --ink: #1a1a1a;
+        --muted: #6b6b6b;
+        --faint: #9a9a9a;
+        --line: rgba(26, 26, 26, 0.08);
+        --line-2: rgba(26, 26, 26, 0.16);
+        --ok: #2d5a27;
+        --warn: #d4a026;
+        --bad: #c44536;
+        --blue: #335c99;
+        --r-sm: 6px;
+        --r-md: 10px;
+        --r-lg: 18px;
+        --shadow-soft: 0 1px 2px rgba(26, 26, 26, 0.04), 0 10px 30px rgba(26, 26, 26, 0.06);
+        --shadow-lift: 0 2px 6px rgba(26, 26, 26, 0.06), 0 22px 50px rgba(26, 26, 26, 0.12);
+        --sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+        --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
       }
 
-      * {
-        box-sizing: border-box;
-      }
-
-      html {
-        width: 100%;
-        overflow-x: clip;
-      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      a { color: inherit; text-decoration: none; }
 
       body {
         margin: 0;
-        width: 100%;
         min-height: 100vh;
-        overflow-x: clip;
+        overflow-x: hidden;
         color: var(--ink);
-        background:
-          linear-gradient(90deg, rgb(24 27 31 / 4%) 1px, transparent 1px),
-          linear-gradient(rgb(24 27 31 / 4%) 1px, transparent 1px),
-          var(--paper);
-        background-size: 28px 28px;
-        font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", Menlo,
-          Consolas, monospace;
+        font-family: var(--sans);
+        font-feature-settings: "tnum";
+        -webkit-font-smoothing: antialiased;
+        background: radial-gradient(125% 95% at 50% -8%, #ffffff 0%, var(--bg) 44%, #e6e9ee 100%) fixed;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.5;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
       }
 
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .shell {
-        width: min(1440px, calc(100vw - 32px));
-        max-width: 100%;
+      .wrap {
+        position: relative;
+        z-index: 1;
+        width: min(1180px, calc(100vw - 48px));
         margin: 0 auto;
-        padding: 28px 0 40px;
-      }
-
-      .topbar {
-        display: flex;
-        justify-content: space-between;
-        gap: 18px;
-        align-items: start;
-        margin-bottom: 22px;
+        padding: clamp(44px, 6vw, 92px) 0 88px;
       }
 
       .eyebrow {
-        margin: 0 0 10px;
-        color: var(--muted);
-        font-size: 12px;
-        letter-spacing: 0.08em;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin: 0 0 32px;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.26em;
         text-transform: uppercase;
+        color: var(--faint);
       }
-
-      h1 {
-        margin: 0;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(40px, 7vw, 92px);
-        line-height: 0.92;
-        letter-spacing: 0;
-        max-width: 760px;
-      }
-
-      .clock {
-        min-width: 250px;
-        padding: 14px 16px;
-        border: 1px solid var(--line);
-        background: var(--panel);
-        box-shadow: var(--shadow);
-      }
-
-      .clock strong {
-        display: block;
-        font-size: 16px;
-        margin-bottom: 6px;
-      }
-
-      .clock span {
-        color: var(--muted);
-        font-size: 12px;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: 1.1fr 1.45fr 0.9fr;
-        gap: 16px;
-      }
-
-      .card {
-        min-width: 0;
-        border: 1px solid var(--line);
-        background: rgb(255 253 248 / 92%);
-        box-shadow: var(--shadow);
-      }
-
-      .card h2 {
-        margin: 0;
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--line);
-        font-size: 13px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .hero-status {
-        min-height: 290px;
-        display: grid;
-        align-content: space-between;
-        padding: 18px;
-      }
-
-      .status-word {
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(72px, 10vw, 140px);
-        line-height: 0.86;
-      }
-
-      .status-word.ok {
+      .eyebrow .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
         color: var(--ok);
       }
-
-      .score-row {
-        display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 12px;
-        min-width: 0;
-      }
-
-      .score {
-        font-size: 54px;
-        line-height: 0.9;
-      }
-
-      .muted {
-        color: var(--muted);
-      }
-
-      .list {
-        display: grid;
-      }
-
-      .row {
-        display: grid;
-        grid-template-columns: 12px minmax(0, 1fr) auto;
-        gap: 12px;
-        align-items: center;
-        padding: 14px 16px;
-        border-top: 1px solid var(--line);
-        min-width: 0;
-      }
-
-      a.row {
-        transition:
-          border-color 160ms ease,
-          background 160ms ease,
-          transform 160ms ease;
-      }
-
-      a.row:hover,
-      a.row:focus-visible {
-        background: #fff;
-        border-color: var(--blue);
-        outline: none;
-        transform: translateX(3px);
-      }
-
-      .row > div {
-        min-width: 0;
-      }
-
-      .row:first-child {
-        border-top: 0;
-      }
-
-      .dot {
-        width: 10px;
-        height: 10px;
+      .eyebrow .live::before {
+        content: "";
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
-        background: var(--muted);
-      }
-
-      .dot.ok {
         background: var(--ok);
+        box-shadow: 0 0 0 0 rgba(45, 90, 39, 0.4);
+        animation: blip 2.4s ease-out infinite;
+      }
+      @keyframes blip {
+        0% { box-shadow: 0 0 0 0 rgba(45, 90, 39, 0.4); }
+        70%, 100% { box-shadow: 0 0 0 9px rgba(45, 90, 39, 0); }
       }
 
-      .dot.warn {
-        background: var(--warn);
+      /* ---------- hero ---------- */
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 40px;
+        padding-bottom: 34px;
+        border-bottom: 1px solid var(--line);
       }
-
-      .dot.bad {
-        background: var(--bad);
-      }
-
-      .name {
-        font-weight: 700;
-        font-size: 13px;
-      }
-
-      .detail {
-        margin-top: 4px;
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(15px, 1.5vw, 17px);
+        font-weight: 500;
+        line-height: 1.5;
         color: var(--muted);
-        font-size: 12px;
-        line-height: 1.4;
+        max-width: 32ch;
       }
+      .hero h1 b { color: var(--ink); font-weight: 700; }
 
-      .pill {
+      /* signature hook: live pulse stage */
+      .stage {
+        position: relative;
+        perspective: 1000px;
+        transform-style: preserve-3d;
+        padding: 24px 6px 8px 0;
+      }
+      .pulse {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+      }
+      .pulse i {
+        position: absolute;
+        right: 18%;
+        width: 130px;
+        height: 130px;
+        border: 1.5px solid rgba(45, 90, 39, 0.28);
+        border-radius: 50%;
+        animation: pulse 3.6s ease-out infinite;
+      }
+      .pulse i:nth-child(2) { animation-delay: 1.2s; }
+      .pulse i:nth-child(3) { animation-delay: 2.4s; }
+      @keyframes pulse {
+        0% { transform: scale(0.5); opacity: 0.7; }
+        100% { transform: scale(2.7); opacity: 0; }
+      }
+      .deck {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        transform-style: preserve-3d;
+        pointer-events: none;
+        will-change: transform;
+        transition: transform 0.4s var(--ease);
+      }
+      .chip {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 13px;
+        border-radius: 11px;
+        background: rgba(254, 254, 255, 0.66);
         border: 1px solid var(--line);
-        padding: 5px 8px;
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
         font-size: 11px;
-        background: #fff;
-        max-width: 100%;
-        overflow-wrap: anywhere;
+        font-weight: 600;
+        color: var(--muted);
         white-space: nowrap;
       }
+      .chip .d { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+      .chip-1 { top: -8px; right: -10px; transform: translateZ(64px) rotate(-3deg); animation: floatA 7s ease-in-out infinite; }
+      .chip-2 { top: 132px; right: -22px; color: var(--faint); transform: translateZ(32px) rotate(3deg); animation: floatB 9s ease-in-out infinite; }
+      @keyframes floatA { 0%, 100% { transform: translateZ(64px) rotate(-3deg) translateY(0); } 50% { transform: translateZ(64px) rotate(-3deg) translateY(-11px); } }
+      @keyframes floatB { 0%, 100% { transform: translateZ(32px) rotate(3deg) translateY(0); } 50% { transform: translateZ(32px) rotate(3deg) translateY(9px); } }
 
-      .apps {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        padding: 16px;
-        min-width: 0;
+      .hero-score { position: relative; z-index: 2; display: grid; justify-items: end; gap: 6px; }
+      .hero-score .label { font-size: 11px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--faint); }
+      .hero-score .score {
+        font-size: clamp(64px, 11vw, 132px);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 0.82;
+        color: var(--ink);
+        text-shadow: 0 1px 0 rgba(26, 26, 26, 0.05), 0 16px 34px rgba(26, 26, 26, 0.1);
+        transition: transform 0.3s var(--ease);
+        will-change: transform;
       }
+      .hero-score .word { font-size: 13px; font-weight: 600; color: var(--ok); }
+      .hero-score .word.warn { color: var(--warn); }
+      .hero-score .word.bad { color: var(--bad); }
 
-      .app {
-        min-height: 96px;
+      /* ---------- stats ---------- */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        margin: 0 0 40px;
+        border-bottom: 1px solid var(--line);
+      }
+      .stat { padding: 26px 28px 26px 0; border-right: 1px solid var(--line); }
+      .stat:last-child { border-right: 0; padding-right: 0; }
+      .stat .k { margin: 0 0 12px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
+      .stat .v { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; line-height: 1; }
+      .stat .v .u { margin-left: 5px; font-size: 12px; font-weight: 500; color: var(--faint); }
+
+      /* ---------- bento ---------- */
+      .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 22px; }
+      .card {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        box-shadow: var(--shadow-soft);
+        padding: 12px 0 8px;
+        transform-style: preserve-3d;
+        transition: transform 0.25s var(--ease), box-shadow 0.5s var(--ease);
+      }
+      .card.hoverable { will-change: transform; }
+      .card.hoverable::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s var(--ease);
+        background: radial-gradient(440px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 62%);
+        mix-blend-mode: soft-light;
+        z-index: 3;
+      }
+      .card.hoverable:hover { box-shadow: var(--shadow-lift); }
+      .card.hoverable:hover::after { opacity: 1; }
+      .card > h2 {
+        margin: 0;
+        padding: 18px 26px 16px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+      }
+      .card > h2 .meta { font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
+
+      .col-7 { grid-column: span 7; }
+      .col-5 { grid-column: span 5; }
+
+      .list { display: grid; }
+      .row {
+        display: grid;
+        grid-template-columns: 10px minmax(0, 1fr) auto;
+        gap: 13px;
+        align-items: center;
+        padding: 14px 26px;
+        border-top: 1px solid var(--line);
         min-width: 0;
+        transition: background 0.2s var(--ease);
+      }
+      .row:first-of-type { border-top: 0; }
+      a.row:hover { background: var(--surface-2); }
+      .row > div { min-width: 0; }
+      .sdot { width: 9px; height: 9px; border-radius: 50%; background: var(--faint); }
+      .sdot.ok { background: var(--ok); }
+      .sdot.warn { background: var(--warn); }
+      .sdot.bad { background: var(--bad); }
+      .row .name { font-size: 13.5px; font-weight: 600; }
+      .row .detail { margin-top: 4px; font-size: 11.5px; line-height: 1.45; color: var(--muted); overflow-wrap: anywhere; }
+      .pill {
+        flex: 0 0 auto;
+        padding: 4px 9px;
+        border-radius: 99px;
+        background: var(--surface-2);
+        font-size: 10.5px;
+        font-weight: 600;
+        color: var(--muted);
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      .pill.ok { background: rgba(45, 90, 39, 0.1); color: var(--ok); }
+      .pill.warn { background: rgba(212, 160, 38, 0.14); color: #927019; }
+      .pill.bad { background: rgba(196, 69, 54, 0.1); color: var(--bad); }
+
+      /* apps launcher */
+      .apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); margin: 6px 0 0; border-top: 1px solid var(--line); }
+      .app {
+        min-height: 92px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: 12px;
-        border: 1px solid var(--line);
-        background: #fff;
+        gap: 10px;
+        padding: 18px 22px;
+        background: var(--surface);
+        transition: background 0.2s var(--ease);
+      }
+      .app:hover { background: var(--surface-2); }
+      .app .an { font-size: 14px; font-weight: 700; }
+      .app .ak { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
+      .app .au { font-size: 11px; color: var(--blue); overflow-wrap: anywhere; }
+
+      /* footer */
+      .foot {
+        margin-top: 52px;
+        padding-top: 22px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        color: var(--faint);
+        font-variant-numeric: tabular-nums;
       }
 
-      .app:hover {
-        border-color: var(--blue);
+      .rise { opacity: 0; transform: translateY(18px); animation: rise 0.8s var(--ease) forwards; }
+      @keyframes rise { to { opacity: 1; transform: none; } }
+
+      @media (prefers-reduced-motion: reduce) {
+        .rise { animation: none; opacity: 1; transform: none; }
+        .pulse i, .eyebrow .live::before, .chip { animation: none; }
       }
 
-      .app > * {
-        min-width: 0;
+      @media (max-width: 920px) {
+        .hero { grid-template-columns: 1fr; align-items: start; gap: 24px; }
+        .hero-score { justify-items: start; }
+        .stats { grid-template-columns: repeat(2, 1fr); }
+        .stat:nth-child(2) { border-right: 0; padding-right: 0; }
+        .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line); padding-top: 26px; }
+        .col-7, .col-5 { grid-column: 1 / -1; }
       }
-
-      .quicklink {
-        display: inline-block;
-        margin-top: 14px;
-        border: 1px solid var(--ink);
-        background: var(--panel);
-        padding: 9px 11px;
-        box-shadow: 4px 4px 0 rgb(24 27 31 / 12%);
-        font-size: 12px;
-      }
-
-      .span-2 {
-        grid-column: span 2;
-      }
-
-      .full {
-        grid-column: 1 / -1;
-      }
-
-      @supports not (overflow: clip) {
-        html,
-        body {
-          overflow-x: hidden;
-        }
-      }
-
-      @media (max-width: 980px) {
-        .topbar,
-        .grid {
-          grid-template-columns: 1fr;
-          display: grid;
-        }
-
-        .clock {
-          min-width: 0;
-        }
-
-        .span-2 {
-          grid-column: auto;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .shell {
-          width: 100%;
-          padding: 18px 12px 30px;
-        }
-
-        h1 {
-          font-size: clamp(36px, 12vw, 52px);
-        }
-
-        .status-word {
-          font-size: clamp(64px, 22vw, 96px);
-        }
-
-        .row {
-          grid-template-columns: 12px minmax(0, 1fr);
-          gap: 10px;
-          padding: 13px 12px;
-        }
-
-        .pill {
-          grid-column: 2;
-          justify-self: start;
-          white-space: normal;
-          text-align: left;
-        }
-
-        .score-row {
-          display: grid;
-        }
-
-        .apps {
-          grid-template-columns: 1fr;
-          padding: 12px;
-        }
+      @media (max-width: 520px) {
+        .stats { grid-template-columns: 1fr; }
+        .stat { border-right: 0; padding: 20px 0; border-top: 1px solid var(--line); }
+        .stat:first-child { border-top: 0; padding-top: 0; }
+        .apps { grid-template-columns: 1fr; }
       }
     </style>
   </head>
   <body>
-    <main class="shell">
-      <section class="topbar">
-        <div>
-          <p class="eyebrow">Space operations board</p>
-          <h1>Status that can stay open all day.</h1>
+    <main class="wrap">
+      <p class="eyebrow rise" style="animation-delay: 0.02s">Space Ops · Status Board <span class="live" id="liveTag">live</span></p>
+
+      <header class="hero">
+        <h1 class="rise" style="animation-delay: 0.06s" id="heroLine">하루 종일 열어둘 수 있는 <b>운영 상태판</b>입니다.</h1>
+        <div class="stage rise" style="animation-delay: 0.1s">
+          <div class="pulse" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="deck" id="deck">
+            <div class="chip chip-1" id="chip1"><span class="d"></span>—</div>
+            <div class="chip chip-2" id="chip2"><span class="d"></span>—</div>
+          </div>
+          <div class="hero-score">
+            <span class="label">System Health</span>
+            <span class="score" id="score">—</span>
+            <span class="word" id="word">—</span>
+          </div>
         </div>
-        <aside class="clock">
-          <strong id="now">Loading...</strong>
-          <span id="generated">Waiting for status.json</span>
-        </aside>
-      </section>
+      </header>
 
-      <section class="grid">
-        <article class="card hero-status">
-          <div>
-            <p class="eyebrow">Overall</p>
-            <div id="overallState" class="status-word ok">OK</div>
-          </div>
-          <div class="score-row">
-            <div>
-              <div id="overallLabel">All core static surfaces are reachable</div>
-              <div class="detail">Static HTML + S3 JSON feed</div>
-            </div>
-            <div id="score" class="score">98</div>
-          </div>
+      <section class="stats rise" style="animation-delay: 0.16s" id="stats"></section>
+
+      <section class="bento">
+        <article class="card hoverable col-7 rise" style="animation-delay: 0.2s">
+          <h2>Live Checks <span class="meta" id="checksMeta">—</span></h2>
+          <div class="list" id="checks"></div>
         </article>
-
-        <article class="card span-2">
-          <h2>Live checks</h2>
-          <div id="checks" class="list"></div>
+        <article class="card hoverable col-5 rise" style="animation-delay: 0.24s">
+          <h2>Agent Lane <span class="meta" id="agentsMeta">—</span></h2>
+          <div class="list" id="agents"></div>
         </article>
-
-        <article class="card">
-          <h2>Agent lane</h2>
-          <div id="agents" class="list"></div>
+        <article class="card hoverable col-7 rise" style="animation-delay: 0.28s">
+          <h2>Deployments <span class="meta" id="depMeta">—</span></h2>
+          <div class="list" id="deployments"></div>
+        </article>
+        <article class="card hoverable col-5 rise" style="animation-delay: 0.32s">
+          <h2>Surfaces <span class="meta">launcher</span></h2>
+          <div class="apps" id="apps"></div>
         </article>
       </section>
+
+      <footer class="foot">
+        <span id="footLeft">Sam Samuel — Status Board</span>
+        <span id="footRight">—</span>
+      </footer>
     </main>
 
     <script>
-      const stateClass = (state) =>
-        state === "ok" ? "ok" : state === "warn" ? "warn" : "bad";
-
-      const row = (item, right = "", href = "") => {
-        const tag = href ? "a" : "div";
-        const attrs = href ? ` href="${href}" target="_blank" rel="noopener noreferrer"` : "";
-        return `
-        <${tag} class="row"${attrs}>
-          <span class="dot ${stateClass(item.state)}"></span>
-          <div>
-            <div class="name">${item.name}</div>
-            <div class="detail">${item.detail || item.url || ""}</div>
-          </div>
-          <span class="pill">${right || item.state.toUpperCase()}</span>
-        </${tag}>
-      `;
+      const $ = (id) => document.getElementById(id);
+      const sc = (s) => (s === "ok" ? "ok" : s === "warn" ? "warn" : "bad");
+      const host = (u) => { try { return new URL(u).hostname; } catch { return u || ""; } };
+      const ago = (iso) => {
+        if (!iso) return "—";
+        const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+        if (diff < 60) return "방금";
+        if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+        return `${Math.floor(diff / 86400)}일 전`;
       };
 
-      const render = (data) => {
-        document.getElementById("overallState").textContent =
-          data.overall.state.toUpperCase();
-        document.getElementById("overallState").className =
-          "status-word " + stateClass(data.overall.state);
-        document.getElementById("overallLabel").textContent = data.overall.label;
-        document.getElementById("score").textContent = data.overall.score;
-        document.getElementById("generated").textContent =
-          "Generated " + new Date(data.generatedAt).toLocaleString();
+      function render(data) {
+        const ov = data.overall || {};
+        $("score").textContent = ov.score != null ? ov.score : "—";
+        const w = $("word");
+        w.textContent = (ov.state || "ok").toUpperCase() + (ov.label ? ` · ${ov.label}` : "");
+        w.className = "word " + sc(ov.state);
+        $("liveTag").textContent = (ov.state || "ok") === "ok" ? "live" : ov.state;
+        $("footRight").textContent = `generated ${new Date(data.generatedAt).toLocaleString("ko-KR")}`;
 
-        document.getElementById("checks").innerHTML = data.checks
-          .map((item) => row(item, item.url ? new URL(item.url).hostname : "open", item.url))
-          .join("");
-        document.getElementById("agents").innerHTML = data.agents
-          .map((item) => row(item))
-          .join("");
-      };
+        const checks = data.checks || [];
+        const agents = data.agents || [];
+        const deps = data.deployments || [];
+        const apps = data.apps || [];
 
-      const tick = () => {
-        document.getElementById("now").textContent = new Date().toLocaleString();
-      };
+        const okAgents = agents.filter((a) => a.state === "ok").length;
+        const avgLat = checks.length ? Math.round(checks.reduce((s, c) => s + (c.latencyMs || 0), 0) / checks.length) : 0;
+        $("stats").innerHTML = [
+          { k: "Score", v: ov.score != null ? ov.score : "—", u: "/ 100" },
+          { k: "Surfaces", v: checks.length, u: "live" },
+          { k: "Agents OK", v: `${okAgents}`, u: `/ ${agents.length}` },
+          { k: "Avg latency", v: avgLat, u: "ms" }
+        ].map((it) => `<div class="stat"><div class="k">${it.k}</div><div class="v">${it.v}<span class="u">${it.u}</span></div></div>`).join("");
 
-      tick();
-      setInterval(tick, 1000);
+        $("checksMeta").textContent = `${checks.length} surfaces`;
+        $("checks").innerHTML = checks.map((c) => `
+          <a class="row" href="${c.url || "#"}" target="_blank" rel="noopener noreferrer">
+            <span class="sdot ${sc(c.state)}"></span>
+            <div><div class="name">${c.name}</div><div class="detail">${c.detail || host(c.url)}</div></div>
+            <span class="pill ${sc(c.state)}">${c.latencyMs ? c.latencyMs + "ms" : (c.state || "").toUpperCase()}</span>
+          </a>`).join("");
+
+        $("agentsMeta").textContent = `${okAgents}/${agents.length} ok`;
+        $("agents").innerHTML = agents.map((a) => `
+          <div class="row">
+            <span class="sdot ${sc(a.state)}"></span>
+            <div><div class="name">${a.name}</div><div class="detail">${a.detail || ""}</div></div>
+            <span class="pill ${sc(a.state)}">${(a.state || "").toUpperCase()}</span>
+          </div>`).join("");
+
+        $("depMeta").textContent = `${deps.length} slots`;
+        $("deployments").innerHTML = deps.map((d) => `
+          <div class="row">
+            <span class="sdot ${sc(d.state)}"></span>
+            <div><div class="name">${d.name}</div><div class="detail">${[d.hosting, d.distribution].filter(Boolean).join(" · ")}</div></div>
+            <span class="pill">${ago(d.updatedAt)}</span>
+          </div>`).join("");
+
+        $("apps").innerHTML = apps.map((a) => `
+          <a class="app" href="${a.url || "#"}" target="_blank" rel="noopener noreferrer">
+            <div class="ak">${a.kind || "surface"}</div>
+            <div><div class="an">${a.name}</div><div class="au">${host(a.url)}</div></div>
+          </a>`).join("");
+
+        // floating chips: two most relevant checks
+        const sorted = checks.slice().sort((x, y) => (x.state === "ok") - (y.state === "ok") || (y.latencyMs || 0) - (x.latencyMs || 0));
+        const c1 = sorted[0], c2 = sorted[1];
+        if (c1) $("chip1").innerHTML = `<span class="d" style="background:var(--${sc(c1.state)})"></span>${c1.name} · ${c1.latencyMs ? c1.latencyMs + "ms" : c1.state}`;
+        if (c2) $("chip2").innerHTML = `<span class="d" style="background:var(--${sc(c2.state)})"></span>${c2.name} · ${c2.latencyMs ? c2.latencyMs + "ms" : c2.state}`;
+      }
 
       fetch("./status.json", { cache: "no-store" })
-        .then((response) => response.json())
+        .then((r) => r.json())
         .then(render)
-        .catch(() => {
-          document.getElementById("overallState").textContent = "BOOT";
-          document.getElementById("overallLabel").textContent =
-            "status.json is not available yet";
+        .catch(() => { $("word").textContent = "BOOT · status.json 대기 중"; $("score").textContent = "··"; });
+
+      /* signature hook: 3D tilt + glare + score parallax */
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduceMotion && window.matchMedia("(pointer: fine)").matches) {
+        document.querySelectorAll(".card.hoverable").forEach((card) => {
+          card.addEventListener("mousemove", (e) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+            card.style.setProperty("--mx", `${x * 100}%`);
+            card.style.setProperty("--my", `${y * 100}%`);
+            card.style.transform = `rotateX(${(0.5 - y) * 4.5}deg) rotateY(${(x - 0.5) * 4.5}deg) translateZ(8px)`;
+          });
+          card.addEventListener("mouseleave", () => { card.style.transform = ""; });
         });
+        const score = $("score"), deck = $("deck");
+        let raf = 0;
+        window.addEventListener("mousemove", (e) => {
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            const dx = e.clientX / window.innerWidth - 0.5, dy = e.clientY / window.innerHeight - 0.5;
+            score.style.transform = `translate(${dx * -16}px, ${dy * -9}px)`;
+            if (deck) deck.style.transform = `rotateY(${dx * 16}deg) rotateX(${dy * -12}deg)`;
+            raf = 0;
+          });
+        }, { passive: true });
+      }
     </script>
   </body>
 </html>

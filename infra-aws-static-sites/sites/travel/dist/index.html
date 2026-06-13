@@ -342,6 +342,15 @@
       .col-map { grid-column: span 5; }
       .col-cat { grid-column: span 7; }
       .col-reflect { grid-column: span 5; }
+      .col-ledger { grid-column: 1 / -1; }
+      .led-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; }
+      .led-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 13px 0; border-top: 1px solid var(--line); }
+      .led-grid .led-row:nth-child(1), .led-grid .led-row:nth-child(2) { border-top: 0; }
+      .led-row .led-date { font-size: 12px; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+      .led-name { font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
+      .led-sub { margin-top: 3px; font-size: 11.5px; color: var(--muted); }
+      .led-amt { font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .led-empty { color: var(--faint); font-size: 13px; padding: 8px 0; }
 
       /* budget */
       .budget-figure {
@@ -727,6 +736,8 @@
         .stat:nth-child(2) { border-right: 0; padding-right: 0; }
         .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line); padding-top: 26px; }
         .col-budget, .col-schengen, .col-itin, .col-map, .col-cat, .col-reflect { grid-column: 1 / -1; }
+        .led-grid { grid-template-columns: 1fr; }
+        .led-grid .led-row:nth-child(2) { border-top: 1px solid var(--line); }
         #map { min-height: 300px; }
       }
       @media (max-width: 520px) {
@@ -888,6 +899,11 @@
           <p class="reflect-quote" id="reflectQuote">—</p>
           <div class="reflect-meta" id="reflectMeta"></div>
         </div>
+
+        <div class="card hoverable col-ledger rise" style="animation-delay: 0.44s">
+          <div class="card-head"><h2>최근 지출</h2><span class="meta" id="ledgerMeta">travel only</span></div>
+          <div id="ledger" class="led-grid"></div>
+        </div>
       </section>
 
       <footer class="foot">
@@ -928,6 +944,14 @@
         return b ? `${a}–${b}` : a;
       };
       const escapeHtml = (v) => String(v || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      const maskMerchant = (raw) => {
+        if (!raw) return "지출";
+        if (/airbnb/i.test(raw)) return "Airbnb 숙소";
+        let s = raw.split(" - ")[0].split("*")[0];
+        s = s.replace(/[_]+/g, " ").replace(/\([주유사]\)/g, "").replace(/\s+/g, " ").trim();
+        s = s.replace(/\b[A-Z0-9]{8,}\b/g, "").trim();
+        return s || "지출";
+      };
       let routeRows = [];
 
       function setHero(data) {
@@ -1010,6 +1034,19 @@
           </div>`;
         }).join("");
         document.querySelectorAll(".leg-detail").forEach((b) => b.addEventListener("click", () => openModal(Number(b.dataset.idx))));
+      }
+
+      function renderLedger(data) {
+        const list = ((data.travelExpenses && data.travelExpenses.length ? data.travelExpenses : data.expenses) || [])
+          .filter((e) => e.travel !== false)
+          .sort((a, b) => `${b.date} ${b.time || ""}`.localeCompare(`${a.date} ${a.time || ""}`))
+          .slice(0, 8);
+        $("ledger").innerHTML = list.length ? list.map((e) => `
+          <div class="led-row">
+            <span class="led-date">${(e.date || "").slice(5).replace("-", ".")}</span>
+            <div><div class="led-name">${escapeHtml(maskMerchant(e.merchant))}</div><div class="led-sub">${escapeHtml([e.location, catNames[e.category] || e.category].filter(Boolean).join(" · "))}</div></div>
+            <span class="led-amt">${won(e.amount)}</span>
+          </div>`).join("") : `<div class="led-empty">여행 지출 없음</div>`;
       }
 
       function renderCats(data) {
@@ -1097,6 +1134,7 @@
           renderTimeline(data);
           renderCats(data);
           renderReflect(data);
+          renderLedger(data);
           renderMap(data);
         })
         .catch((e) => { $("ddaySub").textContent = "sync failed"; console.error(e); });

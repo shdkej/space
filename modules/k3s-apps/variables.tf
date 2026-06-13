@@ -55,7 +55,7 @@ variable "argocd_version" {
 variable "kube_prometheus_stack_version" {
   description = "kube-prometheus-stack Helm Chart 버전"
   type        = string
-  default     = "81.5.0"
+  default     = "86.2.2"
 }
 
 # =============================================================================

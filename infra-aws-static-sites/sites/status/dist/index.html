@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Space Status — Studio</title>
+    <script>(function(){try{var t=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
       rel="stylesheet"
@@ -325,25 +326,43 @@
         .pulse i, .eyebrow .live::before, .chip { animation: none; }
       }
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #15171b;
-          --surface: #1e2126;
-          --surface-2: #262a31;
-          --ink: #e8eaed;
-          --muted: #9aa0a8;
-          --faint: #6b7079;
-          --line: rgba(255, 255, 255, 0.09);
-          --line-2: rgba(255, 255, 255, 0.17);
-          --ok: #5bb150;
-          --warn: #e8b84a;
-          --bad: #e05545;
-          --blue: #6193cf;
-        }
-        body { background: radial-gradient(125% 95% at 50% -8%, #20242b 0%, var(--bg) 44%, #0e1014 100%) fixed; }
-        .chip { background: rgba(34, 38, 45, 0.62); }
-        .pulse i { border-color: rgba(91, 177, 80, 0.3); }
+      :root[data-theme="dark"] {
+        --bg: #15171b;
+        --surface: #1e2126;
+        --surface-2: #262a31;
+        --ink: #e8eaed;
+        --muted: #9aa0a8;
+        --faint: #6b7079;
+        --line: rgba(255, 255, 255, 0.09);
+        --line-2: rgba(255, 255, 255, 0.17);
+        --ok: #5bb150;
+        --warn: #e8b84a;
+        --bad: #e05545;
+        --blue: #6193cf;
       }
+      :root[data-theme="dark"] body { background: radial-gradient(125% 95% at 50% -8%, #20242b 0%, var(--bg) 44%, #0e1014 100%) fixed; }
+      :root[data-theme="dark"] .chip { background: rgba(34, 38, 45, 0.62); }
+      :root[data-theme="dark"] .pulse i { border-color: rgba(91, 177, 80, 0.3); }
+
+      .theme-toggle {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 100;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        font-size: 17px;
+        cursor: pointer;
+        box-shadow: var(--shadow-lift);
+        display: grid;
+        place-items: center;
+        transition: transform 0.3s var(--ease), background 0.3s var(--ease);
+      }
+      .theme-toggle:hover { transform: translateY(-2px); }
 
       @media (max-width: 920px) {
         .hero { grid-template-columns: 1fr; align-items: start; gap: 24px; }
@@ -399,6 +418,8 @@
         <span id="footRight">—</span>
       </footer>
     </main>
+
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">🌙</button>
 
     <script>
       const $ = (id) => document.getElementById(id);
@@ -487,6 +508,16 @@
           });
         }, { passive: true });
       }
+
+      const themeToggle = document.getElementById("themeToggle");
+      const syncThemeIcon = () => { themeToggle.textContent = document.documentElement.getAttribute("data-theme") === "dark" ? "☀" : "🌙"; };
+      syncThemeIcon();
+      themeToggle.addEventListener("click", () => {
+        const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+        syncThemeIcon();
+      });
     </script>
   </body>
 </html>

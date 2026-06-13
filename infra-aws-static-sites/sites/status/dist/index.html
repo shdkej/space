@@ -325,6 +325,26 @@
         .pulse i, .eyebrow .live::before, .chip { animation: none; }
       }
 
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #15171b;
+          --surface: #1e2126;
+          --surface-2: #262a31;
+          --ink: #e8eaed;
+          --muted: #9aa0a8;
+          --faint: #6b7079;
+          --line: rgba(255, 255, 255, 0.09);
+          --line-2: rgba(255, 255, 255, 0.17);
+          --ok: #5bb150;
+          --warn: #e8b84a;
+          --bad: #e05545;
+          --blue: #6193cf;
+        }
+        body { background: radial-gradient(125% 95% at 50% -8%, #20242b 0%, var(--bg) 44%, #0e1014 100%) fixed; }
+        .chip { background: rgba(34, 38, 45, 0.62); }
+        .pulse i { border-color: rgba(91, 177, 80, 0.3); }
+      }
+
       @media (max-width: 920px) {
         .hero { grid-template-columns: 1fr; align-items: start; gap: 24px; }
         .hero-score { justify-items: start; }

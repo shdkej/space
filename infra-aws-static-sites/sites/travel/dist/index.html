@@ -537,9 +537,9 @@
       .tag.booked { background: rgba(45, 90, 39, 0.1); color: var(--success); }
       .tag.planned { background: rgba(212, 160, 38, 0.14); color: #927019; }
       .tag.candidate { background: var(--surface-2); color: var(--faint); }
+      .leg-actions { display: flex; align-items: center; gap: 11px; margin-top: 9px; }
       .leg-detail {
-        display: block;
-        margin-top: 9px;
+        display: inline-block;
         padding: 0;
         border: 0;
         background: none;
@@ -552,6 +552,16 @@
         transition: opacity 0.2s var(--ease);
       }
       .leg-detail:hover { opacity: 0.55; }
+      .pay-chip {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 99px;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+      .pay-chip.paid { background: rgba(45, 90, 39, 0.12); color: var(--success); }
+      .pay-chip.unpaid { background: rgba(196, 69, 54, 0.1); color: var(--danger); }
 
       /* movement detail modal */
       .modal {
@@ -728,6 +738,26 @@
       @media (prefers-reduced-motion: reduce) {
         .rise { animation: none; opacity: 1; transform: none; }
         .track > span, .cat .bar > span { transition: none; }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #15171b;
+          --surface: #1e2126;
+          --surface-2: #262a31;
+          --ink: #e8eaed;
+          --muted: #9aa0a8;
+          --faint: #6b7079;
+          --line: rgba(255, 255, 255, 0.09);
+          --line-2: rgba(255, 255, 255, 0.17);
+          --danger: #e05545;
+          --success: #5bb150;
+          --warning: #e8b84a;
+          --blue: #6193cf;
+        }
+        body { background: radial-gradient(125% 95% at 50% -8%, #20242b 0%, var(--bg) 44%, #0e1014 100%) fixed; }
+        .chip { background: rgba(34, 38, 45, 0.62); }
+        .globe .wire { border-color: rgba(97, 147, 207, 0.2); }
       }
 
       /* ---------- responsive ---------- */
@@ -1027,10 +1057,14 @@
           const status = r.status || "planned";
           const lodging = r.lodging || (status === "candidate" ? "숙소 후보" : "숙소 미정");
           const detail = r.arrivalTransfer ? `<button class="leg-detail" type="button" data-idx="${i}">이동 상세 →</button>` : "";
+          const transport = r.transportOut || r.transportIn || "";
+          const paid = r.transportOutPayment && r.transportOutPayment.status === "paid";
+          const payChip = transport ? `<span class="pay-chip ${paid ? "paid" : "unpaid"}">${paid ? "예매완료" : "예매전"}</span>` : "";
+          const actions = (detail || payChip) ? `<div class="leg-actions">${detail}${payChip}</div>` : "";
           return `
           <div class="leg${i === nextIdx ? " next" : ""}">
             <div class="date">${dateLabel(r.startDate, r.endDate)}<small>${nights(r.startDate, r.endDate) || "TBD"}</small></div>
-            <div class="place"><b>${r.city}</b><small>${[r.country, lodging].filter(Boolean).join(" · ")}</small>${detail}</div>
+            <div class="place"><b>${r.city}</b><small>${[r.country, lodging].filter(Boolean).join(" · ")}</small>${actions}</div>
             <div class="right">
               <span class="amt${r.amount ? "" : " muted"}">${r.amount ? `${manWon(r.amount)}원` : "미정"}</span>
               <span class="tag ${status}">${status}</span>

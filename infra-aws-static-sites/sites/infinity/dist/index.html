@@ -309,6 +309,32 @@
       color: var(--faint); font-size: 11px;
       text-align: center; font-weight: 500;
     }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #15171b;
+        --surface: #1e2126;
+        --surface-2: #262a31;
+        --surface-3: #2f343c;
+        --text: #e8eaed;
+        --muted: #9aa0a8;
+        --faint: #6b7079;
+        --line: rgba(255, 255, 255, 0.09);
+        --line-2: rgba(255, 255, 255, 0.17);
+        --border: rgba(255, 255, 255, 0.09);
+        --accent: #6193cf;
+        --blue: #6193cf;
+        --success: #5bb150;
+        --warning: #e8b84a;
+        --danger: #e05545;
+        --violet: #8b7fd0;
+        --inbox: #e8b84a;
+        --active: #5bb150;
+        --waiting: #8b7fd0;
+        --done: #6b7079;
+      }
+      body { background: radial-gradient(125% 90% at 50% -6%, #20242b 0%, var(--bg) 44%, #0e1014 100%) fixed; }
+      header { background: rgba(24, 26, 30, 0.8); }
+    }
   </style>
 </head>
 <body>

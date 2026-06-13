@@ -436,8 +436,11 @@
         inset: 16px;
         background: var(--surface);
         border-radius: 50%;
-        display: grid;
-        place-items: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
         text-align: center;
       }
       .donut .hole b {
@@ -448,7 +451,6 @@
       }
       .donut .hole small {
         display: block;
-        margin-top: 4px;
         font-size: 10px;
         font-weight: 600;
         letter-spacing: 0.12em;
@@ -739,6 +741,8 @@
         .led-grid { grid-template-columns: 1fr; }
         .led-grid .led-row:nth-child(2) { border-top: 1px solid var(--line); }
         #map { min-height: 300px; }
+        .globe-wrap, .deck { display: none; }
+        .col-budget { order: 99; }
       }
       @media (max-width: 520px) {
         html,

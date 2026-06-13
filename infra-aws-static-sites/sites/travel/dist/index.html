@@ -730,11 +730,93 @@
         #map { min-height: 300px; }
       }
       @media (max-width: 520px) {
+        html,
+        body {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+
+        .wrap {
+          width: min(100% - 32px, 1180px);
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+
         .stats { grid-template-columns: 1fr; }
         .stat { border-right: 0; padding: 20px 0; border-top: 1px solid var(--line); }
         .stat:first-child { border-top: 0; padding-top: 0; }
-        .leg { grid-template-columns: 74px minmax(0, 1fr); }
-        .leg .right { grid-column: 2; justify-items: start; text-align: left; flex-direction: row; }
+
+        .col-itin.card {
+          padding: 24px 20px;
+        }
+
+        .col-itin .card-head {
+          margin-bottom: 16px;
+        }
+
+        .leg {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 8px;
+          padding: 13px 0;
+        }
+
+        .leg:first-child { padding-top: 0; }
+
+        .leg.next::before {
+          left: -10px;
+          top: 18px;
+        }
+
+        .leg .date {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          font-size: 11.5px;
+          line-height: 1.2;
+        }
+
+        .leg .date small {
+          margin-top: 0;
+          white-space: nowrap;
+        }
+
+        .leg .place b {
+          font-size: 15px;
+          line-height: 1.2;
+        }
+
+        .leg .place small {
+          margin-top: 3px;
+          font-size: 11px;
+          line-height: 1.35;
+        }
+
+        .leg-detail {
+          margin-top: 7px;
+          font-size: 11px;
+        }
+
+        .leg .right {
+          grid-column: 1;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          text-align: left;
+        }
+
+        .leg .amt {
+          font-size: 13px;
+          line-height: 1.1;
+        }
+
+        .tag {
+          padding: 3px 7px;
+          font-size: 9px;
+          letter-spacing: 0.05em;
+        }
       }
     </style>
   </head>

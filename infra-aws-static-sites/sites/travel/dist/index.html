@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Travel Ledger — Studio</title>
+    <script>(function(){try{var t=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
@@ -740,25 +741,43 @@
         .track > span, .cat .bar > span { transition: none; }
       }
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #15171b;
-          --surface: #1e2126;
-          --surface-2: #262a31;
-          --ink: #e8eaed;
-          --muted: #9aa0a8;
-          --faint: #6b7079;
-          --line: rgba(255, 255, 255, 0.09);
-          --line-2: rgba(255, 255, 255, 0.17);
-          --danger: #e05545;
-          --success: #5bb150;
-          --warning: #e8b84a;
-          --blue: #6193cf;
-        }
-        body { background: radial-gradient(125% 95% at 50% -8%, #20242b 0%, var(--bg) 44%, #0e1014 100%) fixed; }
-        .chip { background: rgba(34, 38, 45, 0.62); }
-        .globe .wire { border-color: rgba(97, 147, 207, 0.2); }
+      :root[data-theme="dark"] {
+        --bg: #15171b;
+        --surface: #1e2126;
+        --surface-2: #262a31;
+        --ink: #e8eaed;
+        --muted: #9aa0a8;
+        --faint: #6b7079;
+        --line: rgba(255, 255, 255, 0.09);
+        --line-2: rgba(255, 255, 255, 0.17);
+        --danger: #e05545;
+        --success: #5bb150;
+        --warning: #e8b84a;
+        --blue: #6193cf;
       }
+      :root[data-theme="dark"] body { background: radial-gradient(125% 95% at 50% -8%, #20242b 0%, var(--bg) 44%, #0e1014 100%) fixed; }
+      :root[data-theme="dark"] .chip { background: rgba(34, 38, 45, 0.62); }
+      :root[data-theme="dark"] .globe .wire { border-color: rgba(97, 147, 207, 0.2); }
+
+      .theme-toggle {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 100;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        font-size: 17px;
+        cursor: pointer;
+        box-shadow: var(--shadow-lift);
+        display: grid;
+        place-items: center;
+        transition: transform 0.3s var(--ease), background 0.3s var(--ease);
+      }
+      .theme-toggle:hover { transform: translateY(-2px); }
 
       /* ---------- responsive ---------- */
       @media (max-width: 920px) {
@@ -955,6 +974,8 @@
         <div class="modal-body" id="mBody"></div>
       </div>
     </div>
+
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">🌙</button>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -1230,6 +1251,16 @@
           });
         }, { passive: true });
       }
+
+      const themeToggle = document.getElementById("themeToggle");
+      const syncThemeIcon = () => { themeToggle.textContent = document.documentElement.getAttribute("data-theme") === "dark" ? "☀" : "🌙"; };
+      syncThemeIcon();
+      themeToggle.addEventListener("click", () => {
+        const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+        syncThemeIcon();
+      });
     </script>
   </body>
 </html>

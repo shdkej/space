@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Travel Operations Ledger</title>
+    <title>Travel Ledger — Studio</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
@@ -12,1440 +12,823 @@
     />
     <style>
       :root {
-        --paper: #fafbfc;
-        --paper-2: #fefeff;
+        --bg: #fafbfc;
+        --surface: #fefeff;
+        --surface-2: #eff0f2;
         --ink: #1a1a1a;
         --muted: #6b6b6b;
-        --faint: rgb(26 26 26 / 0.1);
-        --line: rgb(26 26 26 / 0.2);
-        --line-strong: rgb(26 26 26 / 0.32);
-        --red: #c44536;
+        --faint: #9a9a9a;
+        --line: rgba(26, 26, 26, 0.08);
+        --line-2: rgba(26, 26, 26, 0.16);
+        --danger: #c44536;
+        --success: #2d5a27;
+        --warning: #d4a026;
         --blue: #335c99;
-        --green: #2d5a27;
-        --gold: #d4a026;
-        --violet: #564b96;
-        --shadow: 0 18px 48px rgb(26 26 26 / 0.12);
-        --shadow-soft: 0 8px 24px rgb(26 26 26 / 0.1);
-        --r-sm: 5px;
-        --r-md: 9px;
-        --mono: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+        --r-sm: 6px;
+        --r-md: 10px;
+        --r-lg: 18px;
+        --shadow-soft: 0 1px 2px rgba(26, 26, 26, 0.04), 0 10px 30px rgba(26, 26, 26, 0.06);
+        --shadow-lift: 0 2px 6px rgba(26, 26, 26, 0.06), 0 22px 50px rgba(26, 26, 26, 0.12);
         --sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
-        --serif: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+        --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
       }
 
       * { box-sizing: border-box; }
 
-      html { background: var(--ink); }
+      html { scroll-behavior: smooth; }
 
       body {
         margin: 0;
         min-height: 100vh;
-        padding-bottom: 64px;
+        overflow-x: hidden;
         color: var(--ink);
         font-family: var(--sans);
+        font-feature-settings: "tnum";
+        -webkit-font-smoothing: antialiased;
         background:
-          linear-gradient(90deg, rgb(26 26 26 / 0.045) 1px, transparent 1px),
-          linear-gradient(0deg, rgb(26 26 26 / 0.035) 1px, transparent 1px),
-          radial-gradient(circle at 90% 10%, rgb(51 92 153 / 0.1), transparent 30%),
-          radial-gradient(circle at 6% 82%, rgb(196 69 54 / 0.12), transparent 26%),
-          var(--paper);
-        background-size: 30px 30px, 30px 30px, auto, auto, auto;
+          radial-gradient(125% 95% at 50% -8%, #ffffff 0%, var(--bg) 44%, #e6e9ee 100%) fixed;
       }
 
+      /* fine studio grain */
       body::before {
         content: "";
         position: fixed;
         inset: 0;
-        z-index: -1;
-        background:
-          repeating-linear-gradient(90deg, transparent 0 11px, rgb(26 26 26 / 0.022) 11px 12px),
-          linear-gradient(180deg, transparent, rgb(26 26 26 / 0.07));
+        z-index: 0;
         pointer-events: none;
+        opacity: 0.5;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
       }
 
-      button, input { font: inherit; }
-
-      html { scroll-behavior: smooth; }
-
-      [id] { scroll-margin-top: 18px; }
-
-      .ledger {
-        width: min(1560px, calc(100vw - 24px));
-        min-height: 100vh;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 86px minmax(540px, 1fr) minmax(432px, 0.74fr);
-        grid-template-rows: auto minmax(620px, 1fr) auto;
-        border-left: 2px solid var(--line);
-        border-right: 2px solid var(--line);
-        background: rgb(251 250 248 / 0.5);
-        box-shadow: var(--shadow);
-      }
-
-      /* ---------------- spine ---------------- */
-      .spine {
-        grid-row: 1 / 4;
-        grid-column: 1;
-        border-right: 2px solid var(--line);
-        background:
-          linear-gradient(180deg, var(--red) 0 16%, transparent 16% 18%, var(--blue) 18% 58%, transparent 58% 60%, var(--green) 60% 100%);
-        display: grid;
-        grid-template-rows: 1fr auto auto 1fr;
-        justify-items: center;
-        align-items: center;
-        gap: 14px;
-        padding: 22px 0;
-        color: var(--paper-2);
-      }
-
-      .spine span,
-      .spine small,
-      .spine .pos {
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
-        font-family: var(--mono);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-      }
-
-      .spine .pos { color: var(--ink); font-weight: 500; }
-
-      .spine strong {
-        color: var(--ink);
-        background: var(--paper-2);
-        border: 1.5px solid var(--line-strong);
-        border-radius: var(--r-md);
-        padding: 12px 9px;
-        font: 900 clamp(30px, 3.4vw, 50px)/0.84 var(--serif);
-        transform: rotate(-90deg);
-        white-space: nowrap;
-        box-shadow: var(--shadow-soft);
-      }
-
-      /* ---------------- mast ---------------- */
-      .mast {
-        grid-column: 2 / 4;
-        grid-row: 1;
-        border-bottom: 2px solid var(--line);
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 332px;
-        grid-template-rows: 1fr auto;
-        position: relative;
-        overflow: hidden;
-        background:
-          linear-gradient(116deg, rgb(251 250 248 / 0.97) 0 60%, rgb(26 26 26 / 0.04) 60% 100%),
-          var(--paper-2);
-      }
-
-      .mast::after {
-        content: "";
-        position: absolute;
-        right: -96px;
-        top: -56px;
-        width: 320px;
-        height: 320px;
-        border: 2px solid var(--line);
-        border-radius: 999px;
-        background:
-          conic-gradient(from -40deg, var(--blue) 0 24deg, transparent 24deg 116deg, var(--red) 116deg 142deg, transparent 142deg 250deg, var(--green) 250deg 274deg, transparent 274deg);
-        opacity: 0.85;
-        pointer-events: none;
-      }
-
-      .title {
-        padding: 26px clamp(22px, 3.5vw, 44px) 18px;
+      .wrap {
         position: relative;
         z-index: 1;
+        width: min(1180px, calc(100vw - 48px));
+        margin: 0 auto;
+        padding: clamp(48px, 7vw, 104px) 0 96px;
       }
 
+      /* ---------- hero ---------- */
       .eyebrow {
-        margin: 0 0 14px;
-        color: var(--blue);
-        font-family: var(--mono);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
         display: flex;
-        gap: 10px;
         align-items: center;
+        gap: 11px;
+        margin: 0 0 32px;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--faint);
       }
-
-      .eyebrow::before {
-        content: "";
-        width: 26px;
-        height: 2px;
+      .eyebrow .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
         background: var(--blue);
       }
 
-      h1 {
-        margin: 0;
-        font: 900 clamp(42px, 6.6vw, 96px)/0.84 var(--serif);
-        letter-spacing: -0.015em;
-        max-width: 860px;
-      }
-
-      .subline {
-        width: min(660px, 92%);
-        margin: 16px 0 0;
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 1.6;
-        font-weight: 500;
-      }
-
-      .launch-box {
-        border-left: 2px solid var(--line);
-        padding: 24px 26px;
+      .hero {
         position: relative;
-        z-index: 1;
-        display: grid;
-        align-content: end;
-        gap: 6px;
-        background: rgb(212 160 38 / 0.12);
-      }
-
-      .launch-box small {
-        color: var(--muted);
-        font-family: var(--mono);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-      }
-
-      .launch-box b {
-        font: 900 clamp(42px, 3.3vw, 48px)/0.84 var(--serif);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .launch-box em {
-        margin-top: 8px;
-        color: var(--muted);
-        font-family: var(--mono);
-        font-size: 12px;
-        line-height: 1.5;
-        font-style: normal;
-      }
-
-      /* ---------------- readout strip ---------------- */
-      .readouts {
-        grid-column: 1 / 3;
-        grid-row: 2;
-        border-top: 2px solid var(--line);
-        display: grid;
-        grid-auto-flow: column;
-        grid-auto-columns: 1fr;
-        position: relative;
-        z-index: 2;
-        background: rgb(26 26 26 / 0.92);
-        color: var(--paper-2);
-      }
-
-      .readout {
-        padding: 13px 18px;
-        border-left: 1px solid rgb(251 250 248 / 0.16);
-        display: grid;
-        gap: 5px;
-        align-content: center;
-      }
-
-      .readout:first-child { border-left: 0; }
-
-      .readout small {
-        color: rgb(251 250 248 / 0.6);
-        font-family: var(--mono);
-        font-size: 10px;
-        font-weight: 500;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-      }
-
-      .readout b {
-        font: 900 19px/1 var(--serif);
-        font-variant-numeric: tabular-nums;
-        overflow-wrap: anywhere;
-      }
-
-      .readout b .unit {
-        font-family: var(--mono);
-        font-size: 11px;
-        font-weight: 400;
-        color: rgb(251 250 248 / 0.62);
-        margin-left: 4px;
-      }
-
-      .readout.accent b { color: var(--gold); }
-
-      /* ---------------- timeline ---------------- */
-      .timeline {
-        grid-column: 2;
-        grid-row: 2;
-        border-right: 2px solid var(--line);
-        background:
-          linear-gradient(90deg, transparent 0 calc(100% - 1px), rgb(26 26 26 / 0.07) calc(100% - 1px)),
-          var(--paper-2);
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        min-width: 0;
-      }
-
-      .section-head {
-        border-bottom: 2px solid var(--line);
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 14px;
         align-items: end;
-        padding: 18px 22px 15px;
+        gap: 40px;
+        padding-bottom: 36px;
+        border-bottom: 1px solid var(--line);
       }
 
-      .section-head h2 {
+      /* signature hook: rotating 3D wireframe globe behind the hero */
+      .globe-wrap {
+        position: absolute;
+        top: 46%;
+        right: -150px;
+        width: 460px;
+        height: 460px;
+        z-index: 0;
+        pointer-events: none;
+        perspective: 1300px;
+        transform: translateY(-50%);
+        opacity: 0.85;
+        -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+        mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+      }
+      .globe {
+        position: absolute;
+        inset: 0;
+        transform-style: preserve-3d;
+        animation: spin 40s linear infinite;
+      }
+      .globe .wire {
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba(51, 92, 153, 0.18);
+        border-radius: 50%;
+      }
+      .globe .wire.lat { border-color: rgba(51, 92, 153, 0.12); }
+      .globe .core {
+        position: absolute;
+        inset: 34%;
+        border-radius: 50%;
+        background: radial-gradient(circle at 38% 32%, rgba(51, 92, 153, 0.14), rgba(51, 92, 153, 0.03) 70%);
+        filter: blur(2px);
+      }
+      @keyframes spin { to { transform: rotateY(360deg); } }
+      @media (prefers-reduced-motion: reduce) { .globe { animation: none; } }
+      .hero h1 {
         margin: 0;
-        font: 900 clamp(24px, 2.6vw, 38px)/0.92 var(--serif);
-        letter-spacing: -0.01em;
-      }
-
-      .section-head p {
-        margin: 7px 0 0;
+        font-size: clamp(15px, 1.5vw, 17px);
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        line-height: 1.5;
         color: var(--muted);
-        font-size: 12.5px;
+        max-width: 30ch;
+      }
+      .hero h1 b { color: var(--ink); font-weight: 700; }
+
+      .dday {
+        display: grid;
+        justify-items: end;
+        gap: 6px;
+      }
+      .dday .label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .dday .num {
+        font-size: clamp(64px, 11vw, 132px);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 0.82;
+        color: var(--ink);
+        text-shadow: 0 1px 0 rgba(26, 26, 26, 0.05), 0 16px 34px rgba(26, 26, 26, 0.1);
+        transition: transform 0.3s var(--ease);
+        will-change: transform;
+      }
+      .dday .sub {
+        font-size: 13px;
         font-weight: 500;
+        color: var(--muted);
       }
 
-      .stamp {
-        border: 2px solid var(--line);
-        padding: 8px 12px;
-        background: var(--green);
-        color: var(--paper-2);
-        border-radius: var(--r-sm);
-        font-family: var(--mono);
+      /* signature hook: hero studio stage with floating glass chips */
+      .dday-stage {
+        position: relative;
+        perspective: 1000px;
+        transform-style: preserve-3d;
+        padding: 28px 8px 12px 0;
+      }
+      .glow {
+        position: absolute;
+        inset: -50px -30px -20px;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(58% 52% at 72% 38%, rgba(51, 92, 153, 0.12), rgba(51, 92, 153, 0) 70%);
+        filter: blur(6px);
+      }
+      .deck {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        transform-style: preserve-3d;
+        pointer-events: none;
+        will-change: transform;
+        transition: transform 0.4s var(--ease);
+      }
+      .chip {
+        position: absolute;
+        padding: 9px 13px;
+        border-radius: 11px;
+        background: rgba(254, 254, 255, 0.66);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
         font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        transform: rotate(-2deg);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--muted);
         white-space: nowrap;
       }
-
-      .schedule {
-        display: grid;
-        grid-template-columns: 112px minmax(140px, 0.78fr) minmax(172px, 0.95fr) minmax(190px, 1.05fr) 118px 122px;
-        align-content: start;
+      .chip::before {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        margin-right: 7px;
+        border-radius: 50%;
+        background: var(--blue);
+        vertical-align: 1px;
       }
+      .chip-1 {
+        top: -10px;
+        right: -14px;
+        transform: translateZ(64px) rotate(-3.5deg);
+        animation: floatA 7s ease-in-out infinite;
+      }
+      .chip-2 {
+        top: 138px;
+        right: -30px;
+        color: var(--faint);
+        transform: translateZ(32px) rotate(3deg);
+        animation: floatB 9s ease-in-out infinite;
+      }
+      @keyframes floatA {
+        0%, 100% { transform: translateZ(64px) rotate(-3.5deg) translateY(0); }
+        50% { transform: translateZ(64px) rotate(-3.5deg) translateY(-11px); }
+      }
+      @keyframes floatB {
+        0%, 100% { transform: translateZ(32px) rotate(3deg) translateY(0); }
+        50% { transform: translateZ(32px) rotate(3deg) translateY(9px); }
+      }
+      .dday { position: relative; z-index: 2; }
 
-      .schedule .head {
-        background: var(--ink);
-        color: rgb(251 250 248 / 0.85);
-        font-family: var(--mono);
-        font-size: 10px;
-        font-weight: 500;
-        letter-spacing: 0.14em;
+      /* ---------- stat strip ---------- */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        margin: 0 0 40px;
+        border-bottom: 1px solid var(--line);
+      }
+      .stat {
+        padding: 26px 28px 26px 0;
+        border-right: 1px solid var(--line);
+      }
+      .stat:last-child { border-right: 0; padding-right: 0; }
+      .stat .k {
+        margin: 0 0 12px;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
-        padding: 9px 13px;
-        position: sticky;
-        top: 0;
+        color: var(--faint);
+      }
+      .stat .v {
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1;
+      }
+      .stat .v .u {
+        margin-left: 5px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--faint);
+      }
+      .stat.accent .v { color: var(--blue); }
+
+      /* ---------- bento ---------- */
+      .bento {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 22px;
+        perspective: 1500px;
+      }
+      .card {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        box-shadow: var(--shadow-soft);
+        padding: 30px;
+        transform-style: preserve-3d;
+        transition: transform 0.25s var(--ease), box-shadow 0.5s var(--ease);
+      }
+      .card.hoverable { will-change: transform; }
+      /* signature hook: studio light reflection sweeping the panel surface */
+      .card.hoverable::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s var(--ease);
+        background: radial-gradient(440px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 62%);
+        mix-blend-mode: soft-light;
         z-index: 3;
       }
-
-      .schedule-row { display: contents; }
-
-      .schedule-row > div {
-        min-height: 72px;
-        border-bottom: 1px solid var(--line);
-        display: grid;
-        align-content: center;
-        padding: 11px 13px;
+      .card.hoverable:hover {
+        box-shadow: var(--shadow-lift);
       }
-
-      .schedule-row:hover > div { background: rgb(212 160 38 / 0.1); }
-
-      .schedule-row.next > div { background: rgb(51 92 153 / 0.07); }
-
-      .date-cell {
-        font-family: var(--mono);
-        font-weight: 500;
+      .card.hoverable:hover::after { opacity: 1; }
+      .card-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 22px;
+      }
+      .card-head h2 {
+        margin: 0;
         font-size: 17px;
-        line-height: 1.05;
-        color: var(--red);
-        font-variant-numeric: tabular-nums;
+        font-weight: 700;
+        letter-spacing: -0.01em;
       }
-
-      .date-cell small {
-        margin-top: 7px;
-        color: var(--muted);
-        font: 400 10px/1.2 var(--mono);
-        letter-spacing: 0.06em;
+      .card-head .meta {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
+        color: var(--faint);
       }
 
-      .city-cell b {
-        display: block;
-        font: 700 19px/1.05 var(--sans);
-        overflow-wrap: anywhere;
-      }
+      .col-budget { grid-column: span 7; }
+      .col-schengen { grid-column: span 5; }
+      .col-itin { grid-column: span 7; }
+      .col-map { grid-column: span 5; }
+      .col-cat { grid-column: span 7; }
+      .col-reflect { grid-column: span 5; }
 
-      .city-cell small,
-      .stay-cell small {
-        display: block;
-        margin-top: 6px;
+      /* budget */
+      .budget-figure {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 4px;
+      }
+      .budget-figure .big {
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .budget-figure .pct {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--blue);
+      }
+      .budget-sub {
+        font-size: 12.5px;
         color: var(--muted);
-        font-size: 11px;
-        line-height: 1.3;
-        font-weight: 500;
+        margin-bottom: 20px;
       }
-
-      .stay-cell b {
+      .track {
+        height: 8px;
+        border-radius: 99px;
+        background: var(--surface-2);
+        overflow: hidden;
+      }
+      .track > span {
         display: block;
-        font: 600 14.5px/1.12 var(--sans);
-        overflow-wrap: anywhere;
+        height: 100%;
+        width: 0;
+        border-radius: 99px;
+        background: var(--ink);
+        transition: width 1s var(--ease);
+      }
+      .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        margin-top: 24px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: var(--r-md);
+        overflow: hidden;
+      }
+      .mini-grid div {
+        background: var(--surface);
+        padding: 14px 16px;
+      }
+      .mini-grid .k {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--faint);
+        margin-bottom: 7px;
+      }
+      .mini-grid .v {
+        font-size: 15px;
+        font-weight: 600;
       }
 
-      .transport-line {
+      /* schengen donut */
+      .donut-wrap {
         display: flex;
         align-items: center;
-        gap: 7px;
-        min-width: 0;
+        gap: 26px;
       }
-
-      .transport-line b {
-        font: 600 13.5px/1.2 var(--sans);
-        min-width: 0;
-        overflow-wrap: anywhere;
-      }
-
-      .pay-chip {
-        display: inline-flex;
-        align-items: center;
+      .donut {
+        position: relative;
+        width: 132px;
+        height: 132px;
         flex: 0 0 auto;
-        min-width: 52px;
-        justify-content: center;
-        border: 1.5px solid currentColor;
-        border-radius: var(--r-sm);
-        padding: 2px 5px;
-        background: var(--paper-2);
-        color: var(--muted);
-        font-family: var(--mono);
-        font-size: 9px;
-        line-height: 1.2;
-        letter-spacing: 0.04em;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+      }
+      .donut .hole {
+        position: absolute;
+        inset: 16px;
+        background: var(--surface);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+      .donut .hole b {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .donut .hole small {
+        display: block;
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
+        color: var(--faint);
       }
-
-      .pay-chip.paid {
-        background: var(--green);
-        color: var(--paper-2);
+      .schengen-side { display: grid; gap: 14px; }
+      .schengen-side .row { display: grid; gap: 3px; }
+      .schengen-side .row .k {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--faint);
       }
+      .schengen-side .row .v { font-size: 17px; font-weight: 700; }
 
-      .pay-chip.unpaid {
-        background: rgb(196 69 54 / 0.08);
-        color: var(--red);
+      /* itinerary */
+      .timeline { display: grid; gap: 0; }
+      .leg {
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: baseline;
+        padding: 16px 0;
+        border-top: 1px solid var(--line);
       }
-
-      .pay-chip.none {
-        background: transparent;
+      .leg:first-child { border-top: 0; padding-top: 0; }
+      .leg.next { position: relative; }
+      .leg.next::before {
+        content: "";
+        position: absolute;
+        left: -16px;
+        top: 18px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--blue);
+      }
+      .leg .date {
+        font-size: 12.5px;
+        font-weight: 600;
         color: var(--muted);
-        border-style: dashed;
+        line-height: 1.3;
       }
-
-      .detail-trigger {
-        width: fit-content;
-        margin-top: 7px;
-        border: 0;
-        border-bottom: 1px solid currentColor;
-        padding: 0;
-        background: transparent;
-        color: var(--blue);
-        cursor: pointer;
-        font-family: var(--mono);
+      .leg .date small {
+        display: block;
+        margin-top: 3px;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .leg .place b {
+        display: block;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .leg .place small {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .leg .right {
+        display: grid;
+        justify-items: end;
+        gap: 7px;
+        text-align: right;
+      }
+      .leg .amt { font-size: 14px; font-weight: 600; }
+      .leg .amt.muted { color: var(--faint); font-weight: 500; }
+      .tag {
         font-size: 9.5px;
+        font-weight: 600;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 99px;
+        white-space: nowrap;
       }
+      .tag.booked { background: rgba(45, 90, 39, 0.1); color: var(--success); }
+      .tag.planned { background: rgba(212, 160, 38, 0.14); color: #927019; }
+      .tag.candidate { background: var(--surface-2); color: var(--faint); }
+      .leg-detail {
+        display: block;
+        margin-top: 9px;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--blue);
+        font-family: var(--sans);
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        transition: opacity 0.2s var(--ease);
+      }
+      .leg-detail:hover { opacity: 0.55; }
 
-      .detail-trigger:hover { color: var(--red); }
-
-      .transfer-modal {
+      /* movement detail modal */
+      .modal {
         position: fixed;
         inset: 0;
-        z-index: 20;
+        z-index: 50;
         display: none;
         place-items: center;
         padding: 24px;
-        background: rgb(26 26 26 / 0.48);
+        background: rgba(26, 26, 26, 0.32);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
       }
-
-      .transfer-modal.open { display: grid; }
-
-      .transfer-dialog {
-        width: min(520px, calc(100vw - 32px));
+      .modal.open { display: grid; animation: fade 0.3s var(--ease); }
+      @keyframes fade { from { opacity: 0; } }
+      .modal-card {
+        width: min(540px, calc(100vw - 40px));
         max-height: calc(100vh - 48px);
         overflow: auto;
-        border: 1.5px solid var(--line);
-        border-radius: var(--r-md);
-        background: var(--paper-2);
-        color: var(--ink);
-        box-shadow: var(--shadow);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        box-shadow: var(--shadow-lift);
+        animation: pop 0.35s var(--ease);
       }
-
-      .transfer-dialog header {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 14px;
-        align-items: start;
-        border-bottom: 2px solid var(--line);
-        padding: 16px 18px 13px;
-        background: rgb(51 92 153 / 0.08);
-      }
-
-      .transfer-dialog small {
-        display: block;
-        color: var(--muted);
-        font: 500 10px/1.2 var(--mono);
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .transfer-dialog h3 {
-        margin: 5px 0 0;
-        font: 900 27px/0.95 var(--serif);
-        overflow-wrap: anywhere;
-      }
-
-      .transfer-close {
-        width: 32px;
-        height: 32px;
-        border: 1.5px solid var(--line);
-        border-radius: var(--r-sm);
-        background: var(--ink);
-        color: var(--paper-2);
-        cursor: pointer;
-        font-family: var(--mono);
-      }
-
-      .transfer-body { padding: 16px 18px 18px; }
-
-      .transfer-route {
-        margin: 0;
-        font: 700 15px/1.35 var(--sans);
-      }
-
-      .transfer-duration {
-        display: inline-block;
-        margin-top: 9px;
-        border: 1.5px solid var(--line);
-        border-radius: var(--r-sm);
-        padding: 4px 7px;
-        background: var(--gold);
-        color: var(--ink);
-        font-family: var(--mono);
-        font-size: 10px;
-      }
-
-      .transfer-notes {
-        display: grid;
-        gap: 8px;
-        margin-top: 14px;
-      }
-
-      .transfer-note {
-        border-left: 4px solid var(--blue);
-        padding: 8px 10px;
-        background: rgb(51 92 153 / 0.06);
-      }
-
-      .transfer-note.next {
-        border-left-color: var(--red);
-        background: rgb(196 69 54 / 0.06);
-      }
-
-      .transfer-note b {
-        display: block;
-        margin-bottom: 4px;
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-      }
-
-      .transfer-note span {
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 1.45;
-      }
-
-      .transfer-steps {
-        margin: 14px 0 0;
-        padding-left: 18px;
-        color: var(--muted);
-        font-size: 12.5px;
-        line-height: 1.5;
-      }
-
-      .transfer-steps li { margin-top: 5px; }
-
-      .transfer-source {
-        display: block;
-        margin-top: 15px;
-        color: var(--blue);
-        font-family: var(--mono);
-        font-size: 10px;
-        overflow-wrap: anywhere;
-      }
-
-      .schengen-tag {
-        display: inline-block;
-        margin-top: 7px;
-        font-family: var(--mono);
-        font-size: 9.5px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--blue);
-        border: 1px solid var(--blue);
-        padding: 1px 5px;
-      }
-
-      .status-pill {
-        width: fit-content;
-        border: 1.5px solid var(--line);
-        border-radius: var(--r-sm);
-        padding: 5px 8px;
-        color: var(--paper-2);
-        background: var(--blue);
-        font-family: var(--mono);
-        font-size: 10px;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .status-pill.hosted { background: var(--green); }
-      .status-pill.candidate { background: transparent; color: var(--ink); border-style: dashed; }
-      .status-pill.planned { background: var(--gold); color: var(--ink); }
-
-      .status-cell small {
-        display: block;
-        margin-top: 7px;
-        color: var(--muted);
-        font: 400 10px/1.2 var(--mono);
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-      }
-
-      .amount-cell {
-        justify-items: end;
-        text-align: right;
-        font: 500 18px/1 var(--mono);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .amount-cell.muted { color: var(--muted); font-size: 13px; }
-
-      .amount-cell small {
-        display: block;
-        margin-top: 7px;
-        color: var(--muted);
-        font: 400 9.5px/1 var(--mono);
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-      }
-
-      .schedule-foot {
-        border-top: 2px solid var(--line);
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        gap: 12px;
-        padding: 15px 22px;
-        background: rgb(26 26 26 / 0.04);
-      }
-
-      .schedule-foot span {
-        font-family: var(--mono);
-        font-size: 11px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-
-      .schedule-foot b {
-        font: 500 24px/1 var(--mono);
-        color: var(--red);
-        font-variant-numeric: tabular-nums;
-      }
-
-      /* ---------------- dashboard ---------------- */
-      .dashboard {
-        grid-column: 3;
-        grid-row: 2;
-        background: var(--paper);
-        display: grid;
-        grid-template-rows: 268px auto auto auto;
-        min-width: 0;
-      }
-
-      .block {
-        border-bottom: 2px solid var(--line);
-        padding: 18px 20px;
-      }
-
-      .block-head {
+      @keyframes pop { from { transform: translateY(14px) scale(0.98); opacity: 0; } }
+      .modal-card header {
         display: flex;
-        align-items: baseline;
+        align-items: flex-start;
         justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 14px;
+        gap: 16px;
+        padding: 26px 28px 20px;
+        border-bottom: 1px solid var(--line);
       }
-
-      .block-head h3 {
-        margin: 0;
-        font: 900 21px/0.95 var(--serif);
-        letter-spacing: -0.01em;
-      }
-
-      .block-head span {
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.12em;
+      .modal-card header small {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
+        color: var(--faint);
+      }
+      .modal-card header h3 {
+        margin: 0;
+        font-size: 21px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+      }
+      .modal-card .close {
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        background: var(--surface);
         color: var(--muted);
+        font-size: 17px;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+      }
+      .modal-card .close:hover { background: var(--surface-2); color: var(--ink); }
+      .modal-body { padding: 22px 28px 28px; }
+      .m-route { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.5; }
+      .m-duration {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 5px 11px;
+        border-radius: 99px;
+        background: rgba(51, 92, 153, 0.1);
+        color: var(--blue);
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+      .m-notes { display: grid; gap: 10px; margin-top: 20px; }
+      .m-note {
+        padding: 13px 15px;
+        border-radius: var(--r-md);
+        background: var(--surface-2);
+        border-left: 3px solid var(--blue);
+      }
+      .m-note.next { border-left-color: var(--warning); }
+      .m-note b {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .m-note span { font-size: 13px; line-height: 1.5; color: var(--muted); }
+      .m-steps { margin: 20px 0 0; padding-left: 20px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+      .m-steps li { margin-top: 6px; }
+      .m-source {
+        display: inline-block;
+        margin-top: 20px;
+        color: var(--blue);
+        font-size: 11.5px;
+        font-weight: 500;
+        word-break: break-all;
       }
 
       /* map */
-      .map-wrap {
-        position: relative;
-        border-bottom: 2px solid var(--line);
-        overflow: hidden;
-      }
-
+      .col-map { display: flex; flex-direction: column; }
+      .map-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+      .map-card .card-head { padding: 30px 30px 0; margin-bottom: 18px; }
       #map {
-        position: absolute;
-        inset: 0;
-        filter: saturate(0.55) contrast(1.08) brightness(0.99);
+        flex: 1;
+        min-height: 360px;
+        filter: saturate(0.65) contrast(1.03);
       }
+      .leaflet-container { background: var(--surface-2); font-family: var(--sans); }
+      .leaflet-control-attribution, .leaflet-control-zoom { display: none; }
 
-      .leaflet-container { background: var(--paper); font-family: var(--mono); }
-      .leaflet-control-attribution { display: none; }
-
-      .map-label {
-        position: absolute;
-        left: 14px;
-        bottom: 14px;
-        z-index: 500;
-        border: 2px solid var(--line);
-        background: rgb(251 250 248 / 0.92);
-        padding: 8px 11px;
-        font-family: var(--mono);
-        font-size: 10.5px;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .map-pos {
-        position: absolute;
-        right: 14px;
-        top: 14px;
-        z-index: 500;
-        border: 2px solid var(--line);
-        background: var(--ink);
-        color: var(--paper-2);
-        padding: 7px 10px;
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-      }
-
-      /* schengen meter */
-      .meter {
-        height: 22px;
-        border: 1.5px solid var(--line);
-        border-radius: var(--r-sm);
-        background: var(--paper-2);
-        display: flex;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .meter span {
-        display: block;
-        height: 100%;
-        width: 0;
-        background: var(--blue);
-        transition: width 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
-      }
-
-      .meter.schengen span { background: repeating-linear-gradient(45deg, var(--blue) 0 6px, #4a72ad 6px 12px); }
-
-      .meter-foot {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 10px;
-        font-family: var(--mono);
-        font-size: 11px;
-        color: var(--muted);
-        letter-spacing: 0.04em;
-      }
-
-      .meter-foot b { color: var(--ink); }
-
-      .schengen-grid {
+      /* categories */
+      .cat {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        margin-top: 15px;
-        border: 1px solid var(--line);
-      }
-
-      .schengen-grid div {
-        padding: 9px 11px;
-        border-left: 1px solid var(--line);
-      }
-
-      .schengen-grid div:first-child { border-left: 0; }
-
-      .schengen-grid small {
-        display: block;
-        font-family: var(--mono);
-        font-size: 9.5px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-
-      .schengen-grid b {
-        display: block;
-        margin-top: 5px;
-        font: 500 17px/1 var(--mono);
-        font-variant-numeric: tabular-nums;
-      }
-
-      /* budget */
-      .budget-top {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: end;
-        gap: 10px;
-        margin-bottom: 14px;
-      }
-
-      .budget-top small {
-        display: block;
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-
-      .budget-top b {
-        display: block;
-        margin-top: 6px;
-        font: 900 clamp(30px, 3.4vw, 42px)/0.9 var(--serif);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .budget-top em {
-        font: 500 14px/1 var(--mono);
-        font-style: normal;
-        color: var(--red);
-        white-space: nowrap;
-      }
-
-      .budget-stats {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        margin-top: 15px;
-        border: 1px solid var(--line);
-      }
-
-      .budget-stats div {
-        padding: 9px 10px;
-        border-left: 1px solid var(--line);
-      }
-
-      .budget-stats div:first-child { border-left: 0; }
-
-      .budget-stats small {
-        display: block;
-        font-family: var(--mono);
-        font-size: 9px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--muted);
-        line-height: 1.3;
-      }
-
-      .budget-stats b {
-        display: block;
-        margin-top: 5px;
-        font: 500 14px/1.1 var(--mono);
-        font-variant-numeric: tabular-nums;
-      }
-
-      /* category bars */
-      .cat-row {
-        display: grid;
-        grid-template-columns: 64px minmax(0, 1fr) 78px;
-        gap: 11px;
+        grid-template-columns: 86px minmax(0, 1fr) 92px;
+        gap: 16px;
         align-items: center;
-        min-height: 38px;
-        border-top: 1px solid var(--faint);
-        padding: 7px 0;
+        padding: 13px 0;
+        border-top: 1px solid var(--line);
       }
+      .cat:first-of-type { border-top: 0; }
+      .cat .name { font-size: 13px; font-weight: 600; }
+      .cat .bar { height: 7px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+      .cat .bar > span { display: block; height: 100%; width: 0; border-radius: 99px; transition: width 1s var(--ease); }
+      .cat .amt { text-align: right; font-size: 13.5px; font-weight: 600; }
 
-      .cat-row:first-of-type { border-top: 0; }
-
-      .cat-row b {
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .bar {
-        height: 13px;
-        border: 1.5px solid var(--line);
-        border-radius: 4px;
-        background: var(--paper-2);
-        overflow: hidden;
-      }
-
-      .bar span {
-        display: block;
-        width: 0;
-        height: 100%;
-        transition: width 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
-      }
-
-      .cat-row strong {
-        text-align: right;
-        font: 500 14px/1 var(--mono);
-        font-variant-numeric: tabular-nums;
-      }
-
-      /* ---------------- ops footer ---------------- */
-      .ops {
-        grid-column: 2 / 4;
-        grid-row: 3;
-        border-top: 2px solid var(--line);
-        display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 0.78fr);
-        background: var(--paper-2);
-      }
-
-      .ops > section {
-        border-left: 2px solid var(--line);
-        padding: 18px 20px 20px;
-        min-width: 0;
-      }
-
-      .ops > section:first-child { border-left: 0; }
-
-      .ops h3 {
-        margin: 0 0 4px;
-        font: 900 20px/0.95 var(--serif);
-        letter-spacing: -0.01em;
-      }
-
-      .ops .ops-sub {
-        margin: 0 0 16px;
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-
-      /* axes */
-      .axis {
-        display: grid;
-        grid-template-columns: 30px 1fr;
-        gap: 12px;
-        padding: 11px 0;
-        border-top: 1px solid var(--faint);
-      }
-
-      .axis:first-of-type { border-top: 0; }
-
-      .axis i {
-        font: 900 20px/1 var(--serif);
-        font-style: normal;
-        color: var(--paper-2);
-        background: var(--ink);
-        width: 30px;
-        height: 30px;
-        display: grid;
-        place-items: center;
-      }
-
-      .axis.a1 i { background: var(--red); }
-      .axis.a2 i { background: var(--blue); }
-      .axis.a3 i { background: var(--green); }
-
-      .axis b {
-        display: block;
-        font: 700 14px/1.1 var(--sans);
-      }
-
-      .axis span {
-        display: block;
-        margin-top: 4px;
-        font-size: 11.5px;
-        line-height: 1.4;
-        color: var(--muted);
-        font-weight: 500;
-      }
-
-      .thread {
-        margin-top: 14px;
-        border-top: 2px solid var(--line);
-        padding-top: 12px;
-      }
-
-      .thread small {
-        font-family: var(--mono);
-        font-size: 9.5px;
-        letter-spacing: 0.12em;
+      /* reflection */
+      .reflect-label {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--blue);
+        margin-bottom: 14px;
       }
-
-      .thread p {
-        margin: 6px 0 0;
-        font-size: 12.5px;
-        line-height: 1.45;
-        font-weight: 500;
-      }
-
-      /* recent ledger */
-      .led-row {
-        display: grid;
-        grid-template-columns: 52px minmax(0, 1fr) auto;
-        gap: 10px;
-        align-items: baseline;
-        border-top: 1px solid var(--faint);
-        padding: 8px 0;
-      }
-
-      .led-row:first-of-type { border-top: 0; }
-
-      .led-row .d {
-        font: 400 11px/1.2 var(--mono);
-        color: var(--muted);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .led-row .m {
-        font-size: 13px;
+      .reflect-quote {
+        font-size: 17px;
         font-weight: 600;
-        overflow-wrap: anywhere;
+        line-height: 1.5;
+        letter-spacing: -0.01em;
+        margin: 0 0 16px;
       }
+      .reflect-meta { font-size: 12px; color: var(--muted); line-height: 1.55; }
+      .reflect-meta .sep { margin: 0 8px; color: var(--line-2); }
 
-      .led-row .m em {
-        display: inline-block;
-        margin-left: 6px;
-        font-family: var(--mono);
-        font-size: 8.5px;
-        font-style: normal;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--red);
-        border: 1px solid var(--red);
-        padding: 0 4px;
-        vertical-align: 1px;
-      }
-
-      .led-row .m small {
-        display: block;
-        margin-top: 3px;
-        font-size: 10.5px;
-        font-weight: 500;
-        color: var(--muted);
-      }
-
-      .led-row .a {
-        font: 500 14px/1 var(--mono);
-        font-variant-numeric: tabular-nums;
-        white-space: nowrap;
-      }
-
-      /* traces */
-      .trace-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        gap: 10px;
-        border-top: 1px solid var(--faint);
-        padding: 10px 0;
-      }
-
-      .trace-row:first-of-type { border-top: 0; }
-
-      .trace-row b { font: 700 15px/1 var(--sans); }
-
-      .trace-row .dots {
+      /* footer */
+      .foot {
+        margin-top: 56px;
+        padding-top: 22px;
+        border-top: 1px solid var(--line);
         display: flex;
-        gap: 3px;
-        margin-top: 6px;
-      }
-
-      .trace-row .dots i {
-        width: 6px;
-        height: 6px;
-        background: var(--green);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-      }
-
-      .trace-row strong {
-        font: 500 18px/1 var(--mono);
-        color: var(--green);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .trace-foot {
-        margin-top: 14px;
-        padding-top: 12px;
-        border-top: 2px solid var(--line);
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      /* ---------------- floating nav ---------------- */
-      .float-nav {
-        position: fixed;
-        left: 50%;
-        bottom: max(10px, env(safe-area-inset-bottom));
-        z-index: 1200;
-        width: min(680px, calc(100vw - 24px));
-        border: 1.5px solid var(--line);
-        border-radius: var(--r-md);
-        background: rgb(26 26 26 / 0.95);
-        box-shadow: 0 14px 38px rgb(26 26 26 / 0.22);
-        transform: translateX(-50%);
-        overflow-x: auto;
-        overscroll-behavior-x: contain;
-        scrollbar-width: none;
-      }
-
-      .float-nav::-webkit-scrollbar { display: none; }
-
-      .float-nav__track {
-        display: grid;
-        grid-auto-flow: column;
-        grid-auto-columns: minmax(68px, 1fr);
-        min-width: max-content;
-      }
-
-      .float-nav a {
-        min-height: 42px;
-        padding: 6px 9px;
-        border-left: 1px solid rgb(251 250 248 / 0.18);
-        color: rgb(251 250 248 / 0.72);
-        text-decoration: none;
-        display: grid;
-        place-items: center;
-        gap: 1px;
-        font-family: var(--mono);
-        font-size: 9px;
+        justify-content: space-between;
+        gap: 16px;
+        font-size: 11px;
         font-weight: 500;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        white-space: nowrap;
-        transition: background 0.18s ease, color 0.18s ease;
+        color: var(--faint);
       }
 
-      .float-nav a:first-child { border-left: 0; }
+      /* ---------- load motion ---------- */
+      .rise {
+        opacity: 0;
+        transform: translateY(18px);
+        animation: rise 0.8s var(--ease) forwards;
+      }
+      @keyframes rise { to { opacity: 1; transform: none; } }
 
-      .float-nav a::before {
-        content: attr(data-mark);
-        width: 18px;
-        height: 18px;
-        border: 1.5px solid currentColor;
-        display: grid;
-        place-items: center;
-        font: 700 9px/1 var(--mono);
-        letter-spacing: 0;
+      @media (prefers-reduced-motion: reduce) {
+        .rise { animation: none; opacity: 1; transform: none; }
+        .track > span, .cat .bar > span { transition: none; }
       }
 
-      .float-nav a:hover {
-        color: var(--paper-2);
-        background: rgb(251 250 248 / 0.1);
+      /* ---------- responsive ---------- */
+      @media (max-width: 920px) {
+        .hero { grid-template-columns: 1fr; align-items: start; gap: 24px; }
+        .dday { justify-items: start; }
+        .stats { grid-template-columns: repeat(2, 1fr); }
+        .stat:nth-child(2) { border-right: 0; padding-right: 0; }
+        .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line); padding-top: 26px; }
+        .col-budget, .col-schengen, .col-itin, .col-map, .col-cat, .col-reflect { grid-column: 1 / -1; }
+        #map { min-height: 300px; }
       }
-
-      /* ---------------- responsive ---------------- */
-      @media (max-width: 1140px) {
-        .ledger {
-          width: 100%;
-          display: block;
-          border-left: 0;
-          border-right: 0;
-        }
-
-        .spine {
-          grid-template-rows: auto;
-          grid-auto-flow: column;
-          justify-content: space-between;
-          align-items: center;
-          gap: 12px;
-          padding: 10px 16px;
-          border-right: 0;
-          border-bottom: 2px solid var(--line);
-        }
-
-        .spine span,
-        .spine small,
-        .spine .pos { writing-mode: initial; }
-
-        .spine strong { transform: none; font-size: 34px; padding: 6px 12px; }
-
-        .mast { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
-        .launch-box { border-left: 0; border-top: 2px solid var(--line); }
-        .readouts { grid-column: 1; }
-
-        .timeline, .dashboard { border-right: 0; }
-        .dashboard { border-top: 2px solid var(--line); grid-template-rows: 280px auto auto auto; }
-
-        .ops { grid-template-columns: 1fr; }
-        .ops > section { border-left: 0; border-top: 2px solid var(--line); }
-        .ops > section:first-child { border-top: 0; }
-      }
-
-      @media (max-width: 720px) {
-        .title { padding: 22px 16px 14px; }
-        .subline { width: 100%; }
-        .mast::after { opacity: 0.18; right: -120px; top: 20px; }
-
-        .readouts { grid-auto-flow: row; grid-auto-columns: initial; }
-        .readout { border-left: 0; border-top: 1px solid rgb(251 250 248 / 0.16); }
-        .readout:first-child { border-top: 0; }
-
-        .section-head { grid-template-columns: 1fr; align-items: start; }
-        .stamp { width: fit-content; }
-
-        .schedule { display: block; }
-        .schedule .head { display: none; }
-
-        .schedule-row > div {
-          border-bottom: 0;
-          min-height: auto;
-          padding: 4px 16px;
-        }
-
-        .schedule-row {
-          display: grid;
-          grid-template-columns: 84px minmax(0, 1fr);
-          border-bottom: 2px solid var(--line);
-          padding: 12px 0;
-        }
-
-        .schedule-row .date-cell { grid-row: span 5; padding-top: 8px; }
-        .schedule-row .amount-cell { justify-items: start; text-align: left; }
-
-        .budget-stats, .schengen-grid { grid-template-columns: 1fr 1fr; }
-        .budget-stats div:nth-child(3), .schengen-grid div:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
-
-        .float-nav {
-          width: calc(100vw - 16px);
-          bottom: max(6px, env(safe-area-inset-bottom));
-        }
-
-        .float-nav__track { grid-auto-columns: 62px; }
-
-        .float-nav a {
-          min-height: 40px;
-          padding: 5px 7px;
-          font-size: 8.5px;
-        }
+      @media (max-width: 520px) {
+        .stats { grid-template-columns: 1fr; }
+        .stat { border-right: 0; padding: 20px 0; border-top: 1px solid var(--line); }
+        .stat:first-child { border-top: 0; padding-top: 0; }
+        .leg { grid-template-columns: 74px minmax(0, 1fr); }
+        .leg .right { grid-column: 2; justify-items: start; text-align: left; flex-direction: row; }
       }
     </style>
   </head>
   <body>
-    <main class="ledger" id="top">
-      <aside class="spine">
-        <span>departure ledger</span>
-        <strong id="daysLeft">D--</strong>
-        <span class="pos" id="posLabel">현재 위치 --</span>
-        <small id="syncLabel">sync --</small>
-      </aside>
+    <main class="wrap">
+      <p class="eyebrow rise" style="animation-delay: 0.02s"><span class="dot"></span> Travel Ledger · 2026</p>
 
-      <header class="mast">
-        <div class="title">
-          <p class="eyebrow">Travel Operations Ledger</p>
-          <h1>일정과 돈을<br />한 판에서<br />운영한다</h1>
-          <p class="subline">
-            지도 포스터가 아니라 매일 다시 붙일 수 있는 운영판입니다.
-            도시 이동·숙소·예약 금액·분야별 지출·Schengen 잔여를 한 화면에서 비교합니다.
-          </p>
+      <header class="hero">
+        <div class="globe-wrap" id="globeWrap" aria-hidden="true"><div class="globe" id="globe"></div></div>
+        <h1 class="rise" style="animation-delay: 0.06s" id="heroLine">일정과 돈을 한 판에서 운영하는 <b>여행 장부</b>입니다.</h1>
+        <div class="dday-stage rise" style="animation-delay: 0.1s">
+          <div class="glow"></div>
+          <div class="deck" id="deck">
+            <div class="chip chip-2" id="chip2">—</div>
+            <div class="chip chip-1" id="chip1">—</div>
+          </div>
+          <div class="dday">
+            <span class="label">Departure</span>
+            <span class="num" id="dday">D-—</span>
+            <span class="sub" id="ddaySub">—</span>
+          </div>
         </div>
-        <div class="launch-box">
-          <small>launch</small>
-          <b id="launchDate">2026.07.08</b>
-          <em id="launchLine">출발 전 일정과 지출을 동기화하는 중</em>
-        </div>
-        <div class="readouts" id="readouts"></div>
       </header>
 
-      <section class="timeline" id="itinerary" aria-label="여행 일정 장부">
-        <div class="section-head">
-          <div>
-            <h2>Itinerary Ledger</h2>
-            <p>도시 이동·숙소·예약 금액을 날짜 순서대로. 숙소는 행마다 한 번만 표기합니다.</p>
-          </div>
-          <span class="stamp" id="scheduleStamp">-- stops</span>
-        </div>
-        <div class="schedule" id="schedule"></div>
-        <div class="schedule-foot">
-          <span>booked stays subtotal</span>
-          <b id="bookedSubtotal">--</b>
-        </div>
-      </section>
+      <section class="stats rise" style="animation-delay: 0.16s" id="stats"></section>
 
-      <aside class="dashboard" aria-label="지도·예산·지출">
-        <div class="map-wrap" id="route-map">
-          <div id="map"></div>
-          <div class="map-pos" id="mapPos">현재 위치 --</div>
-          <div class="map-label" id="mapLabel">route map</div>
+      <section class="bento">
+        <div class="card hoverable col-budget rise" style="animation-delay: 0.2s">
+          <div class="card-head"><h2>예산 운영</h2><span class="meta" id="budgetMode">travel</span></div>
+          <div class="budget-figure"><span class="big" id="reserved">—</span><span class="pct" id="reservedPct">—</span></div>
+          <p class="budget-sub" id="budgetBand">목표 구간 —</p>
+          <div class="track"><span id="budgetBar"></span></div>
+          <div class="mini-grid">
+            <div><div class="k">Reserve burn</div><div class="v" id="burn">—</div></div>
+            <div><div class="k">Daily min</div><div class="v" id="dmin">—</div></div>
+            <div><div class="k">Daily max</div><div class="v" id="dmax">—</div></div>
+          </div>
         </div>
 
-        <section class="block" id="schengen">
-          <div class="block-head">
-            <h3>Schengen 잔여</h3>
-            <span id="schengenWindow">180-day window</span>
-          </div>
-          <div class="meter schengen"><span id="schengenBar"></span></div>
-          <div class="meter-foot">
-            <span>used <b id="schengenUsed">0</b> / 90</span>
-            <span>entry <b id="schengenEntry">--</b></span>
-          </div>
-          <div class="schengen-grid">
-            <div><small>remaining</small><b id="schengenRemain">-- d</b></div>
-            <div><small>limit</small><b>90 d</b></div>
-            <div><small>status</small><b id="schengenStatus">--</b></div>
-          </div>
-        </section>
-
-        <section class="block" id="budget">
-          <div class="block-head">
-            <h3>예산 운영</h3>
-            <span id="budgetMode">travel mode</span>
-          </div>
-          <div class="budget-top">
-            <div>
-              <small>reserved / paid</small>
-              <b id="reservedTotal">--</b>
+        <div class="card hoverable col-schengen rise" style="animation-delay: 0.24s">
+          <div class="card-head"><h2>Schengen</h2><span class="meta" id="scWindow">180-day</span></div>
+          <div class="donut-wrap">
+            <div class="donut" id="donut"><div class="hole"><b id="scRemain">—</b><small>days left</small></div></div>
+            <div class="schengen-side">
+              <div class="row"><span class="k">Used</span><span class="v" id="scUsed">—</span></div>
+              <div class="row"><span class="k">Entry</span><span class="v" id="scEntry">—</span></div>
+              <div class="row"><span class="k">Status</span><span class="v" id="scStatus">—</span></div>
             </div>
-            <em id="reservedPct">--</em>
           </div>
-          <div class="meter"><span id="budgetBar"></span></div>
-          <div class="meter-foot">
-            <span>target band</span>
-            <span><b id="targetBand">--</b></span>
-          </div>
-          <div class="budget-stats">
-            <div><small>reserve burn</small><b id="reserveBurn">--</b></div>
-            <div><small>daily min</small><b id="dailyMin">--</b></div>
-            <div><small>daily max</small><b id="dailyMax">--</b></div>
-          </div>
-        </section>
+        </div>
 
-        <section class="block" id="spending" style="border-bottom: 0;">
-          <div class="block-head">
-            <h3>분야별 지출</h3>
-            <span id="catTotal">--</span>
-          </div>
-          <div id="catRows"></div>
-        </section>
-      </aside>
+        <div class="card hoverable col-itin rise" style="animation-delay: 0.28s">
+          <div class="card-head"><h2>여정</h2><span class="meta" id="itinMeta">— stops</span></div>
+          <div class="timeline" id="timeline"></div>
+        </div>
 
-      <section class="ops" aria-label="운영 보드">
-        <section>
-          <h3>여행 3축</h3>
-          <p class="ops-sub">video · app · ai workshop</p>
-          <div id="axes"></div>
-          <div class="thread">
-            <small id="threadLabel">today's thread</small>
-            <p id="threadText">--</p>
-          </div>
-        </section>
+        <div class="card hoverable col-map map-card rise" style="animation-delay: 0.32s">
+          <div class="card-head"><h2>경로</h2><span class="meta" id="mapMeta">route</span></div>
+          <div id="map"></div>
+        </div>
 
-        <section id="recent-ledger">
-          <h3>최근 지출</h3>
-          <p class="ops-sub" id="ledgerSub">recent ledger · travel only</p>
-          <div id="ledger"></div>
-        </section>
+        <div class="card hoverable col-cat rise" style="animation-delay: 0.36s">
+          <div class="card-head"><h2>분야별 지출</h2><span class="meta" id="catTotal">—</span></div>
+          <div id="cats"></div>
+        </div>
 
-        <section>
-          <h3>Local Traces</h3>
-          <p class="ops-sub">출발 전 활동 좌표</p>
-          <div id="traces"></div>
-          <div class="trace-foot" id="traceFoot">--</div>
-        </section>
+        <div class="card hoverable col-reflect rise" style="animation-delay: 0.4s">
+          <div class="reflect-label" id="reflectLabel">today's thread</div>
+          <p class="reflect-quote" id="reflectQuote">—</p>
+          <div class="reflect-meta" id="reflectMeta"></div>
+        </div>
       </section>
+
+      <footer class="foot">
+        <span id="footLeft">Sam Samuel — Studio Ledger</span>
+        <span id="footRight">synced —</span>
+      </footer>
     </main>
 
-    <nav class="float-nav" aria-label="대시보드 바로가기">
-      <div class="float-nav__track">
-        <a href="#top" data-mark="↑" data-target="top">Top</a>
-        <a href="#itinerary" data-mark="01" data-target="itinerary">일정</a>
-        <a href="#route-map" data-mark="02" data-target="route-map">지도</a>
-        <a href="#schengen" data-mark="03" data-target="schengen">쉥겐</a>
-        <a href="#budget" data-mark="04" data-target="budget">예산</a>
-        <a href="#spending" data-mark="05" data-target="spending">지출</a>
-        <a href="#recent-ledger" data-mark="06" data-target="recent-ledger">최근</a>
-      </div>
-    </nav>
-
-    <div class="transfer-modal" id="transferModal" role="dialog" aria-modal="true" aria-labelledby="transferTitle">
-      <div class="transfer-dialog">
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <div class="modal-card">
         <header>
-          <div>
-            <small id="transferKicker">movement detail</small>
-            <h3 id="transferTitle">이동정보</h3>
-          </div>
-          <button class="transfer-close" type="button" id="transferClose" aria-label="닫기">×</button>
+          <div><small id="mKicker">movement detail</small><h3 id="mTitle">이동정보</h3></div>
+          <button class="close" id="mClose" type="button" aria-label="닫기">×</button>
         </header>
-        <div class="transfer-body" id="transferBody"></div>
+        <div class="modal-body" id="mBody"></div>
       </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
-      let scheduleRows = [];
-
-      const categoryNames = {
-        stay: "숙소",
-        flight: "항공",
-        transit: "이동",
-        transport: "교통",
-        food: "식비",
-        groceries: "장보기",
-        cafe: "카페",
-        tool: "도구",
-        other: "기타"
-      };
-      const catColors = {
-        stay: "#335c99",
-        flight: "#564b96",
-        transit: "#564b96",
-        transport: "#564b96",
-        food: "#c44536",
-        groceries: "#2d5a27",
-        cafe: "#d4a026",
-        tool: "#6b6b6b",
-        other: "#6b6b6b"
-      };
-
-      const axesData = [
-        { cls: "a1", mark: "1", name: "영상 / Video", text: "여행 관찰을 유튜브 소비 언어로. 검색량이 아니라 플랫폼 언어에서 제목을 연다." },
-        { cls: "a2", mark: "2", name: "앱 / App", text: "여행 중 앱을 만들고 화면 변화로 보여주기. 관찰 → 인사이트 → 반영 루프." },
-        { cls: "a3", mark: "3", name: "AI 워크샵 / AI Workshop", text: "사람 판단 + AI 실행을 한 판에. 자동화는 승인 직전까지, 판단은 한 장 카드로." }
-      ];
+      const catNames = { stay: "숙소", flight: "항공", transit: "이동", transport: "교통", food: "식비", groceries: "장보기", cafe: "카페", tool: "도구", other: "기타" };
+      const catColor = { stay: "#335c99", flight: "#564b96", transit: "#564b96", transport: "#564b96", food: "#c44536", groceries: "#2d5a27", cafe: "#d4a026", tool: "#9a9a9a", other: "#9a9a9a" };
 
       const won = (v) => new Intl.NumberFormat("ko-KR").format(Math.round(v || 0));
       const manWon = (v) => {
@@ -1455,308 +838,240 @@
         if (n >= 10000) return `${won(Math.round(n / 10000))}만`;
         return won(n);
       };
-
-      const nights = (start, end) => {
-        if (!start || !end) return "";
-        const diff = Math.max(1, Math.round((new Date(end) - new Date(start)) / 86400000));
-        return `${diff}박`;
+      const nights = (s, e) => (!s || !e) ? "" : `${Math.max(1, Math.round((new Date(e) - new Date(s)) / 86400000))}박`;
+      const dateLabel = (s, e) => {
+        if (!s) return "TBD";
+        const a = s.slice(5).replace("-", ".");
+        const b = e ? e.slice(5).replace("-", ".") : "";
+        return b ? `${a}–${b}` : a;
       };
+      const escapeHtml = (v) => String(v || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      let routeRows = [];
 
-      const dateLabel = (start, end) => {
-        if (!start) return "TBD";
-        const s = start.slice(5).replace("-", ".");
-        const e = end ? end.slice(5).replace("-", ".") : "";
-        return e ? `${s}–${e}` : s;
-      };
-
-      const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      }[char]));
-
-      // privacy: collapse merchant codes / transaction hashes, never expose addresses
-      const maskMerchant = (raw) => {
-        if (!raw) return "지출";
-        if (/airbnb/i.test(raw)) return "Airbnb 숙소";
-        let s = raw.split(" - ")[0].split("*")[0];
-        s = s.replace(/[_]+/g, " ").replace(/\([주유사]\)/g, "").replace(/\s+/g, " ").trim();
-        s = s.replace(/\b[A-Z0-9]{8,}\b/g, "").trim();
-        return s || "지출";
-      };
-
-      function setLaunch(launch, currentDate) {
-        const base = currentDate ? new Date(`${currentDate}T00:00:00+09:00`) : new Date();
-        const target = new Date(`${launch}T00:00:00+09:00`);
+      function setHero(data) {
+        const cur = data.current || {};
+        const base = cur.date ? new Date(`${cur.date}T00:00:00+09:00`) : new Date();
+        const target = new Date(`${data.launch}T00:00:00+09:00`);
         const days = Math.ceil((target - base) / 86400000);
-        $("daysLeft").textContent = days >= 0 ? `D-${days}` : `D+${Math.abs(days)}`;
-        $("launchDate").textContent = launch.replace(/-/g, ".");
-        $("launchLine").textContent = `${launch} 출발 · D-${Math.max(0, days)} 기준`;
+        $("dday").textContent = days >= 0 ? `D-${days}` : `D+${Math.abs(days)}`;
+        $("ddaySub").textContent = `${(data.launch || "").replace(/-/g, ".")} 출발 · 현재 ${cur.location || "—"}`;
+        $("footRight").textContent = `synced ${String(data.generatedAt || "").slice(0, 10)}`;
+        const r = data.route || [];
+        const fmt = (x) => x ? `${x.city} · ${dateLabel(x.startDate)}` : "";
+        if (r[1]) $("chip1").textContent = fmt(r[1]);
+        if (r[2]) $("chip2").textContent = fmt(r[2]);
         return days;
       }
 
-      function renderReadouts(data, dDay) {
-        const b = data.budget || {};
-        const sc = data.schengen || {};
+      function renderStats(data, dday) {
+        const b = data.budget || {}, sc = data.schengen || {};
         const items = [
-          { label: "departure", value: dDay >= 0 ? `D-${dDay}` : `D+${Math.abs(dDay)}`, unit: data.launch },
-          { label: "current position", value: (data.current && data.current.location) || "--", unit: (data.current && data.current.date) || "" },
-          { label: "schengen left", value: `${sc.remainingDays != null ? sc.remainingDays : "--"}`, unit: `/ ${sc.limitDays || 90} d`, accent: true },
-          { label: "budget target", value: `${manWon(b.targetMinKrw)}–${manWon(b.targetMaxKrw)}`, unit: "krw" },
-          { label: "route stops", value: `${(data.route || []).length}`, unit: "cities" }
+          { k: "Departure", v: dday >= 0 ? `D-${dday}` : `D+${Math.abs(dday)}`, u: "" },
+          { k: "Route", v: (data.route || []).length, u: "stops" },
+          { k: "Schengen left", v: sc.remainingDays != null ? sc.remainingDays : "—", u: `/ ${sc.limitDays || 90}d`, accent: true },
+          { k: "Target band", v: `${manWon(b.targetMinKrw)}–${manWon(b.targetMaxKrw)}`, u: "krw" }
         ];
-        $("readouts").innerHTML = items.map((it) => `
-          <div class="readout${it.accent ? " accent" : ""}">
-            <small>${it.label}</small>
-            <b>${it.value}${it.unit ? `<span class="unit">${it.unit}</span>` : ""}</b>
-          </div>
-        `).join("");
-      }
-
-      function renderSchedule(route, currentDate) {
-        const rows = route || [];
-        scheduleRows = rows;
-        $("scheduleStamp").textContent = `${rows.length} stops`;
-        const today = currentDate ? new Date(`${currentDate}T00:00:00+09:00`) : new Date();
-        const nextIdx = rows.findIndex((r) => r.startDate && new Date(r.startDate) >= today);
-
-        const header = `
-          <div class="head">date</div>
-          <div class="head">city</div>
-          <div class="head">stay · note</div>
-          <div class="head">movement · pay</div>
-          <div class="head">status</div>
-          <div class="head">amount</div>
-        `;
-        const body = rows.map((row, i) => {
-          const status = row.status || "planned";
-          const lodging = row.lodging || (status === "candidate" ? "숙소 후보 검토" : "숙소 미정");
-          const amount = row.amount;
-          const transfer = row.arrivalTransfer;
-          const transport = row.transportOut || row.transportIn || "";
-          const payment = row.transportOutPayment || (transport ? { status: "unpaid" } : null);
-          const paid = payment && payment.status === "paid";
-          const paymentLabel = payment ? (paid ? "결제완료" : "미결제") : "없음";
-          const paymentTitle = payment
-            ? (paid ? `실제 결제 · ${manWon(payment.amount)}원` : "미결제 / 확인 필요")
-            : "교통 없음";
-          const paymentClass = paid ? "paid" : (payment ? "unpaid" : "none");
-          const movementTitle = transfer ? transfer.title : (transport || "이동정보 대기");
-          const movementDetail = transfer ? `<button class="detail-trigger" type="button" data-transfer-index="${i}">상세</button>` : "";
-          return `
-          <div class="schedule-row${i === nextIdx ? " next" : ""}">
-            <div class="date-cell">${dateLabel(row.startDate, row.endDate)}<small>${nights(row.startDate, row.endDate) || "undated"}</small></div>
-            <div class="city-cell"><b>${row.city}</b><small>${row.country || ""}</small>${row.schengen ? '<span class="schengen-tag">schengen</span>' : ""}</div>
-            <div class="stay-cell"><b>${lodging}</b><small>${row.source || row.note || "source pending"}</small></div>
-            <div class="transport-cell"><div class="transport-line"><b>${movementTitle}</b><span class="pay-chip ${paymentClass}" title="${paymentTitle}">${paymentLabel}</span></div>${movementDetail}</div>
-            <div class="status-cell"><span class="status-pill ${status}">${status}</span><small>${row.startDate ? "dated" : "tbd"}</small></div>
-            <div class="amount-cell${amount ? "" : " muted"}">${amount ? `${manWon(amount)}원` : "미정"}<small>${amount ? "booked" : "needs check"}</small></div>
-          </div>`;
-        }).join("");
-        $("schedule").innerHTML = header + body;
-        document.querySelectorAll("[data-transfer-index]").forEach((button) => {
-          button.addEventListener("click", () => openTransferModal(Number(button.dataset.transferIndex)));
-        });
-
-        const subtotal = rows.reduce((s, r) => s + Number(r.amount || 0), 0);
-        $("bookedSubtotal").textContent = `${won(subtotal)}원`;
-      }
-
-      function openTransferModal(index) {
-        const row = scheduleRows[index] || {};
-        const transfer = row.arrivalTransfer;
-        if (!transfer) return;
-        $("transferKicker").textContent = `${dateLabel(row.startDate, row.endDate)} · ${row.city || "movement"}`;
-        $("transferTitle").textContent = transfer.title || "이동정보";
-        const steps = (transfer.steps || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("");
-        const notes = [
-          transfer.statusNote ? `<div class="transfer-note"><b>기존 확인</b><span>${escapeHtml(transfer.statusNote)}</span></div>` : "",
-          transfer.nextCheck ? `<div class="transfer-note next"><b>앞으로 확인</b><span>${escapeHtml(transfer.nextCheck)}</span></div>` : ""
-        ].filter(Boolean).join("");
-        const source = transfer.sourceUrl
-          ? `<a class="transfer-source" href="${escapeHtml(transfer.sourceUrl)}" target="_blank" rel="noreferrer">출처 · ${escapeHtml(transfer.sourceName || transfer.sourceUrl)}</a>`
-          : `<span class="transfer-source">출처 · ${escapeHtml(transfer.sourceName || "checked")}</span>`;
-        $("transferBody").innerHTML = `
-          <p class="transfer-route">${escapeHtml(transfer.route || "")}</p>
-          ${transfer.duration ? `<span class="transfer-duration">${escapeHtml(transfer.duration)}</span>` : ""}
-          ${notes ? `<div class="transfer-notes">${notes}</div>` : ""}
-          ${steps ? `<ul class="transfer-steps">${steps}</ul>` : ""}
-          ${source}
-        `;
-        $("transferModal").classList.add("open");
-        $("transferClose").focus();
-      }
-
-      function closeTransferModal() {
-        $("transferModal").classList.remove("open");
-      }
-
-      $("transferClose").addEventListener("click", closeTransferModal);
-      $("transferModal").addEventListener("click", (event) => {
-        if (event.target === $("transferModal")) closeTransferModal();
-      });
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeTransferModal();
-      });
-
-      function renderSchengen(data) {
-        const sc = data.schengen || {};
-        const used = Number(sc.usedDays || 0);
-        const limit = Number(sc.limitDays || 90);
-        requestAnimationFrame(() => { $("schengenBar").style.width = `${Math.min(100, (used / limit) * 100)}%`; });
-        $("schengenUsed").textContent = used;
-        $("schengenEntry").textContent = sc.entryDate ? sc.entryDate.slice(5).replace("-", ".") : "--";
-        $("schengenRemain").textContent = `${sc.remainingDays != null ? sc.remainingDays : "--"} d`;
-        $("schengenStatus").textContent = sc.status || "--";
-        $("schengenWindow").textContent = sc.window ? `${sc.window} window` : "180-day window";
+        $("stats").innerHTML = items.map((it) => `
+          <div class="stat${it.accent ? " accent" : ""}">
+            <div class="k">${it.k}</div>
+            <div class="v">${it.v}${it.u ? `<span class="u">${it.u}</span>` : ""}</div>
+          </div>`).join("");
       }
 
       function renderBudget(data) {
         const b = data.budget || {};
-        const booked = (data.bookedCosts || []).reduce((s, it) => s + Number(it.amount || 0), 0);
-        const paid = Number(b.travelLoggedKrw || b.loggedKrw || 0);
-        const reserved = paid + booked;
-        const targetMin = Number(b.targetMinKrw || 0);
-        const targetMax = Number(b.targetMaxKrw || 0);
-
-        $("reservedTotal").textContent = `${manWon(reserved)}원`;
-        const pct = targetMin ? (reserved / targetMin) * 100 : 0;
+        const booked = (data.bookedCosts || []).reduce((s, c) => s + Number(c.amount || 0), 0);
+        const reserved = Number(b.travelLoggedKrw || b.loggedKrw || 0) + booked;
+        const min = Number(b.targetMinKrw || 0);
+        const pct = min ? (reserved / min) * 100 : 0;
+        $("reserved").textContent = `${manWon(reserved)}원`;
         $("reservedPct").textContent = `${pct.toFixed(1)}% of min`;
-        $("budgetBar").style.background = "var(--red)";
+        $("budgetBand").textContent = `목표 구간 ${manWon(b.targetMinKrw)}–${manWon(b.targetMaxKrw)}원`;
+        $("budgetMode").textContent = `${b.mode || "travel"}`;
+        $("burn").textContent = `${manWon(b.reserveBurnKrw)}원`;
+        $("dmin").textContent = `${manWon(b.dailyBudgetMinKrw)}원`;
+        $("dmax").textContent = `${manWon(b.dailyBudgetMaxKrw)}원`;
         requestAnimationFrame(() => { $("budgetBar").style.width = `${Math.min(100, pct)}%`; });
-        $("targetBand").textContent = `${manWon(targetMin)}–${manWon(targetMax)}원`;
-        $("reserveBurn").textContent = `${manWon(b.reserveBurnKrw)}원`;
-        $("dailyMin").textContent = `${manWon(b.dailyBudgetMinKrw)}원`;
-        $("dailyMax").textContent = `${manWon(b.dailyBudgetMaxKrw)}원`;
-        $("budgetMode").textContent = `${b.mode || "travel"} mode`;
       }
 
-      function renderCategories(data) {
-        const totals = Object.keys(data.travelCategoryTotals || {}).length
-          ? data.travelCategoryTotals
-          : (data.categoryTotals || {});
+      function renderSchengen(data) {
+        const sc = data.schengen || {};
+        const used = Number(sc.usedDays || 0), limit = Number(sc.limitDays || 90);
+        const remain = sc.remainingDays != null ? sc.remainingDays : limit - used;
+        const deg = Math.min(360, (used / limit) * 360);
+        $("donut").style.background = `conic-gradient(var(--blue) ${deg}deg, var(--surface-2) ${deg}deg)`;
+        $("scRemain").textContent = remain;
+        $("scUsed").textContent = `${used} / ${limit} d`;
+        $("scEntry").textContent = sc.entryDate ? sc.entryDate.slice(5).replace("-", ".") : "—";
+        $("scStatus").textContent = sc.status || "—";
+        $("scWindow").textContent = sc.window || "180-day";
+      }
+
+      function renderTimeline(data) {
+        const rows = data.route || [];
+        routeRows = rows;
+        $("itinMeta").textContent = `${rows.length} stops`;
+        const today = (data.current && data.current.date) ? new Date(`${data.current.date}T00:00:00+09:00`) : new Date();
+        const nextIdx = rows.findIndex((r) => r.startDate && new Date(r.startDate) >= today);
+        $("timeline").innerHTML = rows.map((r, i) => {
+          const status = r.status || "planned";
+          const lodging = r.lodging || (status === "candidate" ? "숙소 후보" : "숙소 미정");
+          const detail = r.arrivalTransfer ? `<button class="leg-detail" type="button" data-idx="${i}">이동 상세 →</button>` : "";
+          return `
+          <div class="leg${i === nextIdx ? " next" : ""}">
+            <div class="date">${dateLabel(r.startDate, r.endDate)}<small>${nights(r.startDate, r.endDate) || "TBD"}</small></div>
+            <div class="place"><b>${r.city}</b><small>${[r.country, lodging].filter(Boolean).join(" · ")}</small>${detail}</div>
+            <div class="right">
+              <span class="amt${r.amount ? "" : " muted"}">${r.amount ? `${manWon(r.amount)}원` : "미정"}</span>
+              <span class="tag ${status}">${status}</span>
+            </div>
+          </div>`;
+        }).join("");
+        document.querySelectorAll(".leg-detail").forEach((b) => b.addEventListener("click", () => openModal(Number(b.dataset.idx))));
+      }
+
+      function renderCats(data) {
+        const totals = Object.keys(data.travelCategoryTotals || {}).length ? data.travelCategoryTotals : (data.categoryTotals || {});
         const rows = Object.entries(totals).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
         const sum = rows.reduce((s, [, v]) => s + v, 0);
         const max = Math.max(...rows.map(([, v]) => v), 1);
         $("catTotal").textContent = `${manWon(sum)}원`;
-        $("catRows").innerHTML = rows.length ? rows.map(([key, value]) => `
-          <div class="cat-row">
-            <b>${categoryNames[key] || key}</b>
-            <div class="bar"><span data-w="${Math.round((value / max) * 100)}" style="background:${catColors[key] || "#6b6b6b"};"></span></div>
-            <strong>${manWon(value)}원</strong>
-          </div>
-        `).join("") : '<div class="cat-row"><b>여행 지출 없음</b><div class="bar"><span data-w="0"></span></div><strong>0원</strong></div>';
-        requestAnimationFrame(() => {
-          document.querySelectorAll(".bar span[data-w]").forEach((el) => { el.style.width = `${el.dataset.w}%`; });
-        });
+        $("cats").innerHTML = rows.length ? rows.map(([k, v]) => `
+          <div class="cat">
+            <span class="name">${catNames[k] || k}</span>
+            <div class="bar"><span data-w="${Math.round((v / max) * 100)}" style="background:${catColor[k] || "#9a9a9a"}"></span></div>
+            <span class="amt">${manWon(v)}원</span>
+          </div>`).join("") : `<div class="cat"><span class="name">지출 없음</span><div class="bar"><span data-w="0"></span></div><span class="amt">0원</span></div>`;
+        requestAnimationFrame(() => document.querySelectorAll(".cat .bar span[data-w]").forEach((el) => { el.style.width = `${el.dataset.w}%`; }));
       }
 
-      function renderAxes(data) {
-        $("axes").innerHTML = axesData.map((a) => `
-          <div class="axis ${a.cls}">
-            <i>${a.mark}</i>
-            <div><b>${a.name}</b><span>${a.text}</span></div>
-          </div>
-        `).join("");
+      function renderReflect(data) {
         const refs = (data.reflections || []).filter((r) => r.intent);
-        const latest = refs[refs.length - 1];
-        if (latest) {
-          $("threadLabel").textContent = `thread · ${latest.date}`;
-          $("threadText").textContent = `${latest.title.replace(/^실제 흐름 \/ |^내일 의도 \/ /, "")} — ${latest.intent}`;
-        }
-      }
-
-      function renderLedger(data) {
-        const travel = ((data.travelExpenses && data.travelExpenses.length ? data.travelExpenses : data.expenses) || [])
-          .filter((e) => e.travel !== false)
-          .map((e) => ({ ...e, travel: true }));
-        const merged = travel
-          .sort((a, b) => `${b.date} ${b.time || ""}`.localeCompare(`${a.date} ${a.time || ""}`))
-          .slice(0, 7);
-        $("ledger").innerHTML = merged.length ? merged.map((e) => `
-          <div class="led-row">
-            <span class="d">${(e.date || "").slice(5).replace("-", ".")}</span>
-            <span class="m">${maskMerchant(e.merchant)}${e.travel ? '<em>travel</em>' : ""}<small>${e.location || ""} · ${categoryNames[e.category] || e.category || ""}</small></span>
-            <span class="a">${won(e.amount)}</span>
-          </div>
-        `).join("") : '<div class="led-row"><span class="d">--</span><span class="m">여행 지출 없음<small>travel only</small></span><span class="a">0</span></div>';
-      }
-
-      function renderTraces(data) {
-        const locs = (data.locations || []).slice().sort((a, b) => b.count - a.count);
-        const max = Math.max(...locs.map((l) => l.count), 1);
-        $("traces").innerHTML = locs.map((l) => {
-          const dots = Array.from({ length: Math.min(8, Math.round((l.count / max) * 8) || 1) }, () => "<i></i>").join("");
-          return `
-          <div class="trace-row">
-            <div><b>${l.name}</b><div class="dots">${dots}</div></div>
-            <strong>${l.count}</strong>
-          </div>`;
-        }).join("");
-        const sum = locs.reduce((s, l) => s + Number(l.count || 0), 0);
-        $("traceFoot").textContent = `${locs.length} cities · ${sum} traces · synced ${String(data.generatedAt || "").slice(0, 10)}`;
+        const last = refs[refs.length - 1];
+        if (!last) { $("reflectQuote").textContent = "기록 없음"; return; }
+        $("reflectLabel").textContent = `thread · ${last.date}`;
+        $("reflectQuote").textContent = last.intent;
+        $("reflectMeta").innerHTML = `${(last.title || "").replace(/^(실제 흐름|내일 의도)\s*\/\s*/, "")}`;
       }
 
       function renderMap(data) {
         const route = (data.route || []).filter((p) => p.lat && p.lng);
         const logged = (data.locations || []).filter((p) => p.lat && p.lng);
         const map = L.map("map", { zoomControl: false, scrollWheelZoom: false, attributionControl: false });
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(map);
-
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { maxZoom: 18 }).addTo(map);
+        $("mapMeta").textContent = `${route.length} route · ${logged.length} local`;
         if (route.length) {
-          L.polyline(route.map((p) => [p.lat, p.lng]), { color: "#c44536", weight: 3.5, opacity: 0.85 }).addTo(map);
-          route.forEach((p, i) => {
-            L.circleMarker([p.lat, p.lng], {
-              radius: i === 0 ? 8 : 5,
-              color: "#1a1a1a",
-              fillColor: p.status === "candidate" ? "#d4a026" : "#335c99",
-              fillOpacity: 0.95,
-              weight: 2
-            }).bindTooltip(`${p.city} · ${p.status}`, { direction: "top" }).addTo(map);
-          });
+          L.polyline(route.map((p) => [p.lat, p.lng]), { color: "#335c99", weight: 2.5, opacity: 0.7 }).addTo(map);
+          route.forEach((p, i) => L.circleMarker([p.lat, p.lng], {
+            radius: i === 0 ? 7 : 4.5, color: "#1a1a1a",
+            fillColor: p.status === "candidate" ? "#d4a026" : "#335c99", fillOpacity: 0.95, weight: 1.5
+          }).bindTooltip(`${p.city}`, { direction: "top" }).addTo(map));
         }
-        logged.forEach((p) => {
-          L.circleMarker([p.lat, p.lng], {
-            radius: Math.min(11, 4 + Number(p.count || 1)),
-            color: "#1a1a1a",
-            fillColor: "#2d5a27",
-            fillOpacity: 0.55,
-            weight: 1.5
-          }).bindTooltip(`${p.name} · ${p.count}`, { direction: "top" }).addTo(map);
-        });
-
+        logged.forEach((p) => L.circleMarker([p.lat, p.lng], {
+          radius: Math.min(10, 4 + Number(p.count || 1) * 0.3), color: "#1a1a1a",
+          fillColor: "#2d5a27", fillOpacity: 0.5, weight: 1.2
+        }).bindTooltip(`${p.name} · ${p.count}`, { direction: "top" }).addTo(map));
         const all = [...route, ...logged].map((p) => [p.lat, p.lng]);
-        if (all.length) map.fitBounds(all, { padding: [36, 36] });
+        if (all.length) map.fitBounds(all, { padding: [40, 40] });
         else map.setView([48.8566, 2.3522], 4);
-        $("mapLabel").textContent = `${route.length} route · ${logged.length} local traces`;
+        setTimeout(() => map.invalidateSize(), 200);
       }
+
+      function openModal(i) {
+        const r = routeRows[i] || {};
+        const t = r.arrivalTransfer;
+        if (!t) return;
+        $("mKicker").textContent = `${dateLabel(r.startDate, r.endDate)} · ${r.city || "movement"}`;
+        $("mTitle").textContent = t.title || "이동정보";
+        const steps = (t.steps || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+        const notes = [
+          t.statusNote ? `<div class="m-note"><b>기존 확인</b><span>${escapeHtml(t.statusNote)}</span></div>` : "",
+          t.nextCheck ? `<div class="m-note next"><b>앞으로 확인</b><span>${escapeHtml(t.nextCheck)}</span></div>` : ""
+        ].filter(Boolean).join("");
+        const source = t.sourceUrl
+          ? `<a class="m-source" href="${escapeHtml(t.sourceUrl)}" target="_blank" rel="noreferrer">출처 · ${escapeHtml(t.sourceName || t.sourceUrl)}</a>`
+          : (t.sourceName ? `<span class="m-source">출처 · ${escapeHtml(t.sourceName)}</span>` : "");
+        $("mBody").innerHTML = `
+          ${t.route ? `<p class="m-route">${escapeHtml(t.route)}</p>` : ""}
+          ${t.duration ? `<span class="m-duration">${escapeHtml(t.duration)}</span>` : ""}
+          ${notes ? `<div class="m-notes">${notes}</div>` : ""}
+          ${steps ? `<ul class="m-steps">${steps}</ul>` : ""}
+          ${source}`;
+        $("modal").classList.add("open");
+        $("mClose").focus();
+      }
+      function closeModal() { $("modal").classList.remove("open"); }
+      $("mClose").addEventListener("click", closeModal);
+      $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) closeModal(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
       fetch("travel-data.json", { cache: "no-store" })
         .then((r) => r.json())
         .then((data) => {
-          const currentDate = data.current && data.current.date;
-          const dDay = setLaunch(data.launch || "2026-07-08", currentDate);
-          const pos = (data.current && data.current.location) || "--";
-          $("posLabel").textContent = `현재 위치 ${pos}`;
-          $("mapPos").textContent = `현재 위치 ${pos}`;
-          $("syncLabel").textContent = `sync ${String(data.generatedAt || "").slice(5, 16).replace("T", " ")}`;
-
-          renderReadouts(data, dDay);
-          renderSchedule(data.route, currentDate);
-          renderSchengen(data);
+          const dday = setHero(data);
+          renderStats(data, dday);
           renderBudget(data);
-          renderCategories(data);
-          renderAxes(data);
-          renderLedger(data);
-          renderTraces(data);
+          renderSchengen(data);
+          renderTimeline(data);
+          renderCats(data);
+          renderReflect(data);
           renderMap(data);
         })
-        .catch((err) => {
-          $("syncLabel").textContent = "sync failed";
-          console.error(err);
+        .catch((e) => { $("ddaySub").textContent = "sync failed"; console.error(e); });
+
+      /* ---------- signature hook: studio 3D tilt + parallax ---------- */
+      (function buildGlobe() {
+        const g = $("globe");
+        if (!g) return;
+        const R = 230;
+        for (let i = 0; i < 6; i++) {
+          const m = document.createElement("div");
+          m.className = "wire";
+          m.style.transform = `rotateY(${i * 30}deg)`;
+          g.appendChild(m);
+        }
+        [[-0.42, 0.55], [-0.2, 0.84], [0, 1], [0.2, 0.84], [0.42, 0.55]].forEach(([y, s]) => {
+          const p = document.createElement("div");
+          p.className = "wire lat";
+          p.style.transform = `rotateX(90deg) translateZ(${y * R}px) scale(${s})`;
+          g.appendChild(p);
         });
+        const core = document.createElement("div");
+        core.className = "core";
+        g.appendChild(core);
+      })();
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduceMotion && window.matchMedia("(pointer: fine)").matches) {
+        document.querySelectorAll(".card.hoverable").forEach((card) => {
+          card.addEventListener("mousemove", (e) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width;
+            const y = (e.clientY - r.top) / r.height;
+            card.style.setProperty("--mx", `${x * 100}%`);
+            card.style.setProperty("--my", `${y * 100}%`);
+            const rx = (0.5 - y) * 5.5;
+            const ry = (x - 0.5) * 5.5;
+            card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(10px)`;
+          });
+          card.addEventListener("mouseleave", () => { card.style.transform = ""; });
+        });
+        const ddayNum = $("dday");
+        const deck = $("deck");
+        const globeWrap = $("globeWrap");
+        let raf = 0;
+        window.addEventListener("mousemove", (e) => {
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            const dx = e.clientX / window.innerWidth - 0.5;
+            const dy = e.clientY / window.innerHeight - 0.5;
+            ddayNum.style.transform = `translate(${dx * -18}px, ${dy * -10}px)`;
+            if (deck) deck.style.transform = `rotateY(${dx * 16}deg) rotateX(${dy * -12}deg)`;
+            if (globeWrap) globeWrap.style.transform = `translateY(-50%) translate(${dx * 24}px, ${dy * 14}px)`;
+            raf = 0;
+          });
+        }, { passive: true });
+      }
     </script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-14T02:19:18.758473+00:00",
+  "generatedAt": "2026-06-14T09:06:14.219979+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -125,9 +125,9 @@
       "date": "2026-06-13",
       "time": "09:45",
       "amount": 85261,
-      "merchant": "DB Vertrieb GmbH",
+      "merchant": "DB · Berlin → Prague",
       "category": "transport",
-      "location": "서울특별시",
+      "location": "Berlin → Prague",
       "travel": true
     },
     {
@@ -135,9 +135,9 @@
       "date": "2026-06-13",
       "time": "09:29",
       "amount": 113702,
-      "merchant": "DB Vertrieb GmbH",
+      "merchant": "DB · Cologne → Berlin",
       "category": "transport",
-      "location": "서울특별시",
+      "location": "Cologne → Berlin",
       "travel": true
     },
     {
@@ -217,9 +217,9 @@
       "date": "2026-06-13",
       "time": "09:45",
       "amount": 85261,
-      "merchant": "DB Vertrieb GmbH",
+      "merchant": "DB · Berlin → Prague",
       "category": "transport",
-      "location": "서울특별시",
+      "location": "Berlin → Prague",
       "travel": true
     },
     {
@@ -227,9 +227,9 @@
       "date": "2026-06-13",
       "time": "09:29",
       "amount": 113702,
-      "merchant": "DB Vertrieb GmbH",
+      "merchant": "DB · Cologne → Berlin",
       "category": "transport",
-      "location": "서울특별시",
+      "location": "Cologne → Berlin",
       "travel": true
     },
     {
@@ -673,14 +673,21 @@
         "title": "쾰른 -> 베를린",
         "route": "Koeln Hbf -> Berlin Hbf",
         "duration": "직행 열차 약 4시간 50분 전후",
-        "statusNote": "Cologne Hbf와 Berlin Hbf를 잇는 직행 열차가 있으며, 평균 4시간대 후반으로 잡는다.",
-        "nextCheck": "7/11 실제 DB ICE 시간표와 베를린 도착 후 숙소/만남 장소를 확정한다.",
+        "statusNote": "2026-06-13 DB 결제 113,702원은 쾰른 -> 베를린 철도 이동으로 보정됨.",
+        "nextCheck": "DB 앱/메일에서 7/11 실제 열차번호, 좌석, 도착 시간을 확정해 붙인다.",
         "steps": [
           "Koeln Hbf에서 Berlin Hbf행 장거리 열차를 탄다.",
           "Berlin Hbf 도착 후 S-Bahn/U-Bahn 또는 택시로 숙소/만남 장소 이동."
         ],
-        "sourceName": "Omio / DB route reference",
+        "sourceName": "DB 결제 기록 / 여행 원장",
         "sourceUrl": "https://www.omio.com/trains/cologne/berlin"
+      },
+      "transportInPayment": {
+        "status": "paid",
+        "amount": 113702,
+        "paidDate": "2026-06-13",
+        "merchant": "DB Vertrieb GmbH",
+        "note": "User corrected this DB payment as Cologne -> Berlin."
       },
       "schengen": true,
       "lat": 52.52,
@@ -702,14 +709,21 @@
         "title": "베를린 -> 프라하",
         "route": "Berlin Hbf -> Praha hl.n.",
         "duration": "직행 열차 약 4시간 20분",
-        "statusNote": "DB 안내 기준 베를린-프라하 직행 열차가 있고 환승 없이 이동 가능.",
-        "nextCheck": "EC 열차와 FlixBus 가격/시간을 비교하고, 짐이 있으면 좌석 예약을 우선 검토한다.",
+        "statusNote": "2026-06-13 DB 결제 85,261원은 베를린 -> 프라하 철도 이동으로 보정됨.",
+        "nextCheck": "DB 앱/메일에서 7/14 실제 열차번호, 좌석, 출발역을 확정해 붙인다.",
         "steps": [
           "Berlin Hbf에서 Praha hl.n.행 직행 열차를 우선 후보로 본다.",
           "가격이나 시간대가 나쁘면 FlixBus 대안을 비교한다."
         ],
-        "sourceName": "DB Berlin-Prague route page",
+        "sourceName": "DB 결제 기록 / 여행 원장",
         "sourceUrl": "https://int.bahn.de/en/destinations/berlin/prague"
+      },
+      "transportInPayment": {
+        "status": "paid",
+        "amount": 85261,
+        "paidDate": "2026-06-13",
+        "merchant": "DB Vertrieb GmbH",
+        "note": "User corrected this DB payment as Berlin -> Prague."
       },
       "schengen": true,
       "lat": 50.0755,

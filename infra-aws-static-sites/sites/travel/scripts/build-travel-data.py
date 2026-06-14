@@ -118,14 +118,21 @@ ROUTE = [
             "title": "쾰른 -> 베를린",
             "route": "Koeln Hbf -> Berlin Hbf",
             "duration": "직행 열차 약 4시간 50분 전후",
-            "statusNote": "Cologne Hbf와 Berlin Hbf를 잇는 직행 열차가 있으며, 평균 4시간대 후반으로 잡는다.",
-            "nextCheck": "7/11 실제 DB ICE 시간표와 베를린 도착 후 숙소/만남 장소를 확정한다.",
+            "statusNote": "2026-06-13 DB 결제 113,702원은 쾰른 -> 베를린 철도 이동으로 보정됨.",
+            "nextCheck": "DB 앱/메일에서 7/11 실제 열차번호, 좌석, 도착 시간을 확정해 붙인다.",
             "steps": [
                 "Koeln Hbf에서 Berlin Hbf행 장거리 열차를 탄다.",
                 "Berlin Hbf 도착 후 S-Bahn/U-Bahn 또는 택시로 숙소/만남 장소 이동.",
             ],
-            "sourceName": "Omio / DB route reference",
+            "sourceName": "DB 결제 기록 / 여행 원장",
             "sourceUrl": "https://www.omio.com/trains/cologne/berlin",
+        },
+        "transportInPayment": {
+            "status": "paid",
+            "amount": 113702,
+            "paidDate": "2026-06-13",
+            "merchant": "DB Vertrieb GmbH",
+            "note": "User corrected this DB payment as Cologne -> Berlin.",
         },
         "schengen": True,
         "lat": 52.52,
@@ -147,14 +154,21 @@ ROUTE = [
             "title": "베를린 -> 프라하",
             "route": "Berlin Hbf -> Praha hl.n.",
             "duration": "직행 열차 약 4시간 20분",
-            "statusNote": "DB 안내 기준 베를린-프라하 직행 열차가 있고 환승 없이 이동 가능.",
-            "nextCheck": "EC 열차와 FlixBus 가격/시간을 비교하고, 짐이 있으면 좌석 예약을 우선 검토한다.",
+            "statusNote": "2026-06-13 DB 결제 85,261원은 베를린 -> 프라하 철도 이동으로 보정됨.",
+            "nextCheck": "DB 앱/메일에서 7/14 실제 열차번호, 좌석, 출발역을 확정해 붙인다.",
             "steps": [
                 "Berlin Hbf에서 Praha hl.n.행 직행 열차를 우선 후보로 본다.",
                 "가격이나 시간대가 나쁘면 FlixBus 대안을 비교한다.",
             ],
-            "sourceName": "DB Berlin-Prague route page",
+            "sourceName": "DB 결제 기록 / 여행 원장",
             "sourceUrl": "https://int.bahn.de/en/destinations/berlin/prague",
+        },
+        "transportInPayment": {
+            "status": "paid",
+            "amount": 85261,
+            "paidDate": "2026-06-13",
+            "merchant": "DB Vertrieb GmbH",
+            "note": "User corrected this DB payment as Berlin -> Prague.",
         },
         "schengen": True,
         "lat": 50.0755,
@@ -455,6 +469,24 @@ TRAVEL_PAYMENT_OVERRIDES = [
         "location": "Frankfurt",
         "note": "Mapped from 하나투어/온라인 payment",
     },
+    {
+        "date": "2026-06-13",
+        "match": "DB Vertrieb GmbH",
+        "amount": 113702,
+        "merchant": "DB · Cologne → Berlin",
+        "category": "transport",
+        "location": "Cologne → Berlin",
+        "note": "User corrected this payment as Cologne -> Berlin.",
+    },
+    {
+        "date": "2026-06-13",
+        "match": "DB Vertrieb GmbH",
+        "amount": 85261,
+        "merchant": "DB · Berlin → Prague",
+        "category": "transport",
+        "location": "Berlin → Prague",
+        "note": "User corrected this payment as Berlin -> Prague.",
+    },
 ]
 
 GEOCODE_OVERRIDES = {
@@ -537,9 +569,13 @@ def is_travel_expense(merchant, category, location):
     return False
 
 
-def travel_payment_override(day, merchant):
+def travel_payment_override(day, merchant, amount=None):
     lowered = (merchant or "").lower()
     for override in TRAVEL_PAYMENT_OVERRIDES:
+        if override["date"] != day or override["match"].lower() not in lowered:
+            continue
+        if "amount" in override and amount != override["amount"]:
+            continue
         if override["date"] == day and override["match"].lower() in lowered:
             return override
     return None
@@ -732,7 +768,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
         if match:
             amount = int(match.group(1).replace(",", ""))
             merchant = match.group(2).strip()
-            override = travel_payment_override(day, merchant)
+            override = travel_payment_override(day, merchant, amount)
             display_merchant = override.get("merchant") if override else merchant
             display_location = override.get("location") if override else public_location_label(location)
             category = override.get("category") if override else category_for(merchant)

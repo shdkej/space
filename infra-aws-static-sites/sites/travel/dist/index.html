@@ -1078,16 +1078,18 @@
           const status = r.status || "planned";
           const lodging = r.lodging || (status === "candidate" ? "숙소 후보" : "숙소 미정");
           const detail = r.arrivalTransfer ? `<button class="leg-detail" type="button" data-idx="${i}">이동 상세 →</button>` : "";
-          const transport = r.transportOut || r.transportIn || "";
-          const paid = r.transportOutPayment && r.transportOutPayment.status === "paid";
+          const transport = (r.arrivalTransfer && r.arrivalTransfer.title) || r.transportOut || r.transportIn || "";
+          const journeyPayment = r.journeyPayment || r.transportInPayment || r.transportOutPayment || null;
+          const paid = journeyPayment && journeyPayment.status === "paid";
           const payChip = transport ? `<span class="pay-chip ${paid ? "paid" : "unpaid"}">${paid ? "예매완료" : "예매전"}</span>` : "";
           const actions = (detail || payChip) ? `<div class="leg-actions">${detail}${payChip}</div>` : "";
+          const displayAmount = r.journeyAmount || (journeyPayment && journeyPayment.amount) || r.amount;
           return `
           <div class="leg${i === nextIdx ? " next" : ""}">
             <div class="date">${dateLabel(r.startDate, r.endDate)}<small>${nights(r.startDate, r.endDate) || "TBD"}</small></div>
             <div class="place"><b>${r.city}</b><small>${[r.country, lodging].filter(Boolean).join(" · ")}</small>${actions}</div>
             <div class="right">
-              <span class="amt${r.amount ? "" : " muted"}">${r.amount ? `${manWon(r.amount)}원` : "미정"}</span>
+              <span class="amt${displayAmount ? "" : " muted"}">${displayAmount ? `${manWon(displayAmount)}원` : "미정"}</span>
               <span class="tag ${status}">${status}</span>
             </div>
           </div>`;

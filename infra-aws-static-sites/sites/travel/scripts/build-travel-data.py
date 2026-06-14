@@ -609,6 +609,10 @@ def route_with_mapped_amounts(travel_expenses):
     route = []
     for stop in ROUTE:
         item = dict(stop)
+        journey_payment = item.get("transportInPayment") or item.get("transportOutPayment")
+        if journey_payment and journey_payment.get("amount"):
+            item["journeyAmount"] = journey_payment.get("amount")
+            item["journeyPayment"] = journey_payment
         mapped_amount = mapped_amount_for_stop(item, travel_expenses)
         if mapped_amount:
             item["amount"] = mapped_amount

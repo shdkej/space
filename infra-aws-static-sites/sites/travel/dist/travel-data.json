@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-14T09:06:14.219979+00:00",
+  "generatedAt": "2026-06-14T10:15:46.315245+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -627,6 +627,14 @@
       "schengen": true,
       "lat": 50.1109,
       "lng": 8.6821,
+      "journeyAmount": 71351,
+      "journeyPayment": {
+        "status": "paid",
+        "amount": 71351,
+        "paidDate": "2026-06-09",
+        "merchant": "DB Vertrieb GmbH",
+        "note": "Actual rail payment logged in the travel ledger."
+      },
       "amount": 77132
     },
     {
@@ -691,7 +699,15 @@
       },
       "schengen": true,
       "lat": 52.52,
-      "lng": 13.405
+      "lng": 13.405,
+      "journeyAmount": 113702,
+      "journeyPayment": {
+        "status": "paid",
+        "amount": 113702,
+        "paidDate": "2026-06-13",
+        "merchant": "DB Vertrieb GmbH",
+        "note": "User corrected this DB payment as Cologne -> Berlin."
+      }
     },
     {
       "city": "Prague",
@@ -727,7 +743,15 @@
       },
       "schengen": true,
       "lat": 50.0755,
-      "lng": 14.4378
+      "lng": 14.4378,
+      "journeyAmount": 85261,
+      "journeyPayment": {
+        "status": "paid",
+        "amount": 85261,
+        "paidDate": "2026-06-13",
+        "merchant": "DB Vertrieb GmbH",
+        "note": "User corrected this DB payment as Berlin -> Prague."
+      }
     },
     {
       "city": "Vienna",

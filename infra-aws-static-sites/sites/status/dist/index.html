@@ -373,6 +373,62 @@
         .col-7, .col-5 { grid-column: 1 / -1; }
       }
       @media (max-width: 520px) {
+        html,
+        body {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+
+        .wrap {
+          width: min(100% - 32px, 1180px);
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+
+        .hero {
+          overflow: hidden;
+        }
+
+        .stage {
+          width: 100%;
+          min-width: 0;
+          overflow: hidden;
+          padding-right: 0;
+        }
+
+        .pulse {
+          display: none;
+        }
+
+        .deck {
+          position: relative;
+          inset: auto;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 8px;
+          margin-top: 18px;
+          transform: none !important;
+          pointer-events: auto;
+        }
+
+        .chip {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+          justify-content: flex-start;
+          white-space: normal;
+          overflow-wrap: anywhere;
+          transform: none !important;
+          animation: none;
+        }
+
+        .hero-score {
+          justify-items: start;
+        }
+
         .stats { grid-template-columns: 1fr; }
         .stat { border-right: 0; padding: 20px 0; border-top: 1px solid var(--line); }
         .stat:first-child { border-top: 0; padding-top: 0; }

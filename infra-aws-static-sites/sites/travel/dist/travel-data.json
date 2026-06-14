@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T23:51:07.022853+00:00",
+  "generatedAt": "2026-06-14T02:19:18.758473+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,30 +8,30 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 1443923,
-    "travelLoggedKrw": 1443923,
-    "remainingMinKrw": 28556077,
-    "remainingMaxKrw": 38556077,
-    "reservedPctMin": 4.8,
+    "loggedKrw": 1642886,
+    "travelLoggedKrw": 1642886,
+    "remainingMinKrw": 28357114,
+    "remainingMaxKrw": 38357114,
+    "reservedPctMin": 5.5,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 96262,
+    "reserveBurnKrw": 96640,
     "firstTravelExpenseDate": "2026-05-29",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-06-12",
+    "date": "2026-06-14",
     "location": "서울특별시",
     "mapQuery": "서울특별시"
   },
   "categoryTotals": {
     "stay": 1372572,
-    "transport": 71351
+    "transport": 270314
   },
   "travelCategoryTotals": {
     "stay": 1372572,
-    "transport": 71351
+    "transport": 270314
   },
   "dailyTotals": [
     {
@@ -45,6 +45,10 @@
     {
       "date": "2026-06-09",
       "amount": 71351
+    },
+    {
+      "date": "2026-06-13",
+      "amount": 198963
     }
   ],
   "bookedCosts": [
@@ -117,6 +121,26 @@
   ],
   "travelExpenses": [
     {
+      "id": "_690k6c2569134ba46co42b9k70p3eb9o8gqk2ba26gqj4d1j6gs32e1j70",
+      "date": "2026-06-13",
+      "time": "09:45",
+      "amount": 85261,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
+      "id": "_6grk8gph70qkcb9m88qjib9k8grjiba18d330b9o64rk8c1p84p30chn8k",
+      "date": "2026-06-13",
+      "time": "09:29",
+      "amount": 113702,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
       "id": "_8osjighi64o32ba68h13gb9k8gokab9o6t246ba6610jge236d0j4chi6k",
       "date": "2026-06-09",
       "time": "23:06",
@@ -188,6 +212,26 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_690k6c2569134ba46co42b9k70p3eb9o8gqk2ba26gqj4d1j6gs32e1j70",
+      "date": "2026-06-13",
+      "time": "09:45",
+      "amount": 85261,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
+      "id": "_6grk8gph70qkcb9m88qjib9k8grjiba18d330b9o64rk8c1p84p30chn8k",
+      "date": "2026-06-13",
+      "time": "09:29",
+      "amount": 113702,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": true
+    },
     {
       "id": "_8osjighi64o32ba68h13gb9k8gokab9o6t246ba6610jge236d0j4chi6k",
       "date": "2026-06-09",
@@ -262,7 +306,7 @@
   "locations": [
     {
       "name": "서울특별시",
-      "count": 35,
+      "count": 51,
       "lat": 37.5665,
       "lng": 126.978
     },
@@ -277,7 +321,7 @@
     "points": [
       {
         "name": "서울특별시",
-        "count": 35,
+        "count": 51,
         "lat": 37.5665,
         "lng": 126.978
       },
@@ -922,7 +966,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-06-12",
+    "asOf": "2026-06-14",
     "limitDays": 90,
     "usedDays": 0,
     "remainingDays": 90,
@@ -1001,6 +1045,18 @@
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.75"
+    },
+    {
+      "date": "2026-06-12",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "6.50"
+    },
+    {
+      "date": "2026-06-13",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.91"
     }
   ],
   "reflections": [
@@ -1097,11 +1153,31 @@
     {
       "id": "u0fanurjdfe6r1d6b1keuuctek",
       "date": "2026-06-12",
-      "title": "내일 의도 / KOCO 보안 대응을 먼저 닫기",
+      "title": "실제 흐름 / CMS 실사용 전환과 publish 경계 대기",
       "intent": "KOCO SDK/보안성검토 잔여를 새 후보보다 먼저 닫는다.",
+      "did": "KOCO 보안/데이터 폴더 검토도 이어갔지만, 하루의 큰 흐름은 Control Center CMS를 실제 웹 CRUD와 shadcn 운영툴로 배포하고 publish/rollback 경계를 결정 대기 상태로 분리한 것이었습니다.",
+      "why": "마스터님이 CMS를 설계로 끊지 않고 웹에서 직접 데이터 조작까지 해보고 싶다고 하셨고, 품질 중요한 프론트엔드 작업은 Claude Code에 맡기는 방향을 주셨기 때문입니다.",
+      "carry": "공개 반영 전 diff preview, 승인 경계, rollback 손잡이를 먼저 보여주는 방식.",
+      "drop": "설계 산출물만 Archive하고 다음 intent 없이 끊는 흐름."
+    },
+    {
+      "id": "ulijih3g00rjcf0e285i9okbck",
+      "date": "2026-06-13",
+      "title": "내일 의도 / Control Center 공개 반영 범위 먼저 고르기",
+      "intent": "CMS를 더 키우기 전에 실제 공개 반영을 어느 범위까지 열지 먼저 고른다.",
       "did": null,
       "why": null,
-      "carry": "검토의견 잔여 항목과 SDK production/E2E 중 지금 막힌 1개만 먼저 잡는다.",
+      "carry": "build-09의 기본값인 dry-run preview만 먼저 열지, 단일 target publish까지 갈지 한 줄로 정한다.",
+      "drop": null
+    },
+    {
+      "id": "hv6gnqmt70p0kqcc1fhu51fdfc",
+      "date": "2026-06-14",
+      "title": "내일 의도 / 고객 접점 3레이어를 한 화면에 낮추기",
+      "intent": "고객 유치-문제 해결-문의 해소 중 어느 접점이 먼저인지 한 화면에서 보이게 낮춘다.",
+      "did": null,
+      "why": null,
+      "carry": "새 화면이나 카드 1개를 볼 때 세 레이어 중 하나만 표시한다.",
       "drop": null
     }
   ]

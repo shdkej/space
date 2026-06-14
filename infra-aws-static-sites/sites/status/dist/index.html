@@ -397,10 +397,6 @@
           padding-right: 0;
         }
 
-        .pulse {
-          display: none;
-        }
-
         .deck {
           position: relative;
           inset: auto;
@@ -412,6 +408,12 @@
           pointer-events: auto;
         }
 
+        .pulse i {
+          right: 12%;
+          width: 92px;
+          height: 92px;
+        }
+
         .chip {
           position: relative;
           inset: auto;
@@ -421,9 +423,12 @@
           justify-content: flex-start;
           white-space: normal;
           overflow-wrap: anywhere;
-          transform: none !important;
-          animation: none;
         }
+
+        .chip-1 { transform: rotate(-1.5deg); animation: floatMobileA 7s ease-in-out infinite; }
+        .chip-2 { transform: rotate(1.5deg); animation: floatMobileB 9s ease-in-out infinite; }
+        @keyframes floatMobileA { 0%, 100% { transform: rotate(-1.5deg) translateY(0); } 50% { transform: rotate(-1.5deg) translateY(-6px); } }
+        @keyframes floatMobileB { 0%, 100% { transform: rotate(1.5deg) translateY(0); } 50% { transform: rotate(1.5deg) translateY(6px); } }
 
         .hero-score {
           justify-items: start;

@@ -433,6 +433,75 @@ CATEGORY_RULES = [
     ("gear", ["무신사", "쿠팡", "다이소", "올리브영", "전자", "gear"]),
 ]
 
+MANUAL_TRAVEL_EXPENSES = [
+    {
+        "id": "manual-shopping-2026-05-10-travel-prep",
+        "date": "2026-05-10",
+        "time": "",
+        "amount": 70200,
+        "merchant": "Travel prep · 손톱깎이/수건/빨랫줄",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/10729",
+    },
+    {
+        "id": "manual-shopping-2026-05-10-coupang",
+        "date": "2026-05-10",
+        "time": "",
+        "amount": 24100,
+        "merchant": "쿠팡 · 여행 준비",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/10729",
+    },
+    {
+        "id": "manual-shopping-2026-05-19-coupang",
+        "date": "2026-05-19",
+        "time": "",
+        "amount": 45190,
+        "merchant": "쿠팡 · 여행 준비",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/10729",
+    },
+    {
+        "id": "manual-shopping-2026-05-27-nua-clothes",
+        "date": "2026-05-27",
+        "time": "",
+        "amount": 442940,
+        "merchant": "누아옷",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/10729",
+    },
+    {
+        "id": "manual-shopping-2026-05-30-muji",
+        "date": "2026-05-30",
+        "time": "",
+        "amount": 28400,
+        "merchant": "무인양품",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/10729",
+    },
+    {
+        "id": "manual-shopping-2026-06-07-international-license",
+        "date": "2026-06-07",
+        "time": "",
+        "amount": 25600,
+        "merchant": "국제면허증 2건",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/10729",
+    },
+]
+
 TRAVEL_MERCHANT_WORDS = [
     "airbnb",
     "booking",
@@ -826,6 +895,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
                 "drop": fields.get("버릴 것"),
             })
 
+    expenses.extend(dict(expense) for expense in MANUAL_TRAVEL_EXPENSES)
     travel_expenses = [expense for expense in expenses if expense["travel"]]
     route = route_with_mapped_amounts(travel_expenses)
 
@@ -891,7 +961,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
         }
         for stop in route
         if stop.get("amount")
-    ]
+    ] + [dict(expense) for expense in MANUAL_TRAVEL_EXPENSES]
 
     return {
         "generatedAt": datetime.now(timezone.utc).isoformat(),

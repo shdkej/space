@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-14T10:15:46.315245+00:00",
+  "generatedAt": "2026-06-14T13:32:24.803562+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,15 +8,15 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 1642886,
-    "travelLoggedKrw": 1642886,
-    "remainingMinKrw": 28357114,
-    "remainingMaxKrw": 38357114,
-    "reservedPctMin": 5.5,
+    "loggedKrw": 2279316,
+    "travelLoggedKrw": 2279316,
+    "remainingMinKrw": 27720684,
+    "remainingMaxKrw": 37720684,
+    "reservedPctMin": 7.6,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 96640,
-    "firstTravelExpenseDate": "2026-05-29",
+    "reserveBurnKrw": 63314,
+    "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
@@ -27,10 +27,12 @@
   },
   "categoryTotals": {
     "stay": 1372572,
+    "gear": 636430,
     "transport": 270314
   },
   "travelCategoryTotals": {
     "stay": 1372572,
+    "gear": 636430,
     "transport": 270314
   },
   "dailyTotals": [
@@ -117,6 +119,72 @@
       "location": "Budapest",
       "travel": true,
       "source": "7/20 EuroCity from Vienna"
+    },
+    {
+      "id": "manual-shopping-2026-05-10-travel-prep",
+      "date": "2026-05-10",
+      "time": "",
+      "amount": 70200,
+      "merchant": "Travel prep · 손톱깎이/수건/빨랫줄",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-10-coupang",
+      "date": "2026-05-10",
+      "time": "",
+      "amount": 24100,
+      "merchant": "쿠팡 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-19-coupang",
+      "date": "2026-05-19",
+      "time": "",
+      "amount": 45190,
+      "merchant": "쿠팡 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-27-nua-clothes",
+      "date": "2026-05-27",
+      "time": "",
+      "amount": 442940,
+      "merchant": "누아옷",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-30-muji",
+      "date": "2026-05-30",
+      "time": "",
+      "amount": 28400,
+      "merchant": "무인양품",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-06-07-international-license",
+      "date": "2026-06-07",
+      "time": "",
+      "amount": 25600,
+      "merchant": "국제면허증 2건",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
     }
   ],
   "travelExpenses": [
@@ -191,6 +259,28 @@
       "travel": true
     },
     {
+      "id": "manual-shopping-2026-06-07-international-license",
+      "date": "2026-06-07",
+      "time": "",
+      "amount": 25600,
+      "merchant": "국제면허증 2건",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-30-muji",
+      "date": "2026-05-30",
+      "time": "",
+      "amount": 28400,
+      "merchant": "무인양품",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
       "id": "_6oo3ed9o6cpjaba26op4cb9k6cpj8b9p8kqjiba38gokce9n711kae9l8c",
       "date": "2026-05-29",
       "time": "22:27",
@@ -209,6 +299,50 @@
       "category": "stay",
       "location": "Frankfurt",
       "travel": true
+    },
+    {
+      "id": "manual-shopping-2026-05-27-nua-clothes",
+      "date": "2026-05-27",
+      "time": "",
+      "amount": 442940,
+      "merchant": "누아옷",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-19-coupang",
+      "date": "2026-05-19",
+      "time": "",
+      "amount": 45190,
+      "merchant": "쿠팡 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-10-travel-prep",
+      "date": "2026-05-10",
+      "time": "",
+      "amount": 70200,
+      "merchant": "Travel prep · 손톱깎이/수건/빨랫줄",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-10-coupang",
+      "date": "2026-05-10",
+      "time": "",
+      "amount": 24100,
+      "merchant": "쿠팡 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
     }
   ],
   "expenses": [
@@ -283,6 +417,28 @@
       "travel": true
     },
     {
+      "id": "manual-shopping-2026-06-07-international-license",
+      "date": "2026-06-07",
+      "time": "",
+      "amount": 25600,
+      "merchant": "국제면허증 2건",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-30-muji",
+      "date": "2026-05-30",
+      "time": "",
+      "amount": 28400,
+      "merchant": "무인양품",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
       "id": "_6oo3ed9o6cpjaba26op4cb9k6cpj8b9p8kqjiba38gokce9n711kae9l8c",
       "date": "2026-05-29",
       "time": "22:27",
@@ -301,12 +457,56 @@
       "category": "stay",
       "location": "Frankfurt",
       "travel": true
+    },
+    {
+      "id": "manual-shopping-2026-05-27-nua-clothes",
+      "date": "2026-05-27",
+      "time": "",
+      "amount": 442940,
+      "merchant": "누아옷",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-19-coupang",
+      "date": "2026-05-19",
+      "time": "",
+      "amount": 45190,
+      "merchant": "쿠팡 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-10-travel-prep",
+      "date": "2026-05-10",
+      "time": "",
+      "amount": 70200,
+      "merchant": "Travel prep · 손톱깎이/수건/빨랫줄",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-05-10-coupang",
+      "date": "2026-05-10",
+      "time": "",
+      "amount": 24100,
+      "merchant": "쿠팡 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/10729"
     }
   ],
   "locations": [
     {
       "name": "서울특별시",
-      "count": 51,
+      "count": 54,
       "lat": 37.5665,
       "lng": 126.978
     },
@@ -321,7 +521,7 @@
     "points": [
       {
         "name": "서울특별시",
-        "count": 51,
+        "count": 54,
         "lat": 37.5665,
         "lng": 126.978
       },
@@ -1013,12 +1213,6 @@
   },
   "sleep": [
     {
-      "date": "2026-05-29",
-      "sleepHours": 5.61,
-      "recharge": 70.0,
-      "balance": "5.90"
-    },
-    {
       "date": "2026-05-30",
       "sleepHours": 5.61,
       "recharge": 70.0,
@@ -1095,6 +1289,12 @@
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.91"
+    },
+    {
+      "date": "2026-06-14",
+      "sleepHours": 7.73,
+      "recharge": 97.0,
+      "balance": "5.62"
     }
   ],
   "reflections": [

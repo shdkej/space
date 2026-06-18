@@ -9,6 +9,10 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
     />
+    <!-- SpatialPresence: 3D character background layer (build-12) -->
+    <link rel="stylesheet" href="assets/spatial-presence.css" />
+    <!-- Phase 2: poster 준비 후 LCP preload 추가
+    <link rel="preload" as="image" href="assets/character/poster.webp" fetchpriority="high" /> -->
     <style>
       :root {
         color-scheme: light;
@@ -774,7 +778,18 @@
     </style>
   </head>
   <body data-mode="overview">
-    <main class="app-shell">
+    <!-- CharacterStage: z-index 0 spatial layer, pointer-events:none — 캐릭터/공간이 주인공, HUD는 그 위에 뜬다 -->
+    <div class="character-stage" aria-hidden="true" role="presentation">
+      <div class="character-layer depth-far"><div class="sp-aura"></div></div>
+      <div class="character-layer depth-mid" id="character-bg">
+        <!-- Phase 1: 플레이스홀더 프레즌스. Phase 2: 이 div를 <picture> poster.webp 로 교체 -->
+        <div class="character-presence"></div>
+      </div>
+      <div class="character-layer depth-near"><div class="sp-motes"></div></div>
+      <div class="atmosphere"></div>
+    </div>
+
+    <main class="app-shell hud-layer">
       <section class="overview" aria-label="Status overview">
         <header class="topbar">
           <div class="brand">
@@ -1112,6 +1127,42 @@
             fill: 12,
           });
         });
+    </script>
+
+    <script>
+      /* SpatialPresence pointer parallax — Option D, 의존성 없음 (build-12) */
+      (function () {
+        if (window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+        const layers = document.querySelectorAll(".character-layer");
+        if (!layers.length) return;
+        const root = document.documentElement;
+        const isMobile = window.innerWidth < 640;
+        if (isMobile) return; /* 모바일은 작고 안정적으로 — parallax 비활성 */
+        const MAX =
+          parseFloat(getComputedStyle(root).getPropertyValue("--parallax-desktop")) || 8;
+        let ticking = false;
+        let nx = 0;
+        let ny = 0;
+        function apply() {
+          const rx = ny * MAX;
+          const ry = nx * -MAX;
+          layers.forEach(function (l) {
+            const f = parseFloat(getComputedStyle(l).getPropertyValue("--depth-factor")) || 1;
+            l.style.transform =
+              "translate3d(" + ry * f * 1.1 + "px," + rx * f * 0.7 + "px,0) " +
+              "rotateX(" + rx * f + "deg) rotateY(" + ry * f + "deg)";
+          });
+          ticking = false;
+        }
+        document.addEventListener("mousemove", function (e) {
+          nx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+          ny = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(apply);
+          }
+        });
+      })();
     </script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T10:59:37Z",
+  "generatedAt": "2026-06-18T05:50:09Z",
   "overall": {
     "state": "ok",
     "label": "Status, Travel Ops, Card News Library, Infinity, Virtue, and Control Center CMS are the active surfaces",
@@ -10,42 +10,42 @@
       "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 488,
+      "latencyMs": 331,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 149,
+      "latencyMs": 98,
       "detail": "World travel planning board deployed as a separate static app"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 184,
+      "latencyMs": 96,
       "detail": "Growing public archive for photo insight card-news sets"
     },
     {
       "name": "Infinity",
       "url": "https://infinity.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 127,
+      "latencyMs": 136,
       "detail": "Intent dashboard for Infinity work queue and archive state"
     },
     {
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 195,
+      "latencyMs": 175,
       "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring"
     },
     {
       "name": "Control Center CMS",
       "url": "https://cms.oracle.shdkej.com",
       "state": "ok",
-      "latencyMs": 28,
+      "latencyMs": 338,
       "detail": "shadcn/ui operations CMS for Status composition and surface registry management"
     }
   ],
@@ -56,7 +56,7 @@
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-16T10:59:34Z",
+      "updatedAt": "2026-06-18T05:50:08Z",
       "state": "ok"
     },
     {
@@ -65,7 +65,7 @@
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-16T10:59:34Z",
+      "updatedAt": "2026-06-18T05:50:08Z",
       "state": "ok"
     },
     {
@@ -74,7 +74,7 @@
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-16T10:59:34Z",
+      "updatedAt": "2026-06-18T05:50:08Z",
       "state": "ok"
     },
     {
@@ -83,7 +83,7 @@
       "bucket": "static-infinity-aws-shdkej-com",
       "distribution": "E3JYGTLQKF0AXX",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-16T10:59:35Z",
+      "updatedAt": "2026-06-18T05:50:08Z",
       "state": "ok"
     },
     {
@@ -92,7 +92,7 @@
       "bucket": "static-virtue-aws-shdkej-com",
       "distribution": "EVCIL59LC6WJ6",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-16T10:59:35Z",
+      "updatedAt": "2026-06-18T05:50:09Z",
       "state": "ok"
     },
     {
@@ -101,7 +101,7 @@
       "bucket": "",
       "distribution": "",
       "hosting": "kubernetes ingress",
-      "updatedAt": "2026-06-16T10:59:37Z",
+      "updatedAt": "2026-06-18T05:50:09Z",
       "state": "ok"
     }
   ],

@@ -36,7 +36,7 @@
 ### WebGL 캐릭터
 
 - Three.js module은 `https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js`에서 로드한다.
-- 캐릭터는 외부 에셋 없는 procedural mesh rig다: `CapsuleGeometry` body/arms, `SphereGeometry` head, visor bar, core `TorusGeometry`, halo/orbit/motes.
+- 캐릭터는 외부 에셋 없는 procedural humanoid rig다: head, hair cap, neck, shoulder line, tapered torso, arms, hands, legs, core `TorusGeometry`, halo/orbit/motes.
 - `window.__STATUS_CHARACTER_STAGE__ = { mode: "three-webgl", ready: true, interactive: true }`를 설정해 검증 가능하게 한다.
 - pointer/touch 좌표를 smoothing해 `rig.rotation.x/y`에 반영한다. idle motion은 head/core/halo/orbit/motes만 작게 움직인다.
 

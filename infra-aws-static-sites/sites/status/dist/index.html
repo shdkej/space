@@ -1234,14 +1234,25 @@
         const body = new THREE.Group();
         rig.add(body);
 
-        const clay = new THREE.MeshPhysicalMaterial({
-          color: 0xd9c1a2,
-          roughness: 0.38,
+        const skin = new THREE.MeshPhysicalMaterial({
+          color: 0xd8b990,
+          roughness: 0.46,
+          metalness: 0.01,
+          clearcoat: 0.42,
+          clearcoatRoughness: 0.28,
+        });
+        const cloth = new THREE.MeshPhysicalMaterial({
+          color: 0xc6aa83,
+          roughness: 0.56,
           metalness: 0.02,
-          transmission: 0.04,
-          thickness: 0.4,
-          clearcoat: 0.72,
-          clearcoatRoughness: 0.22,
+          clearcoat: 0.28,
+          clearcoatRoughness: 0.36,
+        });
+        const hair = new THREE.MeshPhysicalMaterial({
+          color: 0x7f6b55,
+          roughness: 0.5,
+          metalness: 0.0,
+          clearcoat: 0.18,
         });
         const shadow = new THREE.MeshBasicMaterial({
           color: 0x8f765b,
@@ -1254,6 +1265,11 @@
           transparent: true,
           opacity: 0.54,
         });
+        const feature = new THREE.MeshBasicMaterial({
+          color: 0x6c5845,
+          transparent: true,
+          opacity: 0.46,
+        });
         const glow = new THREE.MeshBasicMaterial({
           color: 0xf2dec3,
           transparent: true,
@@ -1264,36 +1280,98 @@
 
         const base = new THREE.Mesh(new THREE.CircleGeometry(1.55, 80), shadow);
         base.rotation.x = -Math.PI / 2;
-        base.position.y = -1.56;
+        base.position.y = -1.78;
         body.add(base);
 
-        const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.48, 1.1, 12, 32), clay);
-        torso.scale.set(0.9, 1.08, 0.72);
-        torso.position.y = -0.44;
+        const hips = new THREE.Mesh(new THREE.SphereGeometry(0.44, 40, 22), cloth);
+        hips.scale.set(1.08, 0.34, 0.72);
+        hips.position.y = -0.96;
+        body.add(hips);
+
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.48, 1.06, 42), cloth);
+        torso.scale.set(0.88, 1.05, 0.54);
+        torso.position.y = -0.34;
         body.add(torso);
 
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.54, 48, 32), clay);
-        head.scale.set(1.02, 0.94, 0.98);
-        head.position.y = 0.72;
+        const chestGlow = new THREE.Mesh(new THREE.TorusGeometry(0.23, 0.012, 10, 72), line);
+        chestGlow.position.set(0, -0.2, 0.34);
+        chestGlow.rotation.x = 0.08;
+        body.add(chestGlow);
+
+        const shoulderLine = new THREE.Mesh(new THREE.CapsuleGeometry(0.055, 0.94, 8, 18), cloth);
+        shoulderLine.position.y = 0.38;
+        shoulderLine.rotation.z = Math.PI / 2;
+        shoulderLine.scale.set(1, 0.86, 0.72);
+        body.add(shoulderLine);
+
+        const neck = new THREE.Mesh(new THREE.CapsuleGeometry(0.085, 0.28, 8, 18), skin);
+        neck.position.y = 0.82;
+        body.add(neck);
+
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.235, 44, 30), skin);
+        head.scale.set(0.88, 1.12, 0.8);
+        head.position.y = 1.1;
         body.add(head);
 
-        const face = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.12, 0.035), line);
-        face.position.set(0, 0.77, 0.51);
-        body.add(face);
+        const hairCap = new THREE.Mesh(new THREE.SphereGeometry(0.238, 44, 16, 0, Math.PI * 2, 0, Math.PI * 0.52), hair);
+        hairCap.scale.set(0.92, 0.6, 0.84);
+        hairCap.position.set(0, 1.205, 0.01);
+        body.add(hairCap);
 
-        const core = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.018, 12, 80), line);
-        core.position.set(0, -0.36, 0.48);
+        const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.018, 12, 8), feature);
+        leftEye.position.set(-0.06, 1.115, 0.205);
+        body.add(leftEye);
+
+        const rightEye = leftEye.clone();
+        rightEye.position.x = 0.06;
+        body.add(rightEye);
+
+        const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.012, 0.012), feature);
+        mouth.position.set(0, 1.025, 0.205);
+        body.add(mouth);
+
+        const core = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.012, 12, 80), line);
+        core.position.set(0, -0.32, 0.36);
         body.add(core);
 
-        const leftArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.105, 0.8, 8, 18), clay);
-        leftArm.position.set(-0.58, -0.38, 0.04);
-        leftArm.rotation.z = -0.34;
-        body.add(leftArm);
+        const leftUpperArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.58, 8, 18), skin);
+        leftUpperArm.position.set(-0.55, -0.02, 0.01);
+        leftUpperArm.rotation.z = 0.3;
+        body.add(leftUpperArm);
 
-        const rightArm = leftArm.clone();
-        rightArm.position.x = 0.58;
-        rightArm.rotation.z = 0.34;
-        body.add(rightArm);
+        const rightUpperArm = leftUpperArm.clone();
+        rightUpperArm.position.x = 0.55;
+        rightUpperArm.rotation.z = -0.3;
+        body.add(rightUpperArm);
+
+        const leftForearm = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.52, 8, 18), skin);
+        leftForearm.position.set(-0.64, -0.66, 0.02);
+        leftForearm.rotation.z = 0.1;
+        body.add(leftForearm);
+
+        const rightForearm = leftForearm.clone();
+        rightForearm.position.x = 0.64;
+        rightForearm.rotation.z = -0.1;
+        body.add(rightForearm);
+
+        const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.085, 18, 14), skin);
+        leftHand.position.set(-0.68, -1.0, 0.04);
+        leftHand.scale.set(0.78, 1, 0.7);
+        body.add(leftHand);
+
+        const rightHand = leftHand.clone();
+        rightHand.position.x = 0.68;
+        body.add(rightHand);
+
+        const leftLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.095, 0.86, 10, 22), cloth);
+        leftLeg.position.set(-0.2, -1.48, 0.0);
+        leftLeg.rotation.z = 0.04;
+        body.add(leftLeg);
+
+        const rightLeg = leftLeg.clone();
+        rightLeg.position.x = 0.2;
+        rightLeg.rotation.z = -0.04;
+        body.add(rightLeg);
 
         const halo = new THREE.Mesh(new THREE.TorusGeometry(0.88, 0.012, 10, 120), glow);
         halo.position.y = 0.1;
@@ -1345,10 +1423,10 @@
           camera.position.set(0, 0.08, mobile ? 6.4 : 5.2);
           camera.updateProjectionMatrix();
 
-          const scale = mobile ? 0.92 : w < 1024 ? 0.96 : 1.24;
+          const scale = mobile ? 0.92 : w < 1024 ? 0.96 : 1.04;
           rig.scale.setScalar(scale);
-          baseX = mobile ? 0 : 1.85;
-          baseY = mobile ? -0.28 : -0.5;
+          baseX = mobile ? 0 : 2.02;
+          baseY = mobile ? -0.28 : -0.36;
           rig.position.set(baseX, baseY, 0);
         }
 

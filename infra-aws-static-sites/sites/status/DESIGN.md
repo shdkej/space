@@ -24,7 +24,7 @@ Sam Samuel 웹의 핵심 공간 문법: **"캐릭터가 공간의 주인이고, 
 
 - **`background-layer` (`.character-stage`)**: `position:fixed; inset:0; z-index:0; pointer-events:none`. 투명 — 기존 body 배경이 깊은 환경이고, 그 위에 Three.js 캐릭터가 뜬다.
 - **`hud-layer` (`.app-shell.hud-layer`)**: `position:relative; z-index:10`. 기존 글래스 카드는 그대로 두고 z-index 보장만 추가 — 카드의 backdrop-blur 너머로 프레즌스가 은은히 비친다.
-- **real 3D character**: `<canvas id="characterCanvas">`에 Three.js mesh rig를 렌더한다. 머리/몸통/팔/코어 링/halo/orbit/motes는 실제 3D geometry이며 포인터 좌표에 따라 rig가 회전한다.
+- **real 3D character**: `<canvas id="characterCanvas">`에 Three.js humanoid mesh rig를 렌더한다. 머리/헤어캡/목/어깨/몸통/팔/손/다리/코어 링/halo/orbit/motes는 실제 3D geometry이며 포인터 좌표에 따라 rig가 회전한다.
 - **CSS fallback layers**: WebGL 로드 전 또는 실패 시 3겹 `.depth-far`(aura) / `.depth-mid`(presence) / `.depth-near`(motes)를 유지한다.
 - **character-placement**:
   - desktop: 우측 자유 배치, 뷰포트 78% 높이, perspective + aura로 미래지향적

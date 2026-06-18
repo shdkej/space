@@ -1180,7 +1180,44 @@
       const canvas = document.getElementById("characterCanvas");
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+      function startCssFallback(error) {
+        const layers = document.querySelectorAll(".character-layer");
+        window.__STATUS_CHARACTER_STAGE__ = {
+          mode: "css-fallback",
+          ready: true,
+          interactive: !reduceMotion,
+          error: error ? String(error.message || error) : undefined,
+        };
+        if (reduceMotion || !layers.length) return;
+        let ticking = false;
+        let nx = 0;
+        let ny = 0;
+        function apply() {
+          layers.forEach((layer) => {
+            const factor = parseFloat(getComputedStyle(layer).getPropertyValue("--depth-factor")) || 1;
+            const rx = ny * 7 * factor;
+            const ry = nx * -7 * factor;
+            layer.style.transform =
+              `translate3d(${ry * 1.1}px, ${rx * 0.65}px, 0) rotateX(${rx}deg) rotateY(${ry}deg)`;
+          });
+          ticking = false;
+        }
+        window.addEventListener("pointermove", (event) => {
+          nx = (event.clientX / window.innerWidth - 0.5) * 2;
+          ny = (event.clientY / window.innerHeight - 0.5) * 2;
+          window.__STATUS_CHARACTER_STAGE__.lastPointer = {
+            x: Number(nx.toFixed(3)),
+            y: Number(ny.toFixed(3)),
+          };
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(apply);
+          }
+        }, { passive: true });
+      }
+
       if (stage && canvas) {
+        try {
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
         const renderer = new THREE.WebGLRenderer({
@@ -1367,6 +1404,9 @@
         }
 
         requestAnimationFrame(frame);
+        } catch (error) {
+          startCssFallback(error);
+        }
       }
     </script>
   </body>

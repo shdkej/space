@@ -14,6 +14,7 @@ CALENDAR_ID = "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@
 TRIP_START = date(2026, 7, 8)
 SCHENGEN_LIMIT = 90
 BUDGET_PLANNING_DAYS = 365
+SCHENGEN_RULE_SOURCE = "https://home-affairs.ec.europa.eu/policies/schengen/border-crossing/short-stay-calculator_en"
 
 ROUTE = [
     {
@@ -424,6 +425,51 @@ ROUTE = [
     },
 ]
 
+SCHENGEN_PROJECTION_SEGMENTS = [
+    {
+        "label": "1차 쉥겐",
+        "startDate": "2026-07-08",
+        "endDate": "2026-07-29",
+        "schengen": True,
+        "countries": ["Germany", "Czechia", "Austria", "Hungary", "Croatia"],
+        "note": "크로아티아 포함. 출입국일을 모두 체류일로 보는 보수 계산.",
+    },
+    {
+        "label": "터키·이집트 브레이크",
+        "startDate": "2026-07-29",
+        "endDate": "2026-09-01",
+        "schengen": False,
+        "countries": ["Turkey", "Egypt"],
+        "note": "쉥겐 카운트 정지 구간.",
+    },
+    {
+        "label": "2차 쉥겐",
+        "startDate": "2026-09-01",
+        "endDate": "2026-10-23",
+        "schengen": True,
+        "countries": ["Italy", "Switzerland", "Spain", "France"],
+        "excludedDays": 5,
+        "excludedLabel": "Morocco side trip",
+        "note": "모로코 4박 5일은 비쉥겐으로 제외.",
+    },
+    {
+        "label": "런던 브레이크",
+        "startDate": "2026-10-23",
+        "endDate": "2026-10-27",
+        "schengen": False,
+        "countries": ["United Kingdom"],
+        "note": "파리 이후 영국 체류로 쉥겐 카운트 정지.",
+    },
+    {
+        "label": "3차 쉥겐",
+        "startDate": "2026-10-27",
+        "endDate": "2026-11-02",
+        "schengen": True,
+        "countries": ["Denmark", "Iceland"],
+        "note": "레이캬비크 출국일까지 보수적으로 포함.",
+    },
+]
+
 CATEGORY_RULES = [
     ("transport", ["티머니", "지하철", "버스", "택시", "uber", "bolt", "rail", "train", "항공", "flight", "ferry", "db vertrieb", "deutsche bahn", "bahn", "ice"]),
     ("food", ["찌개", "식당", "restaurant", "food", "김밥", "국밥", "맥도날드", "버거", "분식", "고기"]),
@@ -802,6 +848,41 @@ def merge_events(existing, fresh_events, start, end):
     return kept + fresh_events
 
 
+def inclusive_days(start_iso, end_iso):
+    start = date.fromisoformat(start_iso)
+    end = date.fromisoformat(end_iso)
+    return max(0, (end - start).days + 1)
+
+
+def schengen_projection():
+    segments = []
+    total = 0
+    for segment in SCHENGEN_PROJECTION_SEGMENTS:
+        if segment.get("schengen"):
+            calendar_days = inclusive_days(segment["startDate"], segment["endDate"])
+        else:
+            calendar_days = max(0, (date.fromisoformat(segment["endDate"]) - date.fromisoformat(segment["startDate"])).days)
+        excluded = int(segment.get("excludedDays") or 0)
+        schengen_days = max(0, calendar_days - excluded) if segment.get("schengen") else 0
+        total += schengen_days
+        segments.append({
+            **segment,
+            "calendarDays": calendar_days,
+            "schengenDays": schengen_days,
+        })
+    return {
+        "label": "예상 전체 일정",
+        "rule": "90 days in any rolling 180-day period; entry and exit days are counted.",
+        "source": SCHENGEN_RULE_SOURCE,
+        "limitDays": SCHENGEN_LIMIT,
+        "projectedUsedDays": total,
+        "projectedRemainingDays": max(0, SCHENGEN_LIMIT - total),
+        "riskBand": "comfortable" if total <= 80 else "tight" if total <= SCHENGEN_LIMIT else "over",
+        "segments": segments,
+        "note": "EU 90/180 rolling 기준(입국일·출국일 포함) 추정치. 실제 입출국일/항공권 확정 시 재계산한다.",
+    }
+
+
 def schengen_summary(today):
     if today < TRIP_START:
         used = 0
@@ -815,6 +896,7 @@ def schengen_summary(today):
         "remainingDays": max(0, SCHENGEN_LIMIT - used),
         "window": "180 days",
         "status": "pre-trip" if used == 0 else "active",
+        "projection": schengen_projection(),
     }
 
 

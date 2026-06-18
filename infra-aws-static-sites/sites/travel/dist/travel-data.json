@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-14T13:32:24.803562+00:00",
+  "generatedAt": "2026-06-18T13:42:17.061805+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,34 +8,38 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 2279316,
-    "travelLoggedKrw": 2279316,
-    "remainingMinKrw": 27720684,
-    "remainingMaxKrw": 37720684,
-    "reservedPctMin": 7.6,
+    "loggedKrw": 3248822,
+    "travelLoggedKrw": 3248822,
+    "remainingMinKrw": 26751178,
+    "remainingMaxKrw": 36751178,
+    "reservedPctMin": 10.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 63314,
+    "reserveBurnKrw": 81221,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-06-14",
+    "date": "2026-06-18",
     "location": "서울특별시",
     "mapQuery": "서울특별시"
   },
   "categoryTotals": {
-    "stay": 1372572,
+    "stay": 2342078,
     "gear": 636430,
     "transport": 270314
   },
   "travelCategoryTotals": {
-    "stay": 1372572,
+    "stay": 2342078,
     "gear": 636430,
     "transport": 270314
   },
   "dailyTotals": [
+    {
+      "date": "2026-05-23",
+      "amount": 780000
+    },
     {
       "date": "2026-05-29",
       "amount": 171132
@@ -51,6 +55,10 @@
     {
       "date": "2026-06-13",
       "amount": 198963
+    },
+    {
+      "date": "2026-06-17",
+      "amount": 189506
     }
   ],
   "bookedCosts": [
@@ -189,6 +197,16 @@
   ],
   "travelExpenses": [
     {
+      "id": "_71148h9l6gq34b9n8os4cb9k8h34cba26933gb9i8l230dhl6p0kadhk6k",
+      "date": "2026-06-17",
+      "time": "21:54",
+      "amount": 189506,
+      "merchant": "AIRBNB * HMP8R8ZN5W",
+      "category": "stay",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
       "id": "_690k6c2569134ba46co42b9k70p3eb9o8gqk2ba26gqj4d1j6gs32e1j70",
       "date": "2026-06-13",
       "time": "09:45",
@@ -310,6 +328,16 @@
       "location": "여행 준비",
       "travel": true,
       "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "_68q32hhl8h0kaba570s42b9k70rj8b9p6d24ab9i84q36ca68gq3cgpn6c",
+      "date": "2026-05-23",
+      "time": "13:16",
+      "amount": 780000,
+      "merchant": "호텔농심",
+      "category": "stay",
+      "location": "서울특별시",
+      "travel": true
     },
     {
       "id": "manual-shopping-2026-05-19-coupang",
@@ -347,6 +375,16 @@
   ],
   "expenses": [
     {
+      "id": "_71148h9l6gq34b9n8os4cb9k8h34cba26933gb9i8l230dhl6p0kadhk6k",
+      "date": "2026-06-17",
+      "time": "21:54",
+      "amount": 189506,
+      "merchant": "AIRBNB * HMP8R8ZN5W",
+      "category": "stay",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
       "id": "_690k6c2569134ba46co42b9k70p3eb9o8gqk2ba26gqj4d1j6gs32e1j70",
       "date": "2026-06-13",
       "time": "09:45",
@@ -468,6 +506,16 @@
       "location": "여행 준비",
       "travel": true,
       "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "_68q32hhl8h0kaba570s42b9k70rj8b9p6d24ab9i84q36ca68gq3cgpn6c",
+      "date": "2026-05-23",
+      "time": "13:16",
+      "amount": 780000,
+      "merchant": "호텔농심",
+      "category": "stay",
+      "location": "서울특별시",
+      "travel": true
     },
     {
       "id": "manual-shopping-2026-05-19-coupang",
@@ -506,7 +554,7 @@
   "locations": [
     {
       "name": "서울특별시",
-      "count": 54,
+      "count": 76,
       "lat": 37.5665,
       "lng": 126.978
     },
@@ -521,7 +569,7 @@
     "points": [
       {
         "name": "서울특별시",
-        "count": 54,
+        "count": 76,
         "lat": 37.5665,
         "lng": 126.978
       },
@@ -602,6 +650,15 @@
   },
   "accommodations": [
     {
+      "name": "호텔농심",
+      "city": "서울특별시",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 780000,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
       "name": "Frankfurt · IntercityHotel",
       "city": "Frankfurt",
       "status": "paid",
@@ -653,6 +710,15 @@
       "checkIn": null,
       "checkOut": null,
       "amount": 293605,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMP8R8ZN5W",
+      "city": "서울특별시",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 189506,
       "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
@@ -1204,32 +1270,97 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-06-14",
+    "asOf": "2026-06-18",
     "limitDays": 90,
     "usedDays": 0,
     "remainingDays": 90,
     "window": "180 days",
-    "status": "pre-trip"
+    "status": "pre-trip",
+    "projection": {
+      "label": "예상 전체 일정",
+      "rule": "90 days in any rolling 180-day period; entry and exit days are counted.",
+      "source": "https://home-affairs.ec.europa.eu/policies/schengen/border-crossing/short-stay-calculator_en",
+      "limitDays": 90,
+      "projectedUsedDays": 77,
+      "projectedRemainingDays": 13,
+      "riskBand": "comfortable",
+      "segments": [
+        {
+          "label": "1차 쉥겐",
+          "startDate": "2026-07-08",
+          "endDate": "2026-07-29",
+          "schengen": true,
+          "countries": [
+            "Germany",
+            "Czechia",
+            "Austria",
+            "Hungary",
+            "Croatia"
+          ],
+          "note": "크로아티아 포함. 출입국일을 모두 체류일로 보는 보수 계산.",
+          "calendarDays": 22,
+          "schengenDays": 22
+        },
+        {
+          "label": "터키·이집트 브레이크",
+          "startDate": "2026-07-29",
+          "endDate": "2026-09-01",
+          "schengen": false,
+          "countries": [
+            "Turkey",
+            "Egypt"
+          ],
+          "note": "쉥겐 카운트 정지 구간.",
+          "calendarDays": 34,
+          "schengenDays": 0
+        },
+        {
+          "label": "2차 쉥겐",
+          "startDate": "2026-09-01",
+          "endDate": "2026-10-23",
+          "schengen": true,
+          "countries": [
+            "Italy",
+            "Switzerland",
+            "Spain",
+            "France"
+          ],
+          "excludedDays": 5,
+          "excludedLabel": "Morocco side trip",
+          "note": "모로코 4박 5일은 비쉥겐으로 제외.",
+          "calendarDays": 53,
+          "schengenDays": 48
+        },
+        {
+          "label": "런던 브레이크",
+          "startDate": "2026-10-23",
+          "endDate": "2026-10-27",
+          "schengen": false,
+          "countries": [
+            "United Kingdom"
+          ],
+          "note": "파리 이후 영국 체류로 쉥겐 카운트 정지.",
+          "calendarDays": 4,
+          "schengenDays": 0
+        },
+        {
+          "label": "3차 쉥겐",
+          "startDate": "2026-10-27",
+          "endDate": "2026-11-02",
+          "schengen": true,
+          "countries": [
+            "Denmark",
+            "Iceland"
+          ],
+          "note": "레이캬비크 출국일까지 보수적으로 포함.",
+          "calendarDays": 7,
+          "schengenDays": 7
+        }
+      ],
+      "note": "EU 90/180 rolling 기준(입국일·출국일 포함) 추정치. 실제 입출국일/항공권 확정 시 재계산한다."
+    }
   },
   "sleep": [
-    {
-      "date": "2026-05-30",
-      "sleepHours": 5.61,
-      "recharge": 70.0,
-      "balance": "5.90"
-    },
-    {
-      "date": "2026-05-31",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "5.86"
-    },
-    {
-      "date": "2026-06-01",
-      "sleepHours": 5.85,
-      "recharge": 73.0,
-      "balance": "5.85"
-    },
     {
       "date": "2026-06-03",
       "sleepHours": 0.0,
@@ -1295,49 +1426,27 @@
       "sleepHours": 7.73,
       "recharge": 97.0,
       "balance": "5.62"
+    },
+    {
+      "date": "2026-06-15",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "5.54"
+    },
+    {
+      "date": "2026-06-16",
+      "sleepHours": 4.93,
+      "recharge": 62.0,
+      "balance": "5.31"
+    },
+    {
+      "date": "2026-06-17",
+      "sleepHours": 7.62,
+      "recharge": 95.0,
+      "balance": "5.99"
     }
   ],
   "reflections": [
-    {
-      "id": "irifn68jn88e579iruihueipd8",
-      "date": "2026-06-02",
-      "title": "실제 흐름 / 세계여행 3축과 보안 점검 정렬",
-      "intent": "자동화 신호가 사용자 채팅, SAM inbox, 이메일, 로그, NO_REPLY 중 어디에 놓일지 먼저 고정한다.",
-      "did": "세계여행 프로젝트를 유튜브·앱·AI 워크샵 3축으로 정리하고, AX/Koco 보안·인프라 점검과 Virtue PLG Foundation gate 정리를 병행했다.",
-      "why": "마스터님이 직접 던진 중심 질문이 여행 프로젝트를 어떻게 잘 진행할 것인가였고, 자동화 점검은 그 질문을 받치는 보조 흐름이 됐다.",
-      "carry": "여행 입력은 SAM이 먼저 3축으로 분류하고, routine 자동화/마케팅 신호는 내부 inbox와 회고에서 선별한다.",
-      "drop": "내부 자동화 라벨을 하루 의미로 끌어올리는 방식, 여행 준비를 과한 체크리스트로 만드는 방식."
-    },
-    {
-      "id": "n8if01hj541eioqh2au5jpjjic",
-      "date": "2026-06-03",
-      "title": "실제 흐름 / 세계여행 유튜브 입력과 제목 검증",
-      "intent": "세계여행 준비를 체크리스트로 늘리지 않고, 유튜브 축의 가장 작은 입력 표면부터 만든다.",
-      "did": "입력 영상 소스 정의, speech 모드 테스트, workflow-master 점검, 세계여행 유튜브 제목/키워드 데이터 검증을 진행했다.",
-      "why": "기록 템플릿보다 영상이 살아날 플랫폼 언어와 유입 기준을 먼저 좁히는 일이 더 직접적인 병목이었다.",
-      "carry": "유튜브는 유튜브 데이터로, 검색/블로그는 네이버 데이터로 판단하는 분리 기준.",
-      "drop": "유튜브 제목을 네이버 검색량만 보고 고르는 방식."
-    },
-    {
-      "id": "kbhgh76n0jntkakpphiem93asg",
-      "date": "2026-06-04",
-      "title": "실제 흐름 / 여행 앱 공개빌드와 디자인 기준",
-      "intent": "세계여행 첫 영상이 검색량이 아니라 유튜브 소비 언어에서 출발하게 하고, 파일럿 제목 1개와 썸네일 카피 1개를 확정한다.",
-      "did": "여행 앱 제작 공유 루프, Sam Samuel 디자인 기준, 180일 진행도 시각화 시안, agent-wiki 정합성, 보안/인프라 문서 대응이 중심이 됐다.",
-      "why": "실제 병목이 제목 하나보다 여행 중 앱을 만들고 보여주는 방식과 Sam Samuel다운 디자인 기준 쪽으로 이동했다.",
-      "carry": "여행 관찰 -> 제품 인사이트 -> 앱 반영 -> 화면 변화 -> 다음 사용자 반응 루프.",
-      "drop": "180일 진행도를 장식형 오브젝트로 과하게 만드는 방향."
-    },
-    {
-      "id": "n5d7jcmd075ltfgvvi034eeifo",
-      "date": "2026-06-05",
-      "title": "실제 흐름 / 운영 인프라와 기록 표면 정리",
-      "intent": "D+037/180 한 줄과 60개 점 맵으로 여행/앱 공유 표면을 매일 붙일 수 있게 낮춘다.",
-      "did": "회사 인프라/보안, Knowledge Lab/Agent Wiki 로그 구조, 평가 recap, 크론 안정화, Virtue 넛지 경계, status.aws.shdkej.com 배포가 중심이 됐다.",
-      "why": "회사 실무와 운영 오류가 더 시급했고, 실제 대화가 공개 로그 정합성과 배포 가능한 인프라로 이동했다.",
-      "carry": "장식보다 재진입 가능한 상태 표면을 먼저 만든다.",
-      "drop": "한 번 예쁘게 만든 뒤 매일 갱신하기 어려운 장식형 표면."
-    },
     {
       "id": "omso37nm1k9rljhges8a1nj038",
       "date": "2026-06-06",
@@ -1411,11 +1520,51 @@
     {
       "id": "hv6gnqmt70p0kqcc1fhu51fdfc",
       "date": "2026-06-14",
-      "title": "내일 의도 / 고객 접점 3레이어를 한 화면에 낮추기",
-      "intent": "고객 유치-문제 해결-문의 해소 중 어느 접점이 먼저인지 한 화면에서 보이게 낮춘다.",
+      "title": "실제 흐름 / 여행 비용 상태판과 리뷰 전달 보정",
+      "intent": "고객 접점 3레이어를 한 화면에 낮추기",
+      "did": "Travel/Status 화면 보정, DB route와 여행 준비 비용 반영, Infinity Waiting 표시 기준 강화, 주간 리뷰 본문 재전달",
+      "why": "새 접점 설계보다 이미 드러난 화면 깨짐·비용 누락·Waiting 미표시·리뷰 전달 부족을 먼저 닫아야 했음",
+      "carry": "화면/리뷰마다 돈, 승인, Waiting, 다음 행동 중 빠진 칸을 확인",
+      "drop": "저장 완료나 overflow 해결만 보고 실제 사용 의도를 놓치는 방식"
+    },
+    {
+      "id": "7m59dph7cb3dd0nbno1vrghk9c",
+      "date": "2026-06-15",
+      "title": "실제 흐름 / 여행 비용 확정과 상품 후보 보류선",
+      "intent": "여행 준비 비용과 이동비가 같은 값과 category로 보이게 맞춘다.",
+      "did": "Travel 비용 상태를 2026-06-15 기준으로 맞추고, 나래 상품 후보를 휴대폰 도난방지 스트랩 WATCH lead, 압축 파우치 WATCH, 케이블 파우치 HOLD로 낮췄으며, 회사 보안·인수인계·PPTX·대시보드 점검을 처리했다.",
+      "why": "여행 비용 상태 확인은 이어졌지만 낮 시간의 실제 부하는 회사 보안/인수인계 대응과 나래 후보 검증이 더 컸다.",
+      "carry": "숫자가 확정된 것은 Travel 상태판에 남기고, 아직 위험이 남은 상품 후보는 승인 후보가 아니라 WATCH/HOLD로 둔다.",
+      "drop": "검색량이나 상품 수만 보고 바로 팔 후보로 올리는 방식."
+    },
+    {
+      "id": "m5obs9ehba7hs24l7ifmf52dq0",
+      "date": "2026-06-16",
+      "title": "실제 흐름 / 3D 배경 우선과 리소스 옆 설명",
+      "intent": "휴대폰 도난방지 스트랩을 승인 후보로 올리기 전에 위험이 남은 지점만 좁게 본다.",
+      "did": "회사 보안·KOCO·purple-auth·wiki 인수인계 정리가 하루의 대부분을 차지했고, Status 페이지는 마스터님 피드백에 따라 3D 풀 이미지가 주인공이고 메뉴가 그 위에 살짝 떠 있는 방향으로 후속 intent를 분리했다.",
+      "why": "회사 보안/인수인계 업무가 넓게 들어왔고, Status 페이지의 핵심 시각 방향이 마스터님 피드백으로 명확히 바뀌었다.",
+      "carry": "Status는 3D 이미지 우선 구조로 다시 잡고, 회사 자료는 설명을 실제 리소스 옆에 붙이는 방식을 유지한다.",
+      "drop": "큰 카드와 설명 박스를 만들면 충분하다고 보는 방식."
+    },
+    {
+      "id": "i3hcu7e05962vje1fe20ioaalo",
+      "date": "2026-06-17",
+      "title": "실제 흐름 / 사각 카드 밖의 Status 화면과 인프라 인수인계",
+      "intent": "Status 첫 화면에서 3D 풀 이미지가 먼저 보이고, 메뉴와 상태 정보는 얇게 떠 있는 구조로 다시 잡는다.",
+      "did": "Status 화면은 사각 카드 그리드를 깨고 더 투명한 유리 레이어로 풀었고, 낮에는 AX/KOCO 인수인계와 인프라 흐름 도식화가 크게 들어왔다. Kimnoz Travel Notion 키도 연결 확인됐다.",
+      "why": "사용자가 화면 느낌은 맞지만 카드 배치와 투명도를 더 열어 달라고 직접 피드백했고, 회사 쪽 인수인계·보안·인프라 설명 작업이 실제 마감 흐름이었다.",
+      "carry": "화면은 주인공 이미지와 필요한 정보 위치를 먼저 잡고, 인수인계 산출물은 받는 사람이 바로 읽는 그림으로 낮춘다.",
+      "drop": "카드 그리드를 기본값으로 깔고 정보를 같은 높이에 정렬하는 방식."
+    },
+    {
+      "id": "r7jejjamkja7hvsn5kk6h6bsm8",
+      "date": "2026-06-18",
+      "title": "내일 의도 / 인수인계에서 헷갈릴 지점 1개 줄이기",
+      "intent": "인프라 인수인계에서 받는 사람이 헷갈릴 지점 1개만 먼저 줄인다.",
       "did": null,
       "why": null,
-      "carry": "새 화면이나 카드 1개를 볼 때 세 레이어 중 하나만 표시한다.",
+      "carry": "내일 1시 인프라 인수인계 전에 Purple-access → KOCO → infra GitLab → 사용자 접속 흐름에서 설명이 가장 흐린 화살표 하나를 고른다.",
       "drop": null
     }
   ]

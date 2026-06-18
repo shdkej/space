@@ -468,6 +468,87 @@
         color: var(--faint);
       }
       .schengen-side .row .v { font-size: 17px; font-weight: 700; }
+      .schengen-projection {
+        margin-top: 18px;
+        display: grid;
+        gap: 12px;
+        min-width: 0;
+      }
+      .schengen-projection .projection-top {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: end;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--r-md);
+        background: linear-gradient(135deg, rgba(51, 92, 153, 0.09), rgba(255,255,255,0.72));
+      }
+      .schengen-projection .projection-top .k {
+        color: var(--faint);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .schengen-projection .projection-top .v {
+        margin-top: 5px;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .schengen-projection .projection-top .safe {
+        padding: 7px 9px;
+        border-radius: 999px;
+        background: rgba(51, 92, 153, 0.1);
+        color: var(--blue);
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .projection-segments {
+        display: grid;
+        gap: 7px;
+      }
+      .projection-segment {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        min-width: 0;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.62);
+      }
+      .projection-segment.pause { opacity: 0.72; }
+      .projection-segment .name {
+        overflow: hidden;
+        font-size: 12px;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .projection-segment .date {
+        margin-top: 2px;
+        overflow: hidden;
+        color: var(--faint);
+        font-size: 11px;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .projection-segment .days {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .projection-note {
+        color: var(--faint);
+        font-size: 11px;
+        line-height: 1.45;
+      }
 
       /* itinerary */
       .timeline { display: grid; gap: 0; }
@@ -876,6 +957,20 @@
           line-height: 1.1;
         }
 
+        .schengen-projection .projection-top {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .projection-segment {
+          grid-template-columns: 1fr;
+          gap: 5px;
+        }
+
+        .projection-segment .days {
+          justify-self: start;
+        }
+
         .tag {
           padding: 3px 7px;
           font-size: 9px;
@@ -930,6 +1025,7 @@
               <div class="row"><span class="k">Status</span><span class="v" id="scStatus">—</span></div>
             </div>
           </div>
+          <div class="schengen-projection" id="schengenProjection"></div>
         </div>
 
         <div class="card hoverable col-itin rise" style="animation-delay: 0.28s">
@@ -1066,6 +1162,31 @@
         $("scEntry").textContent = sc.entryDate ? sc.entryDate.slice(5).replace("-", ".") : "—";
         $("scStatus").textContent = sc.status || "—";
         $("scWindow").textContent = sc.window || "180-day";
+        const projection = sc.projection || {};
+        const projectedUsed = Number(projection.projectedUsedDays || 0);
+        const projectedRemain = projection.projectedRemainingDays != null ? projection.projectedRemainingDays : limit - projectedUsed;
+        const segments = projection.segments || [];
+        $("schengenProjection").innerHTML = projection.projectedUsedDays == null ? "" : `
+          <div class="projection-top">
+            <div>
+              <div class="k">Expected full trip</div>
+              <div class="v">${projectedUsed} / ${projection.limitDays || limit} d</div>
+            </div>
+            <div class="safe">${projectedRemain}d buffer</div>
+          </div>
+          <div class="projection-segments">
+            ${segments.map((seg) => `
+              <div class="projection-segment${seg.schengen ? "" : " pause"}">
+                <div>
+                  <div class="name">${escapeHtml(seg.label)}</div>
+                  <div class="date">${escapeHtml((seg.startDate || "").slice(5).replace("-", "."))}–${escapeHtml((seg.endDate || "").slice(5).replace("-", "."))}${seg.excludedDays ? ` · ${escapeHtml(seg.excludedLabel || "excluded")} -${seg.excludedDays}d` : ""}</div>
+                </div>
+                <div class="days">${seg.schengen ? `${seg.schengenDays}d` : "pause"}</div>
+              </div>
+            `).join("")}
+          </div>
+          <div class="projection-note">${escapeHtml(projection.note || "입출국일 확정 시 재계산합니다.")}</div>
+        `;
       }
 
       function renderTimeline(data) {

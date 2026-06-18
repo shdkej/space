@@ -1,5 +1,5 @@
 /* spatial-presence.css
-   build-12: Status 3D Character Background — Option D (Pre-rendered + CSS Pointer Parallax)
+   build-12 follow-up: Status 3D Character Background — real WebGL character stage
    "캐릭터/공간 레이어가 주인공, HUD는 그 위에 떠 있다."
    Target: sites/status/dist/assets/spatial-presence.css
    Reference: artifacts/build-12/, artifacts/research-16/3d-character-stage-options.md */
@@ -32,6 +32,25 @@
   overflow: hidden;
   perspective: 1400px;       /* desktop 3D depth */
   perspective-origin: 70% 60%;
+}
+
+.character-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.character-stage.is-webgl-ready .character-layer {
+  opacity: 0;
+}
+
+.character-stage.is-webgl-ready .sp-aura,
+.character-stage.is-webgl-ready .sp-motes {
+  opacity: 0.42;
 }
 
 /* ─── Parallax depth layers ───────────────── */

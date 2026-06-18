@@ -775,14 +775,58 @@
           transition-duration: 0.001ms !important;
         }
       }
+
+      @media (max-width: 639px) {
+        .overview {
+          grid-template-rows: auto minmax(0, 1fr);
+          gap: 8px;
+        }
+
+        .overview-grid {
+          align-self: end;
+          height: min(48svh, 392px);
+          gap: 8px;
+        }
+
+        .brand,
+        .updated,
+        .control-card {
+          background: rgba(255, 255, 255, 0.34);
+          backdrop-filter: blur(18px) saturate(1.45);
+          -webkit-backdrop-filter: blur(18px) saturate(1.45);
+        }
+
+        .control-card {
+          gap: 6px;
+          padding: 10px;
+          box-shadow: 0 16px 42px rgba(62, 59, 52, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+        }
+
+        .card-value {
+          font-size: clamp(28px, 10.5vw, 42px);
+        }
+
+        .card-title {
+          margin-top: 4px;
+          font-size: 14px;
+        }
+
+        .card-note {
+          margin-top: 4px;
+          font-size: 10px;
+          line-height: 1.28;
+          -webkit-line-clamp: 1;
+        }
+      }
     </style>
   </head>
   <body data-mode="overview">
-    <!-- CharacterStage: z-index 0 spatial layer, pointer-events:none — 캐릭터/공간이 주인공, HUD는 그 위에 뜬다 -->
+    <!-- CharacterStage: real WebGL 3D background; HUD floats above it. -->
     <div class="character-stage" aria-hidden="true" role="presentation">
+      <canvas id="characterCanvas" class="character-canvas"></canvas>
       <div class="character-layer depth-far"><div class="sp-aura"></div></div>
       <div class="character-layer depth-mid" id="character-bg">
-        <!-- Phase 1: 플레이스홀더 프레즌스. Phase 2: 이 div를 <picture> poster.webp 로 교체 -->
+        <!-- Fallback only: hidden when the WebGL character is ready. -->
         <div class="character-presence"></div>
       </div>
       <div class="character-layer depth-near"><div class="sp-motes"></div></div>
@@ -1129,40 +1173,201 @@
         });
     </script>
 
-    <script>
-      /* SpatialPresence pointer parallax — Option D, 의존성 없음 (build-12) */
-      (function () {
-        if (window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
-        const layers = document.querySelectorAll(".character-layer");
-        if (!layers.length) return;
-        const root = document.documentElement;
-        const isMobile = window.innerWidth < 640;
-        if (isMobile) return; /* 모바일은 작고 안정적으로 — parallax 비활성 */
-        const MAX =
-          parseFloat(getComputedStyle(root).getPropertyValue("--parallax-desktop")) || 8;
-        let ticking = false;
-        let nx = 0;
-        let ny = 0;
-        function apply() {
-          const rx = ny * MAX;
-          const ry = nx * -MAX;
-          layers.forEach(function (l) {
-            const f = parseFloat(getComputedStyle(l).getPropertyValue("--depth-factor")) || 1;
-            l.style.transform =
-              "translate3d(" + ry * f * 1.1 + "px," + rx * f * 0.7 + "px,0) " +
-              "rotateX(" + rx * f + "deg) rotateY(" + ry * f + "deg)";
-          });
-          ticking = false;
-        }
-        document.addEventListener("mousemove", function (e) {
-          nx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-          ny = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-          if (!ticking) {
-            ticking = true;
-            requestAnimationFrame(apply);
-          }
+    <script type="module">
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js";
+
+      const stage = document.querySelector(".character-stage");
+      const canvas = document.getElementById("characterCanvas");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (stage && canvas) {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+        const renderer = new THREE.WebGLRenderer({
+          canvas,
+          alpha: true,
+          antialias: true,
+          powerPreference: "high-performance",
         });
-      })();
+
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.setClearColor(0xffffff, 0);
+
+        const rig = new THREE.Group();
+        const body = new THREE.Group();
+        rig.add(body);
+
+        const clay = new THREE.MeshPhysicalMaterial({
+          color: 0xd9c1a2,
+          roughness: 0.38,
+          metalness: 0.02,
+          transmission: 0.04,
+          thickness: 0.4,
+          clearcoat: 0.72,
+          clearcoatRoughness: 0.22,
+        });
+        const shadow = new THREE.MeshBasicMaterial({
+          color: 0x8f765b,
+          transparent: true,
+          opacity: 0.16,
+          depthWrite: false,
+        });
+        const line = new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.54,
+        });
+        const glow = new THREE.MeshBasicMaterial({
+          color: 0xf2dec3,
+          transparent: true,
+          opacity: 0.34,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        });
+
+        const base = new THREE.Mesh(new THREE.CircleGeometry(1.55, 80), shadow);
+        base.rotation.x = -Math.PI / 2;
+        base.position.y = -1.56;
+        body.add(base);
+
+        const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.48, 1.1, 12, 32), clay);
+        torso.scale.set(0.9, 1.08, 0.72);
+        torso.position.y = -0.44;
+        body.add(torso);
+
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.54, 48, 32), clay);
+        head.scale.set(1.02, 0.94, 0.98);
+        head.position.y = 0.72;
+        body.add(head);
+
+        const face = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.12, 0.035), line);
+        face.position.set(0, 0.77, 0.51);
+        body.add(face);
+
+        const core = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.018, 12, 80), line);
+        core.position.set(0, -0.36, 0.48);
+        body.add(core);
+
+        const leftArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.105, 0.8, 8, 18), clay);
+        leftArm.position.set(-0.58, -0.38, 0.04);
+        leftArm.rotation.z = -0.34;
+        body.add(leftArm);
+
+        const rightArm = leftArm.clone();
+        rightArm.position.x = 0.58;
+        rightArm.rotation.z = 0.34;
+        body.add(rightArm);
+
+        const halo = new THREE.Mesh(new THREE.TorusGeometry(0.88, 0.012, 10, 120), glow);
+        halo.position.y = 0.1;
+        halo.rotation.x = Math.PI / 2.85;
+        rig.add(halo);
+
+        const orbit = new THREE.Group();
+        for (let i = 0; i < 3; i += 1) {
+          const ring = new THREE.Mesh(new THREE.TorusGeometry(1.16 + i * 0.2, 0.006, 8, 100), glow);
+          ring.rotation.set(Math.PI / (2.7 + i * 0.14), i * 0.55, i * 0.38);
+          orbit.add(ring);
+        }
+        rig.add(orbit);
+
+        const moteGeo = new THREE.SphereGeometry(0.025, 10, 10);
+        const motes = new THREE.Group();
+        for (let i = 0; i < 26; i += 1) {
+          const mote = new THREE.Mesh(moteGeo, glow);
+          mote.position.set(
+            (Math.random() - 0.5) * 3.1,
+            (Math.random() - 0.05) * 2.5,
+            (Math.random() - 0.5) * 1.6
+          );
+          mote.scale.setScalar(0.55 + Math.random() * 1.9);
+          motes.add(mote);
+        }
+        rig.add(motes);
+
+        scene.add(rig);
+        scene.add(new THREE.HemisphereLight(0xffffff, 0xd6c1a6, 1.6));
+        const key = new THREE.DirectionalLight(0xffffff, 2.2);
+        key.position.set(2.4, 3.4, 3.4);
+        scene.add(key);
+
+        let pointerX = 0;
+        let pointerY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        let baseX = 0;
+        let baseY = 0;
+
+        function resize() {
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+          const mobile = w < 640;
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.25 : 1.7));
+          renderer.setSize(w, h, false);
+          camera.aspect = w / h;
+          camera.position.set(0, 0.08, mobile ? 6.4 : 5.2);
+          camera.updateProjectionMatrix();
+
+          const scale = mobile ? 0.92 : w < 1024 ? 0.96 : 1.24;
+          rig.scale.setScalar(scale);
+          baseX = mobile ? 0 : 1.85;
+          baseY = mobile ? -0.28 : -0.5;
+          rig.position.set(baseX, baseY, 0);
+        }
+
+        function onPointerMove(event) {
+          const point = event.touches ? event.touches[0] : event;
+          pointerX = (point.clientX / window.innerWidth - 0.5) * 2;
+          pointerY = (point.clientY / window.innerHeight - 0.5) * 2;
+          if (window.__STATUS_CHARACTER_STAGE__) {
+            window.__STATUS_CHARACTER_STAGE__.lastPointer = {
+              x: Number(pointerX.toFixed(3)),
+              y: Number(pointerY.toFixed(3)),
+            };
+          }
+        }
+
+        window.addEventListener("resize", resize, { passive: true });
+        window.addEventListener("pointermove", onPointerMove, { passive: true });
+        window.addEventListener("touchmove", onPointerMove, { passive: true });
+
+        resize();
+        window.__STATUS_CHARACTER_STAGE__ = { mode: "three-webgl", ready: true, interactive: true };
+        stage.classList.add("is-webgl-ready");
+
+        function frame(now) {
+          const t = now * 0.001;
+          targetX += (pointerX - targetX) * 0.065;
+          targetY += (pointerY - targetY) * 0.065;
+
+          const mobile = window.innerWidth < 640;
+          const interactiveTilt = mobile ? 0.14 : 0.3;
+          rig.rotation.y = targetX * interactiveTilt;
+          rig.rotation.x = -targetY * interactiveTilt * 0.55;
+          body.rotation.z = targetX * 0.045;
+          if (window.__STATUS_CHARACTER_STAGE__) {
+            window.__STATUS_CHARACTER_STAGE__.rotation = {
+              x: Number(rig.rotation.x.toFixed(4)),
+              y: Number(rig.rotation.y.toFixed(4)),
+            };
+          }
+
+          if (!reduceMotion) {
+            rig.position.y = baseY + Math.sin(t * 1.2) * 0.018;
+            head.position.y = 0.72 + Math.sin(t * 1.55) * 0.025;
+            core.rotation.z = t * 0.82;
+            halo.rotation.z = t * 0.22;
+            orbit.rotation.y = t * 0.18 + targetX * 0.18;
+            orbit.rotation.x = targetY * 0.06;
+            motes.rotation.y = t * 0.045;
+          }
+
+          renderer.render(scene, camera);
+          requestAnimationFrame(frame);
+        }
+
+        requestAnimationFrame(frame);
+      }
     </script>
   </body>
 </html>

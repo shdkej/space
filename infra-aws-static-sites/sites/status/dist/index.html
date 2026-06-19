@@ -11,8 +11,7 @@
     />
     <!-- SpatialPresence: 3D character background layer (build-12) -->
     <link rel="stylesheet" href="assets/spatial-presence.css" />
-    <!-- Phase 2: poster 준비 후 LCP preload 추가
-    <link rel="preload" as="image" href="assets/character/poster.webp" fetchpriority="high" /> -->
+    <link rel="preload" as="image" href="assets/character/status-companion-v1.webp" fetchpriority="high" />
     <style>
       :root {
         color-scheme: light;
@@ -199,8 +198,8 @@
         border: 1px solid var(--line-light);
         border-radius: var(--radius);
         background:
-          linear-gradient(145deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.24)),
-          radial-gradient(circle at 92% 0%, rgba(255, 255, 255, 0.44), transparent 11rem);
+          linear-gradient(145deg, rgba(255, 255, 255, 0.54), rgba(255, 255, 255, 0.16)),
+          radial-gradient(circle at 92% 0%, rgba(255, 255, 255, 0.34), transparent 11rem);
         box-shadow: var(--shadow);
         cursor: pointer;
         text-align: left;
@@ -214,7 +213,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        opacity: 0.58;
+        opacity: 0.46;
         pointer-events: none;
         background:
           linear-gradient(120deg, rgba(255, 255, 255, 0.82), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.24)),
@@ -723,6 +722,13 @@
         }
       }
 
+      @media (min-width: 1120px) {
+        .overview-grid {
+          width: min(900px, 66vw);
+          justify-self: start;
+        }
+      }
+
       @media (max-width: 390px) {
         .overview {
           gap: 10px;
@@ -821,13 +827,17 @@
     </style>
   </head>
   <body data-mode="overview">
-    <!-- CharacterStage: real WebGL 3D background; HUD floats above it. -->
+    <!-- CharacterStage: designed companion poster background; HUD floats above it. -->
     <div class="character-stage" aria-hidden="true" role="presentation">
-      <canvas id="characterCanvas" class="character-canvas"></canvas>
       <div class="character-layer depth-far"><div class="sp-aura"></div></div>
       <div class="character-layer depth-mid" id="character-bg">
-        <!-- Fallback only: hidden when the WebGL character is ready. -->
-        <div class="character-presence"></div>
+        <img
+          class="character-poster"
+          src="assets/character/status-companion-v1.webp"
+          alt=""
+          decoding="async"
+          fetchpriority="high"
+        />
       </div>
       <div class="character-layer depth-near"><div class="sp-motes"></div></div>
       <div class="atmosphere"></div>
@@ -1173,35 +1183,40 @@
         });
     </script>
 
-    <script type="module">
-      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js";
-
-      const stage = document.querySelector(".character-stage");
-      const canvas = document.getElementById("characterCanvas");
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      function startCssFallback(error) {
+    <script>
+      (() => {
+        const stage = document.querySelector(".character-stage");
         const layers = document.querySelectorAll(".character-layer");
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
         window.__STATUS_CHARACTER_STAGE__ = {
-          mode: "css-fallback",
-          ready: true,
+          mode: "asset-poster-parallax",
+          ready: Boolean(stage),
           interactive: !reduceMotion,
-          error: error ? String(error.message || error) : undefined,
+          asset: "assets/character/status-companion-v1.webp",
         };
-        if (reduceMotion || !layers.length) return;
+
+        if (!stage || reduceMotion || !layers.length) return;
+
         let ticking = false;
         let nx = 0;
         let ny = 0;
+
         function apply() {
           layers.forEach((layer) => {
             const factor = parseFloat(getComputedStyle(layer).getPropertyValue("--depth-factor")) || 1;
-            const rx = ny * 7 * factor;
-            const ry = nx * -7 * factor;
+            const rx = ny * 5.2 * factor;
+            const ry = nx * -6.2 * factor;
             layer.style.transform =
-              `translate3d(${ry * 1.1}px, ${rx * 0.65}px, 0) rotateX(${rx}deg) rotateY(${ry}deg)`;
+              `translate3d(${ry * 1.2}px, ${rx * 0.72}px, 0) rotateX(${rx}deg) rotateY(${ry}deg)`;
           });
+          window.__STATUS_CHARACTER_STAGE__.lastTransform = {
+            x: Number(nx.toFixed(3)),
+            y: Number(ny.toFixed(3)),
+          };
           ticking = false;
         }
+
         window.addEventListener("pointermove", (event) => {
           nx = (event.clientX / window.innerWidth - 0.5) * 2;
           ny = (event.clientY / window.innerHeight - 0.5) * 2;
@@ -1214,278 +1229,7 @@
             requestAnimationFrame(apply);
           }
         }, { passive: true });
-      }
-
-      if (stage && canvas) {
-        try {
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-        const renderer = new THREE.WebGLRenderer({
-          canvas,
-          alpha: true,
-          antialias: true,
-          powerPreference: "high-performance",
-        });
-
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
-        renderer.setClearColor(0xffffff, 0);
-
-        const rig = new THREE.Group();
-        const body = new THREE.Group();
-        rig.add(body);
-
-        const skin = new THREE.MeshPhysicalMaterial({
-          color: 0xd8b990,
-          roughness: 0.46,
-          metalness: 0.01,
-          clearcoat: 0.42,
-          clearcoatRoughness: 0.28,
-        });
-        const cloth = new THREE.MeshPhysicalMaterial({
-          color: 0xc6aa83,
-          roughness: 0.56,
-          metalness: 0.02,
-          clearcoat: 0.28,
-          clearcoatRoughness: 0.36,
-        });
-        const hair = new THREE.MeshPhysicalMaterial({
-          color: 0x7f6b55,
-          roughness: 0.5,
-          metalness: 0.0,
-          clearcoat: 0.18,
-        });
-        const shadow = new THREE.MeshBasicMaterial({
-          color: 0x8f765b,
-          transparent: true,
-          opacity: 0.16,
-          depthWrite: false,
-        });
-        const line = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.54,
-        });
-        const feature = new THREE.MeshBasicMaterial({
-          color: 0x6c5845,
-          transparent: true,
-          opacity: 0.46,
-        });
-        const glow = new THREE.MeshBasicMaterial({
-          color: 0xf2dec3,
-          transparent: true,
-          opacity: 0.34,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-        });
-
-        const base = new THREE.Mesh(new THREE.CircleGeometry(1.55, 80), shadow);
-        base.rotation.x = -Math.PI / 2;
-        base.position.y = -1.78;
-        body.add(base);
-
-        const hips = new THREE.Mesh(new THREE.SphereGeometry(0.44, 40, 22), cloth);
-        hips.scale.set(1.08, 0.34, 0.72);
-        hips.position.y = -0.96;
-        body.add(hips);
-
-        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.48, 1.06, 42), cloth);
-        torso.scale.set(0.88, 1.05, 0.54);
-        torso.position.y = -0.34;
-        body.add(torso);
-
-        const chestGlow = new THREE.Mesh(new THREE.TorusGeometry(0.23, 0.012, 10, 72), line);
-        chestGlow.position.set(0, -0.2, 0.34);
-        chestGlow.rotation.x = 0.08;
-        body.add(chestGlow);
-
-        const shoulderLine = new THREE.Mesh(new THREE.CapsuleGeometry(0.055, 0.94, 8, 18), cloth);
-        shoulderLine.position.y = 0.38;
-        shoulderLine.rotation.z = Math.PI / 2;
-        shoulderLine.scale.set(1, 0.86, 0.72);
-        body.add(shoulderLine);
-
-        const neck = new THREE.Mesh(new THREE.CapsuleGeometry(0.085, 0.28, 8, 18), skin);
-        neck.position.y = 0.82;
-        body.add(neck);
-
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.235, 44, 30), skin);
-        head.scale.set(0.88, 1.12, 0.8);
-        head.position.y = 1.1;
-        body.add(head);
-
-        const hairCap = new THREE.Mesh(new THREE.SphereGeometry(0.238, 44, 16, 0, Math.PI * 2, 0, Math.PI * 0.52), hair);
-        hairCap.scale.set(0.92, 0.6, 0.84);
-        hairCap.position.set(0, 1.205, 0.01);
-        body.add(hairCap);
-
-        const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.018, 12, 8), feature);
-        leftEye.position.set(-0.06, 1.115, 0.205);
-        body.add(leftEye);
-
-        const rightEye = leftEye.clone();
-        rightEye.position.x = 0.06;
-        body.add(rightEye);
-
-        const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.012, 0.012), feature);
-        mouth.position.set(0, 1.025, 0.205);
-        body.add(mouth);
-
-        const core = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.012, 12, 80), line);
-        core.position.set(0, -0.32, 0.36);
-        body.add(core);
-
-        const leftUpperArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.58, 8, 18), skin);
-        leftUpperArm.position.set(-0.55, -0.02, 0.01);
-        leftUpperArm.rotation.z = 0.3;
-        body.add(leftUpperArm);
-
-        const rightUpperArm = leftUpperArm.clone();
-        rightUpperArm.position.x = 0.55;
-        rightUpperArm.rotation.z = -0.3;
-        body.add(rightUpperArm);
-
-        const leftForearm = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.52, 8, 18), skin);
-        leftForearm.position.set(-0.64, -0.66, 0.02);
-        leftForearm.rotation.z = 0.1;
-        body.add(leftForearm);
-
-        const rightForearm = leftForearm.clone();
-        rightForearm.position.x = 0.64;
-        rightForearm.rotation.z = -0.1;
-        body.add(rightForearm);
-
-        const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.085, 18, 14), skin);
-        leftHand.position.set(-0.68, -1.0, 0.04);
-        leftHand.scale.set(0.78, 1, 0.7);
-        body.add(leftHand);
-
-        const rightHand = leftHand.clone();
-        rightHand.position.x = 0.68;
-        body.add(rightHand);
-
-        const leftLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.095, 0.86, 10, 22), cloth);
-        leftLeg.position.set(-0.2, -1.48, 0.0);
-        leftLeg.rotation.z = 0.04;
-        body.add(leftLeg);
-
-        const rightLeg = leftLeg.clone();
-        rightLeg.position.x = 0.2;
-        rightLeg.rotation.z = -0.04;
-        body.add(rightLeg);
-
-        const halo = new THREE.Mesh(new THREE.TorusGeometry(0.88, 0.012, 10, 120), glow);
-        halo.position.y = 0.1;
-        halo.rotation.x = Math.PI / 2.85;
-        rig.add(halo);
-
-        const orbit = new THREE.Group();
-        for (let i = 0; i < 3; i += 1) {
-          const ring = new THREE.Mesh(new THREE.TorusGeometry(1.16 + i * 0.2, 0.006, 8, 100), glow);
-          ring.rotation.set(Math.PI / (2.7 + i * 0.14), i * 0.55, i * 0.38);
-          orbit.add(ring);
-        }
-        rig.add(orbit);
-
-        const moteGeo = new THREE.SphereGeometry(0.025, 10, 10);
-        const motes = new THREE.Group();
-        for (let i = 0; i < 26; i += 1) {
-          const mote = new THREE.Mesh(moteGeo, glow);
-          mote.position.set(
-            (Math.random() - 0.5) * 3.1,
-            (Math.random() - 0.05) * 2.5,
-            (Math.random() - 0.5) * 1.6
-          );
-          mote.scale.setScalar(0.55 + Math.random() * 1.9);
-          motes.add(mote);
-        }
-        rig.add(motes);
-
-        scene.add(rig);
-        scene.add(new THREE.HemisphereLight(0xffffff, 0xd6c1a6, 1.6));
-        const key = new THREE.DirectionalLight(0xffffff, 2.2);
-        key.position.set(2.4, 3.4, 3.4);
-        scene.add(key);
-
-        let pointerX = 0;
-        let pointerY = 0;
-        let targetX = 0;
-        let targetY = 0;
-        let baseX = 0;
-        let baseY = 0;
-
-        function resize() {
-          const w = window.innerWidth;
-          const h = window.innerHeight;
-          const mobile = w < 640;
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.25 : 1.7));
-          renderer.setSize(w, h, false);
-          camera.aspect = w / h;
-          camera.position.set(0, 0.08, mobile ? 6.4 : 5.2);
-          camera.updateProjectionMatrix();
-
-          const scale = mobile ? 0.92 : w < 1024 ? 0.96 : 1.04;
-          rig.scale.setScalar(scale);
-          baseX = mobile ? 0 : 2.02;
-          baseY = mobile ? -0.28 : -0.36;
-          rig.position.set(baseX, baseY, 0);
-        }
-
-        function onPointerMove(event) {
-          const point = event.touches ? event.touches[0] : event;
-          pointerX = (point.clientX / window.innerWidth - 0.5) * 2;
-          pointerY = (point.clientY / window.innerHeight - 0.5) * 2;
-          if (window.__STATUS_CHARACTER_STAGE__) {
-            window.__STATUS_CHARACTER_STAGE__.lastPointer = {
-              x: Number(pointerX.toFixed(3)),
-              y: Number(pointerY.toFixed(3)),
-            };
-          }
-        }
-
-        window.addEventListener("resize", resize, { passive: true });
-        window.addEventListener("pointermove", onPointerMove, { passive: true });
-        window.addEventListener("touchmove", onPointerMove, { passive: true });
-
-        resize();
-        window.__STATUS_CHARACTER_STAGE__ = { mode: "three-webgl", ready: true, interactive: true };
-        stage.classList.add("is-webgl-ready");
-
-        function frame(now) {
-          const t = now * 0.001;
-          targetX += (pointerX - targetX) * 0.065;
-          targetY += (pointerY - targetY) * 0.065;
-
-          const mobile = window.innerWidth < 640;
-          const interactiveTilt = mobile ? 0.14 : 0.3;
-          rig.rotation.y = targetX * interactiveTilt;
-          rig.rotation.x = -targetY * interactiveTilt * 0.55;
-          body.rotation.z = targetX * 0.045;
-          if (window.__STATUS_CHARACTER_STAGE__) {
-            window.__STATUS_CHARACTER_STAGE__.rotation = {
-              x: Number(rig.rotation.x.toFixed(4)),
-              y: Number(rig.rotation.y.toFixed(4)),
-            };
-          }
-
-          if (!reduceMotion) {
-            rig.position.y = baseY + Math.sin(t * 1.2) * 0.018;
-            head.position.y = 0.72 + Math.sin(t * 1.55) * 0.025;
-            core.rotation.z = t * 0.82;
-            halo.rotation.z = t * 0.22;
-            orbit.rotation.y = t * 0.18 + targetX * 0.18;
-            orbit.rotation.x = targetY * 0.06;
-            motes.rotation.y = t * 0.045;
-          }
-
-          renderer.render(scene, camera);
-          requestAnimationFrame(frame);
-        }
-
-        requestAnimationFrame(frame);
-        } catch (error) {
-          startCssFallback(error);
-        }
-      }
+      })();
     </script>
   </body>
 </html>

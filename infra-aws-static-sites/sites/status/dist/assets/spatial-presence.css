@@ -78,7 +78,8 @@
 
 .presence-halo,
 .presence-phone,
-.presence-card {
+.presence-card,
+.presence-neck-button {
   position: absolute;
   transform-style: preserve-3d;
 }
@@ -103,6 +104,112 @@
   width: min(40vw, 480px);
   aspect-ratio: 1;
   background: radial-gradient(circle, rgba(241, 207, 186, 0.18), transparent 68%);
+}
+
+.presence-neck-button {
+  left: 46%;
+  top: 31%;
+  width: min(23vw, 270px);
+  min-width: 180px;
+  aspect-ratio: 1.42;
+  transform: translateX(-50%) rotate(-4deg) translateZ(72px);
+  filter: drop-shadow(0 26px 38px rgba(97, 67, 48, 0.18));
+  opacity: 0.98;
+}
+
+.presence-neck-button-shadow,
+.presence-neck-button-stem,
+.presence-neck-button-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+}
+
+.presence-neck-button-shadow {
+  inset: 20% 7% -2% 10%;
+  border-radius: 999px;
+  background: radial-gradient(circle at 45% 45%, rgba(140, 96, 72, 0.22), rgba(140, 96, 72, 0) 72%);
+  filter: blur(16px);
+  transform: translateZ(8px);
+}
+
+.presence-neck-button-stem {
+  inset: 18% 10% 12% 8%;
+  background:
+    linear-gradient(180deg, rgba(255, 246, 238, 0.62), rgba(188, 142, 112, 0.42) 60%, rgba(138, 95, 67, 0.38)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16), rgba(110, 75, 52, 0.26));
+  box-shadow:
+    inset 0 2px 1px rgba(255, 255, 255, 0.7),
+    inset 0 -8px 14px rgba(92, 60, 39, 0.2),
+    0 12px 24px rgba(97, 67, 48, 0.12);
+  transform: translate3d(10px, 10px, 16px);
+}
+
+.presence-neck-button-face {
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 16%;
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  background:
+    radial-gradient(circle at 24% 24%, rgba(255, 255, 255, 0.9), transparent 23%),
+    radial-gradient(circle at 72% 80%, rgba(162, 109, 80, 0.2), transparent 42%),
+    linear-gradient(180deg, rgba(255, 251, 247, 0.82), rgba(247, 225, 208, 0.56) 44%, rgba(214, 170, 136, 0.52) 100%);
+  box-shadow:
+    inset 0 2px 1px rgba(255, 255, 255, 0.92),
+    inset 0 -12px 22px rgba(123, 83, 59, 0.18),
+    inset 10px 0 18px rgba(255, 255, 255, 0.14),
+    0 22px 38px rgba(97, 67, 48, 0.14);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+}
+
+.presence-neck-button-face::before,
+.presence-neck-button-face::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.presence-neck-button-face::before {
+  inset: 6% 4%;
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  opacity: 0.8;
+}
+
+.presence-neck-button-face::after {
+  left: 11%;
+  right: 36%;
+  top: 13%;
+  height: 28%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.08));
+  filter: blur(0.2px);
+  opacity: 0.8;
+}
+
+.presence-neck-button-label,
+.presence-neck-button-sub {
+  position: relative;
+  z-index: 1;
+  display: block;
+  text-align: center;
+  text-transform: lowercase;
+}
+
+.presence-neck-button-label {
+  color: rgba(85, 57, 41, 0.88);
+  font-size: clamp(15px, 1.35vw, 18px);
+  font-weight: 720;
+  letter-spacing: 0.02em;
+}
+
+.presence-neck-button-sub {
+  margin-top: 4px;
+  color: rgba(118, 83, 61, 0.66);
+  font-size: clamp(8px, 0.72vw, 10px);
+  font-weight: 580;
+  letter-spacing: 0.16em;
 }
 
 .presence-phone {
@@ -258,6 +365,11 @@
     inset: -5vh -14vw -8vh 8vw;
     min-width: 700px;
   }
+  .presence-neck-button {
+    left: 48%;
+    top: 33%;
+    width: min(29vw, 250px);
+  }
   .presence-phone {
     width: min(40vw, 330px);
     min-width: 260px;
@@ -284,6 +396,20 @@
   }
   .presence-backdrop::before {
     border-radius: 42px;
+  }
+  .presence-neck-button {
+    left: 49%;
+    top: 31%;
+    width: 194px;
+    min-width: 194px;
+    transform: translateX(-50%) rotate(-4deg) translateZ(34px);
+  }
+  .presence-neck-button-label {
+    font-size: 14px;
+  }
+  .presence-neck-button-sub {
+    font-size: 8px;
+    letter-spacing: 0.14em;
   }
   .presence-phone {
     right: 20%;

@@ -414,6 +414,25 @@
       padding: 0 10px 12px;
     }
 
+    .date-group + .date-group {
+      margin-top: 10px;
+    }
+
+    .date-divider {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 12px 8px;
+      color: var(--muted);
+      font: 900 12px/1.2 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+
+    .date-divider strong {
+      color: var(--ink);
+      font-size: 14px;
+    }
+
     .issue-row {
       display: grid;
       grid-template-columns: 52px minmax(170px, 1fr) 118px 142px 64px 44px 38px;
@@ -825,6 +844,10 @@
         scrollbar-width: none;
       }
 
+      .format-tabs {
+        padding-top: 0;
+      }
+
       .mobile-filters::-webkit-scrollbar {
         display: none;
       }
@@ -952,8 +975,8 @@
         </label>
 
         <div class="metrics" aria-label="Library stats">
-          <div class="metric"><b>5</b><span>sets</span></div>
-          <div class="metric"><b>25</b><span>cards</span></div>
+          <div class="metric"><b>6</b><span>sets</span></div>
+          <div class="metric"><b>31</b><span>cards</span></div>
           <div class="metric"><b>2026-06-20</b><span>latest</span></div>
         </div>
       </div>
@@ -961,7 +984,11 @@
 
     <div class="layout">
       <aside class="sidebar" aria-label="Library filters">
-        <p class="intro">사진에서 건진 인사이트를 카드뉴스와 작은 전시로 쌓아두는 아카이브</p>
+        <p class="intro">사진 인사이트와 AI 뉴스 카드뉴스를 날짜별로 쌓아두는 공개 아카이브</p>
+        <div class="filter-group">
+          <p class="filter-title">Format</p>
+          <div class="filter-list" id="formatFilters"></div>
+        </div>
         <div class="filter-group">
           <p class="filter-title">Category</p>
           <div class="filter-list" id="categoryFilters"></div>
@@ -977,6 +1004,7 @@
       </aside>
 
       <main>
+        <div class="mobile-filters format-tabs" id="formatTabs" aria-label="Format tabs"></div>
         <div class="mobile-filters" id="mobileFilters" aria-label="Mobile category filters"></div>
 
         <section class="content-panel" aria-label="Card news index">
@@ -1016,10 +1044,11 @@
   </div>
 
   <script>
-    const LIBRARY = {"items": [{"id": "world-honeymoon-announcement", "date": "2026-06-20", "title": "직장 그만두고 결혼식 대신 1년간 신혼여행을 갑니다", "subtitle": "결혼식 대신 1년간 신혼여행을 택한 두 사람의 조금 더 가깝고 친근한 출발 소식.", "category": "여행 계획", "source": "Telegram 신혼여행 선언문", "status": "published", "tags": ["세계여행", "신혼여행", "부부", "여행 준비"], "accent": "#183036", "cover": "https://img.shdkej.com/2026/06/20/92c96ab3-ca52-4d9f-b650-a790cd38dd09.webp", "cards": ["https://img.shdkej.com/2026/06/20/92c96ab3-ca52-4d9f-b650-a790cd38dd09.webp", "https://img.shdkej.com/2026/06/20/0d004de1-ed93-4138-b0d7-c09dce2dacc7.webp", "https://img.shdkej.com/2026/06/20/a95c216c-e501-4576-9dce-a5afbef55222.webp", "https://img.shdkej.com/2026/06/20/b5012d7e-3006-405c-89e8-df92e367c6ca.webp", "https://img.shdkej.com/2026/06/20/4533fcbc-b4d9-439f-9e57-237c4da9ea0d.webp"], "takeaway": "이번 여행은 좋은 추억을 만들고, 많이 배우고 느끼고, 앞으로를 같이 준비하는 시간입니다.", "thread": "직장 그만두고 결혼식 대신 1년간 신혼여행을 갑니다.\n\n조금 쉬었다 오자는 마음도 있지만, 둘이서 더 넓게 보고 많이 느껴보고 싶어서 떠나보기로 했어요.\n\n여행하면서 본 것들을 차곡차곡 기록하고, 나중에는 저희 식으로 잘 풀어보고 싶습니다.", "local": {"config": "system/data/insight-card-templates/world-honeymoon-announcement-photo-v3.json", "output": "system/reports/insight-card-runs/world-honeymoon-announcement-photo-v3/"}}, {"id": "today-insight-choice-contact-loop", "date": "2026-06-13", "title": "기획은 고객 접점에서 매일 돈다", "subtitle": "세계관, 자유, Design, 고객 접점을 하나의 실행 루프로 정리한 오늘의 인사이트.", "category": "오늘 인사이트", "source": "Telegram 오늘 인사이트 메모", "status": "published", "tags": ["기획", "Design", "고객접점", "PDCA"], "accent": "#3d5f58", "cover": "https://img.shdkej.com/2026/06/13/8a53a73e-e43a-4e04-8e7e-e24ee4033c5a.webp", "cards": ["https://img.shdkej.com/2026/06/13/8a53a73e-e43a-4e04-8e7e-e24ee4033c5a.webp", "https://img.shdkej.com/2026/06/13/e0097b10-31d4-4f1f-865f-20befb66eefa.webp", "https://img.shdkej.com/2026/06/13/ae7a9dc7-0fa8-4e9e-8273-4a16f098a469.webp", "https://img.shdkej.com/2026/06/13/c1eb40b6-1c2d-4e93-808c-9e20e7cccb22.webp", "https://img.shdkej.com/2026/06/13/e1b45d03-21f2-450a-a750-f85c344c04bf.webp"], "takeaway": "정성으로 세계를 고르고, 고객 접점에서 신호를 읽고, 세 레이어를 매일 PDCA로 돌린다.", "thread": "오늘 메모에서 가장 또렷했던 건 “나는 고객과의 접점 부분만 신경쓴다”는 문장이었습니다.\n\n기획은 예쁜 말을 붙이는 일이 아니라 신호를 다시 읽는 일입니다. 고객이 처음 들어오고, 문제를 해결하고, 막혔을 때 묻는 지점을 보면 다음 행동이 보입니다.\n\n오늘의 실행 루프는 단순합니다. 고객 유치, 문제 해결, 문의 해소. 이 세 레이어를 크게 벌리지 않고 매일 PDCA로 돌리는 것.\n\n자유롭게 선택할 수 있는 상태는 결국 이런 작은 접점들이 누적될 때 만들어집니다.", "local": {"config": "system/data/insight-card-templates/today-insight-choice-contact-loop.json", "output": "system/reports/insight-card-runs/today-insight-choice-contact-loop/"}}, {"id": "public-library-1850", "date": "2026-06-06", "title": "공공도서관은 생각보다 최근의 발명품이다", "subtitle": "1850년이라는 숫자 하나가 지식 접근권의 역사를 다시 보게 만든다.", "category": "제도와 일상", "source": "도서관 타임라인 사진", "status": "published", "tags": ["공공도서관", "인프라", "연표", "지식 접근권"], "accent": "#a4562b", "cover": "https://img.shdkej.com/2026/06/06/dc58b9e4-8306-4df3-9c62-43f4b0301873.webp", "cards": ["https://img.shdkej.com/2026/06/06/dc58b9e4-8306-4df3-9c62-43f4b0301873.webp", "https://img.shdkej.com/2026/06/06/7f85dbf0-a73d-40f7-bbe4-4bd49e2b46c9.webp", "https://img.shdkej.com/2026/06/06/8690e348-a429-40fc-a53a-fd61da24ba9e.webp", "https://img.shdkej.com/2026/06/06/891d3fa3-c2e8-4adb-9aac-edd57420d5ed.webp", "https://img.shdkej.com/2026/06/06/37928dc0-45fe-4621-b975-d48661fd22eb.webp"], "takeaway": "책이 있다는 것과 누구나 들어가 읽을 수 있다는 것은 다른 일이다.", "thread": "공공도서관은 훨씬 오래전부터 당연히 있었던 것처럼 느껴진다.\n\n그런데 연표에서 “1850년 미국 보스턴 공공도서관 개관”을 보니 감각이 조금 바뀐다. 책이 있다는 것과, 누구나 들어가 읽을 수 있다는 것은 완전히 다른 일이었다.\n\n당연한 일상은 사실 누군가 만든 인프라다. 도서관도, 기록도, 접근권도 그렇다.\n\n오늘 사진에서 건진 기록 루틴: 숫자 하나에 멈추기 → 당연함을 의심하기 → 지금 누리는 인프라로 연결하기", "local": {"config": "system/data/insight-card-templates/public-library-1850.json", "output": "system/reports/insight-card-runs/public-library-1850/"}}, {"id": "marketing-stage-map", "date": "2026-06-06", "title": "마케팅은 관계의 단계 설계다", "subtitle": "1페이지 마케팅 플랜을 채널 목록이 아니라 고객 상태의 흐름으로 다시 읽었다.", "category": "마케팅 설계", "source": "1페이지 마케팅 플랜 사진", "status": "published", "tags": ["마케팅", "고객상태", "전환", "Threads"], "accent": "#284f68", "cover": "https://img.shdkej.com/2026/06/06/6959cf82-d1f9-46d3-94d5-d1fd5a9cbfe5.webp", "cards": ["https://img.shdkej.com/2026/06/06/6959cf82-d1f9-46d3-94d5-d1fd5a9cbfe5.webp", "https://img.shdkej.com/2026/06/06/b2f0eba4-c31f-4d7b-a975-c4209dde6eb3.webp", "https://img.shdkej.com/2026/06/06/c2d37c3e-26e0-4762-8033-b8030efeed2e.webp", "https://img.shdkej.com/2026/06/06/1dd4ea6c-e544-4a3b-b2d4-8a0364eb00d9.webp", "https://img.shdkej.com/2026/06/06/989a9ad6-c62e-459a-bbe0-f3109bb8ff62.webp"], "takeaway": "마케팅 플랜은 빈칸 채우기가 아니라 고객을 다음 관계 단계로 넘기는 설계다.", "thread": "마케팅 초보가 자주 놓치는 건 채널이 아니라 고객의 현재 상태다.\n\n나를 모르는 사람, 관심만 생긴 사람, 이미 산 사람에게 같은 말을 하면 설계가 무너진다.\n\n이 1페이지 플랜의 핵심은 “어디에 올릴까?”가 아니다. 먼저 고객을 잠재 고객, 관심 고객, 진짜 고객으로 나누고 각 상태에 맞는 메시지와 행동을 정하는 것이다.\n\n내 상품을 팔기 전에 먼저 물어볼 질문: 이 사람은 지금 나를 모르는가, 관심만 있는가, 이미 산 사람인가?", "local": {"config": "system/data/insight-card-templates/marketing-stage-map.json", "output": "system/reports/insight-card-runs/marketing-stage-map/"}}, {"id": "korail-travel-observation", "date": "2026-06-06", "title": "장소는 예쁘게 묘사하는 데서 끝나지 않는다", "subtitle": "행운 소비, 공간의 시간, 보이지 않는 마음을 여행 기록의 렌즈로 묶었다.", "category": "여행 기록", "source": "코레일 매거진 사진", "status": "published", "tags": ["여행", "관찰", "공간", "행운"], "accent": "#38594b", "cover": "https://img.shdkej.com/2026/06/06/eae750e0-fad5-476f-a7f7-188b347282ba.webp", "cards": ["https://img.shdkej.com/2026/06/06/eae750e0-fad5-476f-a7f7-188b347282ba.webp", "https://img.shdkej.com/2026/06/06/3538dadd-0a25-448d-ac14-2822e6a86df6.webp", "https://img.shdkej.com/2026/06/06/1acd0b93-3d42-41e1-bef3-6efc1cd76161.webp", "https://img.shdkej.com/2026/06/06/15015181-dc20-45d6-af1d-0b2738ecdd37.webp", "https://img.shdkej.com/2026/06/06/1936f8a7-b004-43e4-bb9a-fc23d01e119b.webp"], "takeaway": "보이는 디테일에 시간의 층과 사람의 마음을 붙이면 사진이 이야기로 바뀐다.", "thread": "장소는 예쁘게 묘사하는 데서 끝나지 않는다.\n\n행운을 사는 사람들, 공간에 남은 시간, 보이지 않는 마음까지 읽어보면 사진이 기록이 되고, 기록이 이야기로 바뀐다.\n\n오늘 코레일 잡지에서 건진 여행 기록 루틴: 보이는 디테일 → 시간의 층 → 그 안의 마음", "local": {"config": "system/data/insight-card-templates/korail-test.json", "output": "system/reports/korail-insight-cards/"}}], "categories": [["여행 계획", 1], ["오늘 인사이트", 1], ["제도와 일상", 1], ["마케팅 설계", 1], ["여행 기록", 1]], "months": [["2026-06", 5]], "tags": [["세계여행", 1], ["신혼여행", 1], ["부부", 1], ["여행 준비", 1], ["기획", 1], ["Design", 1], ["고객접점", 1], ["PDCA", 1], ["공공도서관", 1], ["인프라", 1], ["연표", 1], ["지식 접근권", 1], ["마케팅", 1], ["고객상태", 1], ["전환", 1], ["Threads", 1], ["여행", 1], ["관찰", 1], ["공간", 1], ["행운", 1]]};
+    const LIBRARY = {"items": [{"id": "world-honeymoon-announcement", "date": "2026-06-20", "title": "직장 그만두고 결혼식 대신 1년간 신혼여행을 갑니다", "subtitle": "결혼식 대신 1년간 신혼여행을 택한 두 사람의 조금 더 가깝고 친근한 출발 소식.", "category": "여행 계획", "source": "Telegram 신혼여행 선언문", "status": "published", "tags": ["세계여행", "신혼여행", "부부", "여행 준비"], "accent": "#183036", "cover": "https://img.shdkej.com/2026/06/20/92c96ab3-ca52-4d9f-b650-a790cd38dd09.webp", "cards": ["https://img.shdkej.com/2026/06/20/92c96ab3-ca52-4d9f-b650-a790cd38dd09.webp", "https://img.shdkej.com/2026/06/20/0d004de1-ed93-4138-b0d7-c09dce2dacc7.webp", "https://img.shdkej.com/2026/06/20/a95c216c-e501-4576-9dce-a5afbef55222.webp", "https://img.shdkej.com/2026/06/20/b5012d7e-3006-405c-89e8-df92e367c6ca.webp", "https://img.shdkej.com/2026/06/20/4533fcbc-b4d9-439f-9e57-237c4da9ea0d.webp"], "takeaway": "이번 여행은 좋은 추억을 만들고, 많이 배우고 느끼고, 앞으로를 같이 준비하는 시간입니다.", "thread": "직장 그만두고 결혼식 대신 1년간 신혼여행을 갑니다.\n\n조금 쉬었다 오자는 마음도 있지만, 둘이서 더 넓게 보고 많이 느껴보고 싶어서 떠나보기로 했어요.\n\n여행하면서 본 것들을 차곡차곡 기록하고, 나중에는 저희 식으로 잘 풀어보고 싶습니다.", "local": {"config": "system/data/insight-card-templates/world-honeymoon-announcement-photo-v3.json", "output": "system/reports/insight-card-runs/world-honeymoon-announcement-photo-v3/"}}, {"id": "ai-news-perplexity-brain-2026-06-20", "date": "2026-06-20", "format": "news", "title": "퍼플렉시티 브레인, AI는 이제 취향보다 일의 흔적을 기억합니다", "subtitle": "에이전트 메모리가 사용자 취향 저장에서 업무 기록과 성공·실패 패턴 축적으로 넘어가는 흐름을 6장 카드로 정리했습니다.", "category": "AI 뉴스", "source": "AI Times · 퍼플렉시티 Brain 기사", "status": "published", "tags": ["AI뉴스", "Perplexity", "에이전트", "메모리"], "accent": "#163b33", "cover": "https://img.shdkej.com/2026/06/20/4663f8b6-fcb7-407c-927b-a31318ae7780.webp", "cards": ["https://img.shdkej.com/2026/06/20/4663f8b6-fcb7-407c-927b-a31318ae7780.webp", "https://img.shdkej.com/2026/06/20/9b0f901b-ab9d-45b4-9d66-06898bbe9b4e.webp", "https://img.shdkej.com/2026/06/20/867800e8-dd09-4279-8e6e-5c2300f494ce.webp", "https://img.shdkej.com/2026/06/20/167acfc1-83d6-493e-840a-d0982702fd3a.webp", "https://img.shdkej.com/2026/06/20/99da9bf4-0a17-468c-b626-fec3051c2e43.webp", "https://img.shdkej.com/2026/06/20/aea33a9b-fe38-4053-83ef-bf542a4c7d31.webp"], "takeaway": "AI 경쟁의 포인트가 취향 기억에서 업무 기억 구조로 이동하고 있다는 뉴스입니다.", "thread": "AI가 기억해야 할 건 취향일까요, 일의 흔적일까요.\n\n퍼플렉시티의 브레인은 이제 사용자가 뭘 좋아하는지보다 에이전트가 어떤 일을 어떻게 해냈는지를 쌓습니다.\n\n오래 쓸수록 더 나아지는 AI의 차이는 기능 수보다 이런 누적 학습 구조에서 벌어질 가능성이 커 보입니다.", "local": {"config": "system/data/insight-card-templates/ai-memory-brain-image-v3.json", "output": "system/reports/insight-card-runs/ai-memory-brain-image-v3-follow-test/"}}, {"id": "today-insight-choice-contact-loop", "date": "2026-06-13", "title": "기획은 고객 접점에서 매일 돈다", "subtitle": "세계관, 자유, Design, 고객 접점을 하나의 실행 루프로 정리한 오늘의 인사이트.", "category": "오늘 인사이트", "source": "Telegram 오늘 인사이트 메모", "status": "published", "tags": ["기획", "Design", "고객접점", "PDCA"], "accent": "#3d5f58", "cover": "https://img.shdkej.com/2026/06/13/8a53a73e-e43a-4e04-8e7e-e24ee4033c5a.webp", "cards": ["https://img.shdkej.com/2026/06/13/8a53a73e-e43a-4e04-8e7e-e24ee4033c5a.webp", "https://img.shdkej.com/2026/06/13/e0097b10-31d4-4f1f-865f-20befb66eefa.webp", "https://img.shdkej.com/2026/06/13/ae7a9dc7-0fa8-4e9e-8273-4a16f098a469.webp", "https://img.shdkej.com/2026/06/13/c1eb40b6-1c2d-4e93-808c-9e20e7cccb22.webp", "https://img.shdkej.com/2026/06/13/e1b45d03-21f2-450a-a750-f85c344c04bf.webp"], "takeaway": "정성으로 세계를 고르고, 고객 접점에서 신호를 읽고, 세 레이어를 매일 PDCA로 돌린다.", "thread": "오늘 메모에서 가장 또렷했던 건 “나는 고객과의 접점 부분만 신경쓴다”는 문장이었습니다.\n\n기획은 예쁜 말을 붙이는 일이 아니라 신호를 다시 읽는 일입니다. 고객이 처음 들어오고, 문제를 해결하고, 막혔을 때 묻는 지점을 보면 다음 행동이 보입니다.\n\n오늘의 실행 루프는 단순합니다. 고객 유치, 문제 해결, 문의 해소. 이 세 레이어를 크게 벌리지 않고 매일 PDCA로 돌리는 것.\n\n자유롭게 선택할 수 있는 상태는 결국 이런 작은 접점들이 누적될 때 만들어집니다.", "local": {"config": "system/data/insight-card-templates/today-insight-choice-contact-loop.json", "output": "system/reports/insight-card-runs/today-insight-choice-contact-loop/"}}, {"id": "public-library-1850", "date": "2026-06-06", "title": "공공도서관은 생각보다 최근의 발명품이다", "subtitle": "1850년이라는 숫자 하나가 지식 접근권의 역사를 다시 보게 만든다.", "category": "제도와 일상", "source": "도서관 타임라인 사진", "status": "published", "tags": ["공공도서관", "인프라", "연표", "지식 접근권"], "accent": "#a4562b", "cover": "https://img.shdkej.com/2026/06/06/dc58b9e4-8306-4df3-9c62-43f4b0301873.webp", "cards": ["https://img.shdkej.com/2026/06/06/dc58b9e4-8306-4df3-9c62-43f4b0301873.webp", "https://img.shdkej.com/2026/06/06/7f85dbf0-a73d-40f7-bbe4-4bd49e2b46c9.webp", "https://img.shdkej.com/2026/06/06/8690e348-a429-40fc-a53a-fd61da24ba9e.webp", "https://img.shdkej.com/2026/06/06/891d3fa3-c2e8-4adb-9aac-edd57420d5ed.webp", "https://img.shdkej.com/2026/06/06/37928dc0-45fe-4621-b975-d48661fd22eb.webp"], "takeaway": "책이 있다는 것과 누구나 들어가 읽을 수 있다는 것은 다른 일이다.", "thread": "공공도서관은 훨씬 오래전부터 당연히 있었던 것처럼 느껴진다.\n\n그런데 연표에서 “1850년 미국 보스턴 공공도서관 개관”을 보니 감각이 조금 바뀐다. 책이 있다는 것과, 누구나 들어가 읽을 수 있다는 것은 완전히 다른 일이었다.\n\n당연한 일상은 사실 누군가 만든 인프라다. 도서관도, 기록도, 접근권도 그렇다.\n\n오늘 사진에서 건진 기록 루틴: 숫자 하나에 멈추기 → 당연함을 의심하기 → 지금 누리는 인프라로 연결하기", "local": {"config": "system/data/insight-card-templates/public-library-1850.json", "output": "system/reports/insight-card-runs/public-library-1850/"}}, {"id": "marketing-stage-map", "date": "2026-06-06", "title": "마케팅은 관계의 단계 설계다", "subtitle": "1페이지 마케팅 플랜을 채널 목록이 아니라 고객 상태의 흐름으로 다시 읽었다.", "category": "마케팅 설계", "source": "1페이지 마케팅 플랜 사진", "status": "published", "tags": ["마케팅", "고객상태", "전환", "Threads"], "accent": "#284f68", "cover": "https://img.shdkej.com/2026/06/06/6959cf82-d1f9-46d3-94d5-d1fd5a9cbfe5.webp", "cards": ["https://img.shdkej.com/2026/06/06/6959cf82-d1f9-46d3-94d5-d1fd5a9cbfe5.webp", "https://img.shdkej.com/2026/06/06/b2f0eba4-c31f-4d7b-a975-c4209dde6eb3.webp", "https://img.shdkej.com/2026/06/06/c2d37c3e-26e0-4762-8033-b8030efeed2e.webp", "https://img.shdkej.com/2026/06/06/1dd4ea6c-e544-4a3b-b2d4-8a0364eb00d9.webp", "https://img.shdkej.com/2026/06/06/989a9ad6-c62e-459a-bbe0-f3109bb8ff62.webp"], "takeaway": "마케팅 플랜은 빈칸 채우기가 아니라 고객을 다음 관계 단계로 넘기는 설계다.", "thread": "마케팅 초보가 자주 놓치는 건 채널이 아니라 고객의 현재 상태다.\n\n나를 모르는 사람, 관심만 생긴 사람, 이미 산 사람에게 같은 말을 하면 설계가 무너진다.\n\n이 1페이지 플랜의 핵심은 “어디에 올릴까?”가 아니다. 먼저 고객을 잠재 고객, 관심 고객, 진짜 고객으로 나누고 각 상태에 맞는 메시지와 행동을 정하는 것이다.\n\n내 상품을 팔기 전에 먼저 물어볼 질문: 이 사람은 지금 나를 모르는가, 관심만 있는가, 이미 산 사람인가?", "local": {"config": "system/data/insight-card-templates/marketing-stage-map.json", "output": "system/reports/insight-card-runs/marketing-stage-map/"}}, {"id": "korail-travel-observation", "date": "2026-06-06", "title": "장소는 예쁘게 묘사하는 데서 끝나지 않는다", "subtitle": "행운 소비, 공간의 시간, 보이지 않는 마음을 여행 기록의 렌즈로 묶었다.", "category": "여행 기록", "source": "코레일 매거진 사진", "status": "published", "tags": ["여행", "관찰", "공간", "행운"], "accent": "#38594b", "cover": "https://img.shdkej.com/2026/06/06/eae750e0-fad5-476f-a7f7-188b347282ba.webp", "cards": ["https://img.shdkej.com/2026/06/06/eae750e0-fad5-476f-a7f7-188b347282ba.webp", "https://img.shdkej.com/2026/06/06/3538dadd-0a25-448d-ac14-2822e6a86df6.webp", "https://img.shdkej.com/2026/06/06/1acd0b93-3d42-41e1-bef3-6efc1cd76161.webp", "https://img.shdkej.com/2026/06/06/15015181-dc20-45d6-af1d-0b2738ecdd37.webp", "https://img.shdkej.com/2026/06/06/1936f8a7-b004-43e4-bb9a-fc23d01e119b.webp"], "takeaway": "보이는 디테일에 시간의 층과 사람의 마음을 붙이면 사진이 이야기로 바뀐다.", "thread": "장소는 예쁘게 묘사하는 데서 끝나지 않는다.\n\n행운을 사는 사람들, 공간에 남은 시간, 보이지 않는 마음까지 읽어보면 사진이 기록이 되고, 기록이 이야기로 바뀐다.\n\n오늘 코레일 잡지에서 건진 여행 기록 루틴: 보이는 디테일 → 시간의 층 → 그 안의 마음", "local": {"config": "system/data/insight-card-templates/korail-test.json", "output": "system/reports/korail-insight-cards/"}}], "formats": [["인사이트", "insight", 5], ["뉴스", "news", 1]], "categories": [["여행 계획", 1], ["AI 뉴스", 1], ["오늘 인사이트", 1], ["제도와 일상", 1], ["마케팅 설계", 1], ["여행 기록", 1]], "months": [["2026-06", 6]], "dates": [["2026-06-20", 2], ["2026-06-13", 1], ["2026-06-06", 3]], "tags": [["세계여행", 1], ["신혼여행", 1], ["부부", 1], ["여행 준비", 1], ["AI뉴스", 1], ["Perplexity", 1], ["에이전트", 1], ["메모리", 1], ["기획", 1], ["Design", 1], ["고객접점", 1], ["PDCA", 1], ["공공도서관", 1], ["인프라", 1], ["연표", 1], ["지식 접근권", 1], ["마케팅", 1], ["고객상태", 1], ["전환", 1], ["Threads", 1], ["여행", 1], ["관찰", 1], ["공간", 1], ["행운", 1]]};
     const ITEMS = LIBRARY.items;
     const state = {
       query: "",
+      format: "all",
       category: "all",
       month: "all",
       tag: "all",
@@ -1029,6 +1058,8 @@
 
     const els = {
       search: document.querySelector("#library-search"),
+      formatFilters: document.querySelector("#formatFilters"),
+      formatTabs: document.querySelector("#formatTabs"),
       categoryFilters: document.querySelector("#categoryFilters"),
       monthFilters: document.querySelector("#monthFilters"),
       tagFilters: document.querySelector("#tagFilters"),
@@ -1055,6 +1086,10 @@
       return (item.date || "").slice(0, 7) || "unknown";
     }
 
+    function formatOf(item) {
+      return item.format || "insight";
+    }
+
     function matchesQuery(item, query) {
       if (!query) return true;
       const haystack = [
@@ -1071,10 +1106,11 @@
 
     function getFilteredItems() {
       const filtered = ITEMS.filter((item) => {
+        const formatOk = state.format === "all" || formatOf(item) === state.format;
         const categoryOk = state.category === "all" || item.category === state.category;
         const monthOk = state.month === "all" || monthOf(item) === state.month;
         const tagOk = state.tag === "all" || (item.tags || []).includes(state.tag);
-        return categoryOk && monthOk && tagOk && matchesQuery(item, state.query);
+        return formatOk && categoryOk && monthOk && tagOk && matchesQuery(item, state.query);
       });
 
       return filtered.sort((a, b) => {
@@ -1086,6 +1122,7 @@
 
     function countFor(filterName, value) {
       return ITEMS.filter((item) => {
+        if (filterName === "format") return value === "all" || formatOf(item) === value;
         if (filterName === "category") return value === "all" || item.category === value;
         if (filterName === "month") return value === "all" || monthOf(item) === value;
         if (filterName === "tag") return value === "all" || (item.tags || []).includes(value);
@@ -1098,6 +1135,9 @@
     }
 
     function renderFilters() {
+      els.formatFilters.innerHTML = button("전체", ITEMS.length, state.format === "all", 'data-format="all"') +
+        LIBRARY.formats.map(([label, key, count]) => button(label, count, state.format === key, `data-format="${escapeHtml(key)}"`)).join("");
+
       els.categoryFilters.innerHTML = button("전체", ITEMS.length, state.category === "all", 'data-category="all"') +
         LIBRARY.categories.map(([label, count]) => button(label, count, state.category === label, `data-category="${escapeHtml(label)}"`)).join("");
 
@@ -1109,6 +1149,11 @@
           <button class="tag-btn ${state.tag === label ? "active" : ""}" data-tag="${escapeHtml(label)}" type="button">
             <span>${escapeHtml(label)}</span><small>${count}</small>
           </button>
+        `).join("");
+
+      els.formatTabs.innerHTML = `<button class="mobile-chip ${state.format === "all" ? "active" : ""}" data-format="all" type="button">전체</button>` +
+        LIBRARY.formats.map(([label, key]) => `
+          <button class="mobile-chip ${state.format === key ? "active" : ""}" data-format="${escapeHtml(key)}" type="button">${escapeHtml(label)}</button>
         `).join("");
 
       els.mobileFilters.innerHTML = `<button class="mobile-chip ${state.category === "all" ? "active" : ""}" data-category="all" type="button">전체</button>` +
@@ -1134,6 +1179,7 @@
       const items = getFilteredItems();
       els.resultCount.textContent = `${items.length} sets`;
       const labels = [
+        state.format !== "all" ? (LIBRARY.formats.find(([, key]) => key === state.format)?.[0] || state.format) : "",
         state.category !== "all" ? state.category : "",
         state.month !== "all" ? state.month : "",
         state.tag !== "all" ? `#${state.tag}` : "",
@@ -1146,7 +1192,20 @@
         state.selectedId = items[0].id;
       }
 
-      els.rowList.innerHTML = items.map((item) => {
+      const grouped = items.reduce((acc, item) => {
+        const key = item.date || "날짜 미상";
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(item);
+        return acc;
+      }, {});
+
+      els.rowList.innerHTML = Object.entries(grouped).map(([date, group]) => `
+        <section class="date-group">
+          <div class="date-divider">
+            <strong>${escapeHtml(date)}</strong>
+            <span>${group.length} set${group.length > 1 ? "s" : ""}</span>
+          </div>
+          ${group.map((item) => {
         const tags = (item.tags || []).slice(0, 2).map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("");
         const cardCount = (item.cards || []).length;
         return `
@@ -1167,7 +1226,9 @@
             </span>
           </button>
         `;
-      }).join("");
+      }).join("")}
+        </section>
+      `).join("");
 
       renderDetail();
     }
@@ -1246,11 +1307,19 @@
 
       document.addEventListener("click", async (event) => {
         const categoryButton = event.target.closest("[data-category]");
+        const formatButton = event.target.closest("[data-format]");
         const monthButton = event.target.closest("[data-month]");
         const tagButton = event.target.closest("[data-tag]");
         const sortButton = event.target.closest("[data-sort]");
         const itemButton = event.target.closest("[data-id]");
         const copyLink = event.target.closest("[data-copy-id]");
+
+        if (formatButton) {
+          state.format = formatButton.dataset.format;
+          renderFilters();
+          renderRows();
+          return;
+        }
 
         if (categoryButton) {
           state.category = categoryButton.dataset.category;

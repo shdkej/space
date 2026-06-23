@@ -1,7 +1,9 @@
 // OpenClaw 이미지 업로드 Worker
 //
 // 흐름(책처럼 읽히게):
-//   POST 요청 -> 토큰 검증 -> 이미지 추출 -> 리사이즈 -> R2 저장 -> 공개 URL 반환
+//   POST /         -> 토큰 검증 -> 이미지 추출 -> 리사이즈 -> R2 저장 -> 공개 URL 반환
+//   GET  /list     -> R2 목록 반환 (?limit=, ?cursor= 페이지네이션)
+//   GET  /random   -> R2 중 1장 무작위 선택 -> 공개 URL로 302 리다이렉트
 //
 // 바인딩(Terraform에서 주입):
 //   BUCKET           R2 버킷
@@ -13,6 +15,16 @@
 
 export default {
   async fetch(request, env) {
+    const { pathname } = new URL(request.url);
+
+    // 조회 엔드포인트(공개): 저장된 이미지 목록 / 랜덤 1장
+    if (request.method === "GET" && pathname === "/list") {
+      return listImages(request, env);
+    }
+    if (request.method === "GET" && pathname === "/random") {
+      return randomImage(env);
+    }
+
     if (request.method !== "POST") {
       return json({ error: "method_not_allowed" }, 405);
     }
@@ -33,6 +45,49 @@ export default {
     return json({ url: `${env.PUBLIC_BASE_URL}/${key}`, key }, 201);
   },
 };
+
+// 저장된 이미지 목록 반환. ?limit= 으로 개수 제한(기본/최대는 env로 조절).
+async function listImages(request, env) {
+  const url = new URL(request.url);
+  const defaultLimit = parseInt(env.LIST_DEFAULT_LIMIT || "50", 10);
+  const maxLimit = parseInt(env.LIST_MAX_LIMIT || "200", 10);
+
+  const requested = parseInt(url.searchParams.get("limit") || String(defaultLimit), 10);
+  const limit = clamp(Number.isNaN(requested) ? defaultLimit : requested, 1, maxLimit);
+
+  const listed = await env.BUCKET.list({ limit, cursor: url.searchParams.get("cursor") || undefined });
+
+  const images = listed.objects.map((obj) => ({
+    key: obj.key,
+    url: `${env.PUBLIC_BASE_URL}/${obj.key}`,
+    size: obj.size,
+    uploaded: obj.uploaded,
+  }));
+
+  return json({
+    images,
+    count: images.length,
+    limit,
+    cursor: listed.truncated ? listed.cursor : null,
+  });
+}
+
+// 저장된 이미지 중 1장을 무작위로 골라 공개 URL로 리다이렉트.
+async function randomImage(env) {
+  const sample = parseInt(env.RANDOM_SAMPLE_SIZE || "1000", 10);
+  const listed = await env.BUCKET.list({ limit: sample });
+
+  if (!listed.objects.length) {
+    return json({ error: "no_images" }, 404);
+  }
+
+  const pick = listed.objects[Math.floor(Math.random() * listed.objects.length)];
+  return Response.redirect(`${env.PUBLIC_BASE_URL}/${pick.key}`, 302);
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
 
 function isAuthorized(request, env) {
   const header = request.headers.get("Authorization") || "";

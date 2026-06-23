@@ -15,14 +15,14 @@
 
 export default {
   async fetch(request, env) {
-    const { pathname } = new URL(request.url);
+    const url = new URL(request.url);
 
     // 조회 엔드포인트(공개): 저장된 이미지 목록 / 랜덤 1장
-    if (request.method === "GET" && pathname === "/list") {
+    if (request.method === "GET" && url.pathname === "/list") {
       return listImages(request, env);
     }
-    if (request.method === "GET" && pathname === "/random") {
-      return randomImage(env);
+    if (request.method === "GET" && url.pathname === "/random") {
+      return randomImage(request, env);
     }
 
     if (request.method !== "POST") {
@@ -38,56 +38,14 @@ export default {
       return json({ error: "no_image" }, 400);
     }
 
+    const kind = uploadKind(url, request);
     const resized = await resizeImage(source.stream, env);
-    const key = buildObjectKey(source.filename, resized.extension);
+    const key = buildObjectKey(source.filename, resized.extension, kind);
     await storeToR2(env, key, resized);
 
     return json({ url: `${env.PUBLIC_BASE_URL}/${key}`, key }, 201);
   },
 };
-
-// 저장된 이미지 목록 반환. ?limit= 으로 개수 제한(기본/최대는 env로 조절).
-async function listImages(request, env) {
-  const url = new URL(request.url);
-  const defaultLimit = parseInt(env.LIST_DEFAULT_LIMIT || "50", 10);
-  const maxLimit = parseInt(env.LIST_MAX_LIMIT || "200", 10);
-
-  const requested = parseInt(url.searchParams.get("limit") || String(defaultLimit), 10);
-  const limit = clamp(Number.isNaN(requested) ? defaultLimit : requested, 1, maxLimit);
-
-  const listed = await env.BUCKET.list({ limit, cursor: url.searchParams.get("cursor") || undefined });
-
-  const images = listed.objects.map((obj) => ({
-    key: obj.key,
-    url: `${env.PUBLIC_BASE_URL}/${obj.key}`,
-    size: obj.size,
-    uploaded: obj.uploaded,
-  }));
-
-  return json({
-    images,
-    count: images.length,
-    limit,
-    cursor: listed.truncated ? listed.cursor : null,
-  });
-}
-
-// 저장된 이미지 중 1장을 무작위로 골라 공개 URL로 리다이렉트.
-async function randomImage(env) {
-  const sample = parseInt(env.RANDOM_SAMPLE_SIZE || "1000", 10);
-  const listed = await env.BUCKET.list({ limit: sample });
-
-  if (!listed.objects.length) {
-    return json({ error: "no_images" }, 404);
-  }
-
-  const pick = listed.objects[Math.floor(Math.random() * listed.objects.length)];
-  return Response.redirect(`${env.PUBLIC_BASE_URL}/${pick.key}`, 302);
-}
-
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
-}
 
 function isAuthorized(request, env) {
   const header = request.headers.get("Authorization") || "";
@@ -131,11 +89,84 @@ async function storeToR2(env, key, resized) {
   });
 }
 
-function buildObjectKey(filename, extension) {
+async function listImages(request, env) {
+  const url = new URL(request.url);
+  const limit = clamp(parseInt(url.searchParams.get("limit") || "100", 10), 1, 1000);
+  const prefix = listingPrefix(url, "");
+  const cursor = url.searchParams.get("cursor") || undefined;
+  const listed = await env.BUCKET.list({ prefix, cursor, limit });
+  const images = listed.objects
+    .filter((object) => isImageKey(object.key))
+    .map((object) => ({
+      key: object.key,
+      url: `${env.PUBLIC_BASE_URL}/${object.key}`,
+      size: object.size,
+      uploaded: object.uploaded,
+    }));
+  return json({
+    images,
+    count: images.length,
+    limit,
+    cursor: listed.truncated ? listed.cursor : null,
+    prefix,
+  }, 200);
+}
+
+async function randomImage(request, env) {
+  const url = new URL(request.url);
+  const prefix = listingPrefix(url, "original/");
+  const limit = clamp(parseInt(url.searchParams.get("limit") || "1000", 10), 1, 1000);
+  const listed = await env.BUCKET.list({ prefix, limit });
+  const candidates = listed.objects.filter((object) => isImageKey(object.key));
+  if (!candidates.length) {
+    return json({ error: "no_images" }, 404);
+  }
+  const index = cryptoRandomInt(candidates.length);
+  const picked = candidates[index];
+  return Response.redirect(`${env.PUBLIC_BASE_URL}/${picked.key}`, 302);
+}
+
+function isImageKey(key) {
+  return /\.(avif|gif|jpe?g|png|webp)$/i.test(key);
+}
+
+function cryptoRandomInt(max) {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return array[0] % max;
+}
+
+function clamp(value, min, max) {
+  if (!Number.isFinite(value)) return min;
+  return Math.max(min, Math.min(max, value));
+}
+
+function uploadKind(url, request) {
+  const raw = (
+    url.searchParams.get("kind") ||
+    url.searchParams.get("type") ||
+    request.headers.get("x-image-kind") ||
+    ""
+  ).toLowerCase();
+  return raw === "original" ? "original" : "derived";
+}
+
+function listingPrefix(url, fallback) {
+  const prefix = url.searchParams.get("prefix");
+  if (prefix !== null) return prefix;
+
+  const rawKind = (url.searchParams.get("kind") || url.searchParams.get("type") || "").toLowerCase();
+  if (rawKind === "original") return "original/";
+  if (rawKind === "derived") return "derived/";
+
+  return fallback;
+}
+
+function buildObjectKey(filename, extension, kind) {
   const now = new Date();
   const datePath = `${now.getUTCFullYear()}/${pad(now.getUTCMonth() + 1)}/${pad(now.getUTCDate())}`;
   const id = crypto.randomUUID();
-  return `${datePath}/${id}.${extension}`;
+  return `${kind}/${datePath}/${id}.${extension}`;
 }
 
 function extensionFor(format) {

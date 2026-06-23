@@ -61,25 +61,49 @@ curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
 openssl rand -hex 32
 ```
 
+## 저장된 이미지 다시 가져오기
+
+업로드 Worker는 같은 Bearer 토큰으로 저장소 조회도 제공한다.
+
+랜덤 이미지 1장:
+
+```bash
+curl https://upload.shdkej.com/random \
+  -H "Authorization: Bearer $UPLOAD_TOKEN"
+# → {"url":"https://img.shdkej.com/original/2026/06/22/<uuid>.webp","key":"..."}
+```
+
+최근 이미지 목록:
+
+```bash
+curl "https://upload.shdkej.com/list?limit=100" \
+  -H "Authorization: Bearer $UPLOAD_TOKEN"
+```
+
+카드뉴스 첫 페이지처럼 “보관함에서 임의의 원본 사진”이 필요할 때는 `/random`을 우선 사용한다.
+`/random`은 기본으로 `original/`만 본다. 가공 산출물 목록이 필요할 때만 `?kind=derived` 또는 `?prefix=derived/`를 쓴다.
+
 ## OpenClaw에서 업로드하는 법
 
 raw 이미지 본문:
 
 ```bash
-curl -X POST https://upload.shdkej.com \
+curl -X POST "https://upload.shdkej.com?kind=original" \
   -H "Authorization: Bearer $UPLOAD_TOKEN" \
   -H "Content-Type: image/jpeg" \
   --data-binary @photo.jpg
-# → {"url":"https://img.shdkej.com/2026/05/25/<uuid>.webp","key":"..."}
+# → {"url":"https://img.shdkej.com/original/2026/05/25/<uuid>.webp","key":"..."}
 ```
 
 multipart 폼:
 
 ```bash
-curl -X POST https://upload.shdkej.com \
+curl -X POST "https://upload.shdkej.com?kind=original" \
   -H "Authorization: Bearer $UPLOAD_TOKEN" \
   -F "file=@photo.jpg"
 ```
+
+카드뉴스, 썸네일, 재렌더 결과처럼 한 번 가공된 이미지는 기본값인 `derived/`에 저장한다. 명시하려면 `?kind=derived`를 붙인다.
 
 응답의 `url`을 OpenClaw가 받아서 관리하면 된다.
 

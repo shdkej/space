@@ -19,18 +19,18 @@ variable "tags" {
   }
 }
 
-variable "virtue_feedback_sender_email" {
-  description = "Verified SES sender email for Virtue feedback notifications."
+variable "app_feedback_sender_email" {
+  description = "Verified SES sender email for app feedback notifications."
   type        = string
 }
 
-variable "virtue_feedback_recipient_email" {
-  description = "Email address that receives Virtue feedback notifications."
+variable "app_feedback_recipient_email" {
+  description = "Email address that receives app feedback notifications."
   type        = string
 }
 
-variable "virtue_feedback_allowed_origins" {
-  description = "Allowed browser origins for the Virtue feedback Lambda Function URL."
+variable "app_feedback_allowed_origins" {
+  description = "Allowed browser origins for the shared app feedback Lambda Function URL."
   type        = list(string)
   default = [
     "https://virtue.aws.shdkej.com",

@@ -9,9 +9,9 @@ output "app_sites" {
   }
 }
 
-output "virtue_feedback" {
+output "app_feedback" {
   value = {
-    bucket_name  = aws_s3_bucket.virtue_feedback.bucket
-    function_url = aws_lambda_function_url.virtue_feedback.function_url
+    bucket_name  = aws_s3_bucket.app_feedback.bucket
+    function_url = aws_lambda_function_url.app_feedback.function_url
   }
 }

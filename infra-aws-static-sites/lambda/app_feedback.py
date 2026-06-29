@@ -16,7 +16,6 @@ ses = boto3.client("ses")
 BUCKET = os.environ["FEEDBACK_BUCKET"]
 RECIPIENT_EMAIL = os.environ["FEEDBACK_RECIPIENT_EMAIL"]
 SENDER_EMAIL = os.environ["FEEDBACK_SENDER_EMAIL"]
-APP_NAME = os.environ.get("APP_NAME", "Virtue")
 ALLOWED_ORIGINS = {
     origin.strip()
     for origin in os.environ.get("ALLOWED_ORIGINS", "").split(",")
@@ -24,6 +23,7 @@ ALLOWED_ORIGINS = {
 }
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+APP_ID_RE = re.compile(r"[^a-z0-9_-]+")
 
 
 def _origin_for(event):
@@ -58,6 +58,12 @@ def _clean_text(value, max_len):
     return str(value).replace("\x00", "").strip()[:max_len]
 
 
+def _clean_app_id(value):
+    raw = _clean_text(value or "unknown", 80).lower()
+    cleaned = APP_ID_RE.sub("-", raw).strip("-")
+    return cleaned or "unknown"
+
+
 def _append_csv_line(row):
     buf = io.StringIO()
     writer = csv.writer(buf)
@@ -68,6 +74,8 @@ def _append_csv_line(row):
 def _append_monthly_csv(key, row):
     header = [
         "created_at",
+        "app_id",
+        "app_name",
         "type",
         "path",
         "reply_email",
@@ -112,6 +120,8 @@ def handler(event, context):
         return _response(400, {"error": "invalid_json"}, origin)
 
     message = _clean_text(payload.get("message"), 3000)
+    app_id = _clean_app_id(payload.get("appId"))
+    app_name = _clean_text(payload.get("appName") or app_id, 120)
     feedback_type = _clean_text(payload.get("type") or "feedback", 40)
     reply_email = _clean_text(payload.get("replyEmail"), 200)
     path = _clean_text(payload.get("path"), 300)
@@ -127,12 +137,13 @@ def handler(event, context):
     now = datetime.now(timezone.utc)
     created_at = now.isoformat()
     month_key = now.strftime("%Y-%m")
-    object_key = f"feedback/{month_key}/{now.strftime('%Y%m%dT%H%M%S')}-{quote(feedback_type)}.json"
-    csv_key = f"feedback/{month_key}.csv"
+    object_key = f"feedback/{app_id}/{month_key}/{now.strftime('%Y%m%dT%H%M%S')}-{quote(feedback_type)}.json"
+    csv_key = f"feedback/{app_id}/{month_key}.csv"
 
     record = {
         "created_at": created_at,
-        "app": APP_NAME,
+        "app_id": app_id,
+        "app_name": app_name,
         "type": feedback_type,
         "message": message,
         "reply_email": reply_email,
@@ -159,6 +170,8 @@ def handler(event, context):
         csv_key,
         [
             created_at,
+            app_id,
+            app_name,
             feedback_type,
             path,
             reply_email,
@@ -171,10 +184,12 @@ def handler(event, context):
         ]
     )
 
-    subject = f"[{APP_NAME}] 새 피드백: {feedback_type}"
+    subject = f"[{app_name}] 새 피드백: {feedback_type}"
     text_body = "\n".join(
         [
             f"created_at: {created_at}",
+            f"app_id: {app_id}",
+            f"app_name: {app_name}",
             f"type: {feedback_type}",
             f"path: {path}",
             f"reply_email: {reply_email or '-'}",
@@ -186,7 +201,8 @@ def handler(event, context):
     )
     html_body = f"""
 <html><body>
-  <h2>{APP_NAME} 새 피드백</h2>
+  <h2>{app_name} 새 피드백</h2>
+  <p><b>app id:</b> {app_id}</p>
   <p><b>type:</b> {feedback_type}</p>
   <p><b>path:</b> {path}</p>
   <p><b>reply email:</b> {reply_email or '-'}</p>
@@ -197,17 +213,26 @@ def handler(event, context):
 </body></html>
 """
 
-    ses.send_email(
-        Source=SENDER_EMAIL,
-        Destination={"ToAddresses": [RECIPIENT_EMAIL]},
-        Message={
-            "Subject": {"Data": subject, "Charset": "UTF-8"},
-            "Body": {
-                "Text": {"Data": text_body, "Charset": "UTF-8"},
-                "Html": {"Data": html_body, "Charset": "UTF-8"},
+    email_sent = True
+    email_error = ""
+    try:
+        ses.send_email(
+            Source=SENDER_EMAIL,
+            Destination={"ToAddresses": [RECIPIENT_EMAIL]},
+            Message={
+                "Subject": {"Data": subject, "Charset": "UTF-8"},
+                "Body": {
+                    "Text": {"Data": text_body, "Charset": "UTF-8"},
+                    "Html": {"Data": html_body, "Charset": "UTF-8"},
+                },
             },
-        },
-        ReplyToAddresses=[reply_email] if reply_email else [],
-    )
+            ReplyToAddresses=[reply_email] if reply_email else [],
+        )
+    except Exception as exc:
+        email_sent = False
+        email_error = exc.__class__.__name__
 
-    return _response(200, {"ok": True}, origin)
+    body = {"ok": True, "email_sent": email_sent, "object_key": object_key}
+    if email_error:
+        body["email_error"] = email_error
+    return _response(200, body, origin)

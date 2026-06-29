@@ -18,3 +18,23 @@ variable "tags" {
     stack   = "aws-static-sites"
   }
 }
+
+variable "virtue_feedback_sender_email" {
+  description = "Verified SES sender email for Virtue feedback notifications."
+  type        = string
+}
+
+variable "virtue_feedback_recipient_email" {
+  description = "Email address that receives Virtue feedback notifications."
+  type        = string
+}
+
+variable "virtue_feedback_allowed_origins" {
+  description = "Allowed browser origins for the Virtue feedback Lambda Function URL."
+  type        = list(string)
+  default = [
+    "https://virtue.aws.shdkej.com",
+    "https://virtue.oracle.shdkej.com",
+    "http://localhost:3000",
+  ]
+}

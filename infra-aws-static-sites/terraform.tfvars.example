@@ -1,2 +1,5 @@
 aws_region         = "ap-northeast-2"
 route53_zone_name  = "aws.shdkej.com"
+
+virtue_feedback_sender_email    = "verified-sender@example.com"
+virtue_feedback_recipient_email = "feedback-recipient@example.com"

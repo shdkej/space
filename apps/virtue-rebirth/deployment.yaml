@@ -29,6 +29,18 @@ spec:
               value: phc_md5jBTe5oiybEc6WsziJS36ZmwLs9ie6jZjZyaoTutHd
             - name: NEXT_PUBLIC_POSTHOG_HOST
               value: https://us.i.posthog.com
+            - name: NEXT_PUBLIC_FEEDBACK_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: virtue-rebirth-settings
+                  key: NEXT_PUBLIC_FEEDBACK_ENDPOINT
+                  optional: true
+            - name: NEXT_PUBLIC_BUY_ME_A_COFFEE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: virtue-rebirth-settings
+                  key: NEXT_PUBLIC_BUY_ME_A_COFFEE_URL
+                  optional: true
             - name: NODE_ENV
               value: production
             # 채점은 별도 Lambda(Gemini)가 처리. 키는 Lambda 쪽 SST Secret에 있음.

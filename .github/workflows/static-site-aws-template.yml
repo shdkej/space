@@ -194,6 +194,24 @@ jobs:
             --delete \
             --cache-control "public,max-age=60"
 
+      - name: Upload extensionless HTML routes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          shopt -s nullglob
+          for file in "${{ matrix.build_dir }}"/*.html; do
+            name="$(basename "$file" .html)"
+            if [ "$name" = "index" ] || [ "$name" = "404" ] || [ "$name" = "_not-found" ]; then
+              continue
+            fi
+
+            aws s3 cp "$file" \
+              "s3://${{ steps.target.outputs.bucket }}/${name}" \
+              --content-type "text/html" \
+              --cache-control "public,max-age=60"
+          done
+
       - name: Invalidate CloudFront
         run: |
           invalidation_id="$(

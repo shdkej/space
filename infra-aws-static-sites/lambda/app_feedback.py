@@ -32,14 +32,10 @@ def _origin_for(event):
 
 
 def _response(status, body, origin=""):
-    allow_origin = origin if origin in ALLOWED_ORIGINS else "null"
     return {
         "statusCode": status,
         "headers": {
             "content-type": "application/json; charset=utf-8",
-            "access-control-allow-origin": allow_origin,
-            "access-control-allow-methods": "POST,OPTIONS",
-            "access-control-allow-headers": "content-type",
         },
         "body": json.dumps(body, ensure_ascii=False),
     }

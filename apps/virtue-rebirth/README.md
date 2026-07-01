@@ -9,5 +9,5 @@
 - Current mode: `NEXT_PUBLIC_SCORING_MODE=mock`
 - Storage: 브라우저 localStorage only. 외부 사진/DB 저장소 없음.
 
-현재 정본은 AWS S3/CloudFront 정적판입니다. 이 Kubernetes 앱은 중복 표면을 피하기 위해
-0 replicas로 두고, ingress는 canonical AWS 도메인으로 영구 리다이렉트합니다.
+현재 정본은 AWS S3/CloudFront 정적판입니다. 이 Kubernetes 배포는 앱을 빌드/서빙하지 않고,
+legacy Oracle 도메인을 canonical AWS 도메인으로 넘기는 작은 redirect 서버만 실행합니다.

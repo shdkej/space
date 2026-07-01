@@ -6,7 +6,7 @@ metadata:
   labels:
     app: virtue-rebirth
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: virtue-rebirth
@@ -55,14 +55,7 @@ spec:
             - /bin/sh
             - -ec
             - |
-              apk add --no-cache git
-              corepack enable
-              rm -rf /app
-              git clone --depth=1 --branch master https://github.com/shdkej/virtue-rebirth-app.git /app
-              cd /app
-              pnpm install --frozen-lockfile
-              NEXT_PUBLIC_SCORING_MODE=ai pnpm build
-              pnpm start
+              node -e "require('http').createServer((req,res)=>{res.writeHead(308,{Location:'https://virtue.aws.shdkej.com'+req.url});res.end();}).listen(8030,'0.0.0.0')"
           readinessProbe:
             httpGet:
               path: /

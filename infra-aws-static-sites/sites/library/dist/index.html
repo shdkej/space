@@ -759,6 +759,8 @@
       background: var(--charcoal);
       border-radius: 7px;
       text-decoration: none;
+      border: 0;
+      cursor: pointer;
       font: 900 12px/1 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
     }
 
@@ -1287,10 +1289,69 @@
 
           <div class="detail-actions">
             <a class="action-link" href="${escapeHtml(firstCard)}" target="_blank" rel="noreferrer">첫 카드 열기</a>
+            <button class="action-link" type="button" data-download-cards="${escapeHtml(item.id)}">${(item.cards || []).length}장 저장</button>
             <a class="action-link secondary" href="#${escapeHtml(item.id)}" data-copy-id="${escapeHtml(item.id)}">ID 복사</a>
           </div>
         </div>
       `;
+    }
+
+    function filenameForCard(item, index, url) {
+      const slug = String(item.id || item.title || "card-news")
+        .toLowerCase()
+        .replace(/[^a-z0-9가-힣_-]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "card-news";
+      const cleanUrl = String(url || "").split("?")[0];
+      const extMatch = cleanUrl.match(/\.([a-zA-Z0-9]+)$/);
+      const ext = extMatch ? extMatch[1].toLowerCase() : "webp";
+      return `${slug}-${String(index + 1).padStart(2, "0")}.${ext}`;
+    }
+
+    async function downloadUrl(url, filename) {
+      try {
+        const response = await fetch(url, { mode: "cors" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = objectUrl;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
+      } catch (error) {
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.target = "_blank";
+        anchor.rel = "noreferrer";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+      }
+    }
+
+    async function downloadAllCards(item, trigger) {
+      const urls = item?.cards || [];
+      if (!urls.length) return;
+      const originalText = trigger?.textContent || "";
+      if (trigger) {
+        trigger.disabled = true;
+        trigger.textContent = "저장 준비 중";
+      }
+      for (let index = 0; index < urls.length; index += 1) {
+        if (trigger) trigger.textContent = `${index + 1}/${urls.length} 저장`;
+        await downloadUrl(urls[index], filenameForCard(item, index, urls[index]));
+        await new Promise((resolve) => setTimeout(resolve, 180));
+      }
+      if (trigger) {
+        trigger.textContent = "저장 완료";
+        setTimeout(() => {
+          trigger.disabled = false;
+          trigger.textContent = originalText;
+        }, 1400);
+      }
     }
 
     function selectItem(id, openDrawer = false) {
@@ -1313,6 +1374,7 @@
         const sortButton = event.target.closest("[data-sort]");
         const itemButton = event.target.closest("[data-id]");
         const copyLink = event.target.closest("[data-copy-id]");
+        const downloadButton = event.target.closest("[data-download-cards]");
 
         if (formatButton) {
           state.format = formatButton.dataset.format;
@@ -1354,6 +1416,12 @@
           await navigator.clipboard?.writeText(copyLink.dataset.copyId);
           copyLink.textContent = "ID 복사됨";
           setTimeout(() => { copyLink.textContent = "ID 복사"; }, 1200);
+          return;
+        }
+
+        if (downloadButton) {
+          const item = ITEMS.find((entry) => entry.id === downloadButton.dataset.downloadCards);
+          await downloadAllCards(item, downloadButton);
           return;
         }
 

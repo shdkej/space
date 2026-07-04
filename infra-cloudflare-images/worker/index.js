@@ -4,6 +4,7 @@
 //   POST /         -> 토큰 검증 -> 이미지 추출 -> 리사이즈 -> R2 저장 -> 공개 URL 반환
 //   GET  /list     -> R2 목록 반환 (?limit=, ?cursor= 페이지네이션)
 //   GET  /random   -> R2 중 1장 무작위 선택 -> 공개 URL로 302 리다이렉트
+//   DELETE /object -> 토큰 검증 -> key를 deleted/ 아래로 이동(소프트 삭제)
 //
 // 바인딩(Terraform에서 주입):
 //   BUCKET           R2 버킷
@@ -23,6 +24,13 @@ export default {
     }
     if (request.method === "GET" && url.pathname === "/random") {
       return randomImage(request, env);
+    }
+
+    if (request.method === "DELETE" && url.pathname === "/object") {
+      if (!isAuthorized(request, env)) {
+        return json({ error: "unauthorized" }, 401);
+      }
+      return softDeleteImage(request, env);
     }
 
     if (request.method !== "POST") {
@@ -126,8 +134,48 @@ async function randomImage(request, env) {
   return Response.redirect(`${env.PUBLIC_BASE_URL}/${picked.key}`, 302);
 }
 
+async function softDeleteImage(request, env) {
+  const url = new URL(request.url);
+  const key = url.searchParams.get("key") || "";
+  const normalized = normalizeDeletableKey(key);
+  if (!normalized) {
+    return json({ error: "invalid_key" }, 400);
+  }
+
+  const object = await env.BUCKET.get(normalized);
+  if (!object) {
+    return json({ error: "not_found" }, 404);
+  }
+
+  const deletedKey = `deleted/${normalized}`;
+  await env.BUCKET.put(deletedKey, object.body, {
+    httpMetadata: object.httpMetadata,
+    customMetadata: {
+      ...(object.customMetadata || {}),
+      deletedFrom: normalized,
+      deletedAt: new Date().toISOString(),
+    },
+  });
+  await env.BUCKET.delete(normalized);
+
+  return json({
+    ok: true,
+    key: normalized,
+    deletedKey,
+    deletedUrl: `${env.PUBLIC_BASE_URL}/${deletedKey}`,
+  }, 200);
+}
+
 function isImageKey(key) {
   return /\.(avif|gif|jpe?g|png|webp)$/i.test(key);
+}
+
+function normalizeDeletableKey(key) {
+  const decoded = decodeURIComponent(key).replace(/^\/+/, "");
+  if (!decoded.startsWith("original/")) return "";
+  if (decoded.includes("..") || decoded.includes("//")) return "";
+  if (!isImageKey(decoded)) return "";
+  return decoded;
 }
 
 function cryptoRandomInt(max) {

@@ -45,6 +45,11 @@ spec:
                 secretKeyRef:
                   name: control-center-cms-env
                   key: CMS_AUTH_PASSWORD
+            - name: IMAGE_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: control-center-cms-env
+                  key: IMAGE_ADMIN_TOKEN
           ports:
             - containerPort: 3000
               name: http

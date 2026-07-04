@@ -342,8 +342,26 @@ export default function Page() {
     }
   }
 
+  async function softDeleteImage(image) {
+    const confirmed = window.confirm(`이 원본 이미지를 휴지통으로 옮길까요?\n\n${image.key}`);
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      const params = new URLSearchParams({ key: image.key });
+      const res = await fetch(`/api/images?${params.toString()}`, { method: "DELETE" });
+      const payload = await res.json();
+      if (!res.ok) throw new Error(payload.error || "이미지 삭제 실패");
+      setOriginalImages((current) => current.filter((item) => item.key !== image.key));
+      toast("이미지를 휴지통으로 옮겼습니다.");
+    } catch (error) {
+      toast(error.message || "이미지를 삭제하지 못했습니다.", "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Header
         stats={stats}
         dark={dark}
@@ -353,7 +371,7 @@ export default function Page() {
         busy={busy || loading}
       />
 
-      <main className="container max-w-[1320px] pb-20 pt-6">
+      <main className="container max-w-[1320px] overflow-x-hidden pb-20 pt-4 sm:pt-6">
         <Tabs defaultValue="composition">
           <TabsList>
             <TabsTrigger value="composition">
@@ -413,6 +431,8 @@ export default function Page() {
               onRefresh={() => loadOriginalImages()}
               onLoadMore={() => loadOriginalImages({ append: true, cursor: originalCursor })}
               onCopy={copyImageUrl}
+              onDelete={softDeleteImage}
+              busy={busy}
             />
           </TabsContent>
 
@@ -447,13 +467,13 @@ export default function Page() {
   );
 }
 
-function OriginalImages({ images, cursor, loading, onRefresh, onLoadMore, onCopy }) {
+function OriginalImages({ images, cursor, loading, onRefresh, onLoadMore, onCopy, onDelete, busy }) {
   const totalSize = images.reduce((sum, image) => sum + (image.size || 0), 0);
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
-          <div>
+        <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <CardTitle>Original Images</CardTitle>
             <CardDescription>업로드된 원본 이미지를 모아 보고, 카드뉴스나 시안 작업에 쓸 URL을 복사합니다.</CardDescription>
           </div>
@@ -462,7 +482,7 @@ function OriginalImages({ images, cursor, loading, onRefresh, onLoadMore, onCopy
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
             <div className="rounded-md border bg-background px-3 py-2">
               <div className="text-lg font-semibold tabular-nums">{images.length}</div>
               <div className="text-[11px] text-muted-foreground">불러온 원본</div>
@@ -484,7 +504,7 @@ function OriginalImages({ images, cursor, loading, onRefresh, onLoadMore, onCopy
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {images.map((image) => (
-                <article key={image.key} className="overflow-hidden rounded-md border bg-card">
+                <article key={image.key} className="min-w-0 overflow-hidden rounded-md border bg-card shadow-sm">
                   <a href={image.url} target="_blank" rel="noreferrer" className="block bg-muted">
                     <img
                       src={image.url}
@@ -493,13 +513,13 @@ function OriginalImages({ images, cursor, loading, onRefresh, onLoadMore, onCopy
                       className="aspect-[4/3] w-full object-cover transition-opacity hover:opacity-90"
                     />
                   </a>
-                  <div className="space-y-2 p-3">
+                  <div className="min-w-0 space-y-2 p-3">
                     <div className="min-h-[2.5rem] break-all text-xs font-medium leading-snug">{image.key}</div>
                     <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
                       <span>{formatDate(image.uploaded)}</span>
                       <span>{formatBytes(image.size)}</span>
                     </div>
-                    <div className="flex gap-1.5">
+                    <div className="grid grid-cols-3 gap-1.5">
                       <Button variant="outline" size="sm" className="h-8 flex-1" onClick={() => onCopy(image.url)}>
                         <Copy className="h-3.5 w-3.5" /> URL
                       </Button>
@@ -507,6 +527,15 @@ function OriginalImages({ images, cursor, loading, onRefresh, onLoadMore, onCopy
                         <a href={image.url} target="_blank" rel="noreferrer">
                           <ExternalLink className="h-3.5 w-3.5" /> 열기
                         </a>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-destructive hover:text-destructive"
+                        onClick={() => onDelete(image)}
+                        disabled={busy}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> 삭제
                       </Button>
                     </div>
                   </div>

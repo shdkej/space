@@ -65,7 +65,9 @@ function layerCheckStatus(payload) {
   const rows = payload?.layer_checks || [];
   if (!rows.length) return "none";
   const latest = rows[rows.length - 1];
-  const fails = LAYER_KEYS.filter((k) => latest[k] === false).length;
+  const ageDays = (Date.now() - new Date(latest.date).getTime()) / 86400000;
+  if (!latest.date || Number.isNaN(ageDays) || ageDays > 2) return "down";
+  const fails = LAYER_KEYS.filter((k) => latest[k] !== true).length;
   if (fails >= 2) return "down";
   if (fails === 1) return "degraded";
   return "operational";

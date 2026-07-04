@@ -1448,13 +1448,14 @@
         parseItems(intentSections["Active"] || ""),
         parseIntentComments(intentSections["Active"] || "", "Active")
       );
-      const waitingItems = [
-        ...mergeById(
+      // 같은 intent가 INTENTS Waiting과 GATES 대기 중에 함께 있으면 INTENTS 항목(필드가 더 풍부)만 남긴다.
+      const waitingItems = mergeById(
+        mergeById(
           parseItems(intentSections["Waiting"] || ""),
           parseIntentComments(intentSections["Waiting"] || "", "Waiting")
         ).map(x => ({ ...x, source: x.source || "INTENTS.md" })),
-        ...parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" })),
-      ];
+        parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" }))
+      );
       const archiveCommentItems = mergeById(
         parseArchiveComments(intentSections["Archive"] || ""),
         [

@@ -9,8 +9,11 @@ export async function GET(request) {
   try {
     const incoming = new URL(request.url);
     const target = new URL("/list", IMAGE_BASE_URL);
-    target.searchParams.set("kind", incoming.searchParams.get("kind") || "original");
-    target.searchParams.set("limit", incoming.searchParams.get("limit") || "60");
+    const rawLimit = Number.parseInt(incoming.searchParams.get("limit") || "60", 10);
+    const limit = Number.isFinite(rawLimit) ? Math.max(1, Math.min(rawLimit, 100)) : 60;
+
+    target.searchParams.set("kind", "original");
+    target.searchParams.set("limit", String(limit));
 
     const cursor = incoming.searchParams.get("cursor");
     if (cursor) target.searchParams.set("cursor", cursor);

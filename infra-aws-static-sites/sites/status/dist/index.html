@@ -964,7 +964,7 @@
 
       function row(item, meta, href) {
         const tag = href ? "a" : "div";
-        const attrs = href ? ` href="${safe(href)}" target="_blank" rel="noopener noreferrer"` : "";
+        const attrs = href ? ` href="${safe(href)}"` : "";
         return `
           <${tag} class="list-row"${attrs}>
             <span class="dot ${stateClass(item.state)}"></span>

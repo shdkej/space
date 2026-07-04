@@ -1256,7 +1256,7 @@
       `).join("");
 
       const tags = (item.tags || []).map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("");
-      const firstCard = (item.cards || [])[0] || item.cover || "#";
+      const itemId = item.id || "";
       const downloadZip = item.download_zip || "#";
 
       els.detailContent.innerHTML = `
@@ -1289,7 +1289,7 @@
           </div>
 
           <div class="detail-actions">
-            <a class="action-link" href="${escapeHtml(firstCard)}" target="_blank" rel="noreferrer">첫 카드 열기</a>
+            <a class="action-link" href="#${escapeHtml(itemId)}" data-copy-thread="${escapeHtml(itemId)}">본문내용 복사하기</a>
             <a class="action-link" href="${escapeHtml(downloadZip)}" download="${escapeHtml(item.id || "card-news")}.zip">${(item.cards || []).length}장 ZIP 저장</a>
             <a class="action-link secondary" href="#${escapeHtml(item.id)}" data-copy-id="${escapeHtml(item.id)}">ID 복사</a>
           </div>
@@ -1316,6 +1316,7 @@
         const tagButton = event.target.closest("[data-tag]");
         const sortButton = event.target.closest("[data-sort]");
         const itemButton = event.target.closest("[data-id]");
+        const copyThreadLink = event.target.closest("[data-copy-thread]");
         const copyLink = event.target.closest("[data-copy-id]");
 
         if (formatButton) {
@@ -1350,6 +1351,20 @@
           state.sort = sortButton.dataset.sort;
           document.querySelectorAll("[data-sort]").forEach((button) => button.classList.toggle("active", button === sortButton));
           renderRows();
+          return;
+        }
+
+        if (copyThreadLink) {
+          event.preventDefault();
+          const item = LIBRARY.items.find((entry) => entry.id === copyThreadLink.dataset.copyThread);
+          const body = item?.thread || item?.takeaway || item?.subtitle || item?.title || "";
+          try {
+            await navigator.clipboard.writeText(body);
+            copyThreadLink.textContent = "본문내용 복사됨";
+          } catch (error) {
+            copyThreadLink.textContent = "복사 실패";
+          }
+          setTimeout(() => { copyThreadLink.textContent = "본문내용 복사하기"; }, 1200);
           return;
         }
 

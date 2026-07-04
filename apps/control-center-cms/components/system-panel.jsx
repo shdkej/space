@@ -1,0 +1,351 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { ExternalLink, RefreshCw } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { STATUS_META } from "@/lib/status-meta";
+
+const STATUS_RANK = { none: 0, planned: 0, operational: 0, maintenance: 1, degraded: 2, down: 3 };
+const LAYER_KEYS = ["direction_fit", "next_action_exists", "choice_accuracy", "artifact_matches_request"];
+const LAYER_KEY_LABELS = {
+  direction_fit: "방향",
+  next_action_exists: "다음 액션",
+  choice_accuracy: "선택",
+  artifact_matches_request: "요청 부합"
+};
+const HEARTBEAT_STALE_MS = 30 * 60 * 1000;
+
+function worst(statuses) {
+  return statuses.reduce(
+    (acc, s) => ((STATUS_RANK[s] ?? 0) > (STATUS_RANK[acc] ?? 0) ? s : acc),
+    "operational"
+  );
+}
+
+function Dot({ status }) {
+  const meta = STATUS_META[status] || STATUS_META.none;
+  return <span className={cn("inline-block h-2 w-2 rounded-full shrink-0", meta.dot)} aria-hidden />;
+}
+
+function fmtMs(ms) {
+  if (!ms) return "-";
+  return new Date(ms).toLocaleString("ko-KR", {
+    month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Seoul"
+  });
+}
+
+function fmtAge(hours) {
+  if (hours == null) return "없음";
+  if (hours < 1) return "1시간 이내";
+  if (hours < 48) return `${Math.round(hours)}시간 전`;
+  return `${Math.round(hours / 24)}일 전`;
+}
+
+function LayerHeader({ title, status }) {
+  return (
+    <div className="mt-8 mb-3 flex items-center gap-2">
+      <Dot status={status} />
+      <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">{title}</h2>
+    </div>
+  );
+}
+
+function cronRowStatuses(payload) {
+  return (payload?.crons || []).map((c) => c.status);
+}
+
+function freshnessStatuses(payload) {
+  return (payload?.freshness || []).map((f) => f.status);
+}
+
+function layerCheckStatus(payload) {
+  const rows = payload?.layer_checks || [];
+  if (!rows.length) return "none";
+  const latest = rows[rows.length - 1];
+  const fails = LAYER_KEYS.filter((k) => latest[k] === false).length;
+  if (fails >= 2) return "down";
+  if (fails === 1) return "degraded";
+  return "operational";
+}
+
+export default function SystemPanel() {
+  const [snapshot, setSnapshot] = useState(null);
+  const [actions, setActions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [snapRes, actRes] = await Promise.all([
+        fetch("/api/system/snapshot"),
+        fetch("/api/system/actions")
+      ]);
+      const snap = await snapRes.json();
+      const act = await actRes.json();
+      setSnapshot(snap.snapshot || null);
+      setActions(act.actions || []);
+      setMessage(null);
+    } catch (error) {
+      setMessage(`불러오기 실패: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  if (loading && !snapshot) {
+    return <p className="py-12 text-center text-sm text-muted-foreground">시스템 상태를 불러오는 중…</p>;
+  }
+  if (!snapshot) {
+    return (
+      <p className="py-12 text-center text-sm text-muted-foreground">
+        스냅샷이 없습니다. 수집기가 아직 push하지 않았습니다.
+      </p>
+    );
+  }
+
+  const payload = snapshot.payload || {};
+  const snapshotAge = Date.now() - new Date(snapshot.created_at).getTime();
+  const heartbeatDead = snapshotAge > HEARTBEAT_STALE_MS;
+  const pdcaStatus = payload.pdca?.status || "none";
+  const backlogStatuses = (payload.backlogs || []).map((b) => b.status);
+  const l1Status = worst([layerCheckStatus(payload)]);
+  const l2Status = worst([...cronRowStatuses(payload), ...backlogStatuses]);
+  const l4Status = worst(freshnessStatuses(payload));
+
+  return (
+    <div className="space-y-2">
+      {heartbeatDead ? (
+        <div className="rounded-md border border-[hsl(var(--down))] bg-[hsl(var(--down))]/10 px-4 py-3 text-sm">
+          수집기 죽음 — 마지막 스냅샷이 {fmtAge(snapshotAge / 3600000)}입니다. 이 화면의 모든 값은 그 시점 기준입니다.
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          스냅샷 {fmtMs(new Date(snapshot.created_at).getTime())} · 수집기 v{snapshot.collector_version}
+          {(payload.errors || []).length > 0 && ` · 섹션 오류 ${payload.errors.length}건`}
+          <Button variant="ghost" size="sm" className="ml-2 h-6 px-2" onClick={load}>
+            <RefreshCw className="h-3 w-3" />
+          </Button>
+        </p>
+      )}
+
+      <LayerHeader title="L1 삶 — PDCA 4지표" status={l1Status} />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">4지표 히트맵 (최근 7일)</CardTitle>
+            <CardDescription>방향 → 다음 액션 → 선택 → 요청 부합</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {(payload.layer_checks || []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                기록 시작 전 — 오늘 밤 4레이어 점검 크론부터 layer-check.jsonl에 쌓입니다.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="text-xs">
+                  <thead>
+                    <tr>
+                      <th className="pr-3 text-left font-normal text-muted-foreground">지표</th>
+                      {payload.layer_checks.map((row) => (
+                        <th key={row.date} className="px-1 font-normal text-muted-foreground">
+                          {String(row.date).slice(5)}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {LAYER_KEYS.map((key) => (
+                      <tr key={key}>
+                        <td className="pr-3 py-1 text-muted-foreground">{LAYER_KEY_LABELS[key]}</td>
+                        {payload.layer_checks.map((row) => (
+                          <td key={row.date + key} className="px-1 py-1 text-center">
+                            <Dot status={row[key] === true ? "operational" : row[key] === false ? "down" : "none"} />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">일일 리뷰</CardTitle>
+            <CardDescription>{payload.review?.latest || "리뷰 없음"}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm">{payload.review?.headline || "헤드라인을 찾지 못했습니다."}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <LayerHeader title="L2 업/시스템 — 크론 · 백로그 · 인프라" status={l2Status} />
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">크론 {payload.crons?.length ?? 0}개</CardTitle>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          {payload.crons == null ? (
+            <p className="text-sm text-muted-foreground">크론 수집 실패 — 섹션 오류를 확인하세요.</p>
+          ) : (
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-left text-muted-foreground">
+                  <th className="py-1 pr-2 font-normal">상태</th>
+                  <th className="py-1 pr-2 font-normal">이름</th>
+                  <th className="py-1 pr-2 font-normal">스케줄</th>
+                  <th className="py-1 pr-2 font-normal">마지막</th>
+                  <th className="py-1 pr-2 font-normal">다음</th>
+                  <th className="py-1 pr-2 font-normal">연속실패</th>
+                </tr>
+              </thead>
+              <tbody>
+                {payload.crons.map((c) => (
+                  <tr key={c.id} className="border-t border-border/60">
+                    <td className="py-1.5 pr-2"><Dot status={c.status} /></td>
+                    <td className="py-1.5 pr-2 max-w-56 truncate" title={c.name}>{c.name}</td>
+                    <td className="py-1.5 pr-2 whitespace-nowrap font-mono">{c.schedule} {c.tz}</td>
+                    <td className="py-1.5 pr-2 whitespace-nowrap">{fmtMs(c.last_run_at_ms)}</td>
+                    <td className="py-1.5 pr-2 whitespace-nowrap">{fmtMs(c.next_run_at_ms)}</td>
+                    <td className="py-1.5 pr-2">{c.consecutive_errors || 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </CardContent>
+      </Card>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">백로그</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {(payload.backlogs || []).map((b) => (
+              <div key={b.name} className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-2"><Dot status={b.status} /> {b.name}</span>
+                <span className="font-mono">{b.count} / 경고 {b.warn_at}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">인프라</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {(payload.links || []).map((l) => (
+              <a key={l.url} href={l.url} target="_blank" rel="noreferrer"
+                 className="flex items-center gap-2 text-sm text-primary hover:underline">
+                <ExternalLink className="h-3 w-3" /> {l.name}
+              </a>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <LayerHeader title="L3 워크플로우 — Infinity · PDCA 루프" status={worst([pdcaStatus])} />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Infinity 인텐트</CardTitle>
+            <CardDescription>
+              Inbox {payload.intents?.counts?.inbox ?? "-"} · Active {payload.intents?.counts?.active ?? "-"} ·
+              Waiting {payload.intents?.counts?.waiting ?? "-"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {["active", "waiting", "inbox"].flatMap((section) =>
+              (payload.intents?.items?.[section] || []).map((it) => (
+                <div key={it.id} className="text-sm">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="font-mono text-[10px]">{it.id}</Badge>
+                    <span className="truncate">{it.title}</span>
+                  </div>
+                  {it.gate && (
+                    <p className="mt-0.5 pl-1 text-xs text-[hsl(var(--warn))]">gate: {it.gate}</p>
+                  )}
+                </div>
+              ))
+            )}
+            {!payload.intents && <p className="text-sm text-muted-foreground">인텐트 수집 실패</p>}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Dot status={pdcaStatus} /> 검증 → 개선 루프
+            </CardTitle>
+            <CardDescription>Check가 쌓이는데 Act가 멈춰 있으면 루프가 닫히지 않는 것</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span>Check — 미해결 감시 항목</span>
+              <span className="font-mono">{payload.pdca?.check?.unresolved_items ?? "-"}건</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Check — 품질 게이트 실패 (7일)</span>
+              <span className="font-mono">{payload.pdca?.check?.failures_7d ?? "-"}건</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Act — 운영 규칙</span>
+              <span className="font-mono">{payload.pdca?.act?.lessons_count ?? "-"}개</span>
+            </div>
+            <div className="flex justify-between text-muted-foreground">
+              <span>Act 마지막 갱신</span>
+              <span>{payload.pdca?.act?.updated ? payload.pdca.act.updated.slice(0, 10) : "-"}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <LayerHeader title="L4 아티팩트 — 산출물 신선도" status={l4Status} />
+      <Card>
+        <CardContent className="pt-6">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {(payload.freshness || []).map((f) => (
+              <div key={f.name} className="flex items-center justify-between rounded-md border border-border/60 px-3 py-2 text-sm">
+                <span className="flex items-center gap-2"><Dot status={f.status} /> {f.name}</span>
+                <span className="text-xs text-muted-foreground">{fmtAge(f.age_hours)}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <LayerHeader title="액션 히스토리" status="none" />
+      <Card>
+        <CardContent className="pt-6 space-y-2">
+          {actions.length === 0 && <p className="text-sm text-muted-foreground">액션 이력이 없습니다.</p>}
+          {actions.map((a) => (
+            <div key={a.id} className="flex items-center justify-between text-xs">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="font-mono text-[10px]">{a.kind}</Badge>
+                {a.target ? <span className="font-mono">{a.target.slice(0, 8)}</span> : null}
+                <span className="text-muted-foreground">{a.result || ""}</span>
+              </span>
+              <span className={cn(
+                a.status === "done" && "text-[hsl(var(--ok))]",
+                a.status === "failed" && "text-[hsl(var(--down))]",
+                (a.status === "pending" || a.status === "running") && "text-[hsl(var(--warn))]"
+              )}>
+                {a.status}
+              </span>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+      {message && <p className="text-sm text-[hsl(var(--down))]">{message}</p>}
+    </div>
+  );
+}

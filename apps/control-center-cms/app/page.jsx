@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
+  Gauge,
   Image,
   Layers,
   Link2,
@@ -47,6 +48,7 @@ import {
   SheetFooter
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import SystemPanel from "@/components/system-panel";
 import {
   STATUS_META,
   STATUS_ORDER,
@@ -386,6 +388,9 @@ export default function Page() {
             <TabsTrigger value="activity">
               <Activity className="h-3.5 w-3.5" /> Activity
             </TabsTrigger>
+            <TabsTrigger value="system">
+              <Gauge className="h-3.5 w-3.5" /> 시스템
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="composition">
@@ -438,6 +443,10 @@ export default function Page() {
 
           <TabsContent value="activity">
             <ActivityFeed activity={activity} />
+          </TabsContent>
+
+          <TabsContent value="system">
+            <SystemPanel />
           </TabsContent>
         </Tabs>
       </main>

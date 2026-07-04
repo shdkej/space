@@ -19,9 +19,9 @@ const LAYER_KEY_LABELS = {
 const HEARTBEAT_STALE_MS = 30 * 60 * 1000;
 
 function worst(statuses) {
-  return statuses.reduce(
-    (acc, s) => ((STATUS_RANK[s] ?? 0) > (STATUS_RANK[acc] ?? 0) ? s : acc),
-    "operational"
+  if (!statuses.length) return "none";
+  return statuses.reduce((acc, s) =>
+    (STATUS_RANK[s] ?? 0) >= (STATUS_RANK[acc] ?? 0) ? s : acc
   );
 }
 
@@ -86,6 +86,8 @@ export default function SystemPanel() {
       ]);
       const snap = await snapRes.json();
       const act = await actRes.json();
+      if (!snapRes.ok) throw new Error(snap.error || `snapshot HTTP ${snapRes.status}`);
+      if (!actRes.ok) throw new Error(act.error || `actions HTTP ${actRes.status}`);
       setSnapshot(snap.snapshot || null);
       setActions(act.actions || []);
       setMessage(null);
@@ -106,7 +108,7 @@ export default function SystemPanel() {
   if (!snapshot) {
     return (
       <p className="py-12 text-center text-sm text-muted-foreground">
-        스냅샷이 없습니다. 수집기가 아직 push하지 않았습니다.
+        {message || "스냅샷이 없습니다. 수집기가 아직 push하지 않았습니다."}
       </p>
     );
   }

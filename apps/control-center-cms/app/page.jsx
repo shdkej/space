@@ -5,9 +5,11 @@ import {
   Activity,
   ChevronDown,
   ChevronUp,
+  Copy,
   ExternalLink,
   Eye,
   EyeOff,
+  Image,
   Layers,
   Link2,
   Moon,
@@ -87,6 +89,9 @@ export default function Page() {
   const [nodes, setNodes] = useState([]);
   const [items, setItems] = useState([]);
   const [activity, setActivity] = useState([]);
+  const [originalImages, setOriginalImages] = useState([]);
+  const [originalCursor, setOriginalCursor] = useState(null);
+  const [imagesLoading, setImagesLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
@@ -128,6 +133,27 @@ export default function Page() {
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  const loadOriginalImages = useCallback(async ({ append = false, cursor = null } = {}) => {
+    setImagesLoading(true);
+    try {
+      const params = new URLSearchParams({ kind: "original", limit: "60" });
+      if (cursor) params.set("cursor", cursor);
+      const res = await fetch(`/api/images?${params.toString()}`, { cache: "no-store" });
+      const payload = await res.json();
+      if (!res.ok) throw new Error(payload.error || "이미지를 불러오지 못했습니다.");
+      setOriginalImages((current) => (append ? [...current, ...(payload.images || [])] : payload.images || []));
+      setOriginalCursor(payload.cursor || null);
+    } catch (error) {
+      toast(error.message || "이미지를 불러오지 못했습니다.", "error");
+    } finally {
+      setImagesLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    loadOriginalImages();
+  }, [loadOriginalImages]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -307,6 +333,15 @@ export default function Page() {
     }
   }
 
+  async function copyImageUrl(url) {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast("이미지 URL을 복사했습니다.");
+    } catch {
+      toast("복사하지 못했습니다. 이미지를 새 탭에서 열어 URL을 복사하세요.", "error");
+    }
+  }
+
   return (
     <div className="min-h-screen">
       <Header
@@ -326,6 +361,9 @@ export default function Page() {
             </TabsTrigger>
             <TabsTrigger value="registry">
               <Square className="h-3.5 w-3.5" /> Surface Registry
+            </TabsTrigger>
+            <TabsTrigger value="images">
+              <Image className="h-3.5 w-3.5" /> Original Images
             </TabsTrigger>
             <TabsTrigger value="activity">
               <Activity className="h-3.5 w-3.5" /> Activity
@@ -367,6 +405,17 @@ export default function Page() {
             />
           </TabsContent>
 
+          <TabsContent value="images">
+            <OriginalImages
+              images={originalImages}
+              cursor={originalCursor}
+              loading={imagesLoading}
+              onRefresh={() => loadOriginalImages()}
+              onLoadMore={() => loadOriginalImages({ append: true, cursor: originalCursor })}
+              onCopy={copyImageUrl}
+            />
+          </TabsContent>
+
           <TabsContent value="activity">
             <ActivityFeed activity={activity} />
           </TabsContent>
@@ -396,6 +445,108 @@ export default function Page() {
       ) : null}
     </div>
   );
+}
+
+function OriginalImages({ images, cursor, loading, onRefresh, onLoadMore, onCopy }) {
+  const totalSize = images.reduce((sum, image) => sum + (image.size || 0), 0);
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
+          <div>
+            <CardTitle>Original Images</CardTitle>
+            <CardDescription>업로드된 원본 이미지를 모아 보고, 카드뉴스나 시안 작업에 쓸 URL을 복사합니다.</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading}>
+            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} /> 새로고침
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <div className="rounded-md border bg-background px-3 py-2">
+              <div className="text-lg font-semibold tabular-nums">{images.length}</div>
+              <div className="text-[11px] text-muted-foreground">불러온 원본</div>
+            </div>
+            <div className="rounded-md border bg-background px-3 py-2">
+              <div className="text-lg font-semibold tabular-nums">{formatBytes(totalSize)}</div>
+              <div className="text-[11px] text-muted-foreground">현재 표시 용량</div>
+            </div>
+            <div className="rounded-md border bg-background px-3 py-2">
+              <div className="text-lg font-semibold">{cursor ? "더 있음" : "끝"}</div>
+              <div className="text-[11px] text-muted-foreground">페이지 상태</div>
+            </div>
+          </div>
+
+          {images.length === 0 ? (
+            <div className="rounded-md border border-dashed py-12 text-center text-sm text-muted-foreground">
+              {loading ? "원본 이미지를 불러오는 중입니다." : "표시할 원본 이미지가 없습니다."}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {images.map((image) => (
+                <article key={image.key} className="overflow-hidden rounded-md border bg-card">
+                  <a href={image.url} target="_blank" rel="noreferrer" className="block bg-muted">
+                    <img
+                      src={image.url}
+                      alt=""
+                      loading="lazy"
+                      className="aspect-[4/3] w-full object-cover transition-opacity hover:opacity-90"
+                    />
+                  </a>
+                  <div className="space-y-2 p-3">
+                    <div className="min-h-[2.5rem] break-all text-xs font-medium leading-snug">{image.key}</div>
+                    <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+                      <span>{formatDate(image.uploaded)}</span>
+                      <span>{formatBytes(image.size)}</span>
+                    </div>
+                    <div className="flex gap-1.5">
+                      <Button variant="outline" size="sm" className="h-8 flex-1" onClick={() => onCopy(image.url)}>
+                        <Copy className="h-3.5 w-3.5" /> URL
+                      </Button>
+                      <Button asChild variant="outline" size="sm" className="h-8 flex-1">
+                        <a href={image.url} target="_blank" rel="noreferrer">
+                          <ExternalLink className="h-3.5 w-3.5" /> 열기
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {cursor ? (
+            <div className="mt-4 flex justify-center">
+              <Button variant="outline" onClick={onLoadMore} disabled={loading}>
+                {loading ? "불러오는 중" : "더 보기"}
+              </Button>
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function formatBytes(size) {
+  if (!Number.isFinite(size) || size <= 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  let value = size;
+  let index = 0;
+  while (value >= 1024 && index < units.length - 1) {
+    value /= 1024;
+    index += 1;
+  }
+  return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  return new Date(value).toLocaleDateString("ko-KR", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit"
+  });
 }
 
 function Header({ stats, dark, onToggleDark, onRefresh, onNewSurface, busy }) {

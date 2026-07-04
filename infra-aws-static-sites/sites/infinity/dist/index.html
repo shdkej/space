@@ -162,6 +162,12 @@
       display: inline-block; padding: 1px 6px; border-radius: 4px;
       font-size: 11px; background: #334155; color: var(--text);
     }
+    .badge.b-id {
+      background: #0b1220; color: #7dd3fc; border: 1px solid #155e75;
+      font-variant-numeric: tabular-nums;
+    }
+    .badge.b-age { background: #1f2937; color: #cbd5e1; }
+    .badge.b-stale { background: #7f1d1d; color: #fecaca; border: 1px solid #991b1b; }
     .empty {
       color: var(--muted); font-size: 12px; padding: 12px 6px;
     }
@@ -406,26 +412,18 @@
     <button id="refresh">새로고침</button>
   </header>
   <div id="error-host"></div>
-  <div class="summary-band" id="summary-band" aria-label="lane summary">
+  <div class="summary-band" id="summary-band" aria-label="flow summary">
     <div class="summary-item open" title="Inbox + Active + Waiting">
       <span class="summary-label">열린 루프</span>
       <span class="summary-value" id="sum-open">–</span>
     </div>
-    <div class="summary-item lane-inbox">
-      <span class="summary-label"><span class="dot inbox"></span>Inbox</span>
-      <span class="summary-value" id="sum-inbox">–</span>
+    <div class="summary-item lane-done" title="최근 7일 완료 수">
+      <span class="summary-label"><span class="dot done"></span>이번 주 완료</span>
+      <span class="summary-value" id="sum-week-done">–</span>
     </div>
-    <div class="summary-item lane-active">
-      <span class="summary-label"><span class="dot active"></span>Active</span>
-      <span class="summary-value" id="sum-active">–</span>
-    </div>
-    <div class="summary-item lane-waiting">
-      <span class="summary-label"><span class="dot waiting"></span>Waiting</span>
-      <span class="summary-value" id="sum-waiting">–</span>
-    </div>
-    <div class="summary-item lane-done">
-      <span class="summary-label"><span class="dot done"></span>Archive</span>
-      <span class="summary-value" id="sum-done">–</span>
+    <div class="summary-item lane-waiting" id="sum-stale-wrap" title="가장 오래 머문 열린 카드" hidden>
+      <span class="summary-label"><span class="dot waiting"></span>최장 체류</span>
+      <span class="summary-value" id="sum-stale">–</span>
     </div>
   </div>
   <main>
@@ -910,6 +908,13 @@
           || "";
     }
 
+    // 카드가 현재 레인에 며칠째 있는지. 날짜를 못 읽으면 null.
+    function ageDays(item, nowMs) {
+      const t = parseDateMs(pickUpdated(item));
+      if (isNaN(t)) return null;
+      return Math.max(0, Math.floor((nowMs - t) / 86400000));
+    }
+
     function splitTagList(value) {
       if (!value) return [];
       return String(value)
@@ -1065,7 +1070,7 @@
       });
       const titleEl = document.createElement("div");
       titleEl.className = "title";
-      titleEl.textContent = it.id ? "[" + it.id + "] " + it.title : it.title;
+      titleEl.textContent = it.title || it.id || "(제목 없음)";
       if (isDecision) {
         const kicker = document.createElement("div");
         kicker.className = "decision-kicker";
@@ -1106,10 +1111,19 @@
 
       const metaEl = document.createElement("div");
       metaEl.className = "meta";
-      const src = document.createElement("span");
-      src.className = "badge";
-      src.textContent = it.source || sourceLabel;
-      metaEl.appendChild(src);
+      // 제목은 내용으로 시작하고, id는 메타 줄의 배지로 내린다 (decision 카드는 kicker에 이미 id가 있음)
+      if (it.id && !isDecision) {
+        const idb = document.createElement("span");
+        idb.className = "badge b-id";
+        idb.textContent = it.id;
+        metaEl.appendChild(idb);
+      }
+      if (!compact) {
+        const src = document.createElement("span");
+        src.className = "badge";
+        src.textContent = it.source || sourceLabel;
+        metaEl.appendChild(src);
+      }
       if (st) {
         const b = document.createElement("span");
         const stKey = String(st).trim().toLowerCase().replace(/[-\s]+/g, "_");
@@ -1123,6 +1137,17 @@
         b.textContent = "제안: " + it.meta.proposed_by;
         metaEl.appendChild(b);
       }
+      // 열린 레인의 정체 가시화: 며칠째 머물러 있는지. 7일 이상은 경고색.
+      const lane = (opts && opts.lane) || "";
+      if (lane === "inbox" || lane === "active" || lane === "waiting") {
+        const days = ageDays(it, Date.now());
+        if (days !== null && days >= 1) {
+          const ab = document.createElement("span");
+          ab.className = "badge b-age" + (days >= 7 ? " b-stale" : "");
+          ab.textContent = "D+" + days;
+          metaEl.appendChild(ab);
+        }
+      }
       const up = pickUpdated(it);
       if (up) {
         const t = document.createElement("span");
@@ -1132,27 +1157,22 @@
       }
       card.appendChild(metaEl);
 
+      // 태그 다이어트: 카드에는 project 1개 + type 1개만. topics는 필터/상세용 데이터로만 유지.
       const projects = Array.isArray(it.meta.projects) ? it.meta.projects : splitTagList(it.meta.projects);
-      const topics = Array.isArray(it.meta.topics) ? it.meta.topics : splitTagList(it.meta.topics);
-      if (projects.length || it.meta.task_type || topics.length) {
+      const primaryProject = projects[0];
+      if (primaryProject || it.meta.task_type) {
         const tagsEl = document.createElement("div");
         tagsEl.className = "tags";
-        for (const p of projects) {
+        if (primaryProject) {
           const chip = document.createElement("span");
           chip.className = "tag project";
-          chip.textContent = p;
+          chip.textContent = primaryProject;
           tagsEl.appendChild(chip);
         }
         if (it.meta.task_type) {
           const chip = document.createElement("span");
           chip.className = "tag type";
           chip.textContent = it.meta.task_type;
-          tagsEl.appendChild(chip);
-        }
-        for (const topic of topics) {
-          const chip = document.createElement("span");
-          chip.className = "tag topic";
-          chip.textContent = topic;
           tagsEl.appendChild(chip);
         }
         card.appendChild(tagsEl);
@@ -1256,6 +1276,23 @@
       return out;
     }
 
+    // 접힌 월 그룹의 한 줄 요약: 개수 + 대표 프로젝트 분포 (펼치지 않고도 그 달의 축이 읽히게)
+    function monthSummaryLabel(month, items) {
+      const counts = new Map();
+      for (const it of items) {
+        const projects = Array.isArray(it.meta.projects) ? it.meta.projects : splitTagList(it.meta.projects);
+        const p = projects[0]
+          || String(it.id || "").split("-").slice(0, -1).join("-")
+          || "기타";
+        counts.set(p, (counts.get(p) || 0) + 1);
+      }
+      const top = Array.from(counts.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+      const parts = top.slice(0, 2).map(([k, v]) => k + " " + v);
+      const rest = top.slice(2).reduce((s, e) => s + e[1], 0);
+      if (rest) parts.push("기타 " + rest);
+      return month + " · " + items.length + "개" + (parts.length ? " — " + parts.join(" · ") : "");
+    }
+
     function archiveFilterQuery() {
       const el = document.getElementById("archive-filter-input");
       return el ? el.value.trim().toLowerCase() : "";
@@ -1339,7 +1376,7 @@
         const { recent, older } = partitionRecent(filtered, Date.now());
         if (recent.length) {
           appendGroupHeader(cards, "지난 14일", recent.length);
-          for (const it of recent) cards.appendChild(buildCard(it, sourceLabel, { compact: true }));
+          for (const it of recent) cards.appendChild(buildCard(it, sourceLabel, { compact: true, lane: "done" }));
         }
         if (older.length) {
           appendGroupHeader(cards, "이전", older.length);
@@ -1350,11 +1387,11 @@
             det.className = "month-group";
             if (filterActive) det.open = true;
             const sum = document.createElement("summary");
-            sum.textContent = month + " · " + items.length + "개";
+            sum.textContent = monthSummaryLabel(month, items);
             det.appendChild(sum);
             const box = document.createElement("div");
             box.className = "month-cards";
-            for (const it of items) box.appendChild(buildCard(it, sourceLabel, { compact: true }));
+            for (const it of items) box.appendChild(buildCard(it, sourceLabel, { compact: true, lane: "done" }));
             det.appendChild(box);
             cards.appendChild(det);
           }
@@ -1371,17 +1408,24 @@
         return;
       }
       for (const it of items) {
-        cards.appendChild(buildCard(it, sourceLabel, { compact: false }));
+        cards.appendChild(buildCard(it, sourceLabel, { compact: false, lane: key }));
       }
     }
 
-    function renderSummary(counts) {
+    // 레인별 개수는 컬럼 헤더가 이미 보여주므로, 요약 밴드는 흐름(이번 주 완료·최장 체류)만 담는다.
+    function renderSummary(counts, flow) {
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
-      set("sum-inbox", counts.inbox);
-      set("sum-active", counts.active);
-      set("sum-waiting", counts.waiting);
-      set("sum-done", counts.done);
       set("sum-open", counts.inbox + counts.active + counts.waiting);
+      set("sum-week-done", flow.weekDone);
+      const staleWrap = document.getElementById("sum-stale-wrap");
+      if (staleWrap) {
+        if (flow.stale) {
+          staleWrap.hidden = false;
+          set("sum-stale", flow.stale.id + " D+" + flow.stale.days);
+        } else {
+          staleWrap.hidden = true;
+        }
+      }
     }
 
     async function loadAndRender() {
@@ -1430,12 +1474,23 @@
       renderColumn("waiting", waitingItems, "Waiting");
       renderColumn("done",    doneItems,    "GATES.md");
 
+      const nowMs = Date.now();
+      const weekDone = doneItems.filter(it => {
+        const t = parseDateMs(pickCompleted(it));
+        return !isNaN(t) && t >= nowMs - 7 * 86400000;
+      }).length;
+      let stale = null;
+      for (const it of [...inboxItems, ...activeItems, ...waitingItems]) {
+        const days = ageDays(it, nowMs);
+        if (days === null) continue;
+        if (!stale || days > stale.days) stale = { id: it.id || "?", days };
+      }
       renderSummary({
         inbox: inboxItems.length,
         active: activeItems.length,
         waiting: waitingItems.length,
         done: doneItems.length,
-      });
+      }, { weekDone, stale: stale && stale.days >= 1 ? stale : null });
 
       // Archive 필터 재적용을 위해 최신 doneItems 보관
       lastDoneItems = doneItems;

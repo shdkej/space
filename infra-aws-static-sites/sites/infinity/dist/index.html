@@ -1189,6 +1189,7 @@
 
     // 카드에서 바로 읽혀야 하는 핵심 필드. 앞의 두 개(바뀌는 것/완료 기준)는 강조 표시.
     const KEY_FIELD_ROWS = [
+      ["goal", "목표", true],
       ["expected_artifact", "바뀌는 것", true],
       ["expected_impact", "기대 효과", true],
       ["success_criteria", "완료 기준", true],
@@ -1196,6 +1197,7 @@
       ["rationale", "왜", false],
       ["source_signal", "근거 신호", false],
       ["source_note", "근거 노트", false],
+      ["gate", "게이트", false],
     ];
     function buildKeyFields(it) {
       const rows = KEY_FIELD_ROWS.filter(([key]) => it.meta && it.meta[key]);

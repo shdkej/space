@@ -37,6 +37,12 @@ variable "upload_api_token" {
   sensitive   = true
 }
 
+variable "delete_api_token" {
+  description = "CMS가 이미지 소프트 삭제 시 Authorization: Bearer 헤더로 보낼 관리자 토큰"
+  type        = string
+  sensitive   = true
+}
+
 variable "max_width" {
   description = "리사이즈 최대 가로 픽셀 (이보다 크면 축소, 작으면 원본 유지)"
   type        = number

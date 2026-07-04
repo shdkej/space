@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const IMAGE_BASE_URL = process.env.IMAGE_CMS_BASE_URL || "https://upload.shdkej.com";
-const IMAGE_ADMIN_TOKEN = process.env.IMAGE_ADMIN_TOKEN || process.env.CLOUDFLARE_IMAGE_UPLOAD_TOKEN || "";
+const IMAGE_ADMIN_TOKEN = process.env.IMAGE_ADMIN_TOKEN || "";
 
 export async function GET(request) {
   try {

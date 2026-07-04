@@ -10,6 +10,7 @@
 //   BUCKET           R2 버킷
 //   IMAGES           Cloudflare Images 바인딩 (인프라가 변환 처리 — Worker CPU/wasm 부담 없음)
 //   UPLOAD_TOKEN     업로드 인증용 Bearer 토큰
+//   DELETE_TOKEN     삭제/휴지통 이동 인증용 Bearer 토큰
 //   PUBLIC_BASE_URL  조회용 공개 베이스 URL (예: https://img.shdkej.com)
 //   MAX_WIDTH        리사이즈 최대 가로 픽셀
 //   OUTPUT_FORMAT    저장 포맷 (예: image/webp)
@@ -27,7 +28,7 @@ export default {
     }
 
     if (request.method === "DELETE" && url.pathname === "/object") {
-      if (!isAuthorized(request, env)) {
+      if (!isDeleteAuthorized(request, env)) {
         return json({ error: "unauthorized" }, 401);
       }
       return softDeleteImage(request, env);
@@ -58,6 +59,11 @@ export default {
 function isAuthorized(request, env) {
   const header = request.headers.get("Authorization") || "";
   return header === `Bearer ${env.UPLOAD_TOKEN}`;
+}
+
+function isDeleteAuthorized(request, env) {
+  const header = request.headers.get("Authorization") || "";
+  return Boolean(env.DELETE_TOKEN) && header === `Bearer ${env.DELETE_TOKEN}`;
 }
 
 // multipart/form-data(file 필드) 또는 raw body 둘 다 허용

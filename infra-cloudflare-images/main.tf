@@ -45,6 +45,11 @@ resource "cloudflare_workers_script" "uploader" {
       text = var.upload_api_token
     },
     {
+      name = "DELETE_TOKEN"
+      type = "secret_text"
+      text = var.delete_api_token
+    },
+    {
       name = "PUBLIC_BASE_URL"
       type = "plain_text"
       text = "https://${var.public_domain}"

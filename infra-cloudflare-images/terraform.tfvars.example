@@ -13,6 +13,9 @@ upload_route  = "upload.shdkej.com/*" # 업로드 Worker 라우트
 # OpenClaw가 업로드 시 사용할 Bearer 토큰 (openssl rand -hex 32 등으로 생성)
 upload_api_token = "여기에_랜덤_시크릿_토큰"
 
+# CMS가 이미지 소프트 삭제 시 사용할 별도 Bearer 토큰 (업로드 토큰과 다르게 생성)
+delete_api_token = "여기에_삭제_전용_랜덤_시크릿_토큰"
+
 # 선택
 max_width     = 1600
 output_format = "image/webp"

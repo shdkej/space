@@ -76,6 +76,7 @@ export default function SystemPanel() {
   const [actions, setActions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
+  const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -97,6 +98,30 @@ export default function SystemPanel() {
       setLoading(false);
     }
   }, []);
+
+  const requestAction = useCallback(
+    async (kind, target = null) => {
+      const label = kind === "cron_enable" ? "크론 켜기" : kind === "cron_disable" ? "크론 끄기" : "수집기 실행";
+      if (!window.confirm(`${label} 요청을 큐에 넣습니다. 반영은 최대 10분 걸립니다.`)) return;
+      setBusy(true);
+      try {
+        const res = await fetch("/api/system/actions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ kind, target })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "요청 실패");
+        setMessage(null);
+        await load();
+      } catch (error) {
+        setMessage(`액션 실패: ${error.message}`);
+      } finally {
+        setBusy(false);
+      }
+    },
+    [load]
+  );
 
   useEffect(() => {
     load();
@@ -134,6 +159,10 @@ export default function SystemPanel() {
           {(payload.errors || []).length > 0 && ` · 섹션 오류 ${payload.errors.length}건`}
           <Button variant="ghost" size="sm" className="ml-2 h-6 px-2" onClick={load}>
             <RefreshCw className="h-3 w-3" />
+          </Button>
+          <Button variant="outline" size="sm" className="ml-1 h-6 px-2 text-xs" disabled={busy}
+                  onClick={() => requestAction("collector_run_now")}>
+            수집기 지금 실행
           </Button>
         </p>
       )}
@@ -209,6 +238,7 @@ export default function SystemPanel() {
                   <th className="py-1 pr-2 font-normal">마지막</th>
                   <th className="py-1 pr-2 font-normal">다음</th>
                   <th className="py-1 pr-2 font-normal">연속실패</th>
+                  <th className="py-1 font-normal">조작</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,6 +250,17 @@ export default function SystemPanel() {
                     <td className="py-1.5 pr-2 whitespace-nowrap">{fmtMs(c.last_run_at_ms)}</td>
                     <td className="py-1.5 pr-2 whitespace-nowrap">{fmtMs(c.next_run_at_ms)}</td>
                     <td className="py-1.5 pr-2">{c.consecutive_errors || 0}</td>
+                    <td className="py-1.5">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs"
+                        disabled={busy}
+                        onClick={() => requestAction(c.enabled ? "cron_disable" : "cron_enable", c.id)}
+                      >
+                        {c.enabled ? "끄기" : "켜기"}
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

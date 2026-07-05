@@ -17,6 +17,17 @@ const LAYER_KEY_LABELS = {
   artifact_matches_request: "요청 부합"
 };
 const HEARTBEAT_STALE_MS = 30 * 60 * 1000;
+const EFFECT_ROWS = [
+  { key: "e1", label: "L1 조정 반영율" },
+  { key: "e2", label: "L2 실패 재발율" },
+  { key: "e3", label: "L3 채택안 생존율" },
+  { key: "e4", label: "L4 산출물 참조율" }
+];
+
+function fmtRate(m) {
+  if (!m || !m.den) return "미기록";
+  return `${Math.round((m.num / m.den) * 100)}% (${m.num}/${m.den})`;
+}
 
 function worst(statuses) {
   if (!statuses.length) return "none";
@@ -208,6 +219,34 @@ export default function SystemPanel() {
                   </tbody>
                 </table>
               </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Dot status={payload.effectiveness?.ledger_status || "none"} /> 지연 게이트 (효과)
+            </CardTitle>
+            <CardDescription>히트맵이 &quot;오늘 지켰나&quot;라면, 여기는 &quot;그 판단이 살아남았나&quot;</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-1 text-sm">
+            {!payload.effectiveness || payload.effectiveness.ledger_status === "none" ? (
+              <p className="text-sm text-muted-foreground">
+                기록 시작 전 — 밤 점검이 effectiveness.jsonl에 쌓기 시작하면 표시됩니다.
+              </p>
+            ) : (
+              <>
+                {EFFECT_ROWS.map((r) => (
+                  <div key={r.key} className="flex justify-between">
+                    <span>{r.label} ({payload.effectiveness[r.key]?.window_days ?? "-"}일)</span>
+                    <span className="font-mono">{fmtRate(payload.effectiveness[r.key])}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between text-muted-foreground">
+                  <span>판정 대기 결정</span>
+                  <span className="font-mono">{payload.effectiveness.decisions_pending ?? 0}건</span>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

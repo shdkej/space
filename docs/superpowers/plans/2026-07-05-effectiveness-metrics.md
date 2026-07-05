@@ -37,7 +37,7 @@
 **Interfaces:**
 - Produces: 밤 점검 크론이 읽는 지연 게이트 판정 절차 (크론 프롬프트 수정 없이 정본 경유로 동작 — layer-check와 같은 방식). Task 2의 스크립트 호출 경로 `python3 /home/ubuntu/workspace/system-dashboard/collector/effectiveness.py`를 정본이 참조한다.
 
-- [ ] **Step 1: 정본에 지연 게이트 소절 추가**
+- [x] **Step 1: 정본에 지연 게이트 소절 추가**
 
 `LIFE_SYSTEM_WORKFLOW_ARTIFACT.md`의 `## 필수 품질 게이트` 섹션 안, `운영 원칙:` 블록 **바로 앞**에 다음을 삽입:
 
@@ -72,7 +72,7 @@
 - 판정(verdict) 줄은 밤 점검만 쓴다: `{"judged_at":"YYYY-MM-DD","id":"슬러그","verdict":"survived|overturned","reason":"한 줄"}`
 ```
 
-- [ ] **Step 2: quality-gates README에 원장 2개 추가**
+- [x] **Step 2: quality-gates README에 원장 2개 추가**
 
 `system/data/quality-gates/README.md`의 JSONL 예시 블록 **뒤에** 다음을 추가하고, 기존 failures 예시 JSON에 `"cause":"kebab-case-슬러그"` 필드를 삽입 (`"task"` 앞):
 
@@ -85,7 +85,7 @@
 - `effectiveness.jsonl` — 밤 점검이 하루 1줄, E1~E4 분자·분모만 기록 (비율은 대시보드가 파생).
 ```
 
-- [ ] **Step 3: SKILL.md에 포인터 추가**
+- [x] **Step 3: SKILL.md에 포인터 추가**
 
 `skills/life-system-workflow-artifact-check/SKILL.md`의 `- 점검을 마치면 4지표 판정을 ... append한다.` 줄 바로 아래에 추가:
 
@@ -93,12 +93,12 @@
 - 이어서 지연 게이트(E1~E4)를 판정해 `system/data/quality-gates/effectiveness.jsonl`에 append한다. 절차의 정본은 `system/docs/LIFE_SYSTEM_WORKFLOW_ARTIFACT.md`의 지연 게이트 소절이다.
 ```
 
-- [ ] **Step 4: 검증 — 정본 일관성 확인**
+- [x] **Step 4: 검증 — 정본 일관성 확인**
 
 Run: `grep -c "effectiveness.jsonl" /home/ubuntu/.openclaw/workspace/system/docs/LIFE_SYSTEM_WORKFLOW_ARTIFACT.md /home/ubuntu/.openclaw/workspace/system/data/quality-gates/README.md /home/ubuntu/.openclaw/workspace/skills/life-system-workflow-artifact-check/SKILL.md`
 Expected: 세 파일 모두 1 이상.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /home/ubuntu/.openclaw/workspace
@@ -121,7 +121,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - Consumes: `failures.jsonl`의 `cause` 필드 (Task 1 규칙), manifest.yaml.
 - Produces: CLI `python3 effectiveness.py [--date YYYY-MM-DD] [--config manifest.yaml]` → stdout JSON `{"date":..., "e2":{"logged":n,"recurred":m,"recurred_causes":[...]}, "e4":{"matured":n,"referenced":m,"dead":[...]}}`. 함수 `judge_e2(failures_path, date)`, `judge_e4(repos, date, globs)` — Task 1의 밤 점검 절차와 테스트가 사용.
 
-- [ ] **Step 1: manifest에 effectiveness 섹션 추가**
+- [x] **Step 1: manifest에 effectiveness 섹션 추가**
 
 `manifest.yaml` 끝(`links:` 섹션 앞 아무 곳, 기존 pdca 섹션 뒤 권장)에 추가 — pdca 섹션처럼 절대 경로를 쓴다:
 
@@ -137,7 +137,7 @@ effectiveness:
   stale_after_days: 2      # 원장 최신 줄이 이보다 오래되면 기록이 죽은 것
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `collector/tests/test_effectiveness.py`:
 
@@ -254,12 +254,12 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-- [ ] **Step 3: 테스트가 실패하는지 확인**
+- [x] **Step 3: 테스트가 실패하는지 확인**
 
 Run: `cd /home/ubuntu/workspace/system-dashboard/collector && python3 -m unittest tests.test_effectiveness -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'effectiveness'`
 
-- [ ] **Step 4: effectiveness.py 구현**
+- [x] **Step 4: effectiveness.py 구현**
 
 ```python
 """E2(실패 재발)·E4(산출물 참조) 결정적 판정.
@@ -380,17 +380,17 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 Run: `cd /home/ubuntu/workspace/system-dashboard/collector && python3 -m unittest tests.test_effectiveness -v`
 Expected: PASS (전체). 기존 테스트도 확인: `python3 -m unittest discover tests -v` → PASS.
 
-- [ ] **Step 6: CLI 실측 1회**
+- [x] **Step 6: CLI 실측 1회**
 
 Run: `cd /home/ubuntu/workspace/system-dashboard/collector && python3 effectiveness.py`
 Expected: `{"date":"...","e2":{"logged":0,...},"e4":{...}}` JSON 1줄 (현재 원장이 비어 있어 e2는 0, e4는 실제 레포 30일 전 생성 파일에 따라 0 이상).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd /home/ubuntu/workspace/system-dashboard
@@ -414,7 +414,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
   `{"ledger_status":"operational|down|none","latest_date":str|None,"e1":{"window_days":7,"num":m,"den":n},"e2":{...30},"e3":{...30},"e4":{...30},"decisions_pending":k}`
   (e1 num=reflected/den=adjustments, e2 num=recurred/den=logged, e3 num=survived/den=judged, e4 num=referenced/den=matured)
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/test_collector.py` 끝(`if __name__` 앞)에 추가:
 
@@ -468,12 +468,12 @@ class TestEffectiveness(unittest.TestCase):
             self.assertEqual(out["ledger_status"], "down")
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 Run: `cd /home/ubuntu/workspace/system-dashboard/collector && python3 -m unittest tests.test_collector.TestEffectiveness -v`
 Expected: FAIL — `AttributeError: module 'collector' has no attribute 'collect_effectiveness'`
 
-- [ ] **Step 3: collect_effectiveness 구현**
+- [x] **Step 3: collect_effectiveness 구현**
 
 `collector.py`의 `collect_layer_checks` 함수 아래에 추가:
 
@@ -534,17 +534,17 @@ def collect_effectiveness(cfg):
         ("effectiveness", lambda: collect_effectiveness(cfg["effectiveness"])),
 ```
 
-- [ ] **Step 4: 전체 테스트 통과 확인**
+- [x] **Step 4: 전체 테스트 통과 확인**
 
 Run: `cd /home/ubuntu/workspace/system-dashboard/collector && python3 -m unittest discover tests -v`
 Expected: 전체 PASS.
 
-- [ ] **Step 5: 수집기 실측 1회 (dry)**
+- [x] **Step 5: 수집기 실측 1회 (dry)**
 
 Run: `cd /home/ubuntu/workspace/system-dashboard/collector && python3 -c "import yaml,json,collector;cfg=yaml.safe_load(open('manifest.yaml').read());print(json.dumps(collector.collect_effectiveness(cfg['effectiveness']),ensure_ascii=False))"`
 Expected: `{"ledger_status":"none",...}` (원장이 아직 없으므로 none — 기록 시작 전 상태).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /home/ubuntu/workspace/system-dashboard
@@ -564,7 +564,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 **Interfaces:**
 - Consumes: snapshot payload의 `effectiveness` 키 (Task 3 스키마). payload에 키가 없거나 null이면 "기록 시작 전" 표시 (수집기 미배포/섹션 오류에도 화면이 죽지 않아야 함).
 
-- [ ] **Step 1: 지연 게이트 카드 추가**
+- [x] **Step 1: 지연 게이트 카드 추가**
 
 `system-panel.jsx` 상단 상수 영역(`LAYER_KEY_LABELS` 아래)에 추가:
 
@@ -615,12 +615,12 @@ L1 grid에서 `4지표 히트맵` Card와 `일일 리뷰` Card 사이에 카드 
         </Card>
 ```
 
-- [ ] **Step 2: 빌드 검증**
+- [x] **Step 2: 빌드 검증**
 
 Run: `cd /home/ubuntu/workspace/space/apps/control-center-cms && npm run build`
 Expected: 빌드 성공 (exit 0). 실패 시 JSX 문법 확인.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /home/ubuntu/workspace/space
@@ -642,7 +642,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 **Interfaces:**
 - Produces: 로컬 워크플로우 세션이 결론 확정 시 decisions.jsonl에 결정 줄을 남기는 규칙 (Task 1 정본과 같은 스키마).
 
-- [ ] **Step 1: 결정 기록 섹션 추가**
+- [x] **Step 1: 결정 기록 섹션 추가**
 
 `workflow-master.md` 파일 끝에 추가:
 
@@ -656,7 +656,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - 정본: `/home/ubuntu/.openclaw/workspace/system/docs/LIFE_SYSTEM_WORKFLOW_ARTIFACT.md` 지연 게이트 소절
 ```
 
-- [ ] **Step 2: 검증 및 Commit**
+- [x] **Step 2: 검증 및 Commit**
 
 Run: `grep -c "decisions.jsonl" /home/ubuntu/workspace/prompt-archive/.agent/workflows/workflow-master.md`
 Expected: 1 이상.

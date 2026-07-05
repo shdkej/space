@@ -5,7 +5,7 @@
 
 ## 디자인 원칙
 
-- **한 화면 (one screen)**: 첫 화면에서 시스템 상태가 스크롤 없이 드러난다. 히어로(전체 온도) + 4카드(System / Surfaces / Agents / Deploy).
+- **한 화면 (one screen)**: 첫 화면에서 시스템 상태가 스크롤 없이 드러난다. 히어로(전체 온도) + 4카드(System / Surfaces / Agents / Output). Deploy 탭은 Surfaces와 중복이라 Output(산출물 신선도)으로 교체(2026-07-05) — Agents(누가 도는가)↔Output(뭐가 쌓이는가) 쌍.
 - **샘(Saem)이 주인공, HUD는 그 위에 뜬다**: 배경의 3D 샘 씬이 무대(主)이고, 상태 카드는 투명 글래스로 그 위에 떠 있다.
 - **브랜드 정본 준수**: 캐릭터는 BRAND.md의 샘 — 이끼 조약돌 정령. 과장된 귀여움·큰 눈 금지, 씬 안에 텍스트/로고 렌더 금지.
 - **팔레트**: 화이트 크림 `#f5f4f1` + 웜 그레이지 + 올리브 이끼 + 은은한 아침빛. 누런기 억제(2026-07-05 피드백 "너무 누래서 하얗게"), 그림자는 웜 그레이(pure black 금지).
@@ -46,7 +46,7 @@
 | 파일 | 생산자 | 케이던스 | 내용 |
 |------|--------|----------|------|
 | `status.json` | `scripts/build-status-json.py` (배포 시) | 배포마다 | surfaces·deployments·정적 agents(폴백용) |
-| `agents-live.json` | `~/workspace/system-dashboard/collector` (systemd timer) | 10분 | OpenClaw 에이전트 로스터 롤업 — 종류·emoji·건강·크론 수·마지막 활동. 크론 상세는 CMS (스펙: `2026-07-05-status-agents-live-design.md`) |
+| `agents-live.json` | `~/workspace/system-dashboard/collector` (systemd timer) | 10분 | `agents`(에이전트 로스터 롤업 — 종류·emoji·건강·크론 수·마지막 활동) + `outputs`(산출물 신선도 — 이름·상태·경과시간). 크론 상세는 CMS (스펙: `2026-07-05-status-agents-live-design.md`) |
 
 Agents 패널은 `agents-live.json`이 30분 이내면 라이브 렌더, 아니면 정적 agents + "Live feed silent" 경고 행. **S3 sync 시 `--exclude "agents-live.json"`을 반드시 유지** — 수집기가 올린 파일을 배포가 지우면 안 된다.
 

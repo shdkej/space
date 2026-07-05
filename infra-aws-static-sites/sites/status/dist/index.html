@@ -1026,7 +1026,7 @@
           <section class="detail-panel" id="panel-system" aria-label="System detail"></section>
           <section class="detail-panel" id="panel-surfaces" aria-label="Surfaces detail"></section>
           <section class="detail-panel" id="panel-agents" aria-label="Agents detail"></section>
-          <section class="detail-panel" id="panel-deploy" aria-label="Deploy detail"></section>
+          <section class="detail-panel" id="panel-output" aria-label="Output detail"></section>
         </div>
       </section>
 
@@ -1040,7 +1040,7 @@
         { id: "system", label: "System" },
         { id: "surfaces", label: "Surfaces" },
         { id: "agents", label: "Agents" },
-        { id: "deploy", label: "Deploy" },
+        { id: "output", label: "Output" },
       ];
       let currentTab = "system";
       let model = null;
@@ -1085,6 +1085,13 @@
         return `${Math.round(hours / 24)}d ago`;
       };
 
+      const relHours = (hours) => {
+        if (hours == null) return "never";
+        if (hours < 1) return "under 1h";
+        if (hours < 48) return `${Math.round(hours)}h ago`;
+        return `${Math.round(hours / 24)}d ago`;
+      };
+
       const LIVE_FRESH_MINUTES = 30;
 
       async function loadAgentsLive() {
@@ -1094,9 +1101,14 @@
           const data = await res.json();
           if (!Array.isArray(data.agents) || data.agents.length === 0) throw new Error("empty");
           const ageMinutes = Math.round((Date.now() - new Date(data.generatedAt).getTime()) / 60000);
-          return { live: ageMinutes >= 0 && ageMinutes <= LIVE_FRESH_MINUTES, ageMinutes, agents: data.agents };
+          return {
+            live: ageMinutes >= 0 && ageMinutes <= LIVE_FRESH_MINUTES,
+            ageMinutes,
+            agents: data.agents,
+            outputs: Array.isArray(data.outputs) ? data.outputs : [],
+          };
         } catch (_error) {
-          return { live: false, ageMinutes: null, agents: null };
+          return { live: false, ageMinutes: null, agents: null, outputs: [] };
         }
       }
 
@@ -1187,7 +1199,8 @@
               meta: a.crons > 0 ? `${a.crons} loops` : "idle",
             }))
           : (data.agents || []).map((a) => ({ ...a, meta: stateLabel(a.state) }));
-        const deployments = data.deployments || [];
+        const outputs = (isLive ? liveFeed.outputs : []) || [];
+        const freshOutputs = outputs.filter((item) => item.state === "ok").length;
         const okChecks = checks.filter((item) => item.state === "ok").length;
         const okAgents = agents.filter((item) => item.state === "ok").length;
         const totalAgents = agents.length;
@@ -1207,7 +1220,6 @@
           ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length)
           : 0;
         const score = Number.isFinite(Number(overall.score)) ? Number(overall.score) : 0;
-        const deployOk = deployments.filter((item) => item.state === "ok").length;
 
         return {
           generatedAt: data.generatedAt,
@@ -1242,12 +1254,12 @@
               state: !isLive ? "warn" : okAgents === totalAgents ? "ok" : "warn",
             },
             {
-              id: "deploy",
-              label: "Deploy",
-              value: `${deployOk}/${deployments.length}`,
-              title: "targets",
-              status: deployOk === deployments.length ? "all live" : "check targets",
-              state: deployOk === deployments.length ? "ok" : "warn",
+              id: "output",
+              label: "Output",
+              value: !isLive ? "--" : `${freshOutputs}/${outputs.length}`,
+              title: "fresh",
+              status: !isLive ? "feed silent" : freshOutputs === outputs.length ? "all fresh" : "check outputs",
+              state: !isLive ? "warn" : freshOutputs === outputs.length ? "ok" : "warn",
             },
           ],
           panels: {
@@ -1263,7 +1275,7 @@
               rows: [
                 { name: "Overall", state: overall.state || "ok", detail: overall.label || "Feed loaded.", meta: stateLabel(overall.state) },
                 { name: "Generated", state: "ok", detail: `status.json · ${stamp(data.generatedAt)}`, meta: "fresh" },
-                { name: "Coverage", state: "ok", detail: `${checks.length} surfaces, ${agents.length} agent lanes, ${deployments.length} deploy targets`, meta: "mapped" },
+                { name: "Coverage", state: "ok", detail: `${checks.length} surfaces, ${totalAgents} agents, ${outputs.length} outputs`, meta: "mapped" },
               ],
             },
             surfaces: {
@@ -1294,22 +1306,30 @@
               ],
               rows: agentRows,
             },
-            deploy: {
-              title: "Deploy Lane",
-              score: `${deployOk}/${deployments.length}`,
-              sub: "각 표면이 어디에 올라가 있고 어떤 경로로 노출되는지 보여줍니다.",
+            output: {
+              title: "Output",
+              score: !isLive ? "--" : `${freshOutputs}/${outputs.length}`,
+              sub: isLive
+                ? "에이전트가 쌓는 산출물의 신선도입니다 — 마지막 갱신 경과로 봅니다."
+                : "라이브 피드가 조용합니다 — 산출물 신선도를 알 수 없습니다.",
               summary: [
-                ["OK", deployOk],
-                ["Targets", deployments.length],
-                ["Route", "edge"],
+                ["Fresh", isLive ? freshOutputs : "--"],
+                ["Outputs", isLive ? outputs.length : "--"],
+                ["Feed", isLive ? `${liveFeed.ageMinutes}m ago` : "silent"],
               ],
-              rows: deployments.map((item) => ({
-                name: item.name,
-                state: item.state,
-                detail: `${host(item.url)} · ${item.hosting || "hosting"} · ${stamp(item.updatedAt)}`,
-                meta: item.distribution || item.hosting || "deploy",
-                href: item.url,
-              })),
+              rows: isLive
+                ? outputs.map((item) => ({
+                    name: item.name,
+                    state: item.state,
+                    detail: `last updated ${relHours(item.ageHours)}`,
+                    meta: relHours(item.ageHours),
+                  }))
+                : [{
+                    name: "Live feed silent",
+                    state: "warn",
+                    detail: "agents-live.json이 없거나 오래됐습니다 — 수집기 신호를 확인하세요.",
+                    meta: "stale",
+                  }],
             },
           },
         };

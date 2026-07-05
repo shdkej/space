@@ -1,7 +1,9 @@
 # Status Agents 섹션 — 실제 에이전트(크론) 라이브 피드
 
 날짜: 2026-07-05
-상태: 사용자 설계 승인 완료 (A안: 수집기 S3 발행)
+상태: 구현 완료 + 사용자 피드백으로 payload 전환 (2026-07-05)
+
+> **전환 기록**: 첫 구현은 크론 23개 전체를 발행했으나, 사용자 피드백 "그냥 에이전트 종류가 나오면 되고 크론은 CMS에서 보면 돼"로 **에이전트 로스터 롤업**으로 변경. payload는 `{name(identity), emoji, state(에이전트별 크론 worst 롤업), crons(수), lastActivityAt}`. 크론 이름·스케줄·UUID는 발행하지 않는다.
 대상: `~/workspace/system-dashboard/collector/` (발행) + `infra-aws-static-sites/sites/status/dist/` (소비)
 
 ## 배경 / 문제

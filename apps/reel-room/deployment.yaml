@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reel-room
+  namespace: default
+  labels:
+    app: reel-room
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reel-room
+  template:
+    metadata:
+      labels:
+        app: reel-room
+    spec:
+      containers:
+        - name: app
+          image: python:3.12-slim
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VIDAUTO_MAX_CONCURRENT_JOBS
+              value: "1"
+            - name: VIDAUTO_MAX_UPLOAD_MB
+              value: "2048"
+            - name: VIDAUTO_JOB_MAX_COUNT
+              value: "10"
+          ports:
+            - containerPort: 8000
+              name: http
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              apt-get update
+              apt-get install -y --no-install-recommends ffmpeg git
+              rm -rf /var/lib/apt/lists/*
+              git clone --depth=1 https://github.com/shdkej/video-automation.git /repo
+              cp -R /repo/. /app
+              cd /app
+              pip install --no-cache-dir -r requirements.txt -r requirements-web.txt
+              exec python -m uvicorn web.app:app --host 0.0.0.0 --port 8000
+          volumeMounts:
+            - name: jobs
+              mountPath: /app/web/jobs
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 600
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 4
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+      volumes:
+        - name: jobs
+          emptyDir:
+            sizeLimit: 15Gi

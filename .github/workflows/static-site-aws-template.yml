@@ -189,9 +189,11 @@ jobs:
 
       - name: Sync S3
         run: |
+          # agents-live.json은 수집기(system-dashboard collector)가 올리는 파일 — 배포가 지우면 안 된다
           aws s3 sync "${{ matrix.build_dir }}/" \
             "s3://${{ steps.target.outputs.bucket }}" \
             --delete \
+            --exclude "agents-live.json" \
             --cache-control "public,max-age=60"
 
       - name: Upload extensionless HTML routes

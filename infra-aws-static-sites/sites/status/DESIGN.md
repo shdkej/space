@@ -41,6 +41,15 @@
 - 전환: 카드·내비·홈·뒤로가기 모두 화면 전체로 퍼지는 transition-flash를 쓴다(사용자가 가장 좋아하는 이펙트 — 빼지 말 것). 패널 전환은 transform만 애니메이션(opacity 금지).
 - 샘 인터랙션: 탭/클릭 → 스쿼시 움찔 + 눈 깜빡 + 물결 1회. 휠/터치 스크롤 → 속도 비례 갸웃(rotation.x/z) 후 스프링 복귀. reduced-motion에서는 모두 끔.
 
+## 데이터 소스
+
+| 파일 | 생산자 | 케이던스 | 내용 |
+|------|--------|----------|------|
+| `status.json` | `scripts/build-status-json.py` (배포 시) | 배포마다 | surfaces·deployments·정적 agents(폴백용) |
+| `agents-live.json` | `~/workspace/system-dashboard/collector` (systemd timer) | 10분 | 실제 OpenClaw 크론 서브셋 (스펙: `2026-07-05-status-agents-live-design.md`) |
+
+Agents 패널은 `agents-live.json`이 30분 이내면 라이브 렌더, 아니면 정적 agents + "Live feed silent" 경고 행. **S3 sync 시 `--exclude "agents-live.json"`을 반드시 유지** — 수집기가 올린 파일을 배포가 지우면 안 된다.
+
 ## 검증 기준
 
 - 390px·데스크탑 첫 화면 스크롤 없음 · `window.__SAEM_SCENE__.ready === true` + `body[data-scene="webgl"]` · 모듈 차단 시 CSS 샘 표시 · 카드 상태값 표시 · 클릭 → 상세 + 내비 동작 · setMood 무드 전환 · reduced-motion 정지.

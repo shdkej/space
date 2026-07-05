@@ -1179,10 +1179,12 @@
         const isLive = Boolean(liveFeed?.live);
         const agents = isLive
           ? liveFeed.agents.map((a) => ({
-              name: a.name,
+              name: `${a.emoji ? a.emoji + " " : ""}${a.name}`,
               state: a.state,
-              detail: `${a.schedule || "?"} ${a.tz || ""} · last run ${rel(a.lastRunAt)}`,
-              meta: a.consecutiveErrors > 0 ? `err ${a.consecutiveErrors}` : a.enabled ? "ok" : "paused",
+              detail: a.crons > 0
+                ? `${a.crons} cron loops · last activity ${rel(a.lastActivityAt)}`
+                : "on-demand agent · no cron loops",
+              meta: a.crons > 0 ? `${a.crons} loops` : "idle",
             }))
           : (data.agents || []).map((a) => ({ ...a, meta: stateLabel(a.state) }));
         const deployments = data.deployments || [];
@@ -1235,8 +1237,8 @@
               id: "agents",
               label: "Agents",
               value: `${okAgents}/${totalAgents}`,
-              title: "loops",
-              status: !isLive ? "feed silent" : okAgents === totalAgents ? "live · all quiet" : "check lanes",
+              title: "agents",
+              status: !isLive ? "feed silent" : okAgents === totalAgents ? "live · all quiet" : "check agents",
               state: !isLive ? "warn" : okAgents === totalAgents ? "ok" : "warn",
             },
             {
@@ -1280,14 +1282,14 @@
               })),
             },
             agents: {
-              title: "Agent Lanes",
+              title: "Agents",
               score: `${okAgents}/${totalAgents}`,
               sub: isLive
-                ? "실제 OpenClaw 크론 상태입니다 — 수집기가 10분마다 발행합니다."
+                ? "실제 OpenClaw 에이전트 로스터입니다 — 크론 상세는 CMS에서 봅니다."
                 : "라이브 피드가 조용합니다 — 정적 registry 목록으로 대신 보여줍니다.",
               summary: [
                 ["OK", okAgents],
-                ["Loops", totalAgents],
+                ["Agents", totalAgents],
                 ["Feed", isLive ? `${liveFeed.ageMinutes}m ago` : "silent"],
               ],
               rows: agentRows,

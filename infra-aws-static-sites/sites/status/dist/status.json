@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-20T06:51:10Z",
+  "generatedAt": "2026-07-05T05:59:33Z",
   "overall": {
     "state": "ok",
-    "label": "Status, Travel Ops, Schengen Calculator, Card News Library, Infinity, Virtue, and Control Center CMS are the active surfaces",
+    "label": "Status, Travel Ops, Schengen Calculator, Card News Library, Infinity, Virtue, Control Center CMS, and Reel Room are the active surfaces",
     "score": 98
   },
   "checks": [
@@ -10,50 +10,57 @@
       "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 212,
+      "latencyMs": 50,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 143,
+      "latencyMs": 131,
       "detail": "World travel planning board deployed as a separate static app"
     },
     {
       "name": "Schengen Calculator",
       "url": "https://schengen.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 201,
+      "latencyMs": 209,
       "detail": "90/180 day Schengen travel calculator for long-term route planning"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 53,
+      "latencyMs": 168,
       "detail": "Growing public archive for photo insight card-news sets"
     },
     {
       "name": "Infinity",
       "url": "https://infinity.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 213,
+      "latencyMs": 200,
       "detail": "Intent dashboard for Infinity work queue and archive state"
     },
     {
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 102,
+      "latencyMs": 411,
       "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring"
     },
     {
       "name": "Control Center CMS",
       "url": "https://cms.oracle.shdkej.com",
       "state": "ok",
-      "latencyMs": 340,
+      "latencyMs": 53,
       "detail": "shadcn/ui operations CMS for Status composition and surface registry management"
+    },
+    {
+      "name": "Reel Room",
+      "url": "https://reel.oracle.shdkej.com",
+      "state": "ok",
+      "latencyMs": 24,
+      "detail": "Video automation web UI for reel production (basic auth)"
     }
   ],
   "deployments": [
@@ -63,7 +70,7 @@
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-20T06:51:07Z",
+      "updatedAt": "2026-07-05T05:59:26Z",
       "state": "ok"
     },
     {
@@ -72,7 +79,7 @@
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-20T06:51:08Z",
+      "updatedAt": "2026-07-05T05:59:26Z",
       "state": "ok"
     },
     {
@@ -81,7 +88,7 @@
       "bucket": "static-schengen-aws-shdkej-com",
       "distribution": "E3PPXUUNA9KRGS",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-20T06:51:08Z",
+      "updatedAt": "2026-07-05T05:59:26Z",
       "state": "ok"
     },
     {
@@ -90,7 +97,7 @@
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-20T06:51:08Z",
+      "updatedAt": "2026-07-05T05:59:26Z",
       "state": "ok"
     },
     {
@@ -99,7 +106,7 @@
       "bucket": "static-infinity-aws-shdkej-com",
       "distribution": "E3JYGTLQKF0AXX",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-20T06:51:08Z",
+      "updatedAt": "2026-07-05T05:59:27Z",
       "state": "ok"
     },
     {
@@ -108,7 +115,7 @@
       "bucket": "static-virtue-aws-shdkej-com",
       "distribution": "EVCIL59LC6WJ6",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-06-20T06:51:08Z",
+      "updatedAt": "2026-07-05T05:59:27Z",
       "state": "ok"
     },
     {
@@ -117,7 +124,16 @@
       "bucket": "",
       "distribution": "",
       "hosting": "kubernetes ingress",
-      "updatedAt": "2026-06-20T06:51:10Z",
+      "updatedAt": "2026-07-05T05:59:31Z",
+      "state": "ok"
+    },
+    {
+      "name": "reel room",
+      "url": "https://reel.oracle.shdkej.com",
+      "bucket": "",
+      "distribution": "",
+      "hosting": "kubernetes ingress",
+      "updatedAt": "2026-07-05T05:59:33Z",
       "state": "ok"
     }
   ],
@@ -188,6 +204,11 @@
       "name": "Control Center CMS",
       "url": "https://cms.oracle.shdkej.com",
       "kind": "cms"
+    },
+    {
+      "name": "Reel Room",
+      "url": "https://reel.oracle.shdkej.com",
+      "kind": "tool"
     }
   ]
 }

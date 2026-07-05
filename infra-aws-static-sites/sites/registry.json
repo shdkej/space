@@ -19,6 +19,15 @@
       "spa_fallback": true
     },
     {
+      "app": "schengen",
+      "name": "Schengen Calculator",
+      "domain_name": "schengen.aws.shdkej.com",
+      "kind": "tool",
+      "detail": "90/180 day Schengen travel calculator for long-term route planning",
+      "deployment_name": "schengen calculator",
+      "spa_fallback": true
+    },
+    {
       "app": "library",
       "name": "Card News Library",
       "domain_name": "library.aws.shdkej.com",
@@ -54,6 +63,17 @@
       "deployment_name": "control center cms",
       "hosting": "kubernetes ingress",
       "health_path": "/api/health",
+      "spa_fallback": false
+    },
+    {
+      "app": "reel-room",
+      "name": "Reel Room",
+      "domain_name": "reel.oracle.shdkej.com",
+      "kind": "tool",
+      "detail": "Video automation web UI for reel production (basic auth)",
+      "deployment_name": "reel room",
+      "hosting": "kubernetes ingress",
+      "ok_status": [401],
       "spa_fallback": false
     }
   ],

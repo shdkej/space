@@ -61,7 +61,7 @@ def cloudfront_distribution_for_domain(domain):
     return "" if distribution_id in {"", "None"} else distribution_id
 
 
-def check_url(url, timeout):
+def check_url(url, timeout, ok_statuses=()):
     start = time.perf_counter()
     request = Request(url, method="HEAD")
     try:
@@ -73,7 +73,8 @@ def check_url(url, timeout):
         return "warn", 0
 
     latency_ms = int((time.perf_counter() - start) * 1000)
-    return ("ok" if 200 <= status < 400 else "warn"), latency_ms
+    healthy = 200 <= status < 400 or status in ok_statuses
+    return ("ok" if healthy else "warn"), latency_ms
 
 
 def title_case_app(app):
@@ -100,7 +101,9 @@ def build_status(registry, outputs, resolve_aws=False, check=False, timeout=5):
         state = "ok"
         latency_ms = 0
         if check:
-            state, latency_ms = check_url(url_for_check(url, site), timeout)
+            # basic auth 뒤의 표면은 401도 "살아있음" 신호다 — registry의 ok_status로 선언
+            ok_statuses = tuple(site.get("ok_status", ()))
+            state, latency_ms = check_url(url_for_check(url, site), timeout, ok_statuses)
 
         checks.append(
             {

@@ -45,6 +45,8 @@ spec:
           volumeMounts:
             - name: jobs
               mountPath: /app/web/jobs
+            - name: music
+              mountPath: /app/web/music
           readinessProbe:
             httpGet:
               path: /
@@ -72,3 +74,8 @@ spec:
         - name: jobs
           emptyDir:
             sizeLimit: 12Gi
+        # BGM 라이브러리 — 파드 교체에도 유지 (노드 고정이라 hostPath로 충분)
+        - name: music
+          hostPath:
+            path: /var/lib/reel-room/music
+            type: DirectoryOrCreate

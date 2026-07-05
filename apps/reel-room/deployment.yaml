@@ -7,6 +7,9 @@ metadata:
     app: reel-room
 spec:
   replicas: 1
+  # arm-1은 1코어라 롤링(신구 동시 기동)이 CPU 부족으로 스케줄 불가 — 종료 후 생성.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: reel-room
@@ -60,7 +63,7 @@ spec:
             failureThreshold: 4
           resources:
             requests:
-              cpu: 250m
+              cpu: 100m
               memory: 512Mi
             limits:
               cpu: "1"

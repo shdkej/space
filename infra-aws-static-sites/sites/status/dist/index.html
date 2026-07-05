@@ -1072,7 +1072,8 @@
         });
       };
 
-      const stateClass = (state) => (state === "ok" ? "ok" : state === "warn" ? "warn" : "bad");
+      const stateClass = (state) =>
+        state === "ok" ? "ok" : state === "warn" ? "warn" : state === "none" ? "" : "bad";
       const stateLabel = (state) => (state === "ok" ? "Operational" : state === "warn" ? "Attention" : "Down");
 
       const rel = (isoStr) => {
@@ -1093,6 +1094,12 @@
       };
 
       const LIVE_FRESH_MINUTES = 30;
+      const LAYER_DETAIL = {
+        l1: "삶 — PDCA 4지표(방향·다음 액션·선택·요청 부합) 판정",
+        l2: "업·시스템 — 크론과 백로그의 worst 롤업",
+        l3: "워크플로우 — 검증→개선 루프가 닫히고 있는가",
+        l4: "아티팩트 — 산출물 신선도 (Output 탭과 같은 소스)",
+      };
 
       async function loadAgentsLive() {
         try {
@@ -1106,9 +1113,10 @@
             ageMinutes,
             agents: data.agents,
             outputs: Array.isArray(data.outputs) ? data.outputs : [],
+            system: data.system || null,
           };
         } catch (_error) {
-          return { live: false, ageMinutes: null, agents: null, outputs: [] };
+          return { live: false, ageMinutes: null, agents: null, outputs: [], system: null };
         }
       }
 
@@ -1201,6 +1209,7 @@
           : (data.agents || []).map((a) => ({ ...a, meta: stateLabel(a.state) }));
         const outputs = (isLive ? liveFeed.outputs : []) || [];
         const freshOutputs = outputs.filter((item) => item.state === "ok").length;
+        const sys = isLive && liveFeed.system && Array.isArray(liveFeed.system.layers) ? liveFeed.system : null;
         const okChecks = checks.filter((item) => item.state === "ok").length;
         const okAgents = agents.filter((item) => item.state === "ok").length;
         const totalAgents = agents.length;
@@ -1269,11 +1278,44 @@
               sub: overall.label || "Status feed loaded.",
               summary: [
                 ["Score", `${score}/100`],
-                ["Surfaces", checks.length],
+                ["Layers", sys ? `${sys.layers.filter((l) => l.state === "ok").length}/${sys.layers.length} ok` : "--"],
                 ["Latency", `${avgLatency}ms`],
               ],
               rows: [
                 { name: "Overall", state: overall.state || "ok", detail: overall.label || "Feed loaded.", meta: stateLabel(overall.state) },
+                ...(sys
+                  ? [
+                      ...sys.layers.map((layer, index) => ({
+                        name: `L${index + 1} ${layer.name}`,
+                        state: layer.state,
+                        detail: LAYER_DETAIL[layer.key] || "",
+                        meta: layer.state === "none" ? "no data" : layer.state,
+                      })),
+                      {
+                        name: "PDCA loop",
+                        state: "ok",
+                        detail: `Check 미해결 ${sys.pdca.checkUnresolved ?? "-"}건 · 게이트 실패(7d) ${sys.pdca.checkFailures7d ?? "-"}건 · Act 규칙 ${sys.pdca.actRules ?? "-"}개`,
+                        meta: "loop",
+                      },
+                      ...sys.backlogs.map((b) => ({
+                        name: `Backlog · ${b.name}`,
+                        state: b.state,
+                        detail: `${b.count}건 / 경고선 ${b.warnAt}건`,
+                        meta: `${b.count}`,
+                      })),
+                      {
+                        name: "Infinity intents",
+                        state: "ok",
+                        detail: `Inbox ${sys.intents.inbox ?? "-"} · Active ${sys.intents.active ?? "-"} · Waiting ${sys.intents.waiting ?? "-"}`,
+                        meta: "queue",
+                      },
+                    ]
+                  : [{
+                      name: "Live feed silent",
+                      state: "warn",
+                      detail: "4레이어·PDCA·백로그는 수집기 피드가 살아있을 때만 표시됩니다.",
+                      meta: "stale",
+                    }]),
                 { name: "Generated", state: "ok", detail: `status.json · ${stamp(data.generatedAt)}`, meta: "fresh" },
                 { name: "Coverage", state: "ok", detail: `${checks.length} surfaces, ${totalAgents} agents, ${outputs.length} outputs`, meta: "mapped" },
               ],

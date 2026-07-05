@@ -46,7 +46,7 @@
 | 파일 | 생산자 | 케이던스 | 내용 |
 |------|--------|----------|------|
 | `status.json` | `scripts/build-status-json.py` (배포 시) | 배포마다 | surfaces·deployments·정적 agents(폴백용) |
-| `agents-live.json` | `~/workspace/system-dashboard/collector` (systemd timer) | 10분 | `agents`(에이전트 로스터 롤업 — 종류·emoji·건강·크론 수·마지막 활동) + `outputs`(산출물 신선도 — 이름·상태·경과시간). 크론 상세는 CMS (스펙: `2026-07-05-status-agents-live-design.md`) |
+| `agents-live.json` | `~/workspace/system-dashboard/collector` (systemd timer) | 10분 | `agents`(에이전트 로스터 롤업) + `outputs`(산출물 신선도) + `system`(4레이어 판정 + PDCA·백로그·인텐트 카운트 — CMS system-panel 판정 로직과 동일 유지). 내용·이름·UUID 등 상세는 CMS (스펙: `2026-07-05-status-agents-live-design.md`) |
 
 Agents 패널은 `agents-live.json`이 30분 이내면 라이브 렌더, 아니면 정적 agents + "Live feed silent" 경고 행. **S3 sync 시 `--exclude "agents-live.json"`을 반드시 유지** — 수집기가 올린 파일을 배포가 지우면 안 된다.
 

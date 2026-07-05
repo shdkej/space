@@ -12,7 +12,7 @@
     <style>
       :root {
         color-scheme: light;
-        --bg: #f0eee9;
+        --bg: #f5f4f1;
         --ink: #2f241d;
         --muted: rgba(79, 62, 50, 0.74);
         --faint: rgba(101, 80, 66, 0.56);
@@ -45,7 +45,7 @@
         font-family: var(--sans);
         font-feature-settings: "tnum";
         -webkit-font-smoothing: antialiased;
-        background: linear-gradient(168deg, #f5f2ec 0%, #f0eee9 46%, #eae4d9 100%);
+        background: linear-gradient(168deg, #fafaf8 0%, #f5f4f1 46%, #edebe6 100%);
       }
 
       a,
@@ -100,7 +100,7 @@
         height: 74px;
         transform: translateX(-50%);
         border-radius: 50%;
-        background: radial-gradient(ellipse at center, rgba(233, 229, 218, 0.9), rgba(233, 229, 218, 0) 70%);
+        background: radial-gradient(ellipse at center, rgba(237, 235, 229, 0.9), rgba(237, 235, 229, 0) 70%);
       }
 
       .saem-fallback .ripple {
@@ -140,8 +140,8 @@
         height: 96px;
         transform: translateX(-50%);
         border-radius: 52% 48% 50% 50% / 58% 60% 42% 44%;
-        background: linear-gradient(155deg, #ded4c6 8%, #cfc4b6 52%, #bcae9d 100%);
-        box-shadow: 0 18px 30px rgba(120, 104, 86, 0.24);
+        background: linear-gradient(155deg, #e6e0d5 8%, #d9d2c6 52%, #c6bcab 100%);
+        box-shadow: 0 18px 30px rgba(128, 118, 102, 0.2);
         animation: saemBreathe 6s ease-in-out infinite;
       }
 
@@ -164,7 +164,7 @@
         height: 34px;
         transform: translateX(-54%);
         border-radius: 50% 50% 46% 46% / 74% 78% 30% 30%;
-        background: linear-gradient(160deg, #9aab7b, #8a9a6b 70%);
+        background: linear-gradient(160deg, #93a26b, #87975f 70%);
       }
 
       .saem-fallback .sprout {
@@ -174,7 +174,7 @@
         width: 3px;
         height: 20px;
         border-radius: 999px;
-        background: #7d8f5d;
+        background: #7fa054;
       }
 
       .saem-fallback .sprout::before,
@@ -185,7 +185,7 @@
         width: 13px;
         height: 7px;
         border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
-        background: #7d8f5d;
+        background: #7fa054;
       }
 
       .saem-fallback .sprout::before {
@@ -744,7 +744,7 @@
       }
 
       .nav-button:hover {
-        background: rgba(255, 255, 255, 0.34);
+        background: rgba(255, 255, 255, 0.2);
       }
 
       .nav-button-label {
@@ -759,8 +759,11 @@
 
       .nav-button.is-current {
         border-color: var(--glass-border);
-        background: rgba(255, 255, 255, 0.55);
         color: rgba(36, 27, 20, 0.98);
+      }
+
+      .nav-button.is-current .nav-button-label {
+        font-weight: 800;
       }
 
       .nav-button:active {

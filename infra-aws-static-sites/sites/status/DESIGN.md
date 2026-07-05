@@ -8,7 +8,7 @@
 - **한 화면 (one screen)**: 첫 화면에서 시스템 상태가 스크롤 없이 드러난다. 히어로(전체 온도) + 4카드(System / Surfaces / Agents / Deploy).
 - **샘(Saem)이 주인공, HUD는 그 위에 뜬다**: 배경의 3D 샘 씬이 무대(主)이고, 상태 카드는 투명 글래스로 그 위에 떠 있다.
 - **브랜드 정본 준수**: 캐릭터는 BRAND.md의 샘 — 이끼 조약돌 정령. 과장된 귀여움·큰 눈 금지, 씬 안에 텍스트/로고 렌더 금지.
-- **팔레트**: 크림 `#F0EEE9` + 웜 그레이지 + 올리브 이끼 + 앰버 아침빛. 그림자는 웜 그레이(pure black 금지).
+- **팔레트**: 화이트 크림 `#f5f4f1` + 웜 그레이지 + 올리브 이끼 + 은은한 아침빛. 누런기 억제(2026-07-05 피드백 "너무 누래서 하얗게"), 그림자는 웜 그레이(pure black 금지).
 
 ## 레이어 구조 (아래 → 위)
 
@@ -22,10 +22,10 @@
 ## SaemScene (Three.js)
 
 - Three.js 0.166.1을 `dist/assets/vendor/three.module.min.js`로 **로컬 vendoring** — CDN 런타임 의존 없음 (과거 Three.js 롤백 원인이던 CDN 실패 리스크 제거).
-- 샘은 이미지가 아니라 **절차적 지오메트리**: 눌린 구체 조약돌(그레이지, roughness 0.94) + 이끼 캡 4패치 + 새싹(줄기+잎 2장) + 점 눈 2개. 숨쉬기 bob + 느린 좌우 바라보기.
+- 샘은 이미지가 아니라 **절차적 지오메트리**로, 정본 이미지(`~/workspace/prompt-archive/assets/saem-character/reference/`)를 기준 삼는다: speckle 질감 조약돌 + 우상단 유기 이끼 패치(작은 clump 22개) + 이끼에서 자라는 새싹 + 담담한 점 눈 2개. 숨쉬기 bob + 느린 좌우 바라보기.
 - 수면: 대형 circle 평면 + 동심원 ring 4개가 스케일/페이드로 퍼지는 물결. 가짜 컨택트 섀도(웜 그레이 radial 텍스처).
 - 카메라: 사인 드리프트 + 포인터 parallax(lerp 0.05). 데스크탑은 샘을 우측 스테이지에(stage.x 오프셋, lookAt은 원점 고정), 모바일은 히어로와 카드 사이 중앙에.
-- **상태 연동** (BRAND.md 상태 문법): `status.json` overall이 ok → 따뜻한 아침빛(`#ffe9cf`) + 물결 진행 / warn·bad → 빛 강도·색온도 하강(`#e3d5c2`) + 물결 정지(고요한 수면). `window.__SAEM_SCENE__.setMood()`로 전환.
+- **상태 연동** (BRAND.md 상태 문법): `status.json` overall이 ok → 따뜻한 아침빛(`#fff8ee`) + 물결 진행 / warn·bad → 빛 강도·색온도 하강(`#eae6dd`) + 물결 정지(고요한 수면). `window.__SAEM_SCENE__.setMood()`로 전환.
 
 ## Fallback 체인
 
@@ -36,7 +36,7 @@
 ## HUD 글래스 문법
 
 - 토큰: `--glass: rgba(255,255,255,0.3)` / `--glass-strong: 0.46` / `--glass-border: 0.62` / `--glass-blur: blur(16px) saturate(1.05)`.
-- 히어로·4카드·상세 타일·리스트 행·하단 내비·아이콘 버튼 전부 같은 토큰 사용.
+- 히어로·4카드·상세 타일·리스트 행·하단 내비·아이콘 버튼 전부 같은 토큰 사용. 내비 현재 탭도 불투명 배경 없이 보더+굵은 글자만(2026-07-05 피드백).
 - 카드는 상태를 보여준다: 상태 dot + label + 핵심 수치(score, OK/total) + 상태 문구.
 - 전환: 카드 클릭 → cardPulse + transition-flash + overview blur-out → 상세. 상세에서 하단 플로팅 내비(Home + 4탭).
 

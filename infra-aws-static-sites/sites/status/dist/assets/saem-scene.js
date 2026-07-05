@@ -5,14 +5,15 @@
 
 import * as THREE from "./vendor/three.module.min.js";
 
-const CREAM = 0xf0eee9;
-const STONE = 0xcfc4b6;
-const MOSS = 0x8a9a6b;
-const SPROUT = 0x7d8f5d;
-const EYE = 0x4a4238;
-const WATER = 0xe9e5da;
-const MORNING = 0xffe9cf;
-const DUSK = 0xe3d5c2;
+/* 정본: prompt-archive/assets/saem-character/reference/saem-canonical-*.png */
+const CREAM = 0xf5f4f1;
+const STONE = 0xd9d2c6;
+const MOSS = 0x87975f;
+const SPROUT = 0x7fa054;
+const EYE = 0x3d3a33;
+const WATER = 0xf1efea;
+const MORNING = 0xfff8ee;
+const DUSK = 0xeae6dd;
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -31,45 +32,91 @@ function makeSoftCircleTexture(inner, outer) {
   return texture;
 }
 
+function makeSpeckleTexture() {
+  const size = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#d9d2c6";
+  ctx.fillRect(0, 0, size, size);
+  let seed = 7;
+  const random = () => {
+    seed = (seed * 16807) % 2147483647;
+    return seed / 2147483647;
+  };
+  for (let i = 0; i < 900; i += 1) {
+    const shade = random();
+    ctx.fillStyle = shade > 0.5 ? "rgba(168, 156, 138, 0.35)" : "rgba(243, 240, 233, 0.5)";
+    const r = 0.5 + random() * 1.6;
+    ctx.beginPath();
+    ctx.arc(random() * size, random() * size, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(2, 2);
+  return texture;
+}
+
 function buildSaem() {
   const saem = new THREE.Group();
 
-  const stoneMaterial = new THREE.MeshStandardMaterial({ color: STONE, roughness: 0.94, metalness: 0 });
+  const stoneMaterial = new THREE.MeshStandardMaterial({
+    map: makeSpeckleTexture(),
+    roughness: 0.96,
+    metalness: 0,
+  });
   const pebble = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 40), stoneMaterial);
-  pebble.scale.set(1, 0.76, 0.9);
+  pebble.scale.set(1, 0.82, 0.92);
   saem.add(pebble);
 
-  const mossMaterial = new THREE.MeshStandardMaterial({ color: MOSS, roughness: 1, metalness: 0 });
-  const mossSpecs = [
-    [0, 0.66, 0.05, 0.46],
-    [-0.3, 0.58, 0.14, 0.3],
-    [0.28, 0.6, -0.08, 0.26],
-    [0.05, 0.56, -0.3, 0.22],
-  ];
-  mossSpecs.forEach(([x, y, z, r]) => {
-    const patch = new THREE.Mesh(new THREE.SphereGeometry(r, 28, 22), mossMaterial);
-    patch.position.set(x, y, z);
-    patch.scale.y = 0.55;
-    saem.add(patch);
-  });
+  /* 이끼: 정본처럼 우상단에 유기적으로 흘러내리는 패치 */
+  const mossGroup = new THREE.Group();
+  let seed = 21;
+  const random = () => {
+    seed = (seed * 16807) % 2147483647;
+    return seed / 2147483647;
+  };
+  const mossColors = [0x87975f, 0x93a26b, 0x7c8c55];
+  for (let i = 0; i < 22; i += 1) {
+    const theta = 0.3 + random() * 0.58; /* 위도: 정수리 부근 */
+    const phi = 0.08 + random() * 1.1; /* 경도: 우측~우상단 */
+    const clump = new THREE.Mesh(
+      new THREE.SphereGeometry(0.07 + random() * 0.09, 16, 12),
+      new THREE.MeshStandardMaterial({ color: mossColors[i % 3], roughness: 1, metalness: 0 })
+    );
+    clump.position.setFromSphericalCoords(0.94, theta, phi);
+    clump.position.y *= 0.82;
+    clump.position.z *= 0.92;
+    clump.scale.set(1.15, 0.42 + random() * 0.18, 1.15);
+    clump.rotation.set(random() * 0.7, random() * 2, random() * 0.7);
+    mossGroup.add(clump);
+  }
+  saem.add(mossGroup);
 
-  const sproutMaterial = new THREE.MeshStandardMaterial({ color: SPROUT, roughness: 0.9 });
-  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.022, 0.24, 10), sproutMaterial);
-  stem.position.set(-0.06, 0.92, 0.02);
-  stem.rotation.z = 0.08;
-  saem.add(stem);
+  /* 새싹: 이끼 패치에서 자란다 */
+  const sproutMaterial = new THREE.MeshStandardMaterial({ color: SPROUT, roughness: 0.85 });
+  const sprout = new THREE.Group();
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.02, 0.2, 10), sproutMaterial);
+  stem.position.y = 0.1;
+  sprout.add(stem);
   [-1, 1].forEach((side) => {
-    const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12), sproutMaterial);
-    leaf.position.set(-0.06 + side * 0.075, 1.02 + (side > 0 ? 0.02 : -0.01), 0.02);
-    leaf.scale.set(1, 0.42, 0.55);
-    leaf.rotation.z = side * 0.7;
-    saem.add(leaf);
+    const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), sproutMaterial);
+    leaf.position.set(side * 0.065, 0.2 + (side > 0 ? 0.015 : -0.005), 0);
+    leaf.scale.set(1, 0.38, 0.5);
+    leaf.rotation.z = side * 0.75;
+    sprout.add(leaf);
   });
+  sprout.position.set(0.34, 0.86, 0.12);
+  sprout.rotation.z = -0.18;
+  saem.add(sprout);
 
-  const eyeMaterial = new THREE.MeshStandardMaterial({ color: EYE, roughness: 0.55 });
-  [-0.26, 0.26].forEach((x) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 14, 12), eyeMaterial);
-    eye.position.set(x, 0.22, 0.86);
+  /* 점 눈: 작고 담담하게, 가운데 가깝게 */
+  const eyeMaterial = new THREE.MeshStandardMaterial({ color: EYE, roughness: 0.5 });
+  [-0.18, 0.18].forEach((x) => {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.038, 14, 12), eyeMaterial);
+    eye.position.set(x, 0.24, 0.85);
     saem.add(eye);
   });
 
@@ -102,9 +149,9 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
   const sun = new THREE.DirectionalLight(MORNING, 2.4);
   sun.position.set(-3.4, 4.6, 2.6);
   scene.add(sun);
-  const fill = new THREE.AmbientLight(0xf4efe6, 1.35);
+  const fill = new THREE.AmbientLight(0xf7f5f1, 1.4);
   scene.add(fill);
-  const bounce = new THREE.HemisphereLight(0xfffaf1, 0xd9cfc0, 0.7);
+  const bounce = new THREE.HemisphereLight(0xfdfcf9, 0xe2ddd3, 0.7);
   scene.add(bounce);
 
   const water = new THREE.Mesh(
@@ -117,7 +164,7 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
   const contactShadow = new THREE.Mesh(
     new THREE.PlaneGeometry(3.1, 2.6),
     new THREE.MeshBasicMaterial({
-      map: makeSoftCircleTexture("rgba(120, 104, 86, 0.34)", "rgba(120, 104, 86, 0)"),
+      map: makeSoftCircleTexture("rgba(128, 118, 102, 0.26)", "rgba(128, 118, 102, 0)"),
       transparent: true,
       depthWrite: false,
     })

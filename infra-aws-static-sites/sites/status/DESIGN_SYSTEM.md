@@ -19,19 +19,19 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
   - 성공: `body.dataset.scene = "webgl"` 설정, `window.__SAEM_SCENE__ = { ready:true, setMood }` 반환.
   - 실패(renderer 예외 등): 아무것도 만지지 않고 `null` — CSS 샘이 그대로 남는다.
   - `webglcontextlost` → `data-scene` 해제 → CSS 샘 복귀.
-- `setMood("ok" | "warn" | "bad")`: ok = 아침빛 `#ffe9cf`·intensity 2.4·물결 진행 / 그 외 = `#e3d5c2`·1.1·물결 정지.
+- `setMood("ok" | "warn" | "bad")`: ok = 아침빛 `#fff8ee`·intensity 2.4·물결 진행 / 그 외 = `#eae6dd`·1.1·물결 정지.
 - 로더는 `index.html`의 `startSaemScene()` — dynamic `import()`라 모듈 로드 실패도 페이지를 죽이지 않는다.
 
 ### 씬 토큰 (saem-scene.js 상수)
 
 | 상수 | 값 | 의미 |
 |------|-----|------|
-| `CREAM` | `#f0eee9` | 배경·fog |
-| `STONE` | `#cfc4b6` | 조약돌 |
-| `MOSS` / `SPROUT` | `#8a9a6b` / `#7d8f5d` | 이끼 / 새싹 |
-| `EYE` | `#4a4238` | 점 눈 |
-| `WATER` | `#e9e5da` | 수면 |
-| `MORNING` / `DUSK` | `#ffe9cf` / `#e3d5c2` | ok / warn·bad 빛 |
+| `CREAM` | `#f5f4f1` | 배경·fog |
+| `STONE` | speckle CanvasTexture (`#d9d2c6` 바탕) | 조약돌 |
+| `MOSS` / `SPROUT` | `#87975f` 계열 3색 / `#7fa054` | 이끼(우상단 유기 패치) / 새싹 |
+| `EYE` | `#3d3a33` | 점 눈 |
+| `WATER` | `#f1efea` | 수면 |
+| `MORNING` / `DUSK` | `#fff8ee` / `#eae6dd` | ok / warn·bad 빛 |
 
 ### 반응형 (layout())
 

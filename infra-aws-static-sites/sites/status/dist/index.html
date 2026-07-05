@@ -156,6 +156,25 @@
         }
       }
 
+      .saem-fallback .pebble.is-poked {
+        animation: saemPoke 0.55s var(--ease);
+      }
+
+      @keyframes saemPoke {
+        0%,
+        100% {
+          transform: translateX(-50%) scale(1, 1);
+        }
+
+        30% {
+          transform: translateX(-50%) scale(1.08, 0.86);
+        }
+
+        62% {
+          transform: translateX(-50%) scale(0.96, 1.05);
+        }
+      }
+
       .saem-fallback .moss {
         position: absolute;
         left: 50%;
@@ -588,14 +607,14 @@
         display: block;
       }
 
+      /* opacity를 건드리면 backdrop-filter가 애니메이션 끝에 갑자기 켜져
+         글래스가 "불투명해지는" 팝이 생긴다 — transform만 움직인다 */
       @keyframes pageIn {
         from {
-          opacity: 0;
-          transform: translateY(14px);
+          transform: translateY(10px);
         }
 
         to {
-          opacity: 1;
           transform: none;
         }
       }
@@ -1258,13 +1277,13 @@
         });
       }
 
-      function setTab(id, mode = "detail") {
+      function setTab(id, { withFlash = false } = {}) {
         currentTab = id;
         const panel = model.panels[id];
         if (!panel) return;
 
-        flash();
-        document.body.dataset.mode = mode;
+        if (withFlash) flash();
+        document.body.dataset.mode = "detail";
         $("detailTitle").textContent = panel.title;
         $("detailSub").textContent = panel.sub;
         $("detailScore").textContent = panel.score;
@@ -1325,12 +1344,11 @@
         renderPanels();
 
         document.querySelectorAll(".control-card").forEach((el) => {
-          el.addEventListener("click", () => setTab(el.dataset.tab));
+          el.addEventListener("click", () => setTab(el.dataset.tab, { withFlash: true }));
         });
         document.querySelectorAll(".nav-button").forEach((el) => {
           el.addEventListener("click", () => {
             if (el.dataset.action === "home") {
-              flash();
               document.body.dataset.mode = "overview";
               return;
             }
@@ -1338,13 +1356,34 @@
           });
         });
         $("backButton").addEventListener("click", () => {
-          flash();
           document.body.dataset.mode = "overview";
         });
 
         applyReveal($("heroCopy"));
         startSaemScene(model.overallState);
       }
+
+      document.addEventListener("pointerdown", (event) => {
+        if (document.body.dataset.scene === "webgl") return;
+        if (event.target.closest("button, a")) return;
+        const fallback = document.querySelector(".saem-fallback");
+        const pebble = fallback.querySelector(".pebble");
+        const rect = fallback.getBoundingClientRect();
+        const pad = 30;
+        const inside =
+          event.clientX > rect.left - pad &&
+          event.clientX < rect.right + pad &&
+          event.clientY > rect.top - pad &&
+          event.clientY < rect.bottom + pad;
+        if (!inside) return;
+        pebble.classList.remove("is-poked");
+        void pebble.offsetWidth;
+        pebble.classList.add("is-poked");
+      });
+
+      document.querySelector(".saem-fallback .pebble").addEventListener("animationend", (event) => {
+        if (event.animationName === "saemPoke") event.target.classList.remove("is-poked");
+      });
 
       fetch("./status.json", { cache: "no-store" })
         .then((response) => response.json())

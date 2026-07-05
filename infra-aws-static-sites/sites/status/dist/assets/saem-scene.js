@@ -114,10 +114,11 @@ function buildSaem() {
 
   /* 점 눈: 작고 담담하게, 가운데 가깝게 */
   const eyeMaterial = new THREE.MeshStandardMaterial({ color: EYE, roughness: 0.5 });
-  [-0.18, 0.18].forEach((x) => {
+  saem.userData.eyes = [-0.18, 0.18].map((x) => {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.038, 14, 12), eyeMaterial);
     eye.position.set(x, 0.24, 0.85);
     saem.add(eye);
+    return eye;
   });
 
   return saem;
@@ -184,6 +185,11 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
     depthWrite: false,
     side: THREE.DoubleSide,
   });
+  const pokeRipple = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 72), rippleMaterialBase.clone());
+  pokeRipple.rotation.x = -Math.PI / 2;
+  pokeRipple.position.y = 0.025;
+  stage.add(pokeRipple);
+
   const ripples = Array.from({ length: 4 }, (_, index) => {
     const ring = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 72), rippleMaterialBase.clone());
     ring.rotation.x = -Math.PI / 2;
@@ -227,6 +233,8 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
     running: true,
     scale: 0.62,
     baseY: 0.62 * 0.62,
+    poke: 0,
+    pokeWave: 1,
   };
 
   function setMood(next) {
@@ -273,6 +281,26 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
   window.addEventListener("pointermove", onPointer, { passive: true });
   window.addEventListener("touchmove", onPointer, { passive: true });
 
+  /* 샘 만지기: 캔버스는 pointer-events:none이므로 문서 레벨에서 히트 판정 */
+  function poke() {
+    if (reduceMotion.matches) return;
+    state.poke = 1;
+    state.pokeWave = 0;
+  }
+
+  const projected = new THREE.Vector3();
+  function onTap(event) {
+    if (event.target.closest("button, a, .floating-nav, .detail-scroll")) return;
+    saem.getWorldPosition(projected);
+    projected.y += 0.2 * state.scale;
+    projected.project(camera);
+    const sx = ((projected.x + 1) / 2) * window.innerWidth;
+    const sy = ((1 - projected.y) / 2) * window.innerHeight;
+    const reach = Math.min(window.innerWidth, window.innerHeight) * 0.22;
+    if (Math.hypot(event.clientX - sx, event.clientY - sy) < reach) poke();
+  }
+  document.addEventListener("pointerdown", onTap, { passive: true });
+
   canvas.addEventListener("webglcontextlost", () => {
     state.running = false;
     delete document.body.dataset.scene;
@@ -290,6 +318,26 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
 
     saem.position.y = state.baseY + Math.sin(elapsed * 0.9) * 0.014 * state.scale;
     saem.rotation.y = Math.sin(elapsed * 0.22) * 0.05;
+
+    /* poke: 스쿼시&스트레치 움찔 + 눈 깜빡 + 물결 한 번 */
+    if (state.poke > 0) {
+      const wobble = Math.sin(state.poke * Math.PI * 3) * state.poke * 0.1;
+      saem.scale.set(state.scale * (1 + wobble), state.scale * (1 - wobble * 1.5), state.scale * (1 + wobble));
+      const blink = state.poke > 0.55 ? 0.15 : 1;
+      saem.userData.eyes.forEach((eye) => eye.scale.setY(blink));
+      state.poke = Math.max(0, state.poke - delta * 1.6);
+      if (state.poke === 0) {
+        saem.scale.setScalar(state.scale);
+        saem.userData.eyes.forEach((eye) => eye.scale.setY(1));
+      }
+    }
+    if (state.pokeWave < 1) {
+      state.pokeWave = Math.min(1, state.pokeWave + delta * 0.9);
+      pokeRipple.scale.setScalar(state.scale * (1.05 + state.pokeWave * 3.2));
+      pokeRipple.material.opacity = 0.5 * (1 - state.pokeWave);
+    } else {
+      pokeRipple.material.opacity = 0;
+    }
 
     ripples.forEach((ring) => {
       if (state.rippleSpeed === 0) {
@@ -324,6 +372,7 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
   const api = {
     ready: true,
     setMood,
+    poke,
   };
   window.__SAEM_SCENE__ = api;
   return api;

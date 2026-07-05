@@ -235,6 +235,8 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
     baseY: 0.62 * 0.62,
     poke: 0,
     pokeWave: 1,
+    scrollVel: 0,
+    lastTouchY: null,
   };
 
   function setMood(next) {
@@ -281,6 +283,30 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
   window.addEventListener("pointermove", onPointer, { passive: true });
   window.addEventListener("touchmove", onPointer, { passive: true });
 
+  /* 스크롤 반응: 휠/터치 스크롤 속도만큼 샘이 갸웃하고 물결이 잠깐 빨라진다 */
+  const pushScroll = (delta) => {
+    if (reduceMotion.matches) return;
+    state.scrollVel = Math.max(-1, Math.min(1, state.scrollVel + delta));
+  };
+  window.addEventListener("wheel", (event) => pushScroll(event.deltaY * 0.0035), { passive: true });
+  window.addEventListener(
+    "touchstart",
+    (event) => {
+      state.lastTouchY = event.touches[0]?.clientY ?? null;
+    },
+    { passive: true }
+  );
+  window.addEventListener(
+    "touchmove",
+    (event) => {
+      const y = event.touches[0]?.clientY;
+      if (y == null || state.lastTouchY == null) return;
+      pushScroll((state.lastTouchY - y) * 0.008);
+      state.lastTouchY = y;
+    },
+    { passive: true }
+  );
+
   /* 샘 만지기: 캔버스는 pointer-events:none이므로 문서 레벨에서 히트 판정 */
   function poke() {
     if (reduceMotion.matches) return;
@@ -318,6 +344,12 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
 
     saem.position.y = state.baseY + Math.sin(elapsed * 0.9) * 0.014 * state.scale;
     saem.rotation.y = Math.sin(elapsed * 0.22) * 0.05;
+
+    /* 스크롤 갸웃: 속도에 비례해 앞뒤 기울고 스프링처럼 복귀 */
+    state.scrollVel *= Math.max(0, 1 - delta * 3.2);
+    if (Math.abs(state.scrollVel) < 0.001) state.scrollVel = 0;
+    saem.rotation.x = state.scrollVel * 0.3;
+    saem.rotation.z = state.scrollVel * -0.12;
 
     /* poke: 스쿼시&스트레치 움찔 + 눈 깜빡 + 물결 한 번 */
     if (state.poke > 0) {

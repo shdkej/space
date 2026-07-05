@@ -35,10 +35,11 @@
 
 ## HUD 글래스 문법
 
-- 토큰: `--glass: rgba(255,255,255,0.3)` / `--glass-strong: 0.46` / `--glass-border: 0.62` / `--glass-blur: blur(16px) saturate(1.05)`.
+- 토큰: `--glass: rgba(255,255,255,0.28)` / `--glass-strong: 0.42` / `--glass-border: 0.62` / `--glass-blur: none` — backdrop-blur는 밀키한 불투명감을 만들어 뺐다. 맑은 투명이 최종 상태다.
 - 히어로·4카드·상세 타일·리스트 행·하단 내비·아이콘 버튼 전부 같은 토큰 사용. 내비 현재 탭도 불투명 배경 없이 보더+굵은 글자만(2026-07-05 피드백).
 - 카드는 상태를 보여준다: 상태 dot + label + 핵심 수치(score, OK/total) + 상태 문구.
-- 전환: 카드 클릭 → cardPulse + transition-flash + overview blur-out → 상세. 상세에서 하단 플로팅 내비(Home + 4탭).
+- 전환: 카드·내비·홈·뒤로가기 모두 화면 전체로 퍼지는 transition-flash를 쓴다(사용자가 가장 좋아하는 이펙트 — 빼지 말 것). 패널 전환은 transform만 애니메이션(opacity 금지).
+- 샘 인터랙션: 탭/클릭 → 스쿼시 움찔 + 눈 깜빡 + 물결 1회. 휠/터치 스크롤 → 속도 비례 갸웃(rotation.x/z) 후 스프링 복귀. reduced-motion에서는 모두 끔.
 
 ## 검증 기준
 

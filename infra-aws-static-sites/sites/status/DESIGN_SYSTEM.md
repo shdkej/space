@@ -47,10 +47,10 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
 
 | 토큰 | 값 |
 |------|-----|
-| `--glass` | `rgba(255,255,255,0.3)` |
-| `--glass-strong` | `rgba(255,255,255,0.46)` (hover) |
+| `--glass` | `rgba(255,255,255,0.28)` |
+| `--glass-strong` | `rgba(255,255,255,0.42)` (hover) |
 | `--glass-border` | `rgba(255,255,255,0.62)` |
-| `--glass-blur` | `blur(16px) saturate(1.05)` |
+| `--glass-blur` | `none` — blur는 밀키한 불투명감을 만들어 제거(2026-07-05 피드백 "투명한 버전이 남아야") |
 | `--shadow-soft` | `0 12px 34px rgba(112,92,72,0.14)` |
 | `--ok` / `--warn` / `--bad` | `#8ba97c` / `#d9a84e` / `#c96f5f` |
 

@@ -19,10 +19,11 @@
         --ok: #8ba97c;
         --warn: #d9a84e;
         --bad: #c96f5f;
-        --glass: rgba(255, 255, 255, 0.3);
-        --glass-strong: rgba(255, 255, 255, 0.46);
+        /* blur를 걷어낸 맑은 투명 — 전환 중 보이던 "투명한 버전"이 곧 최종 상태 */
+        --glass: rgba(255, 255, 255, 0.28);
+        --glass-strong: rgba(255, 255, 255, 0.42);
         --glass-border: rgba(255, 255, 255, 0.62);
-        --glass-blur: blur(16px) saturate(1.05);
+        --glass-blur: none;
         --shadow-soft: 0 12px 34px rgba(112, 92, 72, 0.14);
         --radius: 14px;
         --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1277,12 +1278,12 @@
         });
       }
 
-      function setTab(id, { withFlash = false } = {}) {
+      function setTab(id) {
         currentTab = id;
         const panel = model.panels[id];
         if (!panel) return;
 
-        if (withFlash) flash();
+        flash();
         document.body.dataset.mode = "detail";
         $("detailTitle").textContent = panel.title;
         $("detailSub").textContent = panel.sub;
@@ -1344,11 +1345,12 @@
         renderPanels();
 
         document.querySelectorAll(".control-card").forEach((el) => {
-          el.addEventListener("click", () => setTab(el.dataset.tab, { withFlash: true }));
+          el.addEventListener("click", () => setTab(el.dataset.tab));
         });
         document.querySelectorAll(".nav-button").forEach((el) => {
           el.addEventListener("click", () => {
             if (el.dataset.action === "home") {
+              flash();
               document.body.dataset.mode = "overview";
               return;
             }
@@ -1356,6 +1358,7 @@
           });
         });
         $("backButton").addEventListener("click", () => {
+          flash();
           document.body.dataset.mode = "overview";
         });
 

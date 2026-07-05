@@ -22,6 +22,12 @@ spec:
           env:
             - name: REMOTION_BROWSER_EXECUTABLE
               value: /usr/bin/chromium
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: reel-room-env
+                  key: OPENAI_API_KEY
+                  optional: true
             - name: VIDAUTO_MAX_CONCURRENT_JOBS
               value: "1"
             - name: VIDAUTO_MAX_UPLOAD_MB

@@ -1,45 +1,50 @@
 # Status Dashboard — Design Notes
 
-`https://status.aws.shdkej.com` 의 디자인 의사결정 기록. 구현은 `dist/index.html` + `dist/assets/spatial-presence.css`.
+`https://status.aws.shdkej.com` 의 디자인 의사결정 기록. 구현은 `dist/index.html` + `dist/assets/saem-scene.js`.
+스펙: `docs/superpowers/specs/2026-07-05-status-saem-3d-redesign-design.md`
 
 ## 디자인 원칙
 
-- **한 화면 (one screen control layer)**: 첫 화면에서 시스템 상태가 한눈에 드러난다. 스크롤 없이 4개 카드(System / Surfaces / Agents / Deploy)로 전체 온도를 본다.
-- **공간이 주인공, HUD는 그 위에 뜬다**: 배경의 3D/공간 레이어가 무대(主)이고, 상태 카드는 그 위에 떠 있는 반투명 글래스 HUD다.
-- **Quiet Note 팔레트**: 따뜻한 본(bone) 배경 + 저채도 단일 악센트(clay/amber). 과채도 금지.
-- **모바일은 작고 안정적, 데스크탑은 크고 미래지향적**.
+- **한 화면 (one screen)**: 첫 화면에서 시스템 상태가 스크롤 없이 드러난다. 히어로(전체 온도) + 4카드(System / Surfaces / Agents / Deploy).
+- **샘(Saem)이 주인공, HUD는 그 위에 뜬다**: 배경의 3D 샘 씬이 무대(主)이고, 상태 카드는 투명 글래스로 그 위에 떠 있다.
+- **브랜드 정본 준수**: 캐릭터는 BRAND.md의 샘 — 이끼 조약돌 정령. 과장된 귀여움·큰 눈 금지, 씬 안에 텍스트/로고 렌더 금지.
+- **팔레트**: 크림 `#F0EEE9` + 웜 그레이지 + 올리브 이끼 + 앰버 아침빛. 그림자는 웜 그레이(pure black 금지).
 
 ## 레이어 구조 (아래 → 위)
 
 | z | 레이어 | 역할 |
 |---|--------|------|
-| body bg | 웰니스 글래스 사진 + 본 그라데이션 | 깊은 환경 |
-| -1 | `body::before` | 그리드 + 노이즈 텍스처 |
-| 0 | `.character-stage` | 디자인된 3D 캐릭터 포스터 + parallax stage |
-| 10 | `.app-shell.hud-layer` | floating HUD (카드·내비·디테일) |
+| body | 크림 본 그라데이션 | WebGL 무관 최종 안전망 |
+| 0 | `canvas.saem-canvas` (fixed, pointer-events:none) | Three.js 샘 씬 |
+| 0 | `.saem-fallback` | CSS 도형 샘 — `body[data-scene="webgl"]`일 때만 숨김 |
+| 10 | `.app-shell` | 글래스 HUD (히어로·카드·상세·하단 내비) |
 
-## Spatial Presence Layer
+## SaemScene (Three.js)
 
-Sam Samuel 웹의 핵심 공간 문법: **"캐릭터가 공간의 주인이고, UI는 그 위에 떠 있다."** (research-15, research-16 → build-12)
+- Three.js 0.166.1을 `dist/assets/vendor/three.module.min.js`로 **로컬 vendoring** — CDN 런타임 의존 없음 (과거 Three.js 롤백 원인이던 CDN 실패 리스크 제거).
+- 샘은 이미지가 아니라 **절차적 지오메트리**: 눌린 구체 조약돌(그레이지, roughness 0.94) + 이끼 캡 4패치 + 새싹(줄기+잎 2장) + 점 눈 2개. 숨쉬기 bob + 느린 좌우 바라보기.
+- 수면: 대형 circle 평면 + 동심원 ring 4개가 스케일/페이드로 퍼지는 물결. 가짜 컨택트 섀도(웜 그레이 radial 텍스처).
+- 카메라: 사인 드리프트 + 포인터 parallax(lerp 0.05). 데스크탑은 샘을 우측 스테이지에(stage.x 오프셋, lookAt은 원점 고정), 모바일은 히어로와 카드 사이 중앙에.
+- **상태 연동** (BRAND.md 상태 문법): `status.json` overall이 ok → 따뜻한 아침빛(`#ffe9cf`) + 물결 진행 / warn·bad → 빛 강도·색온도 하강(`#e3d5c2`) + 물결 정지(고요한 수면). `window.__SAEM_SCENE__.setMood()`로 전환.
 
-- **`background-layer` (`.character-stage`)**: `position:fixed; inset:0; z-index:0; pointer-events:none`. 투명 — 기존 body 배경이 깊은 환경이고, 그 위에 디자인된 캐릭터 에셋이 무대의 주인공으로 선다.
-- **`hud-layer` (`.app-shell.hud-layer`)**: `position:relative; z-index:10`. 기존 글래스 카드는 그대로 두고 z-index 보장만 추가 — 카드의 backdrop-blur 너머로 프레즌스가 은은히 비친다.
-- **designed character asset**: `assets/character/status-companion-v1.webp`를 `.depth-mid`에 올린다. 코드로 사람 도형을 조립하지 않고, 먼저 디자인된 캐릭터 포스터를 만든 뒤 웹 stage에 얹는다.
-- **spatial layers**: 3겹 `.depth-far`(aura) / `.depth-mid`(character poster) / `.depth-near`(motes)를 유지한다.
-- **character-placement**:
-  - desktop: 4-card HUD를 좌측 조종석으로 낮추고, 캐릭터는 우측 큰 stage에 배치한다.
-  - tablet: 64vh, 우측 stage 유지.
-  - mobile (<640px): 중앙 상단 무대에 더 작고 안정적으로 배치, 4-card HUD는 아래쪽에 압축 배치.
-- **pointer-response**: pointer/touch 좌표 → `.character-layer` 3겹의 translate/rotate parallax. `requestAnimationFrame`에서 smoothing한다.
-- **fallback-chain**: designed poster asset → static poster when reduced motion.
-- **`prefers-reduced-motion: reduce`**: parallax를 끄고 static poster 중심으로 남긴다.
+## Fallback 체인
 
-### Phase 단계
+1. WebGL 정상 → 풀 3D 씬 (`body[data-scene="webgl"]`, 캔버스 fade-in).
+2. 모듈 로드 실패 / renderer 생성 예외 / context lost → `data-scene` 미설정(또는 해제) → CSS 도형 샘(`.saem-fallback`: 조약돌 div + 이끼 blob + 새싹 + 점 눈 + CSS 물결)이 그대로 남는다. **캐릭터가 사라지는 상태가 구조적으로 없다.**
+3. `prefers-reduced-motion: reduce` → 씬 시간 정지(정적 1프레임) + parallax 무시, CSS 애니메이션도 정지.
 
-- **Phase 2a (현재)**: AI 생성 캐릭터 포스터 에셋을 stage에 올리고, pointer parallax와 floating HUD를 연결한다.
-- **Phase 2b (다음)**: 캐릭터 방향을 stylescape/프롬프트/포즈 기준으로 더 고정하고 poster 또는 short WebM loop를 교체한다.
-- **Phase 3**: Spline / R3F 기반 브랜드 캐릭터 제작 파이프라인으로 승격.
+## HUD 글래스 문법
 
-## 검증 기준 (build-12)
+- 토큰: `--glass: rgba(255,255,255,0.3)` / `--glass-strong: 0.46` / `--glass-border: 0.62` / `--glass-blur: blur(16px) saturate(1.05)`.
+- 히어로·4카드·상세 타일·리스트 행·하단 내비·아이콘 버튼 전부 같은 토큰 사용.
+- 카드는 상태를 보여준다: 상태 dot + label + 핵심 수치(score, OK/total) + 상태 문구.
+- 전환: 카드 클릭 → cardPulse + transition-flash + overview blur-out → 상세. 상세에서 하단 플로팅 내비(Home + 4탭).
 
-- 390px 가로 스크롤 없음 · character poster 표시 · `window.__STATUS_CHARACTER_STAGE__.mode === "asset-poster-parallax"` · HUD z-index 정상(stage 0 / HUD 10) · pointer/touch parallax 반응 · reduced-motion fallback · 4-card overview 유지.
+## 검증 기준
+
+- 390px·데스크탑 첫 화면 스크롤 없음 · `window.__SAEM_SCENE__.ready === true` + `body[data-scene="webgl"]` · 모듈 차단 시 CSS 샘 표시 · 카드 상태값 표시 · 클릭 → 상세 + 내비 동작 · setMood 무드 전환 · reduced-motion 정지.
+- 검증 스크립트: Playwright 헤드리스(chromium `--enable-unsafe-swiftshader`)로 12항목 자동 확인 (2026-07-05 전부 PASS).
+
+## 이력
+
+- 2026-07-05: 샘(Saem) 3D 리디자인. 이전의 Hers-inspired 정적 backdrop(spatial-presence.css)과 미커밋 여행 히어로 변경분은 이 리디자인으로 대체. 브랜드 정본과 어긋난 인물형 `status-companion-v1.webp` 제거.

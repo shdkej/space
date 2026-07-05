@@ -1,60 +1,68 @@
 # Status Design System
 
-`dist/index.html`의 인라인 `<style>` + `dist/assets/spatial-presence.css`에서 쓰는 패턴·토큰.
+`dist/index.html`의 인라인 `<style>` + `dist/assets/saem-scene.js`에서 쓰는 패턴·토큰.
 
-## SpatialPresence Pattern
+## SaemScene Pattern
 
-컴포넌트: `.character-stage` > `.character-layer`(`.depth-far`/`.depth-mid`/`.depth-near`) + `.atmosphere`.
-기본은 디자인된 캐릭터 poster asset이고, CSS/JS layer가 포인터 parallax를 담당한다.
+컴포넌트: `canvas.saem-canvas`(Three.js) + `.saem-fallback`(CSS 도형 샘) + `.app-shell`(글래스 HUD).
 
 ```
-.character-stage            position:fixed; inset:0; z-index:0; pointer-events:none; perspective:1400px
- ├ .character-layer.depth-far   > .sp-aura            (방의 빛)
- ├ .character-layer.depth-mid   > img.character-poster (디자인된 캐릭터 에셋)
- ├ .character-layer.depth-near  > .sp-motes           (전경 빛 입자)
- └ .atmosphere                                        (지평선 글로우)
+canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
+                       body[data-scene="webgl"]일 때만 opacity 1 (fade-in)
+.saem-fallback         CSS 조약돌+이끼+새싹+점눈+물결 — webgl 성공 시에만 display:none
+.app-shell             z-index:10, 글래스 HUD
 ```
 
-### CSS 토큰 (`:root` 선언)
+### JS 계약
 
-| 토큰 | 값 | 의미 |
+- `initSaemScene({ canvas, mood })` (ES module, `assets/saem-scene.js`)
+  - 성공: `body.dataset.scene = "webgl"` 설정, `window.__SAEM_SCENE__ = { ready:true, setMood }` 반환.
+  - 실패(renderer 예외 등): 아무것도 만지지 않고 `null` — CSS 샘이 그대로 남는다.
+  - `webglcontextlost` → `data-scene` 해제 → CSS 샘 복귀.
+- `setMood("ok" | "warn" | "bad")`: ok = 아침빛 `#ffe9cf`·intensity 2.4·물결 진행 / 그 외 = `#e3d5c2`·1.1·물결 정지.
+- 로더는 `index.html`의 `startSaemScene()` — dynamic `import()`라 모듈 로드 실패도 페이지를 죽이지 않는다.
+
+### 씬 토큰 (saem-scene.js 상수)
+
+| 상수 | 값 | 의미 |
 |------|-----|------|
-| `--character-z` | `0` | 배경 레이어 z-index |
-| `--hud-z` | `10` | HUD 카드 z-index |
-| `--hud-bg` | `rgba(244,242,234,0.75)` | HUD 카드 배경(글래스 기준값) |
-| `--hud-blur` | `blur(8px)` | HUD backdrop-filter 기준값 |
-| `--character-scale-desktop` | `92vh` | 데스크탑 캐릭터 포스터 높이 |
-| `--character-scale-tablet` | `64vh` | 태블릿 높이 |
-| `--character-scale-mobile` | `44vh` | 모바일 높이 |
-| `--parallax-desktop` | `8` | 데스크탑 최대 회전각(deg) |
-| `--parallax-mobile` | `3` | 모바일 최대 회전각(deg) |
-| `--sp-warm` / `--sp-deep` | `208,178,132` / `150,120,84` | 프레즌스 warm/clay RGB(알파 조합용) |
+| `CREAM` | `#f0eee9` | 배경·fog |
+| `STONE` | `#cfc4b6` | 조약돌 |
+| `MOSS` / `SPROUT` | `#8a9a6b` / `#7d8f5d` | 이끼 / 새싹 |
+| `EYE` | `#4a4238` | 점 눈 |
+| `WATER` | `#e9e5da` | 수면 |
+| `MORNING` / `DUSK` | `#ffe9cf` / `#e3d5c2` | ok / warn·bad 빛 |
 
-`.depth-far|mid|near`는 stage의 기본 깊이 레이어다. 캐릭터 에셋은 `.depth-mid`에 들어가며, `.depth-far`와 `.depth-near`는 분위기와 포인터 깊이감을 만든다.
+### 반응형 (layout())
 
-### 캐릭터 에셋
+| 폭 | saem scale | stage 위치 | camera z |
+|----|-----------|-----------|----------|
+| ≥1120px | 0.66 | x 1.7 (우측 스테이지) | 5.2 |
+| 740–1119px | 0.6 | x 1.25 | 5.6 |
+| <740px | 0.5 | 중앙, y 0.62 (히어로와 카드 사이) | 7.2 |
 
-- 현재 에셋은 `dist/assets/character/status-companion-v1.webp`이다.
-- 캐릭터는 코드 도형으로 조립하지 않는다. 먼저 stylescape/프롬프트/생성 또는 모델링으로 디자인된 사람 형상의 에셋을 만든 뒤 stage에 올린다.
-- `window.__STATUS_CHARACTER_STAGE__ = { mode: "asset-poster-parallax", ready: true, interactive: true }`를 설정해 검증 가능하게 한다.
-- pointer/touch 좌표를 smoothing해 `.depth-far|mid|near`의 transform에 반영한다.
+카메라 lookAt은 항상 원점 고정 — stage 오프셋이 화면상 위치를 만든다 (stage를 lookAt하면 오프셋이 상쇄되므로 금지).
 
-### 반응형
+## HUD 글래스 토큰 (`:root`)
 
-- 데스크탑(`min-width:1120px`): HUD grid를 좌측 조종석으로 제한하고, 캐릭터는 우측 stage에서 크게 보이게 둔다.
-- 모바일(`max-width:639px`): 캐릭터는 중앙 상단에 작게 두고, 4-card HUD는 하단 48svh 안으로 압축한다. pointer/touch 반응은 유지하되 회전 폭을 줄인다.
-- 태블릿(640–1023px): 프레즌스 64vh, aura 축소.
+| 토큰 | 값 |
+|------|-----|
+| `--glass` | `rgba(255,255,255,0.3)` |
+| `--glass-strong` | `rgba(255,255,255,0.46)` (hover) |
+| `--glass-border` | `rgba(255,255,255,0.62)` |
+| `--glass-blur` | `blur(16px) saturate(1.05)` |
+| `--shadow-soft` | `0 12px 34px rgba(112,92,72,0.14)` |
+| `--ok` / `--warn` / `--bad` | `#8ba97c` / `#d9a84e` / `#c96f5f` |
 
-### 접근성
+히어로·카드·상세 타일·리스트 행·하단 내비·아이콘 버튼이 모두 이 토큰만 쓴다. 새 표면을 추가할 때 개별 rgba를 만들지 말 것.
 
-`prefers-reduced-motion: reduce` → CSS transition/transform 강제 해제(`!important`), static poster를 유지한다.
+### 전환 문법
 
-### 성능
+- 카드 클릭: `.is-active` → cardPulse(0.48s) + `#transitionFlash` 확산 + `body[data-mode="detail"]`로 overview blur-out(12px)/scale-down.
+- 상세 ↔ 탭: `.detail-panel.is-current` + pageIn(0.42s). 하단 내비는 detail 모드에서만 표시.
 
-- 캐릭터 WebP는 preload한다.
-- pointer 이벤트는 좌표만 갱신하고, transform 적용은 `requestAnimationFrame`에서 처리한다.
-- 별도 WebGL runtime을 로드하지 않아 CDN 실패·GPU 실패 때 빈 배경이 되지 않는다.
+### 접근성 / 성능
 
-### HUD 통합 규칙
-
-HUD 래퍼(`.app-shell`)에 `.hud-layer`를 추가해 `z-index:10`을 보장한다. 데스크탑에서는 HUD grid 폭을 줄여 우측 stage의 캐릭터가 실제로 보이게 하고, 모바일에서는 기존 4-card one-screen 구조를 유지한다.
+- `prefers-reduced-motion: reduce`: CSS 전면 정지 + 씬 elapsed 시간 동결(정적 프레임) + parallax 무시.
+- pixelRatio 상한 2, `powerPreference: "low-power"`, 포인터 좌표는 저장만 하고 transform은 rAF에서 적용.
+- 외부 CDN 런타임 없음 — three.js는 `assets/vendor/` 로컬.

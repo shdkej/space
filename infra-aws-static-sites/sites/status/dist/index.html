@@ -9,27 +9,22 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
     />
-    <!-- SpatialPresence: 3D character background layer (build-12) -->
-    <link rel="stylesheet" href="assets/spatial-presence.css" />
     <style>
       :root {
         color-scheme: light;
-        --bg: #f8f8f5;
-        --paper: rgba(255, 255, 255, 0.24);
-        --glass: rgba(255, 255, 255, 0.11);
-        --glass-strong: rgba(255, 255, 255, 0.26);
-        --ink: #171717;
-        --muted: #62615c;
-        --faint: #96948c;
-        --line: rgba(30, 30, 26, 0.09);
-        --line-light: rgba(255, 255, 255, 0.82);
-        --ok: #5d776e;
-        --warn: #b88325;
-        --bad: #c5534d;
-        --accent: #7d8589;
-        --radius: 8px;
-        --shadow: 0 14px 46px rgba(74, 65, 58, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.46);
-        --shadow-soft: 0 8px 26px rgba(74, 65, 58, 0.045), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+        --bg: #f0eee9;
+        --ink: #2f241d;
+        --muted: rgba(79, 62, 50, 0.74);
+        --faint: rgba(101, 80, 66, 0.56);
+        --ok: #8ba97c;
+        --warn: #d9a84e;
+        --bad: #c96f5f;
+        --glass: rgba(255, 255, 255, 0.3);
+        --glass-strong: rgba(255, 255, 255, 0.46);
+        --glass-border: rgba(255, 255, 255, 0.62);
+        --glass-blur: blur(16px) saturate(1.05);
+        --shadow-soft: 0 12px 34px rgba(112, 92, 72, 0.14);
+        --radius: 14px;
         --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
         --sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
       }
@@ -50,24 +45,7 @@
         font-family: var(--sans);
         font-feature-settings: "tnum";
         -webkit-font-smoothing: antialiased;
-        background:
-          linear-gradient(180deg, rgba(255, 253, 249, 0.42), rgba(248, 244, 239, 0.78)),
-          url("./assets/status-hers-realistic-bg.png") center center / cover fixed,
-          var(--bg);
-      }
-
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(247, 241, 236, 0.72) 58%, rgba(242, 238, 232, 0.82)),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.26) 1px, transparent 1px),
-          linear-gradient(180deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px),
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
-        background-size: auto, 72px 72px, 72px 72px, 180px 180px;
+        background: linear-gradient(168deg, #f5f2ec 0%, #f0eee9 46%, #eae4d9 100%);
       }
 
       a,
@@ -78,10 +56,169 @@
 
       button {
         border: 0;
+        background: none;
+        padding: 0;
       }
 
+      /* ─── 배경 레이어: Three.js 캔버스 ───────────── */
+      .saem-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        width: 100vw;
+        height: 100svh;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.9s var(--ease);
+      }
+
+      body[data-scene="webgl"] .saem-canvas {
+        opacity: 1;
+      }
+
+      /* ─── CSS 샘 fallback (WebGL 실패 시 그대로 남는다) ─ */
+      .saem-fallback {
+        position: fixed;
+        z-index: 0;
+        left: 50%;
+        bottom: 34svh;
+        width: 180px;
+        height: 190px;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      body[data-scene="webgl"] .saem-fallback {
+        display: none;
+      }
+
+      .saem-fallback .water {
+        position: absolute;
+        left: 50%;
+        bottom: -14px;
+        width: 300px;
+        height: 74px;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: radial-gradient(ellipse at center, rgba(233, 229, 218, 0.9), rgba(233, 229, 218, 0) 70%);
+      }
+
+      .saem-fallback .ripple {
+        position: absolute;
+        left: 50%;
+        bottom: 12px;
+        width: 150px;
+        height: 40px;
+        border: 1.5px solid rgba(255, 255, 255, 0.75);
+        border-radius: 50%;
+        transform: translateX(-50%) scale(0.6);
+        opacity: 0;
+        animation: saemRipple 5.2s linear infinite;
+      }
+
+      .saem-fallback .ripple:nth-child(3) {
+        animation-delay: 2.6s;
+      }
+
+      @keyframes saemRipple {
+        0% {
+          opacity: 0.7;
+          transform: translateX(-50%) scale(0.55);
+        }
+
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) scale(1.9);
+        }
+      }
+
+      .saem-fallback .pebble {
+        position: absolute;
+        left: 50%;
+        bottom: 22px;
+        width: 128px;
+        height: 96px;
+        transform: translateX(-50%);
+        border-radius: 52% 48% 50% 50% / 58% 60% 42% 44%;
+        background: linear-gradient(155deg, #ded4c6 8%, #cfc4b6 52%, #bcae9d 100%);
+        box-shadow: 0 18px 30px rgba(120, 104, 86, 0.24);
+        animation: saemBreathe 6s ease-in-out infinite;
+      }
+
+      @keyframes saemBreathe {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+
+        50% {
+          transform: translateX(-50%) translateY(-3px);
+        }
+      }
+
+      .saem-fallback .moss {
+        position: absolute;
+        left: 50%;
+        top: -12px;
+        width: 74px;
+        height: 34px;
+        transform: translateX(-54%);
+        border-radius: 50% 50% 46% 46% / 74% 78% 30% 30%;
+        background: linear-gradient(160deg, #9aab7b, #8a9a6b 70%);
+      }
+
+      .saem-fallback .sprout {
+        position: absolute;
+        left: 44%;
+        top: -30px;
+        width: 3px;
+        height: 20px;
+        border-radius: 999px;
+        background: #7d8f5d;
+      }
+
+      .saem-fallback .sprout::before,
+      .saem-fallback .sprout::after {
+        content: "";
+        position: absolute;
+        top: -4px;
+        width: 13px;
+        height: 7px;
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        background: #7d8f5d;
+      }
+
+      .saem-fallback .sprout::before {
+        left: -11px;
+        transform: rotate(-32deg);
+      }
+
+      .saem-fallback .sprout::after {
+        left: 2px;
+        transform: rotate(32deg);
+      }
+
+      .saem-fallback .eye {
+        position: absolute;
+        top: 40%;
+        width: 7px;
+        height: 8px;
+        border-radius: 50%;
+        background: #4a4238;
+      }
+
+      .saem-fallback .eye.left {
+        left: 32%;
+      }
+
+      .saem-fallback .eye.right {
+        right: 32%;
+      }
+
+      /* ─── HUD ──────────────────────────────────── */
       .app-shell {
         position: relative;
+        z-index: 10;
         width: 100vw;
         height: 100svh;
         isolation: isolate;
@@ -93,7 +230,7 @@
         display: grid;
         grid-template-rows: auto minmax(0, 1fr);
         gap: 10px;
-        padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+        padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
         transition: transform 0.62s var(--ease), opacity 0.42s var(--ease), filter 0.42s var(--ease);
       }
 
@@ -104,86 +241,119 @@
         pointer-events: none;
       }
 
-      .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      .hero-copy {
+        min-width: 0;
+        justify-self: start;
+        display: grid;
+        align-content: start;
         gap: 12px;
-        min-width: 0;
-      }
-
-      .brand {
-        min-width: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 7px 9px;
-        border: 1px solid var(--line-light);
-        border-radius: var(--radius);
-        background: rgba(255, 255, 255, 0.14);
+        padding: 18px 22px 20px;
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        background: var(--glass);
         box-shadow: var(--shadow-soft);
-        backdrop-filter: blur(24px) saturate(1.5);
-        -webkit-backdrop-filter: blur(24px) saturate(1.5);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
       }
 
-      .brand-mark {
-        width: 18px;
-        height: 18px;
-        flex: 0 0 auto;
-        border-radius: 7px;
-        background:
-          linear-gradient(135deg, rgba(255, 255, 255, 0.96), transparent 36%),
-          linear-gradient(135deg, #f5f4ef, #cfcac1 58%, #8b8983);
-        box-shadow: 0 0 22px rgba(70, 67, 60, 0.16);
-      }
-
-      .brand-copy {
-        min-width: 0;
-      }
-
-      .brand-title {
+      .hero-kicker,
+      .hero-line,
+      .hero-meta-line {
         overflow: hidden;
-        font-size: 12px;
-        font-weight: 780;
-        letter-spacing: 0;
-        text-overflow: ellipsis;
-        white-space: nowrap;
       }
 
-      .brand-sub {
-        margin-top: 1px;
-        overflow: hidden;
+      .hero-kicker {
         color: var(--faint);
-        font-size: 9px;
-        font-weight: 680;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
       }
 
-      .updated {
-        max-width: 38vw;
-        padding: 7px 9px;
-        border: 1px solid var(--line-light);
-        border-radius: var(--radius);
-        background: rgba(255, 255, 255, 0.13);
-        box-shadow: var(--shadow-soft);
+      .hero-title {
+        max-width: min(15ch, 100%);
+        margin: 0;
+        font-size: clamp(30px, 8.6vw, 58px);
+        line-height: 0.98;
+        font-weight: 430;
+        letter-spacing: -0.05em;
+        color: rgba(61, 44, 33, 0.95);
+        text-wrap: balance;
+      }
+
+      .hero-title .hero-emphasis {
+        font-weight: 760;
+        color: rgba(33, 24, 18, 0.98);
+      }
+
+      .hero-line {
+        display: block;
+      }
+
+      .hero-line + .hero-line {
+        margin-top: 0.06em;
+      }
+
+      .hero-lead {
+        max-width: min(46ch, 100%);
+        margin: 0;
         color: var(--muted);
-        font-size: 9px;
-        font-weight: 720;
-        line-height: 1.25;
-        text-align: right;
-        backdrop-filter: blur(20px) saturate(1.5);
-        -webkit-backdrop-filter: blur(20px) saturate(1.5);
+        font-size: clamp(12px, 3.2vw, 15px);
+        line-height: 1.42;
+        letter-spacing: -0.02em;
       }
 
+      .hero-meta {
+        display: grid;
+        gap: 3px;
+        color: var(--faint);
+        font-size: 10px;
+        line-height: 1.35;
+      }
+
+      .hero-meta strong {
+        color: rgba(58, 42, 32, 0.88);
+        font-weight: 650;
+      }
+
+      [data-reveal] .reveal-word {
+        display: inline-block;
+        opacity: 0;
+        transform: translate3d(0, 1.1em, 0);
+        filter: blur(8px);
+        animation: revealWord 0.84s var(--ease) forwards;
+        animation-delay: calc(var(--word-index, 0) * 52ms + var(--reveal-delay, 0ms));
+        will-change: transform, opacity, filter;
+      }
+
+      [data-reveal] .reveal-space {
+        display: inline-block;
+        width: 0.28em;
+      }
+
+      @keyframes revealWord {
+        0% {
+          opacity: 0;
+          transform: translate3d(0, 1.1em, 0);
+          filter: blur(8px);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+          filter: blur(0);
+        }
+      }
+
+      /* ─── 4 status cards ───────────────────────── */
       .overview-grid {
         min-height: 0;
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(2, minmax(96px, 0.5fr));
         align-self: end;
-        grid-template-rows: repeat(2, minmax(86px, 0.5fr));
-        gap: 8px;
-        height: min(32svh, 278px);
+        gap: 10px;
+        height: min(30svh, 264px);
       }
 
       .control-card {
@@ -193,40 +363,30 @@
         overflow: hidden;
         display: grid;
         grid-template-rows: auto minmax(0, 1fr) auto;
-        align-items: stretch;
-        gap: 5px;
-        padding: 9px;
-        border: 1px solid var(--line-light);
-        border-radius: var(--radius);
-        background:
-          linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.035)),
-          radial-gradient(circle at 92% 0%, rgba(255, 255, 255, 0.11), transparent 10rem);
-        box-shadow: var(--shadow);
+        gap: 4px;
+        padding: 13px 15px 12px;
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        background: var(--glass);
+        box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
         cursor: pointer;
         text-align: left;
-        transform: translateY(0);
-        transition: transform 0.28s var(--ease), border-color 0.28s var(--ease), background 0.28s var(--ease);
-        backdrop-filter: blur(18px) saturate(1.28);
-        -webkit-backdrop-filter: blur(18px) saturate(1.28);
-      }
-
-      .control-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        opacity: 0.2;
-        pointer-events: none;
-        background:
-          linear-gradient(120deg, rgba(255, 255, 255, 0.68), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.18)),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
-        background-size: auto, 38px 38px;
+        transition:
+          transform 0.28s var(--ease),
+          border-color 0.28s var(--ease),
+          background 0.28s var(--ease),
+          box-shadow 0.28s var(--ease);
       }
 
       .control-card:hover,
       .control-card:focus-visible {
-        border-color: rgba(255, 255, 255, 0.96);
         outline: none;
         transform: translateY(-3px);
+        border-color: rgba(255, 255, 255, 0.85);
+        background: var(--glass-strong);
+        box-shadow: 0 18px 40px rgba(112, 92, 72, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.6);
       }
 
       .control-card.is-active {
@@ -239,137 +399,105 @@
         }
 
         44% {
-          transform: scale(0.975);
+          transform: scale(0.965);
         }
 
         100% {
-          transform: scale(1.02);
+          transform: scale(1.015);
         }
       }
 
-      .card-top,
-      .card-mid,
-      .card-bottom {
-        position: relative;
-        z-index: 1;
-        min-width: 0;
-      }
-
-      .card-top,
-      .card-bottom {
+      .card-top {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 8px;
+        gap: 6px;
+        min-width: 0;
       }
 
       .card-label {
         overflow: hidden;
         color: var(--faint);
         font-size: 10px;
-        font-weight: 820;
-        letter-spacing: 0;
+        font-weight: 750;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
-      .card-icon {
-        width: 19px;
-        height: 19px;
-        flex: 0 0 auto;
-        display: grid;
-        place-items: center;
-        border: 1px solid rgba(30, 30, 26, 0.08);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.2);
-        color: #595a56;
-        font-size: 10px;
-        font-weight: 820;
+      .card-mid {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+        min-width: 0;
       }
 
       .card-value {
-        font-size: clamp(24px, 7vw, 40px);
-        font-weight: 720;
-        line-height: 0.9;
-        letter-spacing: 0;
+        font-size: clamp(26px, 6.4vw, 40px);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        color: rgba(43, 32, 24, 0.96);
       }
 
       .card-title {
-        margin-top: 5px;
         overflow: hidden;
-        font-size: clamp(12px, 2.9vw, 17px);
-        font-weight: 780;
-        line-height: 1.08;
-        letter-spacing: 0;
+        color: var(--muted);
+        font-size: clamp(11px, 2.6vw, 13px);
+        font-weight: 600;
+        letter-spacing: -0.02em;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
-      .card-note {
-        display: -webkit-box;
-        margin-top: 4px;
-        overflow: hidden;
-        color: var(--muted);
-        font-size: 10px;
-        font-weight: 560;
-        line-height: 1.42;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-      }
-
-      .status-pill {
+      .card-bottom {
+        display: flex;
+        align-items: center;
+        gap: 6px;
         min-width: 0;
-        overflow: hidden;
-        padding: 4px 7px;
-        border: 1px solid rgba(30, 30, 26, 0.06);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.16);
-        color: var(--muted);
+        color: var(--faint);
         font-size: 10px;
-        font-weight: 800;
+        font-weight: 650;
+      }
+
+      .card-bottom .card-status {
+        overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
-      .status-pill.ok {
-        color: var(--ok);
-      }
-
-      .status-pill.warn {
-        color: var(--warn);
-      }
-
-      .status-pill.bad {
-        color: var(--bad);
-      }
-
-      .micro-line {
-        flex: 1 1 auto;
-        height: 5px;
-        overflow: hidden;
+      .dot {
+        flex: 0 0 auto;
+        width: 8px;
+        height: 8px;
         border-radius: 999px;
-        background: rgba(30, 30, 26, 0.07);
+        background: var(--faint);
       }
 
-      .micro-line span {
-        display: block;
-        width: var(--fill, 0%);
-        height: 100%;
-        border-radius: inherit;
+      .dot.ok {
         background: var(--ok);
       }
 
+      .dot.warn {
+        background: var(--warn);
+      }
+
+      .dot.bad {
+        background: var(--bad);
+      }
+
+      /* ─── detail ───────────────────────────────── */
       .detail-view {
         position: absolute;
         inset: 0;
         display: grid;
         grid-template-rows: auto minmax(0, 1fr);
-        padding: max(14px, env(safe-area-inset-top)) 14px calc(86px + env(safe-area-inset-bottom));
+        padding: max(16px, env(safe-area-inset-top)) 16px calc(86px + env(safe-area-inset-bottom));
         opacity: 0;
         transform: translateY(24px);
         transition: transform 0.62s var(--ease), opacity 0.42s var(--ease);
         pointer-events: none;
+        z-index: 1;
       }
 
       body[data-mode="detail"] .detail-view {
@@ -387,18 +515,19 @@
       }
 
       .icon-button {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         display: grid;
         place-items: center;
-        border: 1px solid var(--line-light);
-        border-radius: var(--radius);
-        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        background: var(--glass);
         box-shadow: var(--shadow-soft);
         cursor: pointer;
         font-size: 18px;
-        backdrop-filter: blur(22px) saturate(1.5);
-        -webkit-backdrop-filter: blur(22px) saturate(1.5);
+        color: rgba(60, 44, 34, 0.9);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
       }
 
       .detail-title {
@@ -410,10 +539,10 @@
         overflow: hidden;
         font-size: 22px;
         line-height: 1.08;
-        font-weight: 840;
-        letter-spacing: 0;
+        font-weight: 800;
         text-overflow: ellipsis;
         white-space: nowrap;
+        color: rgba(43, 32, 24, 0.96);
       }
 
       .detail-title p {
@@ -428,17 +557,18 @@
       }
 
       .detail-score {
-        min-width: 54px;
-        padding: 9px 10px;
-        border: 1px solid var(--line-light);
-        border-radius: var(--radius);
-        background: rgba(255, 255, 255, 0.2);
+        min-width: 56px;
+        padding: 9px 11px;
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        background: var(--glass);
         box-shadow: var(--shadow-soft);
-        font-size: 18px;
-        font-weight: 840;
+        font-size: 17px;
+        font-weight: 800;
         text-align: center;
-        backdrop-filter: blur(22px) saturate(1.5);
-        -webkit-backdrop-filter: blur(22px) saturate(1.5);
+        color: rgba(43, 32, 24, 0.96);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
       }
 
       .detail-scroll {
@@ -479,12 +609,12 @@
 
       .summary-tile,
       .list-row {
-        border: 1px solid var(--line-light);
+        border: 1px solid var(--glass-border);
         border-radius: var(--radius);
-        background: rgba(255, 255, 255, 0.21);
+        background: var(--glass);
         box-shadow: var(--shadow-soft);
-        backdrop-filter: blur(22px) saturate(1.48);
-        -webkit-backdrop-filter: blur(22px) saturate(1.48);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
       }
 
       .summary-tile {
@@ -506,8 +636,9 @@
         margin-top: 7px;
         overflow: hidden;
         font-size: 20px;
-        font-weight: 840;
+        font-weight: 800;
         line-height: 1;
+        color: rgba(43, 32, 24, 0.96);
         text-overflow: ellipsis;
         white-space: nowrap;
       }
@@ -527,25 +658,6 @@
         text-decoration: none;
       }
 
-      .dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 999px;
-        background: var(--faint);
-      }
-
-      .dot.ok {
-        background: var(--ok);
-      }
-
-      .dot.warn {
-        background: var(--warn);
-      }
-
-      .dot.bad {
-        background: var(--bad);
-      }
-
       .row-main {
         min-width: 0;
       }
@@ -553,8 +665,9 @@
       .row-name {
         overflow: hidden;
         font-size: 13px;
-        font-weight: 820;
+        font-weight: 750;
         line-height: 1.2;
+        color: rgba(43, 32, 24, 0.94);
         text-overflow: ellipsis;
         white-space: nowrap;
       }
@@ -573,36 +686,38 @@
       .row-meta {
         max-width: 96px;
         overflow: hidden;
-        padding: 6px 8px;
+        padding: 6px 9px;
+        border: 1px solid var(--glass-border);
         border-radius: 999px;
-        background: rgba(30, 30, 26, 0.05);
-        color: var(--muted);
+        background: rgba(255, 255, 255, 0.4);
+        color: rgba(86, 66, 54, 0.82);
         font-size: 10px;
-        font-weight: 820;
+        font-weight: 750;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
+      /* ─── floating nav (detail) ────────────────── */
       .floating-nav {
         position: fixed;
-        left: 14px;
-        right: 14px;
+        left: 16px;
+        right: 16px;
         bottom: max(12px, env(safe-area-inset-bottom));
-        z-index: 5;
+        z-index: 15;
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 6px;
         padding: 6px;
-        border: 1px solid var(--line-light);
-        border-radius: var(--radius);
-        background: rgba(255, 255, 255, 0.28);
-        box-shadow: var(--shadow);
+        border: 1px solid var(--glass-border);
+        border-radius: 999px;
+        background: var(--glass);
+        box-shadow: var(--shadow-soft);
         opacity: 0;
         transform: translateY(22px);
         pointer-events: none;
         transition: opacity 0.28s var(--ease), transform 0.32s var(--ease);
-        backdrop-filter: blur(22px) saturate(1.42);
-        -webkit-backdrop-filter: blur(22px) saturate(1.42);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
       }
 
       body[data-mode="detail"] .floating-nav {
@@ -613,39 +728,49 @@
 
       .nav-button {
         min-width: 0;
-        height: 38px;
+        height: 46px;
         display: grid;
         place-items: center;
-        border-radius: 7px;
-        background: transparent;
+        padding: 0 10px;
+        border: 1px solid transparent;
+        border-radius: 999px;
         cursor: pointer;
-        color: var(--muted);
-        font-size: 10px;
-        font-weight: 820;
-        transition: background 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+        color: rgba(60, 44, 34, 0.82);
+        transition:
+          background 0.2s var(--ease),
+          color 0.2s var(--ease),
+          transform 0.2s var(--ease),
+          border-color 0.2s var(--ease);
       }
 
-      .nav-button span {
-        display: block;
+      .nav-button:hover {
+        background: rgba(255, 255, 255, 0.34);
+      }
+
+      .nav-button-label {
         overflow: hidden;
-        max-width: 100%;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+        line-height: 1;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
       .nav-button.is-current {
-        background: rgba(20, 20, 18, 0.07);
-        color: var(--ink);
+        border-color: var(--glass-border);
+        background: rgba(255, 255, 255, 0.55);
+        color: rgba(36, 27, 20, 0.98);
       }
 
       .nav-button:active {
-        transform: scale(0.96);
+        transform: translateY(1px) scale(0.98);
       }
 
       .transition-flash {
         position: fixed;
         inset: auto 50% 86px auto;
-        z-index: 4;
+        z-index: 12;
         width: 12px;
         height: 12px;
         border-radius: 999px;
@@ -671,34 +796,34 @@
         }
       }
 
+      /* ─── responsive ───────────────────────────── */
       @media (min-width: 740px) {
         .overview {
           width: min(1160px, calc(100vw - 48px));
           margin: 0 auto;
-          padding-top: 18px;
-          padding-bottom: 18px;
+          padding-top: 22px;
+          padding-bottom: 22px;
+        }
+
+        .hero-copy {
+          max-width: min(56vw, 680px);
+          gap: 14px;
+          padding: 22px 26px 24px;
+        }
+
+        .hero-kicker {
+          font-size: 11px;
+        }
+
+        .hero-meta {
+          grid-template-columns: repeat(3, minmax(0, max-content));
+          gap: 10px 20px;
+          font-size: 11px;
         }
 
         .overview-grid {
           gap: 10px;
-          height: min(34vh, 320px);
-        }
-
-        .control-card {
-          padding: 11px;
-        }
-
-        .card-value {
-          font-size: clamp(30px, 3.2vw, 46px);
-        }
-
-        .card-title {
-          font-size: clamp(14px, 1.25vw, 18px);
-        }
-
-        .card-note,
-        .row-detail {
-          font-size: 12px;
+          height: min(30vh, 286px);
         }
 
         .detail-view {
@@ -722,20 +847,53 @@
         body[data-mode="detail"] .floating-nav {
           transform: translate(-50%, 0);
         }
+
+        .saem-fallback {
+          left: auto;
+          right: 16vw;
+          bottom: 30svh;
+          transform: none;
+        }
       }
 
       @media (min-width: 1120px) {
+        .hero-copy {
+          max-width: min(46vw, 620px);
+        }
+
         .overview-grid {
-          width: min(470px, 38vw);
+          width: min(520px, 42vw);
           justify-self: start;
+        }
+
+        .saem-fallback {
+          right: 18vw;
+          transform: scale(1.3);
+          transform-origin: bottom right;
         }
       }
 
       @media (max-width: 390px) {
         .overview {
-          gap: 10px;
-          padding-left: 10px;
-          padding-right: 10px;
+          gap: 8px;
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .hero-copy {
+          padding: 15px 17px 16px;
+        }
+
+        .hero-title {
+          font-size: clamp(26px, 8.8vw, 34px);
+        }
+
+        .hero-lead {
+          font-size: 11px;
+        }
+
+        .hero-meta {
+          font-size: 9px;
         }
 
         .overview-grid {
@@ -743,25 +901,13 @@
         }
 
         .control-card {
-          padding: 8px;
-        }
-
-        .card-icon {
-          width: 19px;
-          height: 19px;
-        }
-
-        .card-value {
-          font-size: clamp(22px, 8vw, 34px);
-        }
-
-        .card-title {
-          font-size: 12px;
+          padding: 11px 12px 10px;
+          border-radius: 16px;
         }
 
         .detail-view {
-          padding-left: 10px;
-          padding-right: 10px;
+          padding-left: 12px;
+          padding-right: 12px;
         }
 
         .summary-strip {
@@ -769,8 +915,29 @@
         }
 
         .floating-nav {
-          left: 10px;
-          right: 10px;
+          left: 12px;
+          right: 12px;
+        }
+
+        .nav-button {
+          height: 42px;
+          padding: 0 8px;
+        }
+
+        .nav-button-label {
+          font-size: 9px;
+        }
+      }
+
+      @media (max-width: 639px) {
+        .overview-grid {
+          height: min(30svh, 236px);
+        }
+
+        .saem-fallback {
+          bottom: 38svh;
+          transform: translateX(-50%) scale(0.82);
+          transform-origin: bottom center;
         }
       }
 
@@ -779,105 +946,44 @@
         *::before,
         *::after {
           animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
           scroll-behavior: auto !important;
           transition-duration: 0.001ms !important;
-        }
-      }
-
-      @media (max-width: 639px) {
-        .overview {
-          grid-template-rows: auto minmax(0, 1fr);
-          gap: 8px;
-        }
-
-        .overview-grid {
-          align-self: end;
-          height: min(26svh, 208px);
-          gap: 8px;
-        }
-
-        .brand,
-        .updated,
-        .control-card {
-          background: rgba(255, 255, 255, 0.16);
-          backdrop-filter: blur(14px) saturate(1.24);
-          -webkit-backdrop-filter: blur(14px) saturate(1.24);
-        }
-
-        .control-card {
-          gap: 3px;
-          padding: 7px;
-          box-shadow: 0 10px 22px rgba(62, 59, 52, 0.055), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-        }
-
-        .card-value {
-          font-size: clamp(19px, 6.4vw, 28px);
-        }
-
-        .card-title {
-          margin-top: 3px;
-          font-size: 12px;
-        }
-
-        .card-note {
-          margin-top: 3px;
-          display: none;
-          font-size: 9px;
-          line-height: 1.28;
-          -webkit-line-clamp: 1;
-        }
-
-        .card-label,
-        .status-pill {
-          font-size: 8px;
         }
       }
     </style>
   </head>
   <body data-mode="overview">
-    <!-- CharacterStage: full-screen Hers-inspired backdrop; HUD floats above it. -->
-    <div class="character-stage" aria-hidden="true" role="presentation">
-      <div class="character-layer depth-far"><div class="sp-aura"></div></div>
-      <div class="character-layer depth-mid" id="character-bg">
-        <div class="presence-backdrop">
-          <div class="presence-halo presence-halo-one"></div>
-          <div class="presence-halo presence-halo-two"></div>
-          <div class="presence-neck-button" aria-hidden="true">
-            <div class="presence-neck-button-shadow"></div>
-            <div class="presence-neck-button-stem"></div>
-            <div class="presence-neck-button-face">
-              <span class="presence-neck-button-label">status</span>
-              <span class="presence-neck-button-sub">open detail</span>
-            </div>
-          </div>
-          <div class="presence-phone">
-            <div class="presence-phone-top"></div>
-            <div class="presence-screen">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="presence-orb"></div>
-          </div>
-          <div class="presence-card presence-card-one"></div>
-          <div class="presence-card presence-card-two"></div>
-        </div>
+    <canvas class="saem-canvas" id="saemCanvas" aria-hidden="true"></canvas>
+
+    <div class="saem-fallback" aria-hidden="true">
+      <div class="water"></div>
+      <div class="ripple"></div>
+      <div class="ripple"></div>
+      <div class="pebble">
+        <div class="moss"></div>
+        <div class="sprout"></div>
+        <div class="eye left"></div>
+        <div class="eye right"></div>
       </div>
-      <div class="character-layer depth-near"><div class="sp-motes"></div></div>
-      <div class="atmosphere"></div>
     </div>
 
-    <main class="app-shell hud-layer">
+    <main class="app-shell">
       <section class="overview" aria-label="Status overview">
-        <header class="topbar">
-          <div class="brand">
-            <span class="brand-mark" aria-hidden="true"></span>
-            <div class="brand-copy">
-              <div class="brand-title">Space Status</div>
-              <div class="brand-sub">one screen control layer</div>
-            </div>
+        <header class="hero-copy" id="heroCopy" aria-label="Space status hero">
+          <div class="hero-kicker" id="heroKicker" data-reveal="words" style="--reveal-delay: 40ms">Space status</div>
+          <h1 class="hero-title" id="heroTitle">
+            <span class="hero-line" id="heroLineOne" data-reveal="words" style="--reveal-delay: 120ms">All systems</span>
+            <span class="hero-line hero-emphasis" id="heroLineTwo" data-reveal="words" style="--reveal-delay: 240ms">loading now</span>
+          </h1>
+          <p class="hero-lead" id="heroLead" data-reveal="words" style="--reveal-delay: 360ms">
+            Surfaces, agent lanes, and deploy targets in one quiet view.
+          </p>
+          <div class="hero-meta" id="heroMeta">
+            <div class="hero-meta-line" id="heroMetaScore" data-reveal="words" style="--reveal-delay: 520ms">Score / loading</div>
+            <div class="hero-meta-line" id="heroMetaStats" data-reveal="words" style="--reveal-delay: 620ms">Surfaces / loading</div>
+            <div class="hero-meta-line" id="updatedAt" data-reveal="words" style="--reveal-delay: 720ms">Updated / loading</div>
           </div>
-          <div class="updated" id="updatedAt">status feed loading</div>
         </header>
 
         <section class="overview-grid" id="overviewGrid" aria-label="Four status cards"></section>
@@ -908,10 +1014,10 @@
     <script>
       const $ = (id) => document.getElementById(id);
       const tabs = [
-        { id: "system", label: "System", icon: "◎" },
-        { id: "surfaces", label: "Surfaces", icon: "□" },
-        { id: "agents", label: "Agents", icon: "◇" },
-        { id: "deploy", label: "Deploy", icon: "↗" },
+        { id: "system", label: "System" },
+        { id: "surfaces", label: "Surfaces" },
+        { id: "agents", label: "Agents" },
+        { id: "deploy", label: "Deploy" },
       ];
       let currentTab = "system";
       let model = null;
@@ -946,6 +1052,30 @@
       const stateClass = (state) => (state === "ok" ? "ok" : state === "warn" ? "warn" : "bad");
       const stateLabel = (state) => (state === "ok" ? "Operational" : state === "warn" ? "Attention" : "Down");
 
+      function applyReveal(root) {
+        if (!root) return;
+        const targets = root.querySelectorAll("[data-reveal]");
+        targets.forEach((el) => {
+          const source = el.dataset.sourceText || el.textContent;
+          const words = String(source || "").trim().split(/\s+/).filter(Boolean);
+          el.dataset.sourceText = source;
+          el.textContent = "";
+          words.forEach((word, index) => {
+            const span = document.createElement("span");
+            span.className = "reveal-word";
+            span.style.setProperty("--word-index", index);
+            span.textContent = word;
+            el.appendChild(span);
+            if (index < words.length - 1) {
+              const gap = document.createElement("span");
+              gap.className = "reveal-space";
+              gap.textContent = " ";
+              el.appendChild(gap);
+            }
+          });
+        });
+      }
+
       function flash() {
         const el = $("transitionFlash");
         el.classList.remove("is-on");
@@ -979,20 +1109,18 @@
 
       function card(item) {
         return `
-          <button class="control-card" type="button" data-tab="${safe(item.id)}" aria-label="${safe(item.title)} 상세 보기">
-            <div class="card-top">
+          <button class="control-card" type="button" data-tab="${safe(item.id)}" aria-label="${safe(item.label)} 상세 보기">
+            <span class="card-top">
+              <span class="dot ${stateClass(item.state)}"></span>
               <span class="card-label">${safe(item.label)}</span>
-              <span class="card-icon" aria-hidden="true">${safe(item.icon)}</span>
-            </div>
-            <div class="card-mid">
-              <div class="card-value">${safe(item.value)}</div>
-              <div class="card-title">${safe(item.title)}</div>
-              <div class="card-note">${safe(item.note)}</div>
-            </div>
-            <div class="card-bottom">
-              <span class="status-pill ${stateClass(item.state)}">${safe(item.status)}</span>
-              <span class="micro-line" aria-hidden="true"><span style="--fill: ${safe(item.fill)}%"></span></span>
-            </div>
+            </span>
+            <span class="card-mid">
+              <span class="card-value">${safe(item.value)}</span>
+              <span class="card-title">${safe(item.title)}</span>
+            </span>
+            <span class="card-bottom">
+              <span class="card-status">${safe(item.status)}</span>
+            </span>
           </button>
         `;
       }
@@ -1001,7 +1129,6 @@
         const overall = data.overall || {};
         const checks = data.checks || [];
         const agents = data.agents || [];
-        const apps = data.apps || [];
         const deployments = data.deployments || [];
         const okChecks = checks.filter((item) => item.state === "ok").length;
         const okAgents = agents.filter((item) => item.state === "ok").length;
@@ -1013,54 +1140,43 @@
 
         return {
           generatedAt: data.generatedAt,
+          overallState: overall.state || "ok",
+          overallLabel: overall.label || "Status feed loaded.",
+          score,
+          okChecks,
+          totalChecks: checks.length,
           cards: [
             {
               id: "system",
-              label: "System Health",
-              icon: "◎",
+              label: "System",
               value: score,
-              title: stateLabel(overall.state),
-              note: overall.label || "Core system state is ready.",
-              status: `${score}/100`,
+              title: "/ 100",
+              status: stateLabel(overall.state),
               state: overall.state || "ok",
-              fill: score,
-              sub: "운영 표면 전체의 현재 온도입니다.",
             },
             {
               id: "surfaces",
-              label: "Live Surfaces",
-              icon: "□",
-              value: checks.length,
-              title: `${okChecks}/${checks.length} OK`,
-              note: checks[0]?.detail || "Public surfaces are checked as one visible layer.",
+              label: "Surfaces",
+              value: `${okChecks}/${checks.length}`,
+              title: "OK",
               status: `${avgLatency}ms avg`,
               state: okChecks === checks.length ? "ok" : "warn",
-              fill: checks.length ? Math.round((okChecks / checks.length) * 100) : 0,
-              sub: "사용자가 접하는 공개 표면입니다.",
             },
             {
               id: "agents",
-              label: "Agent Lanes",
-              icon: "◇",
-              value: okAgents,
-              title: `${agents.length} loops`,
-              note: agents[0]?.detail || "Recurring work lanes are tracked here.",
-              status: `${okAgents}/${agents.length} OK`,
+              label: "Agents",
+              value: `${okAgents}/${agents.length}`,
+              title: "loops",
+              status: okAgents === agents.length ? "all quiet" : "check lanes",
               state: okAgents === agents.length ? "ok" : "warn",
-              fill: agents.length ? Math.round((okAgents / agents.length) * 100) : 0,
-              sub: "자동화 루프가 실제로 돌고 있는지 보는 자리입니다.",
             },
             {
               id: "deploy",
-              label: "Deploy Lane",
-              icon: "↗",
-              value: deployOk,
-              title: `${deployments.length} targets`,
-              note: deployments[0]?.hosting || "Static apps are deployed through dedicated lanes.",
-              status: `${deployOk}/${deployments.length} OK`,
+              label: "Deploy",
+              value: `${deployOk}/${deployments.length}`,
+              title: "targets",
+              status: deployOk === deployments.length ? "all live" : "check targets",
               state: deployOk === deployments.length ? "ok" : "warn",
-              fill: deployments.length ? Math.round((deployOk / deployments.length) * 100) : 0,
-              sub: "S3, CloudFront, Ingress 배포 표면입니다.",
             },
           ],
           panels: {
@@ -1162,17 +1278,46 @@
         });
       }
 
+      function heroLines(state, okChecks, totalChecks) {
+        if (state === "ok") return ["All systems", "quiet & running"];
+        if (state === "warn") return ["Some surfaces", "need attention"];
+        return [`${totalChecks - okChecks} surfaces`, "are down now"];
+      }
+
+      function startSaemScene(mood) {
+        import("./assets/saem-scene.js")
+          .then((module) => {
+            const scene = module.initSaemScene({ canvas: $("saemCanvas"), mood });
+            if (!scene) console.info("Saem scene unavailable — CSS fallback stays.");
+          })
+          .catch(() => {
+            console.info("Saem scene module failed to load — CSS fallback stays.");
+          });
+      }
+
       function render(data) {
         model = buildModel(data);
-        $("updatedAt").textContent = `Updated ${stamp(model.generatedAt)}`;
+        const [lineOne, lineTwo] = heroLines(model.overallState, model.okChecks, model.totalChecks);
+        $("heroKicker").textContent = "Space status";
+        $("heroLineOne").textContent = lineOne;
+        $("heroLineTwo").textContent = lineTwo;
+        $("heroLead").textContent = model.overallLabel;
+        $("heroMetaScore").innerHTML = `<strong>Score</strong> / ${safe(String(model.score))} · 100`;
+        $("heroMetaStats").innerHTML = `<strong>Surfaces</strong> / ${safe(`${model.okChecks}/${model.totalChecks}`)} OK`;
+        $("updatedAt").innerHTML = `<strong>Updated</strong> / ${safe(stamp(model.generatedAt))}`;
         $("overviewGrid").innerHTML = model.cards.map(card).join("");
-        $("floatingNav").innerHTML = tabs
-          .map((tab) => `
-            <button class="nav-button" type="button" data-tab="${tab.id}" aria-label="${tab.label}">
-              <span>${tab.icon} ${tab.label}</span>
+        $("floatingNav").innerHTML = [
+          `
+            <button class="nav-button is-home" type="button" data-action="home" aria-label="Home">
+              <span class="nav-button-label">Home</span>
             </button>
-          `)
-          .join("");
+          `,
+          ...tabs.map((tab) => `
+            <button class="nav-button" type="button" data-tab="${tab.id}" aria-label="${tab.label}">
+              <span class="nav-button-label">${tab.label}</span>
+            </button>
+          `),
+        ].join("");
 
         renderPanels();
 
@@ -1180,80 +1325,43 @@
           el.addEventListener("click", () => setTab(el.dataset.tab));
         });
         document.querySelectorAll(".nav-button").forEach((el) => {
-          el.addEventListener("click", () => setTab(el.dataset.tab));
+          el.addEventListener("click", () => {
+            if (el.dataset.action === "home") {
+              flash();
+              document.body.dataset.mode = "overview";
+              return;
+            }
+            setTab(el.dataset.tab);
+          });
         });
         $("backButton").addEventListener("click", () => {
           flash();
           document.body.dataset.mode = "overview";
         });
+
+        applyReveal($("heroCopy"));
+        startSaemScene(model.overallState);
       }
 
       fetch("./status.json", { cache: "no-store" })
         .then((response) => response.json())
         .then(render)
         .catch(() => {
-          $("updatedAt").textContent = "status feed unavailable";
+          $("heroLineTwo").textContent = "feed unavailable";
+          $("heroMetaScore").innerHTML = "<strong>Score</strong> / --";
+          $("heroMetaStats").innerHTML = "<strong>Surfaces</strong> / waiting";
+          $("updatedAt").innerHTML = "<strong>Updated</strong> / unavailable";
           $("overviewGrid").innerHTML = card({
             id: "system",
-            label: "System Health",
-            icon: "◎",
+            label: "System",
             value: "--",
-            title: "Feed Waiting",
-            note: "status.json을 불러오지 못했습니다.",
-            status: "waiting",
+            title: "waiting",
+            status: "status.json unavailable",
             state: "warn",
-            fill: 12,
           });
+          applyReveal($("heroCopy"));
+          startSaemScene("warn");
         });
-    </script>
-
-    <script>
-      (() => {
-        const stage = document.querySelector(".character-stage");
-        const layers = document.querySelectorAll(".character-layer");
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-        window.__STATUS_CHARACTER_STAGE__ = {
-          mode: "hers-inspired-backdrop-parallax",
-          ready: Boolean(stage),
-          interactive: !reduceMotion,
-          asset: "css-fullscreen-backdrop",
-        };
-
-        if (!stage || reduceMotion || !layers.length) return;
-
-        let ticking = false;
-        let nx = 0;
-        let ny = 0;
-
-        function apply() {
-          layers.forEach((layer) => {
-            const factor = parseFloat(getComputedStyle(layer).getPropertyValue("--depth-factor")) || 1;
-            const rx = ny * 5.2 * factor;
-            const ry = nx * -6.2 * factor;
-            layer.style.transform =
-              `translate3d(${ry * 1.2}px, ${rx * 0.72}px, 0) rotateX(${rx}deg) rotateY(${ry}deg)`;
-          });
-          window.__STATUS_CHARACTER_STAGE__.lastTransform = {
-            x: Number(nx.toFixed(3)),
-            y: Number(ny.toFixed(3)),
-          };
-          ticking = false;
-        }
-
-        window.addEventListener("pointermove", (event) => {
-          nx = (event.clientX / window.innerWidth - 0.5) * 2;
-          ny = (event.clientY / window.innerHeight - 0.5) * 2;
-          window.__STATUS_CHARACTER_STAGE__.lastPointer = {
-            x: Number(nx.toFixed(3)),
-            y: Number(ny.toFixed(3)),
-          };
-          if (!ticking) {
-            ticking = true;
-            requestAnimationFrame(apply);
-          }
-        }, { passive: true });
-      })();
     </script>
   </body>
 </html>

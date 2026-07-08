@@ -63,13 +63,15 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 4
+          # limits는 노드(1 CPU/6GB) 생존 몫을 남긴다 — cpu 전량 점유 시 kubelet·sshd가
+          # 굶어 노드가 통째로 죽는다 (2026-07-07 8개 영상 잡 노드 다운 사고).
           resources:
             requests:
               cpu: 100m
               memory: 512Mi
             limits:
-              cpu: "1"
-              memory: 4Gi
+              cpu: 800m
+              memory: 3Gi
       volumes:
         - name: jobs
           emptyDir:

@@ -717,6 +717,103 @@
         white-space: nowrap;
       }
 
+      button.list-row {
+        width: 100%;
+        text-align: left;
+      }
+
+      .list-row.is-clickable {
+        cursor: pointer;
+        transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+      }
+
+      .list-row.is-clickable:hover {
+        border-color: rgba(255, 255, 255, 0.9);
+        background: var(--glass-strong);
+      }
+
+      .list-row.is-clickable .row-meta::after {
+        content: " ›";
+        font-weight: 800;
+      }
+
+      /* ─── reason modal (판정 근거) ─────────────── */
+      .reason-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(47, 36, 29, 0.3);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.24s var(--ease);
+      }
+
+      .reason-modal.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .reason-card {
+        width: min(420px, 100%);
+        padding: 18px;
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: var(--shadow-soft);
+        transform: translateY(10px) scale(0.98);
+        transition: transform 0.24s var(--ease);
+      }
+
+      .reason-modal.is-open .reason-card {
+        transform: none;
+      }
+
+      .reason-head {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .reason-title {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        overflow: hidden;
+        font-size: 14px;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .reason-state {
+        margin: 8px 0 0;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+
+      .reason-state.warn {
+        color: var(--warn);
+      }
+
+      .reason-state.bad {
+        color: var(--bad);
+      }
+
+      .reason-body {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+        overflow-wrap: break-word;
+      }
+
       /* ─── floating nav (detail) ────────────────── */
       .floating-nav {
         position: fixed;
@@ -1032,6 +1129,18 @@
 
       <nav class="floating-nav" id="floatingNav" aria-label="Detail navigation"></nav>
       <div class="transition-flash" id="transitionFlash" aria-hidden="true"></div>
+
+      <div class="reason-modal" id="reasonModal" role="dialog" aria-modal="true" aria-labelledby="reasonTitle">
+        <div class="reason-card">
+          <header class="reason-head">
+            <span class="dot" id="reasonDot"></span>
+            <h2 class="reason-title" id="reasonTitle"></h2>
+            <button class="icon-button" id="reasonClose" type="button" aria-label="닫기">×</button>
+          </header>
+          <p class="reason-state" id="reasonState"></p>
+          <p class="reason-body" id="reasonBody"></p>
+        </div>
+      </div>
     </main>
 
     <script>
@@ -1161,10 +1270,15 @@
       }
 
       function row(item, meta, href) {
-        const tag = href ? "a" : "div";
-        const attrs = href ? ` href="${safe(href)}"` : "";
+        const clickable = !href && Boolean(item.reason);
+        const tag = href ? "a" : clickable ? "button" : "div";
+        const attrs = href
+          ? ` href="${safe(href)}"`
+          : clickable
+            ? ` type="button" data-name="${safe(item.name)}" data-state="${safe(item.state)}" data-reason="${safe(item.reason)}" aria-haspopup="dialog" aria-label="${safe(item.name)} 판정 근거 보기"`
+            : "";
         return `
-          <${tag} class="list-row"${attrs}>
+          <${tag} class="list-row${clickable ? " is-clickable" : ""}"${attrs}>
             <span class="dot ${stateClass(item.state)}"></span>
             <div class="row-main">
               <div class="row-name">${safe(item.name)}</div>
@@ -1173,6 +1287,19 @@
             <div class="row-meta">${safe(meta)}</div>
           </${tag}>
         `;
+      }
+
+      function openReason(dataset) {
+        $("reasonDot").className = `dot ${stateClass(dataset.state)}`;
+        $("reasonTitle").textContent = dataset.name;
+        $("reasonState").textContent = dataset.state === "none" ? "No data" : stateLabel(dataset.state);
+        $("reasonState").className = `reason-state ${stateClass(dataset.state)}`;
+        $("reasonBody").textContent = dataset.reason;
+        $("reasonModal").classList.add("is-open");
+      }
+
+      function closeReason() {
+        $("reasonModal").classList.remove("is-open");
       }
 
       function card(item) {
@@ -1282,7 +1409,18 @@
                 ["Latency", `${avgLatency}ms`],
               ],
               rows: [
-                { name: "Overall", state: overall.state || "ok", detail: overall.label || "Feed loaded.", meta: stateLabel(overall.state) },
+                {
+                  name: "Overall",
+                  state: overall.state || "ok",
+                  detail: overall.label || "Feed loaded.",
+                  meta: stateLabel(overall.state),
+                  reason: (overall.state || "ok") !== "ok"
+                    ? (checks.some((c) => c.state !== "ok")
+                        ? "이상 감지 접점: " + checks.filter((c) => c.state !== "ok")
+                            .map((c) => `${c.name} — ${stateLabel(c.state)}`).join(" · ")
+                        : overall.label || "")
+                    : null,
+                },
                 ...(sys
                   ? [
                       ...sys.layers.map((layer, index) => ({
@@ -1290,6 +1428,10 @@
                         state: layer.state,
                         detail: LAYER_DETAIL[layer.key] || "",
                         meta: layer.state === "none" ? "no data" : layer.state,
+                        reason: layer.reason
+                          || (layer.state !== "ok"
+                              ? "수집기가 판정 근거를 아직 보내지 않았습니다 — 다음 수집 주기(10분) 후 다시 확인하세요."
+                              : null),
                       })),
                       {
                         name: "PDCA loop",
@@ -1302,6 +1444,11 @@
                         state: b.state,
                         detail: `${b.count}건 / 경고선 ${b.warnAt}건`,
                         meta: `${b.count}`,
+                        reason: b.state === "bad"
+                          ? `${b.count}건 — 경고선 ${b.warnAt}건의 2배를 넘었습니다`
+                          : b.state === "warn"
+                            ? `${b.count}건 — 경고선 ${b.warnAt}건을 넘었습니다`
+                            : null,
                       })),
                       {
                         name: "Infinity intents",
@@ -1477,6 +1624,18 @@
         applyReveal($("heroCopy"));
         startSaemScene(model.overallState);
       }
+
+      $("reasonClose").addEventListener("click", closeReason);
+      $("reasonModal").addEventListener("click", (event) => {
+        if (event.target === $("reasonModal")) closeReason();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeReason();
+      });
+      document.addEventListener("click", (event) => {
+        const el = event.target.closest(".list-row.is-clickable");
+        if (el) openReason(el.dataset);
+      });
 
       document.addEventListener("pointerdown", (event) => {
         if (document.body.dataset.scene === "webgl") return;

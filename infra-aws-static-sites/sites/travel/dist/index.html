@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Travel Ledger — Studio</title>
-    <script>(function(){try{var t=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+    <script>(function(){try{var q=new URLSearchParams(location.search).get("theme");var t=q||localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
@@ -32,6 +32,14 @@
         --shadow-lift: 0 2px 6px rgba(26, 26, 26, 0.06), 0 22px 50px rgba(26, 26, 26, 0.12);
         --sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
         --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+        --g-dot: #33415c;
+        --g-dot-alpha: 0.62;
+        --g-sphere: #f2f4f7;
+        --g-glow: #6b93cf;
+        --g-glow-alpha: 0.35;
+        --g-route: #335c99;
+        --g-route-next: #9a9a9a;
+        --g-marker: #c44536;
       }
 
       * { box-sizing: border-box; }
@@ -88,194 +96,254 @@
         background: var(--blue);
       }
 
+      .hero-shell {
+        position: relative;
+        min-height: calc(100vh - clamp(120px, 14vw, 180px));
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      body.globe-on .hero-shell {
+        min-height: calc(100dvh - clamp(96px, 10vw, 150px));
+      }
+
+      /* ---------- hero globe stage (WebGL) ---------- */
+      .hero-stage {
+        position: absolute;
+        top: calc(-1 * clamp(48px, 7vw, 104px));
+        bottom: 0;
+        left: 50%;
+        width: 100vw;
+        transform: translateX(-50%);
+        overflow: hidden;
+        pointer-events: none;
+      }
+      #heroGlobe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        pointer-events: auto;
+        cursor: grab;
+        touch-action: pan-y;
+        opacity: 0;
+        transition: opacity 1.1s var(--ease);
+      }
+      body.globe-on #heroGlobe { opacity: 1; }
+      #heroGlobe.grabbing { cursor: grabbing; }
+      .hero-stage .loc-label {
+        position: absolute;
+        left: 0; top: 0;
+        pointer-events: none;
+        transform: translate(-50%, calc(-100% - 16px));
+        display: grid;
+        justify-items: center;
+        gap: 5px;
+        opacity: 0;
+        transition: opacity 0.5s var(--ease);
+        will-change: left, top;
+      }
+      .hero-stage .loc-label.on { opacity: 1; }
+      .hero-stage .loc-label .tag {
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        background: color-mix(in srgb, var(--surface) 78%, transparent);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 5px 12px;
+        backdrop-filter: blur(8px);
+        box-shadow: var(--shadow-soft);
+        white-space: nowrap;
+      }
+      .hero-stage .loc-label .tag small {
+        font-weight: 600;
+        color: var(--faint);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 9.5px;
+        margin-left: 6px;
+      }
+      .hero-stage .loc-label .stem {
+        width: 1px;
+        height: 14px;
+        background: linear-gradient(var(--faint), transparent);
+      }
+      @media (max-width: 640px) {
+        /* flip the label under the marker so it stays out of the hero text */
+        .hero-stage .loc-label { transform: translate(-50%, 18px); }
+        .hero-stage .loc-label .stem { order: -1; background: linear-gradient(transparent, var(--faint)); }
+      }
+      body.globe-on .hero,
+      body.globe-on .hero-scroll { position: relative; z-index: 1; pointer-events: none; }
+      body.globe-on .hero { border-bottom: none; }
+
       .hero {
         position: relative;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: end;
-        gap: 40px;
-        padding-bottom: 36px;
+        align-content: start;
+        gap: 18px;
+        max-width: min(760px, 100%);
+        padding: clamp(18px, 4vw, 44px) 0 48px;
         border-bottom: 1px solid var(--line);
       }
-
-      /* signature hook: rotating 3D wireframe globe behind the hero */
-      .globe-wrap {
-        position: absolute;
-        top: 46%;
-        right: -150px;
-        width: 460px;
-        height: 460px;
-        z-index: 0;
-        pointer-events: none;
-        perspective: 1300px;
-        transform: translateY(-50%);
-        opacity: 0.85;
-        -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
-        mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+      .hero-kicker,
+      .hero-line,
+      .hero-lead,
+      .hero-meta-line {
+        overflow: hidden;
       }
-      .globe {
-        position: absolute;
-        inset: 0;
-        transform-style: preserve-3d;
-        animation: spin 40s linear infinite;
-      }
-      .globe .wire {
-        position: absolute;
-        inset: 0;
-        border: 1px solid rgba(51, 92, 153, 0.18);
-        border-radius: 50%;
-      }
-      .globe .wire.lat { border-color: rgba(51, 92, 153, 0.12); }
-      .globe .core {
-        position: absolute;
-        inset: 34%;
-        border-radius: 50%;
-        background: radial-gradient(circle at 38% 32%, rgba(51, 92, 153, 0.14), rgba(51, 92, 153, 0.03) 70%);
-        filter: blur(2px);
-      }
-      @keyframes spin { to { transform: rotateY(360deg); } }
-      @media (prefers-reduced-motion: reduce) { .globe { animation: none; } }
-      .hero h1 {
-        margin: 0;
-        font-size: clamp(15px, 1.5vw, 17px);
-        font-weight: 500;
-        letter-spacing: 0.01em;
-        line-height: 1.5;
-        color: var(--muted);
-        max-width: 30ch;
-      }
-      .hero h1 b { color: var(--ink); font-weight: 700; }
-
-      .dday {
-        display: grid;
-        justify-items: end;
-        gap: 6px;
-      }
-      .dday .label {
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.24em;
+      .hero-kicker {
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
         color: var(--faint);
       }
-      .dday .num {
-        font-size: clamp(64px, 11vw, 132px);
-        font-weight: 800;
-        letter-spacing: -0.04em;
-        line-height: 0.82;
-        color: var(--ink);
-        text-shadow: 0 1px 0 rgba(26, 26, 26, 0.05), 0 16px 34px rgba(26, 26, 26, 0.1);
-        transition: transform 0.3s var(--ease);
-        will-change: transform;
-      }
-      .dday .sub {
-        font-size: 13px;
-        font-weight: 500;
+      .hero-title {
+        margin: 0;
+        display: grid;
+        gap: 10px;
+        max-width: 14ch;
+        font-size: clamp(42px, 7vw, 82px);
+        line-height: 0.95;
+        letter-spacing: -0.06em;
+        font-weight: 420;
         color: var(--muted);
       }
-
-      /* signature hook: hero studio stage with floating glass chips */
-      .dday-stage {
-        position: relative;
-        perspective: 1000px;
-        transform-style: preserve-3d;
-        padding: 28px 8px 12px 0;
+      .hero-title b {
+        color: var(--ink);
+        font-weight: 760;
       }
-      .glow {
-        position: absolute;
-        inset: -50px -30px -20px;
-        z-index: 0;
-        pointer-events: none;
-        background: radial-gradient(58% 52% at 72% 38%, rgba(51, 92, 153, 0.12), rgba(51, 92, 153, 0) 70%);
-        filter: blur(6px);
+      .hero-lead {
+        margin: 0;
+        max-width: 46ch;
+        font-size: clamp(16px, 2.1vw, 22px);
+        line-height: 1.52;
+        color: var(--muted);
       }
-      .deck {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        transform-style: preserve-3d;
-        pointer-events: none;
-        will-change: transform;
-        transition: transform 0.4s var(--ease);
+      .hero-meta {
+        display: grid;
+        gap: 4px;
+        max-width: 42ch;
+        font-size: 12px;
+        line-height: 1.55;
+        color: var(--faint);
       }
-      .chip {
-        position: absolute;
-        padding: 9px 13px;
-        border-radius: 11px;
-        background: rgba(254, 254, 255, 0.66);
-        border: 1px solid var(--line);
-        box-shadow: var(--shadow-soft);
-        backdrop-filter: blur(7px);
-        -webkit-backdrop-filter: blur(7px);
+      .hero-meta strong {
+        color: var(--ink);
+        font-weight: 650;
+      }
+      .hero-scroll {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding-top: 18px;
         font-size: 11px;
         font-weight: 600;
-        letter-spacing: 0.02em;
-        color: var(--muted);
-        white-space: nowrap;
-      }
-      .chip::before {
-        content: "";
-        display: inline-block;
-        width: 5px;
-        height: 5px;
-        margin-right: 7px;
-        border-radius: 50%;
-        background: var(--blue);
-        vertical-align: 1px;
-      }
-      .chip-1 {
-        top: -10px;
-        right: -14px;
-        transform: translateZ(64px) rotate(-3.5deg);
-        animation: floatA 7s ease-in-out infinite;
-      }
-      .chip-2 {
-        top: 138px;
-        right: -30px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
         color: var(--faint);
-        transform: translateZ(32px) rotate(3deg);
-        animation: floatB 9s ease-in-out infinite;
       }
-      @keyframes floatA {
-        0%, 100% { transform: translateZ(64px) rotate(-3.5deg) translateY(0); }
-        50% { transform: translateZ(64px) rotate(-3.5deg) translateY(-11px); }
+      .hero-scroll::after {
+        content: "";
+        width: 44px;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(26, 26, 26, 0.4), rgba(26, 26, 26, 0));
       }
-      @keyframes floatB {
-        0%, 100% { transform: translateZ(32px) rotate(3deg) translateY(0); }
-        50% { transform: translateZ(32px) rotate(3deg) translateY(9px); }
+      .section-nav {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        z-index: 12;
+        transform: translateX(-50%);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid rgba(26, 26, 26, 0.08);
+        border-radius: 999px;
+        background: rgba(254, 254, 255, 0.82);
+        box-shadow: 0 18px 40px rgba(26, 26, 26, 0.12);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
       }
-      .dday { position: relative; z-index: 2; }
+      .section-nav a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 0 14px;
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: background 0.24s var(--ease), color 0.24s var(--ease), transform 0.24s var(--ease);
+      }
+      .section-nav a:hover,
+      .section-nav a:focus-visible {
+        background: rgba(26, 26, 26, 0.07);
+        color: var(--ink);
+        transform: translateY(-1px);
+        outline: none;
+      }
+      [data-reveal] .reveal-word {
+        display: inline-block;
+        opacity: 0;
+        transform: translate3d(0, 1.05em, 0);
+        filter: blur(7px);
+        animation: revealWord 0.82s var(--ease) forwards;
+        animation-delay: calc(var(--word-index, 0) * 48ms + var(--reveal-delay, 0ms));
+      }
+      [data-reveal] .reveal-space {
+        display: inline-block;
+        width: 0.28em;
+      }
+      @keyframes revealWord {
+        0% { opacity: 0; transform: translate3d(0, 1.05em, 0); filter: blur(7px); }
+        100% { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+      }
 
       /* ---------- stat strip ---------- */
       .stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 0;
-        margin: 0 0 40px;
+        margin: clamp(32px, 5vw, 56px) 0 28px;
         border-bottom: 1px solid var(--line);
       }
       .stat {
-        padding: 26px 28px 26px 0;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        padding: 14px 20px 14px 0;
         border-right: 1px solid var(--line);
       }
       .stat:last-child { border-right: 0; padding-right: 0; }
       .stat .k {
-        margin: 0 0 12px;
-        font-size: 10.5px;
+        margin: 0;
+        font-size: 10px;
         font-weight: 600;
-        letter-spacing: 0.16em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--faint);
+        white-space: nowrap;
       }
       .stat .v {
-        font-size: 26px;
+        font-size: 18px;
         font-weight: 700;
         letter-spacing: -0.01em;
         line-height: 1;
+        white-space: nowrap;
       }
       .stat .v .u {
-        margin-left: 5px;
-        font-size: 12px;
+        margin-left: 4px;
+        font-size: 11px;
         font-weight: 500;
         color: var(--faint);
       }
@@ -337,13 +405,14 @@
         color: var(--faint);
       }
 
-      .col-budget { grid-column: span 7; }
-      .col-schengen { grid-column: span 5; }
-      .col-itin { grid-column: span 7; }
-      .col-map { grid-column: span 5; }
-      .col-cat { grid-column: span 7; }
-      .col-reflect { grid-column: span 5; }
-      .col-ledger { grid-column: 1 / -1; }
+      .col-budget { grid-column: span 4; order: 1; }
+      .col-cat { grid-column: span 4; order: 2; }
+      .col-reflect { grid-column: span 4; order: 3; align-self: start; }
+      .col-prep { grid-column: 1 / -1; order: 4; }
+      .col-itin { grid-column: 1 / -1; order: 5; }
+      .col-schengen { grid-column: span 6; order: 6; }
+      .col-map { grid-column: span 6; order: 7; }
+      .col-ledger { grid-column: 1 / -1; order: 8; }
       .led-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; }
       .led-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 13px 0; border-top: 1px solid var(--line); }
       .led-grid .led-row:nth-child(1), .led-grid .led-row:nth-child(2) { border-top: 0; }
@@ -352,6 +421,17 @@
       .led-sub { margin-top: 3px; font-size: 11.5px; color: var(--muted); }
       .led-amt { font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .led-empty { color: var(--faint); font-size: 13px; padding: 8px 0; }
+      .country-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+      .country-card { display: grid; gap: 12px; padding: 16px; border-radius: var(--r-md); background: var(--surface-2); }
+      .country-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+      .country-top b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 17px; }
+      .country-top span { flex: 0 0 auto; color: var(--ink); font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .country-bars { display: grid; gap: 8px; }
+      .country-line { display: grid; grid-template-columns: minmax(58px, 0.7fr) minmax(80px, 1.6fr) minmax(62px, 0.8fr); align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+      .country-line .label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .country-line .bar { height: 6px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+      .country-line .bar span { display: block; width: 0%; height: 100%; border-radius: inherit; transition: width 900ms cubic-bezier(.2,.8,.2,1); }
+      .country-line .amt { justify-self: end; color: var(--ink); font-variant-numeric: tabular-nums; }
 
       /* budget */
       .budget-figure {
@@ -402,7 +482,7 @@
       }
       .mini-grid div {
         background: var(--surface);
-        padding: 14px 16px;
+        padding: 14px 12px;
       }
       .mini-grid .k {
         font-size: 10px;
@@ -415,13 +495,15 @@
       .mini-grid .v {
         font-size: 15px;
         font-weight: 600;
+        white-space: nowrap;
       }
 
       /* schengen donut */
       .donut-wrap {
-        display: flex;
+        display: grid;
+        grid-template-columns: 132px minmax(0, 1fr);
         align-items: center;
-        gap: 26px;
+        gap: 22px;
       }
       .donut {
         position: relative;
@@ -437,37 +519,51 @@
         inset: 16px;
         background: var(--surface);
         border-radius: 50%;
+        box-shadow: inset 0 0 0 1px rgba(26, 26, 26, 0.04);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 2px;
+        gap: 4px;
         text-align: center;
       }
       .donut .hole b {
-        font-size: 30px;
+        font-size: 32px;
         font-weight: 800;
         letter-spacing: -0.02em;
         line-height: 1;
       }
       .donut .hole small {
         display: block;
-        font-size: 10px;
+        font-size: 9.5px;
         font-weight: 600;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
         color: var(--faint);
       }
-      .schengen-side { display: grid; gap: 14px; }
-      .schengen-side .row { display: grid; gap: 3px; }
+      .schengen-side {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .schengen-side .row {
+        display: grid;
+        gap: 4px;
+        padding: 2px 0;
+      }
       .schengen-side .row .k {
-        font-size: 10.5px;
+        font-size: 9.5px;
         font-weight: 600;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--faint);
       }
-      .schengen-side .row .v { font-size: 17px; font-weight: 700; }
+      .schengen-side .row .v {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+      }
       .schengen-projection {
         margin-top: 18px;
         display: grid;
@@ -479,68 +575,71 @@
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 12px;
         align-items: end;
-        padding: 14px;
-        border: 1px solid var(--line);
-        border-radius: var(--r-md);
-        background: linear-gradient(135deg, rgba(51, 92, 153, 0.09), rgba(255,255,255,0.72));
+        padding: 0 0 12px;
+        border-bottom: 1px solid var(--line);
       }
       .schengen-projection .projection-top .k {
         color: var(--faint);
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
+        font-size: 9.5px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
       }
       .schengen-projection .projection-top .v {
         margin-top: 5px;
-        font-size: 24px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
       }
       .schengen-projection .projection-top .safe {
-        padding: 7px 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        padding: 0 10px;
         border-radius: 999px;
-        background: rgba(51, 92, 153, 0.1);
-        color: var(--blue);
-        font-size: 11px;
-        font-weight: 800;
+        background: transparent;
+        color: var(--success);
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
         white-space: nowrap;
+        border: 1px solid rgba(45, 90, 39, 0.14);
       }
       .projection-segments {
         display: grid;
-        gap: 7px;
+        gap: 8px;
       }
       .projection-segment {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px;
+        gap: 14px;
         align-items: center;
         min-width: 0;
-        padding: 9px 10px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: rgba(255,255,255,0.62);
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
       }
+      .projection-segment:last-child { border-bottom: 0; }
       .projection-segment.pause { opacity: 0.72; }
       .projection-segment .name {
         overflow: hidden;
-        font-size: 12px;
-        font-weight: 800;
+        font-size: 12.5px;
+        font-weight: 700;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
       .projection-segment .date {
-        margin-top: 2px;
+        margin-top: 3px;
         overflow: hidden;
-        color: var(--faint);
+        color: var(--muted);
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 500;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
       .projection-segment .days {
-        font-size: 13px;
-        font-weight: 800;
+        font-size: 12px;
+        font-weight: 700;
         color: var(--ink);
         white-space: nowrap;
       }
@@ -548,29 +647,53 @@
         color: var(--faint);
         font-size: 11px;
         line-height: 1.45;
+        padding: 2px 0 0;
       }
 
       /* itinerary */
-      .timeline { display: grid; gap: 0; }
-      .leg {
-        display: grid;
-        grid-template-columns: 92px minmax(0, 1fr) auto;
-        gap: 18px;
-        align-items: baseline;
-        padding: 16px 0;
-        border-top: 1px solid var(--line);
+      .timeline {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 2px 2px 12px;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: var(--line-2) transparent;
       }
-      .leg:first-child { border-top: 0; padding-top: 0; }
-      .leg.next { position: relative; }
-      .leg.next::before {
-        content: "";
-        position: absolute;
-        left: -16px;
-        top: 18px;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
+      .timeline::-webkit-scrollbar { height: 7px; }
+      .timeline::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 99px; }
+      .timeline::-webkit-scrollbar-track { background: transparent; }
+      .leg {
+        flex: 0 0 auto;
+        width: 232px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        background: var(--surface);
+        scroll-snap-align: start;
+        transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease);
+      }
+      .leg.today {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 1px var(--blue), var(--shadow-lift);
+        background: rgba(51, 92, 153, 0.04);
+      }
+      .today-badge {
+        display: inline-block;
+        margin-bottom: 6px;
+        padding: 2px 8px;
+        border-radius: 99px;
+        font-size: 9.5px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
         background: var(--blue);
+        color: #fff;
       }
       .leg .date {
         font-size: 12.5px;
@@ -587,6 +710,7 @@
         text-transform: uppercase;
         color: var(--faint);
       }
+      .leg .place { flex: 1; }
       .leg .place b {
         display: block;
         font-size: 16px;
@@ -600,10 +724,12 @@
         color: var(--muted);
       }
       .leg .right {
-        display: grid;
-        justify-items: end;
-        gap: 7px;
-        text-align: right;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
       }
       .leg .amt { font-size: 14px; font-weight: 600; }
       .leg .amt.muted { color: var(--faint); font-weight: 500; }
@@ -835,10 +961,17 @@
         --success: #5bb150;
         --warning: #e8b84a;
         --blue: #6193cf;
+        --g-dot: #9db4d6;
+        --g-dot-alpha: 0.75;
+        --g-sphere: #191c21;
+        --g-glow: #4d7bbd;
+        --g-glow-alpha: 0.5;
+        --g-route: #7aa5dd;
+        --g-route-next: #565c66;
+        --g-marker: #e05545;
       }
       :root[data-theme="dark"] body { background: radial-gradient(125% 95% at 50% -8%, #20242b 0%, var(--bg) 44%, #0e1014 100%) fixed; }
       :root[data-theme="dark"] .chip { background: rgba(34, 38, 45, 0.62); }
-      :root[data-theme="dark"] .globe .wire { border-color: rgba(97, 147, 207, 0.2); }
 
       .theme-toggle {
         position: fixed;
@@ -862,17 +995,33 @@
 
       /* ---------- responsive ---------- */
       @media (max-width: 920px) {
-        .hero { grid-template-columns: 1fr; align-items: start; gap: 24px; }
-        .dday { justify-items: start; }
+        .hero-shell { min-height: auto; }
+        .hero { gap: 16px; }
+        .hero-lead { font-size: 15px; }
+        .section-nav {
+          width: calc(100vw - 28px);
+          max-width: 540px;
+          bottom: 14px;
+          overflow-x: auto;
+          justify-content: flex-start;
+          padding: 8px;
+          scrollbar-width: none;
+        }
+        .section-nav::-webkit-scrollbar { display: none; }
+        .section-nav a {
+          flex: 0 0 auto;
+          min-height: 34px;
+          padding: 0 12px;
+          letter-spacing: 0.1em;
+        }
         .stats { grid-template-columns: repeat(2, 1fr); }
         .stat:nth-child(2) { border-right: 0; padding-right: 0; }
-        .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line); padding-top: 26px; }
-        .col-budget, .col-schengen, .col-itin, .col-map, .col-cat, .col-reflect { grid-column: 1 / -1; }
+        .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line); padding-top: 14px; }
+        .col-budget, .col-schengen, .col-itin, .col-map, .col-cat, .col-reflect, .col-prep, .col-ledger { grid-column: 1 / -1; }
+        .country-grid { grid-template-columns: 1fr; }
         .led-grid { grid-template-columns: 1fr; }
         .led-grid .led-row:nth-child(2) { border-top: 1px solid var(--line); }
         #map { min-height: 300px; }
-        .globe-wrap, .deck { display: none; }
-        .col-budget { order: 99; }
       }
       @media (max-width: 520px) {
         html,
@@ -889,7 +1038,8 @@
         }
 
         .stats { grid-template-columns: 1fr; }
-        .stat { border-right: 0; padding: 20px 0; border-top: 1px solid var(--line); }
+        .stats { margin-top: 48px; }
+        .stat { border-right: 0; padding: 14px 0; border-top: 1px solid var(--line); }
         .stat:first-child { border-top: 0; padding-top: 0; }
 
         .col-itin.card {
@@ -901,23 +1051,12 @@
         }
 
         .leg {
-          grid-template-columns: minmax(0, 1fr);
-          gap: 8px;
-          padding: 13px 0;
-        }
-
-        .leg:first-child { padding-top: 0; }
-
-        .leg.next::before {
-          left: -10px;
-          top: 18px;
+          width: 78vw;
+          max-width: 240px;
+          gap: 10px;
         }
 
         .leg .date {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
           font-size: 11.5px;
           line-height: 1.2;
         }
@@ -957,18 +1096,103 @@
           line-height: 1.1;
         }
 
+        .donut-wrap {
+          grid-template-columns: 86px minmax(0, 1fr);
+          gap: 14px;
+          align-items: center;
+          justify-items: stretch;
+        }
+
+        .donut {
+          width: 86px;
+          height: 86px;
+        }
+
+        .donut .hole {
+          inset: 10px;
+          gap: 2px;
+        }
+
+        .donut .hole b {
+          font-size: 24px;
+        }
+
+        .donut .hole small {
+          font-size: 8px;
+          letter-spacing: 0.1em;
+        }
+
+        .schengen-side {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+          width: 100%;
+        }
+
+        .schengen-side .row {
+          gap: 2px;
+          padding: 0;
+        }
+
+        .schengen-side .row .k {
+          font-size: 8.5px;
+          letter-spacing: 0.08em;
+        }
+
+        .schengen-side .row .v {
+          font-size: 12.5px;
+          line-height: 1.2;
+        }
+
+        .schengen-projection {
+          margin-top: 12px;
+          gap: 8px;
+        }
+
         .schengen-projection .projection-top {
-          grid-template-columns: 1fr;
-          align-items: start;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 8px;
+          align-items: center;
+          padding-bottom: 8px;
+        }
+
+        .schengen-projection .projection-top .v {
+          margin-top: 3px;
+          font-size: 13.5px;
+        }
+
+        .schengen-projection .projection-top .safe {
+          min-height: 24px;
+          padding: 0 8px;
+          font-size: 9.5px;
+        }
+
+        .projection-segments {
+          gap: 4px;
         }
 
         .projection-segment {
-          grid-template-columns: 1fr;
-          gap: 5px;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 8px;
+          padding: 7px 0;
+        }
+
+        .projection-segment .name {
+          font-size: 11.5px;
+        }
+
+        .projection-segment .date {
+          margin-top: 2px;
+          font-size: 10px;
         }
 
         .projection-segment .days {
-          justify-self: start;
+          justify-self: end;
+          font-size: 11px;
+        }
+
+        .projection-note {
+          font-size: 10px;
+          line-height: 1.35;
         }
 
         .tag {
@@ -983,27 +1207,34 @@
     <main class="wrap">
       <p class="eyebrow rise" style="animation-delay: 0.02s"><span class="dot"></span> Travel Ledger · 2026</p>
 
-      <header class="hero">
-        <div class="globe-wrap" id="globeWrap" aria-hidden="true"><div class="globe" id="globe"></div></div>
-        <h1 class="rise" style="animation-delay: 0.06s" id="heroLine">일정과 돈을 한 판에서 운영하는 <b>여행 장부</b>입니다.</h1>
-        <div class="dday-stage rise" style="animation-delay: 0.1s">
-          <div class="glow"></div>
-          <div class="deck" id="deck">
-            <div class="chip chip-2" id="chip2">—</div>
-            <div class="chip chip-1" id="chip1">—</div>
-          </div>
-          <div class="dday">
-            <span class="label">Departure</span>
-            <span class="num" id="dday">D-—</span>
-            <span class="sub" id="ddaySub">—</span>
+      <section class="hero-shell">
+        <div class="hero-stage">
+          <canvas id="heroGlobe" aria-label="세계 여행 경로 지구본 — 누르면 상세로 이동"></canvas>
+          <div class="loc-label" id="locLabel">
+            <div class="tag"><span id="locName">—</span><small>현재</small></div>
+            <div class="stem"></div>
           </div>
         </div>
-      </header>
+        <header class="hero">
+          <div class="hero-kicker rise" style="animation-delay: 0.02s" id="heroKicker" data-reveal="words">Travel right now</div>
+          <h1 class="hero-title" id="heroTitle">
+            <span class="hero-line rise" style="animation-delay: 0.06s" id="heroLineOne" data-reveal="words">현재 도시 기준으로 움직입니다.</span>
+            <span class="hero-line rise" style="animation-delay: 0.1s" id="heroLineTwo" data-reveal="words"><b>오늘 이동과 체크인만 먼저 봅니다.</b></span>
+          </h1>
+          <p class="hero-lead rise" style="animation-delay: 0.14s" id="heroLead" data-reveal="words">현재 구간, 오늘 할 일, 다음 이동을 위에서 바로 읽히게 두었습니다.</p>
+          <div class="hero-meta rise" style="animation-delay: 0.18s" id="heroMeta">
+            <div class="hero-meta-line" id="heroMetaOne" data-reveal="words"><strong>현재</strong> / —</div>
+            <div class="hero-meta-line" id="heroMetaTwo" data-reveal="words"><strong>오늘 할 일</strong> / —</div>
+            <div class="hero-meta-line" id="heroMetaThree" data-reveal="words"><strong>다음 이동</strong> / —</div>
+          </div>
+        </header>
+        <div class="hero-scroll rise" style="animation-delay: 0.22s" data-reveal="words">Scroll for budget and route</div>
+      </section>
 
       <section class="stats rise" style="animation-delay: 0.16s" id="stats"></section>
 
       <section class="bento">
-        <div class="card hoverable col-budget rise" style="animation-delay: 0.2s">
+        <div class="card hoverable col-budget rise" style="animation-delay: 0.2s" id="budget">
           <div class="card-head"><h2>예산 운영</h2><span class="meta" id="budgetMode">travel</span></div>
           <div class="budget-figure"><span class="big" id="reserved">—</span><span class="pct" id="reservedPct">—</span></div>
           <p class="budget-sub" id="budgetBand">목표 구간 —</p>
@@ -1015,7 +1246,7 @@
           </div>
         </div>
 
-        <div class="card hoverable col-schengen rise" style="animation-delay: 0.24s">
+        <div class="card hoverable col-schengen rise" style="animation-delay: 0.24s" id="schengen">
           <div class="card-head"><h2>Schengen</h2><span class="meta" id="scWindow">180-day</span></div>
           <div class="donut-wrap">
             <div class="donut" id="donut"><div class="hole"><b id="scRemain">—</b><small>days left</small></div></div>
@@ -1028,32 +1259,48 @@
           <div class="schengen-projection" id="schengenProjection"></div>
         </div>
 
-        <div class="card hoverable col-itin rise" style="animation-delay: 0.28s">
+        <div class="card hoverable col-itin rise" style="animation-delay: 0.28s" id="itinerary">
           <div class="card-head"><h2>여정</h2><span class="meta" id="itinMeta">— stops</span></div>
           <div class="timeline" id="timeline"></div>
         </div>
 
-        <div class="card hoverable col-map map-card rise" style="animation-delay: 0.32s">
+        <div class="card hoverable col-map map-card rise" style="animation-delay: 0.32s" id="route">
           <div class="card-head"><h2>경로</h2><span class="meta" id="mapMeta">route</span></div>
           <div id="map"></div>
         </div>
 
-        <div class="card hoverable col-cat rise" style="animation-delay: 0.36s">
+        <div class="card hoverable col-cat rise" style="animation-delay: 0.36s" id="spend">
           <div class="card-head"><h2>분야별 지출</h2><span class="meta" id="catTotal">—</span></div>
           <div id="cats"></div>
         </div>
 
-        <div class="card hoverable col-reflect rise" style="animation-delay: 0.4s">
+        <div class="card hoverable col-reflect rise" style="animation-delay: 0.4s" id="reflection">
           <div class="reflect-label" id="reflectLabel">today's thread</div>
           <p class="reflect-quote" id="reflectQuote">—</p>
           <div class="reflect-meta" id="reflectMeta"></div>
         </div>
 
-        <div class="card hoverable col-ledger rise" style="animation-delay: 0.44s">
+        <div class="card hoverable col-prep rise" style="animation-delay: 0.42s" id="countrySpendSection">
+          <div class="card-head"><h2>국가별 지출</h2><span class="meta" id="countrySpendMeta">category split</span></div>
+          <div id="countrySpend" class="country-grid"></div>
+        </div>
+
+        <div class="card hoverable col-ledger rise" style="animation-delay: 0.44s" id="ledgerSection">
           <div class="card-head"><h2>최근 지출</h2><span class="meta" id="ledgerMeta">travel only</span></div>
           <div id="ledger" class="led-grid"></div>
         </div>
       </section>
+
+      <nav class="section-nav" aria-label="섹션 이동">
+        <a href="#budget">Budget</a>
+        <a href="#spend">Spend</a>
+        <a href="#reflection">Notes</a>
+        <a href="#countrySpendSection">Countries</a>
+        <a href="#itinerary">Itinerary</a>
+        <a href="#schengen">Schengen</a>
+        <a href="#route">Route</a>
+        <a href="#ledgerSection">Ledger</a>
+      </nav>
 
       <footer class="foot">
         <span id="footLeft">Sam Samuel — Studio Ledger</span>
@@ -1076,8 +1323,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
-      const catNames = { stay: "숙소", flight: "항공", transit: "이동", transport: "교통", food: "식비", groceries: "장보기", cafe: "카페", gear: "준비물", tool: "도구", other: "기타" };
-      const catColor = { stay: "#335c99", flight: "#564b96", transit: "#564b96", transport: "#564b96", food: "#c44536", groceries: "#2d5a27", cafe: "#d4a026", gear: "#7a5b2e", tool: "#9a9a9a", other: "#9a9a9a" };
+      const catNames = { stay: "숙소", flight: "항공", transit: "이동", transport: "교통", visa: "비자", food: "식비", groceries: "장보기", cafe: "카페", gear: "준비물", medical: "의료", tool: "도구", other: "기타" };
+      const catColor = { stay: "#335c99", flight: "#564b96", transit: "#564b96", transport: "#564b96", visa: "#8a5cf6", food: "#c44536", groceries: "#2d5a27", cafe: "#d4a026", gear: "#7a5b2e", medical: "#2f7f73", tool: "#9a9a9a", other: "#9a9a9a" };
 
       const won = (v) => new Intl.NumberFormat("ko-KR").format(Math.round(v || 0));
       const manWon = (v) => {
@@ -1105,18 +1352,91 @@
       };
       let routeRows = [];
 
+      function applyReveal(root) {
+        if (!root) return;
+        root.querySelectorAll("[data-reveal]").forEach((el) => {
+          const source = el.dataset.sourceText || el.textContent;
+          const words = String(source || "").trim().split(/\s+/).filter(Boolean);
+          el.dataset.sourceText = source;
+          el.textContent = "";
+          words.forEach((word, index) => {
+            const span = document.createElement("span");
+            span.className = "reveal-word";
+            span.style.setProperty("--word-index", index);
+            span.textContent = word;
+            el.appendChild(span);
+            if (index < words.length - 1) {
+              const gap = document.createElement("span");
+              gap.className = "reveal-space";
+              gap.textContent = " ";
+              el.appendChild(gap);
+            }
+          });
+        });
+      }
+
       function setHero(data) {
         const cur = data.current || {};
         const base = cur.date ? new Date(`${cur.date}T00:00:00+09:00`) : new Date();
         const target = new Date(`${data.launch}T00:00:00+09:00`);
         const days = Math.ceil((target - base) / 86400000);
-        $("dday").textContent = days >= 0 ? `D-${days}` : `D+${Math.abs(days)}`;
-        $("ddaySub").textContent = `${(data.launch || "").replace(/-/g, ".")} 출발 · 현재 ${cur.location || "—"}`;
+        const route = data.route || [];
+        const currentBase = cur.location || "—";
+        const launchLabel = (data.launch || "").replace(/-/g, ".");
+        const todayStr = cur.date || new Date().toISOString().slice(0, 10);
+        const at = (d) => d ? new Date(`${d}T00:00:00+09:00`) : null;
+        const currentIndex = (() => {
+          const exact = route.findIndex((stop) => stop.city === currentBase);
+          if (exact >= 0) return exact;
+          let match = -1;
+          route.forEach((stop, index) => {
+            const start = at(stop.startDate), end = at(stop.endDate || stop.startDate), today = at(todayStr);
+            if (start && end && start <= today && today <= end) match = index;
+          });
+          return Math.max(0, match);
+        })();
+        const currentStop = route[currentIndex] || {};
+        const nextRoute = route.slice(currentIndex + 1).find((stop) => stop.startDate) || null;
+        const routeCount = route.length;
+        const bookedSpend = Number(data.budget?.travelLoggedKrw || data.budget?.loggedKrw || 0).toLocaleString("ko-KR");
+        const stopStart = currentStop.startDate || todayStr;
+        const stopEnd = currentStop.endDate || stopStart;
+        const dayInStop = Math.max(1, Math.round((at(todayStr) - at(stopStart)) / 86400000) + 1);
+        const totalStopDays = Math.max(1, Math.round((at(stopEnd) - at(stopStart)) / 86400000) + 1);
+        const isArrivalDay = currentStop.startDate === todayStr;
+        const movement = currentStop.transportIn || currentStop.arrivalTransfer?.title || "";
+        const nextMove = nextRoute ? (nextRoute.transportIn || nextRoute.arrivalTransfer?.title || `${currentStop.city || currentBase} -> ${nextRoute.city}`) : "";
+        const cleanMove = (text) => String(text || "")
+          .replace(/^\d{4}-\d{2}-\d{2}\s*/, "")
+          .replace(/\s+/g, " ")
+          .trim();
+        const cleanTask = (text) => String(text || "")
+          .replace(/[.。]\s*$/, "")
+          .replace(/을 확정해 상세에 붙인다$/, " 확인")
+          .replace(/를 확정해 상세에 붙인다$/, " 확인")
+          .replace(/을 한 번 더 맞춘다$/, " 재확인")
+          .replace(/를 한 번 더 맞춘다$/, " 재확인")
+          .trim();
+        const taskParts = [];
+        if (isArrivalDay && currentStop.lodging) taskParts.push(`${currentStop.lodging} 체크인/숙소 이동`);
+        if (currentStop.arrivalTransfer?.nextCheck) taskParts.push(cleanTask(currentStop.arrivalTransfer.nextCheck));
+        if (!taskParts.length && nextRoute) taskParts.push(`${nextRoute.city} 이동 전 열차번호·좌석·출발역 확인`);
+        const todayPlan = isArrivalDay && movement
+          ? `오늘은 ${cleanMove(movement)} 이동일입니다.`
+          : `오늘은 ${currentStop.city || currentBase} ${dayInStop}/${totalStopDays}일차입니다.`;
+        const nextLeg = nextRoute
+          ? `${dateLabel(nextRoute.startDate)} · ${cleanMove(nextMove)}`
+          : "다음 구간 미정";
+        $("heroLineOne").textContent = `${currentStop.city || currentBase}에 맞춰 움직이면 됩니다.`;
+        $("heroLineTwo").innerHTML = `<b>${escapeHtml(todayPlan)}</b>`;
+        $("heroLead").textContent = taskParts.slice(0, 2).join(" · ");
+        $("heroMetaOne").innerHTML = `<strong>현재</strong> / ${escapeHtml(currentStop.city || currentBase)}, ${escapeHtml(currentStop.country || "")} · ${dateLabel(stopStart, stopEnd)} · ${nights(stopStart, stopEnd) || "당일"}`;
+        $("heroMetaTwo").innerHTML = `<strong>오늘 할 일</strong> / ${escapeHtml(taskParts[0] || "숙소·교통 동선 확인")}`;
+        $("heroMetaThree").innerHTML = `<strong>다음 이동</strong> / ${escapeHtml(nextLeg)} · <strong>확정 비용</strong> / ${bookedSpend} KRW · <strong>총 구간</strong> / ${routeCount}`;
         $("footRight").textContent = `synced ${String(data.generatedAt || "").slice(0, 10)}`;
-        const r = data.route || [];
-        const fmt = (x) => x ? `${x.city} · ${dateLabel(x.startDate)}` : "";
-        if (r[1]) $("chip1").textContent = fmt(r[1]);
-        if (r[2]) $("chip2").textContent = fmt(r[2]);
+        applyReveal($("heroTitle"));
+        applyReveal($("heroLead").parentElement);
+        applyReveal(document.querySelector(".hero-scroll"));
         return days;
       }
 
@@ -1135,10 +1455,14 @@
           </div>`).join("");
       }
 
+      function travelCategorySum(data) {
+        const totals = Object.keys(data.travelCategoryTotals || {}).length ? data.travelCategoryTotals : (data.categoryTotals || {});
+        return Object.values(totals).reduce((sum, value) => sum + Number(value || 0), 0);
+      }
+
       function renderBudget(data) {
         const b = data.budget || {};
-        const booked = (data.bookedCosts || []).reduce((s, c) => s + Number(c.amount || 0), 0);
-        const reserved = Number(b.travelLoggedKrw || b.loggedKrw || 0) + booked;
+        const reserved = travelCategorySum(data);
         const min = Number(b.targetMinKrw || 0);
         const pct = min ? (reserved / min) * 100 : 0;
         $("reserved").textContent = `${manWon(reserved)}원`;
@@ -1193,8 +1517,18 @@
         const rows = data.route || [];
         routeRows = rows;
         $("itinMeta").textContent = `${rows.length} stops`;
-        const today = (data.current && data.current.date) ? new Date(`${data.current.date}T00:00:00+09:00`) : new Date();
-        const nextIdx = rows.findIndex((r) => r.startDate && new Date(r.startDate) >= today);
+        const todayStr = (data.current && data.current.date) || new Date().toISOString().slice(0, 10);
+        const today = new Date(`${todayStr}T00:00:00+09:00`);
+        const at = (d) => new Date(`${d}T00:00:00+09:00`);
+        let nextIdx = -1;
+        rows.forEach((r, i) => {
+          const start = r.startDate && at(r.startDate);
+          const end = at(r.endDate || r.startDate);
+          if (start && end && start <= today && today <= end) nextIdx = i;
+        });
+        let ongoing = nextIdx >= 0;
+        if (nextIdx < 0) nextIdx = rows.findIndex((r) => r.startDate && at(r.startDate) >= today);
+        if (nextIdx < 0) nextIdx = rows.length - 1;
         $("timeline").innerHTML = rows.map((r, i) => {
           const status = r.status || "planned";
           const lodging = r.lodging || (status === "candidate" ? "숙소 후보" : "숙소 미정");
@@ -1205,9 +1539,10 @@
           const payChip = transport ? `<span class="pay-chip ${paid ? "paid" : "unpaid"}">${paid ? "예매완료" : "예매전"}</span>` : "";
           const actions = (detail || payChip) ? `<div class="leg-actions">${detail}${payChip}</div>` : "";
           const displayAmount = r.journeyAmount || (journeyPayment && journeyPayment.amount) || r.amount;
+          const badge = i === nextIdx ? `<span class="today-badge">${ongoing ? "오늘" : "다음 일정"}</span>` : "";
           return `
-          <div class="leg${i === nextIdx ? " next" : ""}">
-            <div class="date">${dateLabel(r.startDate, r.endDate)}<small>${nights(r.startDate, r.endDate) || "TBD"}</small></div>
+          <div class="leg${i === nextIdx ? " today" : ""}">
+            <div class="date">${badge}${dateLabel(r.startDate, r.endDate)}<small>${nights(r.startDate, r.endDate) || "TBD"}</small></div>
             <div class="place"><b>${r.city}</b><small>${[r.country, lodging].filter(Boolean).join(" · ")}</small>${actions}</div>
             <div class="right">
               <span class="amt${displayAmount ? "" : " muted"}">${displayAmount ? `${manWon(displayAmount)}원` : "미정"}</span>
@@ -1216,6 +1551,9 @@
           </div>`;
         }).join("");
         document.querySelectorAll(".leg-detail").forEach((b) => b.addEventListener("click", () => openModal(Number(b.dataset.idx))));
+        const tl = $("timeline");
+        const cur = tl.children[nextIdx];
+        if (cur) tl.scrollLeft += cur.getBoundingClientRect().left - tl.getBoundingClientRect().left - 16;
       }
 
       function renderLedger(data) {
@@ -1234,7 +1572,7 @@
       function renderCats(data) {
         const totals = Object.keys(data.travelCategoryTotals || {}).length ? data.travelCategoryTotals : (data.categoryTotals || {});
         const rows = Object.entries(totals).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
-        const sum = rows.reduce((s, [, v]) => s + v, 0);
+        const sum = travelCategorySum(data);
         const max = Math.max(...rows.map(([, v]) => v), 1);
         $("catTotal").textContent = `${manWon(sum)}원`;
         $("cats").innerHTML = rows.length ? rows.map(([k, v]) => `
@@ -1253,6 +1591,31 @@
         $("reflectLabel").textContent = `thread · ${last.date}`;
         $("reflectQuote").textContent = last.intent;
         $("reflectMeta").innerHTML = `${(last.title || "").replace(/^(실제 흐름|내일 의도)\s*\/\s*/, "")}`;
+      }
+
+      function renderCountrySpend(data) {
+        const countries = data.countryCategoryTotals || [];
+        const grandTotal = countries.reduce((sum, row) => sum + Number(row.total || 0), 0);
+        $("countrySpendMeta").textContent = `${countries.length} countries · ${manWon(grandTotal)}원`;
+        $("countrySpend").innerHTML = countries.length ? countries.map((row) => {
+          const categories = Object.entries(row.categories || {}).slice(0, 5);
+          const max = Math.max(...categories.map(([, amount]) => Number(amount || 0)), 1);
+          return `
+            <div class="country-card">
+              <div class="country-top"><b>${escapeHtml(row.country || "Unmapped")}</b><span>${manWon(row.total)}원</span></div>
+              <div class="country-bars">
+                ${categories.map(([category, amount]) => `
+                  <div class="country-line">
+                    <span class="label">${escapeHtml(catNames[category] || category)}</span>
+                    <span class="bar"><span data-w="${Math.round((Number(amount || 0) / max) * 100)}" style="background:${catColor[category] || "#9a9a9a"}"></span></span>
+                    <span class="amt">${manWon(amount)}원</span>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        }).join("") : `<div class="country-card"><div class="country-top"><b>지출 없음</b><span>0원</span></div></div>`;
+        requestAnimationFrame(() => document.querySelectorAll(".country-line .bar span[data-w]").forEach((el) => { el.style.width = `${el.dataset.w}%`; }));
       }
 
       function renderMap(data) {
@@ -1306,8 +1669,8 @@
       $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) closeModal(); });
       document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-      fetch("travel-data.json", { cache: "no-store" })
-        .then((r) => r.json())
+      window.travelDataPromise = fetch("travel-data.json", { cache: "no-store" }).then((r) => r.json());
+      window.travelDataPromise
         .then((data) => {
           const dday = setHero(data);
           renderStats(data, dday);
@@ -1316,33 +1679,13 @@
           renderTimeline(data);
           renderCats(data);
           renderReflect(data);
+          renderCountrySpend(data);
           renderLedger(data);
           renderMap(data);
         })
-        .catch((e) => { $("ddaySub").textContent = "sync failed"; console.error(e); });
+        .catch((e) => { $("heroMetaThree").innerHTML = "<strong>Sync</strong> / failed"; console.error(e); });
 
       /* ---------- signature hook: studio 3D tilt + parallax ---------- */
-      (function buildGlobe() {
-        const g = $("globe");
-        if (!g) return;
-        const R = 230;
-        for (let i = 0; i < 6; i++) {
-          const m = document.createElement("div");
-          m.className = "wire";
-          m.style.transform = `rotateY(${i * 30}deg)`;
-          g.appendChild(m);
-        }
-        [[-0.42, 0.55], [-0.2, 0.84], [0, 1], [0.2, 0.84], [0.42, 0.55]].forEach(([y, s]) => {
-          const p = document.createElement("div");
-          p.className = "wire lat";
-          p.style.transform = `rotateX(90deg) translateZ(${y * R}px) scale(${s})`;
-          g.appendChild(p);
-        });
-        const core = document.createElement("div");
-        core.className = "core";
-        g.appendChild(core);
-      })();
-
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!reduceMotion && window.matchMedia("(pointer: fine)").matches) {
         document.querySelectorAll(".card.hoverable").forEach((card) => {
@@ -1360,16 +1703,14 @@
         });
         const ddayNum = $("dday");
         const deck = $("deck");
-        const globeWrap = $("globeWrap");
         let raf = 0;
         window.addEventListener("mousemove", (e) => {
           if (raf) return;
           raf = requestAnimationFrame(() => {
             const dx = e.clientX / window.innerWidth - 0.5;
             const dy = e.clientY / window.innerHeight - 0.5;
-            ddayNum.style.transform = `translate(${dx * -18}px, ${dy * -10}px)`;
+            if (ddayNum) ddayNum.style.transform = `translate(${dx * -18}px, ${dy * -10}px)`;
             if (deck) deck.style.transform = `rotateY(${dx * 16}deg) rotateX(${dy * -12}deg)`;
-            if (globeWrap) globeWrap.style.transform = `translateY(-50%) translate(${dx * 24}px, ${dy * 14}px)`;
             raf = 0;
           });
         }, { passive: true });
@@ -1383,7 +1724,349 @@
         document.documentElement.setAttribute("data-theme", next);
         try { localStorage.setItem("theme", next); } catch (e) {}
         syncThemeIcon();
+        window.dispatchEvent(new Event("themechange"));
       });
+    </script>
+
+    <script type="importmap">
+      { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }
+    </script>
+    <script type="module">
+      /* ---------- hero globe: dotted-land WebGL earth on real route data ---------- */
+      import * as THREE from "three";
+      import { feature } from "https://cdn.jsdelivr.net/npm/topojson-client@3/+esm";
+
+      const canvas = document.getElementById("heroGlobe");
+      const stage = canvas?.closest(".hero-stage");
+      const label = document.getElementById("locLabel");
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      } catch (e) { console.warn("globe: WebGL unavailable", e); }
+
+      if (renderer) {
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+        camera.position.set(0, 0, 3.6);
+
+        const globe = new THREE.Group();
+        scene.add(globe);
+
+        const R = 1;
+        const latLng = (lat, lng, r = R) => {
+          const phi = (90 - lat) * (Math.PI / 180);
+          const theta = (lng + 180) * (Math.PI / 180);
+          return new THREE.Vector3(
+            -r * Math.sin(phi) * Math.cos(theta),
+            r * Math.cos(phi),
+            r * Math.sin(phi) * Math.sin(theta)
+          );
+        };
+        const rotYFor = (lng) => THREE.MathUtils.degToRad(-lng - 90);
+
+        const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+        const themeColors = () => ({
+          dot: new THREE.Color(cssVar("--g-dot")),
+          dotAlpha: parseFloat(cssVar("--g-dot-alpha")),
+          sphere: new THREE.Color(cssVar("--g-sphere")),
+          glow: new THREE.Color(cssVar("--g-glow")),
+          glowAlpha: parseFloat(cssVar("--g-glow-alpha")),
+          route: new THREE.Color(cssVar("--g-route")),
+          routeNext: new THREE.Color(cssVar("--g-route-next")),
+          marker: new THREE.Color(cssVar("--g-marker")),
+        });
+
+        /* occluder sphere hides back-hemisphere dots and reads as the globe body */
+        const sphereMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        globe.add(new THREE.Mesh(new THREE.SphereGeometry(R * 0.996, 64, 64), sphereMat));
+
+        const fresnelVert = `
+          varying vec3 vN; varying vec3 vP;
+          void main() {
+            vN = normalize(normalMatrix * normal);
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            vP = mv.xyz;
+            gl_Position = projectionMatrix * mv;
+          }`;
+        const glowMat = new THREE.ShaderMaterial({
+          transparent: true, blending: THREE.AdditiveBlending, side: THREE.BackSide, depthWrite: false,
+          uniforms: { c: { value: new THREE.Color() }, a: { value: 0.4 } },
+          vertexShader: fresnelVert,
+          fragmentShader: `
+            uniform vec3 c; uniform float a;
+            varying vec3 vN; varying vec3 vP;
+            void main() {
+              float f = pow(1.0 - abs(dot(normalize(vN), normalize(-vP))), 3.0);
+              gl_FragColor = vec4(c, f * a);
+            }`,
+        });
+        globe.add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.12, 64, 64), glowMat));
+
+        const rimMat = new THREE.ShaderMaterial({
+          transparent: true, depthWrite: false,
+          uniforms: { c: { value: new THREE.Color() }, a: { value: 0.16 } },
+          vertexShader: fresnelVert,
+          fragmentShader: `
+            uniform vec3 c; uniform float a;
+            varying vec3 vN; varying vec3 vP;
+            void main() {
+              float f = pow(1.0 - abs(dot(normalize(vN), normalize(-vP))), 2.2);
+              gl_FragColor = vec4(c, f * a);
+            }`,
+        });
+        globe.add(new THREE.Mesh(new THREE.SphereGeometry(R * 0.9965, 64, 64), rimMat));
+
+        const dotMat = new THREE.ShaderMaterial({
+          transparent: true, depthWrite: false,
+          uniforms: {
+            c: { value: new THREE.Color() },
+            a: { value: 0.6 },
+            size: { value: 2.6 * Math.min(devicePixelRatio, 2) },
+          },
+          vertexShader: `
+            uniform float size;
+            void main() {
+              vec4 mv = modelViewMatrix * vec4(position, 1.0);
+              gl_PointSize = size * (3.6 / -mv.z);
+              gl_Position = projectionMatrix * mv;
+            }`,
+          fragmentShader: `
+            uniform vec3 c; uniform float a;
+            void main() {
+              float d = length(gl_PointCoord - 0.5);
+              if (d > 0.5) discard;
+              float edge = smoothstep(0.5, 0.32, d);
+              gl_FragColor = vec4(c, a * edge);
+            }`,
+        });
+
+        async function buildLand() {
+          const topo = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json").then((r) => r.json());
+          const fc = feature(topo, topo.objects.land);
+          const feats = fc.features || [fc];
+          const W = 2048, H = 1024;
+          const cv = document.createElement("canvas");
+          cv.width = W; cv.height = H;
+          const cx = cv.getContext("2d", { willReadFrequently: true });
+          cx.fillStyle = "#000"; cx.fillRect(0, 0, W, H);
+          cx.fillStyle = "#fff";
+          const px = (lng) => ((lng + 180) / 360) * W;
+          const py = (lat) => ((90 - lat) / 180) * H;
+          cx.beginPath();
+          for (const f of feats) {
+            const g = f.geometry;
+            const polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
+            for (const poly of polys)
+              for (const ring of poly) {
+                ring.forEach(([lng, lat], i) => (i ? cx.lineTo(px(lng), py(lat)) : cx.moveTo(px(lng), py(lat))));
+                cx.closePath();
+              }
+          }
+          cx.fill();
+          const img = cx.getImageData(0, 0, W, H).data;
+          const N = innerWidth < 640 ? 28000 : 44000;
+          const GA = Math.PI * (3 - Math.sqrt(5));
+          const pts = [];
+          for (let i = 0; i < N; i++) {
+            const y = 1 - (i / (N - 1)) * 2;
+            const rad = Math.sqrt(1 - y * y);
+            const th = GA * i;
+            const x = Math.cos(th) * rad, z = Math.sin(th) * rad;
+            const lat = Math.asin(y) * (180 / Math.PI);
+            const lng = Math.atan2(z, -x) * (180 / Math.PI) - 180;
+            const ix = (Math.floor(py(lat)) * W + Math.floor(px(((lng + 540) % 360) - 180))) * 4;
+            if (img[ix] > 128) pts.push(x, y, z);
+          }
+          const geo = new THREE.BufferGeometry();
+          geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pts), 3));
+          const dots = new THREE.Points(geo, dotMat);
+          dots.scale.setScalar(R * 1.001);
+          globe.add(dots);
+        }
+
+        const routeGroup = new THREE.Group();
+        globe.add(routeGroup);
+        const doneMat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.85 });
+        const nextMat = new THREE.LineDashedMaterial({ transparent: true, opacity: 0.55, dashSize: 0.028, gapSize: 0.02 });
+        const stopMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.9 });
+        const markerMat = new THREE.MeshBasicMaterial();
+        const ringMat = new THREE.MeshBasicMaterial({ transparent: true, side: THREE.DoubleSide });
+
+        const arcCurve = (a, b) => {
+          const va = latLng(a.lat, a.lng), vb = latLng(b.lat, b.lng);
+          const dist = va.distanceTo(vb);
+          const pts = [];
+          for (let i = 0; i <= 48; i++) {
+            const t = i / 48;
+            const p = new THREE.Vector3().lerpVectors(va, vb, t).normalize()
+              .multiplyScalar(R * (1.004 + Math.sin(Math.PI * t) * dist * 0.14));
+            pts.push(p);
+          }
+          return pts;
+        };
+
+        let marker = null, ring = null, markerPos = null;
+        let targetRotY = rotYFor(13.4), targetRotX = 0.5;
+
+        async function buildRoute() {
+          let data = null;
+          try { data = await window.travelDataPromise; } catch (e) {}
+          const stops = data?.map?.routePoints?.length ? data.map.routePoints : [];
+          const curName = data?.current?.location || "";
+          if (!stops.length) return;
+          let curIdx = stops.findIndex((s) => s.name?.toLowerCase().includes(curName.toLowerCase()));
+          if (curIdx < 0) curIdx = 0;
+          const cur = { name: curName || stops[curIdx].name, lat: stops[curIdx].lat, lng: stops[curIdx].lng };
+          document.getElementById("locName").textContent = cur.name;
+
+          for (let i = 0; i < stops.length - 1; i++) {
+            const pts = arcCurve(stops[i], stops[i + 1]);
+            const geo = new THREE.BufferGeometry().setFromPoints(pts);
+            const line = new THREE.Line(geo, i < curIdx ? doneMat : nextMat);
+            if (i >= curIdx) line.computeLineDistances();
+            routeGroup.add(line);
+          }
+          stops.forEach((s, i) => {
+            if (i === curIdx) return;
+            const m = new THREE.Mesh(new THREE.SphereGeometry(0.0075, 12, 12), stopMat);
+            m.position.copy(latLng(s.lat, s.lng, R * 1.004));
+            routeGroup.add(m);
+          });
+
+          markerPos = latLng(cur.lat, cur.lng, R * 1.006);
+          marker = new THREE.Mesh(new THREE.SphereGeometry(0.016, 16, 16), markerMat);
+          marker.position.copy(markerPos);
+          routeGroup.add(marker);
+          ring = new THREE.Mesh(new THREE.RingGeometry(0.024, 0.028, 40), ringMat);
+          ring.position.copy(markerPos);
+          ring.lookAt(markerPos.clone().multiplyScalar(2));
+          routeGroup.add(ring);
+
+          targetRotY = rotYFor(cur.lng);
+          targetRotX = THREE.MathUtils.degToRad(Math.min(50, Math.max(-50, cur.lat))) * 0.75;
+          if (reduce) { rotY = targetRotY; rotX = targetRotX; }
+        }
+
+        function applyTheme() {
+          const t = themeColors();
+          sphereMat.color.copy(t.sphere);
+          glowMat.uniforms.c.value.copy(t.glow);
+          glowMat.uniforms.a.value = t.glowAlpha;
+          rimMat.uniforms.c.value.copy(t.glow);
+          dotMat.uniforms.c.value.copy(t.dot);
+          dotMat.uniforms.a.value = t.dotAlpha;
+          doneMat.color.copy(t.route);
+          nextMat.color.copy(t.routeNext);
+          stopMat.color.copy(t.route);
+          markerMat.color.copy(t.marker);
+          ringMat.color.copy(t.marker);
+        }
+        window.addEventListener("themechange", applyTheme);
+
+        function resize() {
+          const w = stage.clientWidth, h = stage.clientHeight;
+          const mobile = w < 640;
+          renderer.setSize(w, h, false);
+          camera.aspect = w / h;
+          const frac = mobile ? 0.84 : 0.72;
+          const fovY = THREE.MathUtils.degToRad(camera.fov);
+          const fitH = R / Math.tan((fovY / 2) * frac);
+          const fitW = R / (Math.tan(fovY / 2) * camera.aspect * frac);
+          camera.position.z = Math.max(fitH, fitW) + R;
+          // desktop reads text-left / globe-right; mobile stacks text over a lower globe
+          globe.position.x = mobile ? 0 : 0.45;
+          globe.position.y = mobile ? -0.3 : -0.08;
+          dotMat.uniforms.size.value = 2.6 * Math.min(devicePixelRatio, 2) * Math.max(1, Math.min(1.8, h / 950));
+          camera.updateProjectionMatrix();
+        }
+        addEventListener("resize", resize);
+        resize();
+
+        /* drag with inertia; a clean tap scrolls to the detail sections */
+        let rotY = rotYFor(13.4) - 1.1, rotX = 0.18;
+        let velY = 0, velX = 0;
+        let dragging = false, entered = false;
+        let px0 = 0, py0 = 0, moved = 0, downT = 0;
+        let idleT = 0;
+
+        canvas.addEventListener("pointerdown", (e) => {
+          dragging = true; entered = true;
+          canvas.classList.add("grabbing");
+          canvas.setPointerCapture(e.pointerId);
+          px0 = e.clientX; py0 = e.clientY; moved = 0; downT = performance.now();
+          velY = velX = 0;
+        });
+        canvas.addEventListener("pointermove", (e) => {
+          if (!dragging) return;
+          const dx = e.clientX - px0, dy = e.clientY - py0;
+          px0 = e.clientX; py0 = e.clientY;
+          moved += Math.abs(dx) + Math.abs(dy);
+          const k = 0.0045;
+          rotY += dx * k; rotX += dy * k * 0.7;
+          velY = dx * k; velX = dy * k * 0.7;
+          rotX = Math.max(-1.1, Math.min(1.1, rotX));
+          idleT = 0;
+        });
+        canvas.addEventListener("pointerup", () => {
+          dragging = false;
+          canvas.classList.remove("grabbing");
+          if (moved < 7 && performance.now() - downT < 500)
+            document.getElementById("stats")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+        });
+        canvas.addEventListener("pointercancel", () => { dragging = false; canvas.classList.remove("grabbing"); });
+
+        /* render only while the hero is on screen */
+        let onScreen = true;
+        new IntersectionObserver((es) => { onScreen = es[0].isIntersecting; }).observe(stage);
+
+        const v = new THREE.Vector3();
+        let last = performance.now();
+        function frame(now) {
+          requestAnimationFrame(frame);
+          if (document.hidden || !onScreen) { last = now; return; }
+          const dt = Math.min((now - last) / 1000, 0.05);
+          last = now;
+
+          if (!dragging) {
+            if (!entered) {
+              rotY += (targetRotY - rotY) * Math.min(1, dt * 2.2);
+              rotX += (targetRotX - rotX) * Math.min(1, dt * 2.2);
+              if (Math.abs(targetRotY - rotY) < 0.002) entered = true;
+            } else {
+              rotY += velY; rotX += velX;
+              velY *= 0.94; velX *= 0.94;
+              rotX += (targetRotX - rotX) * dt * 0.5;
+              idleT += dt;
+              if (!reduce && idleT > 1.2) rotY += dt * 0.05;
+            }
+            rotX = Math.max(-1.1, Math.min(1.1, rotX));
+          }
+          globe.rotation.set(rotX, rotY, 0);
+
+          if (ring && markerPos) {
+            const p = (now / 1600) % 1;
+            ring.scale.setScalar(1 + p * 1.9);
+            ringMat.opacity = 0.75 * (1 - p);
+            v.copy(markerPos).applyMatrix4(globe.matrixWorld);
+            const facing = v.clone().normalize().dot(camera.position.clone().normalize());
+            v.project(camera);
+            label.style.left = (v.x * 0.5 + 0.5) * stage.clientWidth + "px";
+            label.style.top = (-v.y * 0.5 + 0.5) * stage.clientHeight + "px";
+            label.classList.toggle("on", facing > 0.28);
+          }
+          renderer.render(scene, camera);
+        }
+
+        applyTheme();
+        buildRoute();
+        buildLand().catch((e) => console.warn("globe: land load failed", e));
+        requestAnimationFrame(frame);
+        document.body.classList.add("globe-on");
+        resize();
+      }
     </script>
   </body>
 </html>

@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Travel Ledger — Globe</title>
+    <script>(function(){try{var q=new URLSearchParams(location.search).get("theme");var t=q||localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <style>
+      :root {
+        --bg: #fafbfc;
+        --surface: #fefeff;
+        --ink: #1a1a1a;
+        --muted: #6b6b6b;
+        --faint: #9a9a9a;
+        --line: rgba(26, 26, 26, 0.08);
+        --blue: #335c99;
+        --sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+        --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+        /* globe palette (light) */
+        --g-dot: #33415c;
+        --g-dot-alpha: 0.62;
+        --g-sphere: #f2f4f7;
+        --g-glow: #6b93cf;
+        --g-glow-alpha: 0.35;
+        --g-route: #335c99;
+        --g-route-next: #9a9a9a;
+        --g-marker: #c44536;
+        --page-grad: radial-gradient(125% 95% at 50% -8%, #ffffff 0%, var(--bg) 44%, #e6e9ee 100%);
+      }
+      :root[data-theme="dark"] {
+        --bg: #15171b;
+        --surface: #1e2126;
+        --ink: #e8eaed;
+        --muted: #9aa0a8;
+        --faint: #6b7079;
+        --line: rgba(255, 255, 255, 0.09);
+        --blue: #6193cf;
+        --g-dot: #9db4d6;
+        --g-dot-alpha: 0.75;
+        --g-sphere: #191c21;
+        --g-glow: #4d7bbd;
+        --g-glow-alpha: 0.5;
+        --g-route: #7aa5dd;
+        --g-route-next: #565c66;
+        --g-marker: #e05545;
+        --page-grad: radial-gradient(125% 95% at 50% -8%, #20242b 0%, var(--bg) 44%, #0e1014 100%);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: var(--sans);
+        font-feature-settings: "tnum";
+        -webkit-font-smoothing: antialiased;
+        background: var(--page-grad) fixed;
+        transition: background 0.4s var(--ease);
+      }
+      /* fine studio grain — same as dashboard */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0.5;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
+      }
+
+      .stage {
+        position: fixed;
+        inset: 0;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      canvas#globe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: grab;
+        touch-action: none;
+        opacity: 0;
+        transition: opacity 1.1s var(--ease);
+      }
+      canvas#globe.on { opacity: 1; }
+      canvas#globe.grabbing { cursor: grabbing; }
+
+      /* ---------- hero text (kept from dashboard) ---------- */
+      .hero {
+        position: relative;
+        z-index: 2;
+        pointer-events: none;
+        padding: max(20px, env(safe-area-inset-top)) 0 0;
+        width: min(1180px, calc(100vw - 48px));
+        margin: 0 auto;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin: 10px 0 22px;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+      .hero-kicker {
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--faint);
+        margin-bottom: 12px;
+      }
+      .hero-title {
+        margin: 0;
+        display: grid;
+        gap: 8px;
+        word-break: keep-all;
+        font-size: clamp(26px, 4.6vw, 54px);
+        line-height: 1.02;
+        letter-spacing: -0.05em;
+        font-weight: 420;
+        color: var(--muted);
+      }
+      .hero-title b { color: var(--ink); font-weight: 760; }
+      .rise {
+        opacity: 0;
+        transform: translateY(14px);
+        animation: rise 0.9s var(--ease) forwards;
+      }
+      @keyframes rise { to { opacity: 1; transform: none; } }
+
+      /* ---------- bottom status ---------- */
+      .foot {
+        position: relative;
+        z-index: 2;
+        margin-top: auto;
+        pointer-events: none;
+        width: min(1180px, calc(100vw - 48px));
+        margin-inline: auto;
+        padding-bottom: max(22px, env(safe-area-inset-bottom));
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .now {
+        display: grid;
+        gap: 3px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--faint);
+      }
+      .now strong { color: var(--ink); font-weight: 700; font-size: 14px; letter-spacing: -0.01em; }
+      .hint {
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--faint);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+      .hint .pulse {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: var(--blue);
+        animation: hintPulse 2.4s var(--ease) infinite;
+      }
+      @keyframes hintPulse {
+        0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--blue) 45%, transparent); }
+        50% { box-shadow: 0 0 0 7px transparent; }
+      }
+
+      /* ---------- current-location label (projected) ---------- */
+      .loc-label {
+        position: fixed;
+        z-index: 2;
+        left: 0; top: 0;
+        pointer-events: none;
+        transform: translate(-50%, calc(-100% - 16px));
+        display: grid;
+        justify-items: center;
+        gap: 5px;
+        opacity: 0;
+        transition: opacity 0.5s var(--ease);
+        will-change: left, top;
+      }
+      .loc-label.on { opacity: 1; }
+      .loc-label .tag {
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        background: color-mix(in srgb, var(--surface) 78%, transparent);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 5px 12px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 2px 14px rgba(0, 0, 0, 0.09);
+      }
+      .loc-label .tag small {
+        font-weight: 600;
+        color: var(--faint);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 9.5px;
+        margin-left: 6px;
+      }
+      .loc-label .stem {
+        width: 1px;
+        height: 14px;
+        background: linear-gradient(var(--faint), transparent);
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: max(18px, env(safe-area-inset-top));
+        right: 20px;
+        z-index: 4;
+        width: 42px; height: 42px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--surface) 80%, transparent);
+        backdrop-filter: blur(8px);
+        color: var(--ink);
+        font-size: 16px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: transform 0.3s var(--ease);
+      }
+      .theme-toggle:hover { transform: translateY(-2px); }
+
+      /* leave transition to dashboard */
+      .veil {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+        background: var(--bg);
+        opacity: 0;
+        transition: opacity 0.45s var(--ease);
+      }
+      body.leaving .veil { opacity: 1; }
+      body.leaving canvas#globe { transition: transform 0.5s var(--ease), opacity 0.5s var(--ease); transform: scale(1.06); }
+
+      @media (max-width: 640px) {
+        .eyebrow { margin: 6px 0 16px; }
+        .hero-title { font-size: clamp(24px, 7.4vw, 34px); }
+        .foot { flex-direction: column; align-items: flex-start; gap: 10px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .rise { animation: none; opacity: 1; transform: none; }
+        .hint .pulse { animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <header class="hero">
+        <p class="eyebrow rise" style="animation-delay: 0.02s"><span class="dot"></span> Travel Ledger · 2026</p>
+        <div class="hero-kicker rise" style="animation-delay: 0.06s">Travel right now</div>
+        <h1 class="hero-title">
+          <span class="rise" style="animation-delay: 0.1s">현재 도시 기준으로 움직입니다.</span>
+          <span class="rise" style="animation-delay: 0.14s"><b>오늘 이동과 체크인만 먼저 봅니다.</b></span>
+        </h1>
+      </header>
+
+      <canvas id="globe" aria-label="세계 여행 경로 지구본 — 누르면 대시보드로 이동"></canvas>
+
+      <div class="foot">
+        <div class="now rise" style="animation-delay: 0.2s">
+          <strong id="nowCity">—</strong>
+          <span id="nowSub">경로를 불러오는 중</span>
+        </div>
+        <div class="hint rise" style="animation-delay: 0.24s"><span class="pulse"></span> 지구본을 누르면 대시보드</div>
+      </div>
+    </div>
+
+    <div class="loc-label" id="locLabel">
+      <div class="tag"><span id="locName">—</span><small>현재</small></div>
+      <div class="stem"></div>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">◐</button>
+    <div class="veil"></div>
+
+    <script type="importmap">
+      { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }
+    </script>
+    <script type="module">
+      import * as THREE from "three";
+      import { feature } from "https://cdn.jsdelivr.net/npm/topojson-client@3/+esm";
+
+      const canvas = document.getElementById("globe");
+      const label = document.getElementById("locLabel");
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* ---------- theme plumbing ---------- */
+      const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+      const themeColors = () => ({
+        dot: new THREE.Color(cssVar("--g-dot")),
+        dotAlpha: parseFloat(cssVar("--g-dot-alpha")),
+        sphere: new THREE.Color(cssVar("--g-sphere")),
+        glow: new THREE.Color(cssVar("--g-glow")),
+        glowAlpha: parseFloat(cssVar("--g-glow-alpha")),
+        route: new THREE.Color(cssVar("--g-route")),
+        routeNext: new THREE.Color(cssVar("--g-route-next")),
+        marker: new THREE.Color(cssVar("--g-marker")),
+      });
+
+      /* ---------- renderer / scene ---------- */
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+      camera.position.set(0, 0, 3.6);
+
+      const globe = new THREE.Group();
+      scene.add(globe);
+
+      const R = 1;
+      const latLng = (lat, lng, r = R) => {
+        const phi = (90 - lat) * (Math.PI / 180);
+        const theta = (lng + 180) * (Math.PI / 180);
+        return new THREE.Vector3(
+          -r * Math.sin(phi) * Math.cos(theta),
+          r * Math.cos(phi),
+          r * Math.sin(phi) * Math.sin(theta)
+        );
+      };
+
+      /* occluder sphere — hides back-hemisphere dots, reads as the globe body */
+      const sphereMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(R * 0.996, 64, 64), sphereMat);
+      globe.add(sphere);
+
+      /* atmosphere — fresnel rim, additive */
+      const glowMat = new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide,
+        depthWrite: false,
+        uniforms: { c: { value: new THREE.Color() }, a: { value: 0.4 } },
+        vertexShader: `
+          varying vec3 vN; varying vec3 vP;
+          void main() {
+            vN = normalize(normalMatrix * normal);
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            vP = mv.xyz;
+            gl_Position = projectionMatrix * mv;
+          }`,
+        fragmentShader: `
+          uniform vec3 c; uniform float a;
+          varying vec3 vN; varying vec3 vP;
+          void main() {
+            float f = pow(1.0 - abs(dot(normalize(vN), normalize(-vP))), 3.0);
+            gl_FragColor = vec4(c, f * a);
+          }`,
+      });
+      globe.add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.12, 64, 64), glowMat));
+
+      /* inner rim shading on the sphere itself for depth */
+      const rimMat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        uniforms: { c: { value: new THREE.Color() }, a: { value: 0.16 } },
+        vertexShader: glowMat.vertexShader,
+        fragmentShader: `
+          uniform vec3 c; uniform float a;
+          varying vec3 vN; varying vec3 vP;
+          void main() {
+            float f = pow(1.0 - abs(dot(normalize(vN), normalize(-vP))), 2.2);
+            gl_FragColor = vec4(c, f * a);
+          }`,
+      });
+      globe.add(new THREE.Mesh(new THREE.SphereGeometry(R * 0.9965, 64, 64), rimMat));
+
+      /* ---------- land dots from real topology ---------- */
+      const dotMat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        uniforms: {
+          c: { value: new THREE.Color() },
+          a: { value: 0.6 },
+          size: { value: 2.6 * Math.min(devicePixelRatio, 2) },
+        },
+        vertexShader: `
+          uniform float size;
+          void main() {
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            gl_PointSize = size * (3.6 / -mv.z);
+            gl_Position = projectionMatrix * mv;
+          }`,
+        fragmentShader: `
+          uniform vec3 c; uniform float a;
+          void main() {
+            float d = length(gl_PointCoord - 0.5);
+            if (d > 0.5) discard;
+            float edge = smoothstep(0.5, 0.32, d);
+            gl_FragColor = vec4(c, a * edge);
+          }`,
+      });
+      let dots = null;
+
+      async function buildLand() {
+        const topo = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json").then((r) => r.json());
+        const fc = feature(topo, topo.objects.land);
+        const feats = fc.features || [fc];
+
+        // rasterize land polygons on an equirectangular canvas, then sample
+        const W = 2048, H = 1024;
+        const cv = document.createElement("canvas");
+        cv.width = W; cv.height = H;
+        const cx = cv.getContext("2d", { willReadFrequently: true });
+        cx.fillStyle = "#000"; cx.fillRect(0, 0, W, H);
+        cx.fillStyle = "#fff";
+        const px = (lng) => ((lng + 180) / 360) * W;
+        const py = (lat) => ((90 - lat) / 180) * H;
+        cx.beginPath();
+        for (const f of feats) {
+          const g = f.geometry;
+          const polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
+          for (const poly of polys)
+            for (const ring of poly) {
+              ring.forEach(([lng, lat], i) => (i ? cx.lineTo(px(lng), py(lat)) : cx.moveTo(px(lng), py(lat))));
+              cx.closePath();
+            }
+        }
+        cx.fill();
+        const img = cx.getImageData(0, 0, W, H).data;
+
+        // fibonacci sphere sampling — even density everywhere
+        const N = innerWidth < 640 ? 28000 : 44000;
+        const GA = Math.PI * (3 - Math.sqrt(5));
+        const pts = [];
+        for (let i = 0; i < N; i++) {
+          const y = 1 - (i / (N - 1)) * 2;
+          const rad = Math.sqrt(1 - y * y);
+          const th = GA * i;
+          const x = Math.cos(th) * rad, z = Math.sin(th) * rad;
+          const lat = Math.asin(y) * (180 / Math.PI);
+          const lng = Math.atan2(z, -x) * (180 / Math.PI) - 180;
+          const ix = (Math.floor(py(lat)) * W + Math.floor(px(((lng + 540) % 360) - 180))) * 4;
+          if (img[ix] > 128) pts.push(x, y, z);
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pts), 3));
+        dots = new THREE.Points(geo, dotMat);
+        dots.scale.setScalar(R * 1.001);
+        globe.add(dots);
+      }
+
+      /* ---------- route arcs + current marker ---------- */
+      const routeGroup = new THREE.Group();
+      globe.add(routeGroup);
+      const doneMat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.85 });
+      const nextMat = new THREE.LineDashedMaterial({ transparent: true, opacity: 0.55, dashSize: 0.028, gapSize: 0.02 });
+      const stopMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.9 });
+      const markerMat = new THREE.MeshBasicMaterial();
+      const ringMat = new THREE.MeshBasicMaterial({ transparent: true, side: THREE.DoubleSide });
+
+      const arcCurve = (a, b) => {
+        const va = latLng(a.lat, a.lng), vb = latLng(b.lat, b.lng);
+        const dist = va.distanceTo(vb);
+        const pts = [];
+        for (let i = 0; i <= 48; i++) {
+          const t = i / 48;
+          const p = new THREE.Vector3().lerpVectors(va, vb, t).normalize()
+            .multiplyScalar(R * (1.004 + Math.sin(Math.PI * t) * dist * 0.14));
+          pts.push(p);
+        }
+        return pts;
+      };
+
+      let marker = null, ring = null, markerPos = null;
+      let current = { name: "—", lat: 52.52, lng: 13.405 };
+
+      function addStop(p, r = 0.0075, mat = stopMat) {
+        const m = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 12), mat);
+        m.position.copy(latLng(p.lat, p.lng, R * 1.004));
+        routeGroup.add(m);
+      }
+
+      async function buildRoute() {
+        let data = null;
+        try { data = await fetch("../travel-data.json", { cache: "no-store" }).then((r) => r.json()); } catch (e) {}
+        const stops = data?.map?.routePoints?.length
+          ? data.map.routePoints
+          : [
+              { name: "Seoul", lat: 37.5665, lng: 126.978 },
+              { name: "Frankfurt, Germany", lat: 50.1109, lng: 8.6821 },
+              { name: "Berlin, Germany", lat: 52.52, lng: 13.405 },
+            ];
+        const curName = data?.current?.location || "Berlin";
+        let curIdx = stops.findIndex((s) => s.name?.toLowerCase().includes(curName.toLowerCase()));
+        if (curIdx < 0) curIdx = stops.length - 1;
+        current = { name: curName, lat: stops[curIdx].lat, lng: stops[curIdx].lng };
+
+        document.getElementById("nowCity").textContent = curName;
+        const total = stops.length;
+        document.getElementById("nowSub").textContent =
+          `경로 ${curIdx + 1} / ${total} 구간 · ${data?.current?.date || ""}`;
+        document.getElementById("locName").textContent = curName;
+
+        for (let i = 0; i < stops.length - 1; i++) {
+          const pts = arcCurve(stops[i], stops[i + 1]);
+          const geo = new THREE.BufferGeometry().setFromPoints(pts);
+          const line = new THREE.Line(geo, i < curIdx ? doneMat : nextMat);
+          if (i >= curIdx) line.computeLineDistances();
+          routeGroup.add(line);
+        }
+        stops.forEach((s, i) => { if (i !== curIdx) addStop(s); });
+
+        // current location — dot + pulsing ring
+        markerPos = latLng(current.lat, current.lng, R * 1.006);
+        marker = new THREE.Mesh(new THREE.SphereGeometry(0.016, 16, 16), markerMat);
+        marker.position.copy(markerPos);
+        routeGroup.add(marker);
+        ring = new THREE.Mesh(new THREE.RingGeometry(0.024, 0.028, 40), ringMat);
+        ring.position.copy(markerPos);
+        ring.lookAt(markerPos.clone().multiplyScalar(2));
+        routeGroup.add(ring);
+
+        // face the current city on entry
+        targetRotY = rotYFor(current.lng);
+        targetRotX = THREE.MathUtils.degToRad(Math.min(50, Math.max(-50, current.lat))) * 0.75;
+        if (reduceMotion) { rotY = targetRotY; rotX = targetRotX; }
+      }
+
+      const rotYFor = (lng) => THREE.MathUtils.degToRad(-lng - 90);
+
+      /* ---------- theme apply ---------- */
+      function applyTheme() {
+        const t = themeColors();
+        sphereMat.color.copy(t.sphere);
+        glowMat.uniforms.c.value.copy(t.glow);
+        glowMat.uniforms.a.value = t.glowAlpha;
+        rimMat.uniforms.c.value.copy(t.glow);
+        dotMat.uniforms.c.value.copy(t.dot);
+        dotMat.uniforms.a.value = t.dotAlpha;
+        doneMat.color.copy(t.route);
+        nextMat.color.copy(t.routeNext);
+        stopMat.color.copy(t.route);
+        markerMat.color.copy(t.marker);
+        ringMat.color.copy(t.marker);
+      }
+      document.getElementById("themeToggle").addEventListener("click", () => {
+        const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+        applyTheme();
+      });
+
+      /* ---------- layout: globe fills the screen, no scroll ---------- */
+      function resize() {
+        const w = innerWidth, h = innerHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        // fit sphere: distance so globe diameter ≈ 82% of the smaller viewport axis
+        const frac = w < 640 ? 0.92 : 0.8;
+        const fovY = THREE.MathUtils.degToRad(camera.fov);
+        const fitH = R / Math.tan((fovY / 2) * frac);
+        const fitW = R / (Math.tan(fovY / 2) * camera.aspect * frac);
+        camera.position.z = Math.max(fitH, fitW) + R;
+        // sit the globe slightly low so the title breathes
+        globe.position.y = w < 640 ? -0.2 : -0.16;
+        camera.updateProjectionMatrix();
+      }
+      addEventListener("resize", resize);
+      resize();
+
+      /* ---------- interaction: drag w/ inertia, click → dashboard ---------- */
+      let rotY = rotYFor(13.4) - 1.1, rotX = 0.18; // entry offset, animates to target
+      let targetRotY = rotYFor(13.4), targetRotX = 0.25;
+      let velY = 0, velX = 0;
+      let dragging = false, entered = false;
+      let px0 = 0, py0 = 0, moved = 0, downT = 0;
+      let idleT = 0;
+
+      canvas.addEventListener("pointerdown", (e) => {
+        dragging = true; entered = true;
+        canvas.classList.add("grabbing");
+        canvas.setPointerCapture(e.pointerId);
+        px0 = e.clientX; py0 = e.clientY; moved = 0; downT = performance.now();
+        velY = velX = 0;
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - px0, dy = e.clientY - py0;
+        px0 = e.clientX; py0 = e.clientY;
+        moved += Math.abs(dx) + Math.abs(dy);
+        const k = 0.0045;
+        rotY += dx * k; rotX += dy * k * 0.7;
+        velY = dx * k; velX = dy * k * 0.7;
+        rotX = Math.max(-1.1, Math.min(1.1, rotX));
+        idleT = 0;
+      });
+      canvas.addEventListener("pointerup", (e) => {
+        dragging = false;
+        canvas.classList.remove("grabbing");
+        if (moved < 7 && performance.now() - downT < 500) {
+          document.body.classList.add("leaving");
+          setTimeout(() => (location.href = "../"), 430);
+        }
+      });
+      canvas.addEventListener("pointercancel", () => { dragging = false; canvas.classList.remove("grabbing"); });
+
+      /* ---------- render loop ---------- */
+      const v = new THREE.Vector3();
+      let running = true;
+      document.addEventListener("visibilitychange", () => { running = !document.hidden; });
+
+      let last = performance.now();
+      function frame(now) {
+        requestAnimationFrame(frame);
+        if (!running) { last = now; return; }
+        const dt = Math.min((now - last) / 1000, 0.05);
+        last = now;
+
+        if (!dragging) {
+          if (!entered) {
+            // entry: ease toward the current city
+            rotY += (targetRotY - rotY) * Math.min(1, dt * 2.2);
+            rotX += (targetRotX - rotX) * Math.min(1, dt * 2.2);
+            if (Math.abs(targetRotY - rotY) < 0.002) entered = true;
+          } else {
+            rotY += velY; rotX += velX;
+            velY *= 0.94; velX *= 0.94;
+            rotX += (targetRotX - rotX) * dt * 0.5;
+            idleT += dt;
+            if (!reduceMotion && idleT > 1.2) rotY += dt * 0.05; // gentle auto-spin
+          }
+          rotX = Math.max(-1.1, Math.min(1.1, rotX));
+        }
+        globe.rotation.set(rotX, rotY, 0);
+
+        if (ring && markerPos) {
+          const p = (now / 1600) % 1;
+          ring.scale.setScalar(1 + p * 1.9);
+          ringMat.opacity = 0.75 * (1 - p);
+          // project marker → HTML label, hide when behind the globe
+          v.copy(markerPos).applyMatrix4(globe.matrixWorld);
+          const facing = v.clone().normalize().dot(camera.position.clone().normalize());
+          v.project(camera);
+          const sx = (v.x * 0.5 + 0.5) * innerWidth;
+          const sy = (-v.y * 0.5 + 0.5) * innerHeight;
+          label.style.left = sx + "px";
+          label.style.top = sy + "px";
+          label.classList.toggle("on", facing > 0.28);
+        }
+        renderer.render(scene, camera);
+      }
+
+      applyTheme();
+      buildRoute();
+      buildLand().catch((e) => console.warn("land load failed", e));
+      requestAnimationFrame(frame);
+      requestAnimationFrame(() => canvas.classList.add("on"));
+    </script>
+  </body>
+</html>

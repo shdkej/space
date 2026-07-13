@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T13:42:17.061805+00:00",
+  "generatedAt": "2026-07-13T07:11:02.411788+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,33 +8,106 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 3248822,
-    "travelLoggedKrw": 3248822,
-    "remainingMinKrw": 26751178,
-    "remainingMaxKrw": 36751178,
-    "reservedPctMin": 10.8,
+    "loggedKrw": 5904159,
+    "travelLoggedKrw": 5904159,
+    "remainingMinKrw": 24095841,
+    "remainingMaxKrw": 34095841,
+    "reservedPctMin": 19.7,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 81221,
+    "reserveBurnKrw": 90833,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-06-18",
-    "location": "서울특별시",
-    "mapQuery": "서울특별시"
+    "date": "2026-07-13",
+    "location": "Berlin",
+    "mapQuery": "Berlin, Germany"
   },
   "categoryTotals": {
-    "stay": 2342078,
-    "gear": 636430,
-    "transport": 270314
+    "stay": 2539115,
+    "gear": 1406099,
+    "transport": 866131,
+    "medical": 680000,
+    "other": 296999,
+    "visa": 105697,
+    "groceries": 10118
   },
   "travelCategoryTotals": {
-    "stay": 2342078,
-    "gear": 636430,
-    "transport": 270314
+    "stay": 2539115,
+    "gear": 1406099,
+    "transport": 866131,
+    "medical": 680000,
+    "other": 296999,
+    "visa": 105697,
+    "groceries": 10118
   },
+  "countryCategoryTotals": [
+    {
+      "country": "국가 미확인 예약",
+      "total": 2364587,
+      "categories": {
+        "stay": 2170946,
+        "transport": 193641
+      }
+    },
+    {
+      "country": "여행 준비",
+      "total": 2191796,
+      "categories": {
+        "gear": 1406099,
+        "medical": 680000,
+        "visa": 105697
+      }
+    },
+    {
+      "country": "Germany",
+      "total": 596004,
+      "categories": {
+        "other": 296999,
+        "transport": 204718,
+        "stay": 84169,
+        "groceries": 10118
+      }
+    },
+    {
+      "country": "Croatia",
+      "total": 264534,
+      "categories": {
+        "stay": 190000,
+        "transport": 74534
+      }
+    },
+    {
+      "country": "Hungary",
+      "total": 156361,
+      "categories": {
+        "transport": 156361
+      }
+    },
+    {
+      "country": "Czechia",
+      "total": 155707,
+      "categories": {
+        "transport": 155707
+      }
+    },
+    {
+      "country": "South Korea",
+      "total": 94000,
+      "categories": {
+        "stay": 94000
+      }
+    },
+    {
+      "country": "Austria",
+      "total": 81170,
+      "categories": {
+        "transport": 81170
+      }
+    }
+  ],
   "dailyTotals": [
     {
       "date": "2026-05-23",
@@ -59,6 +132,26 @@
     {
       "date": "2026-06-17",
       "amount": 189506
+    },
+    {
+      "date": "2026-06-18",
+      "amount": 364922
+    },
+    {
+      "date": "2026-07-09",
+      "amount": 44465
+    },
+    {
+      "date": "2026-07-10",
+      "amount": 41820
+    },
+    {
+      "date": "2026-07-12",
+      "amount": 174707
+    },
+    {
+      "date": "2026-07-13",
+      "amount": 53162
     }
   ],
   "bookedCosts": [
@@ -129,6 +222,17 @@
       "source": "7/20 EuroCity from Vienna"
     },
     {
+      "id": "manual-stay-plitvice",
+      "date": "2026-07-23",
+      "time": "",
+      "amount": 190000,
+      "merchant": "Plitvice · Plitvice Airbnb",
+      "category": "stay",
+      "location": "Plitvice",
+      "travel": true,
+      "source": "Notion TO DO / 숙소 예약"
+    },
+    {
       "id": "manual-shopping-2026-05-10-travel-prep",
       "date": "2026-05-10",
       "time": "",
@@ -184,6 +288,39 @@
       "source": "telegram:433493318/message/10729"
     },
     {
+      "id": "manual-transport-2026-07-02-flixbus-budapest-zagreb",
+      "date": "2026-07-02",
+      "time": "",
+      "amount": 156361,
+      "merchant": "FlixBus · Budapest -> Zagreb",
+      "category": "transport",
+      "location": "Budapest / Zagreb",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
+      "id": "manual-transport-2026-07-02-flixbus-zagreb-plitvice",
+      "date": "2026-07-02",
+      "time": "",
+      "amount": 74534,
+      "merchant": "FlixBus · Zagreb -> Plitvice",
+      "category": "transport",
+      "location": "Zagreb / Plitvice",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
+      "id": "manual-stay-2026-07-04-plitvice-airbnb",
+      "date": "2026-07-04",
+      "time": "",
+      "amount": 190000,
+      "merchant": "Plitvice Airbnb",
+      "category": "stay",
+      "location": "Plitvice",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
       "id": "manual-shopping-2026-06-07-international-license",
       "date": "2026-06-07",
       "time": "",
@@ -193,9 +330,509 @@
       "location": "여행 준비",
       "travel": true,
       "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "manual-shopping-2026-06-14-hottracks",
+      "date": "2026-06-14",
+      "time": "",
+      "amount": 110000,
+      "merchant": "핫트랙스 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-14-nua-customs",
+      "date": "2026-06-14",
+      "time": "",
+      "amount": 44139,
+      "merchant": "누아옷 관세",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-15-naver-physiogel",
+      "date": "2026-06-15",
+      "time": "",
+      "amount": 23520,
+      "merchant": "네이버페이 · 피지오겔크림",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-15-coupang-tripod-card-soap",
+      "date": "2026-06-15",
+      "time": "",
+      "amount": 30410,
+      "merchant": "쿠팡 · 삼각대/소니 SD카드/도브비누",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-16-naverpay",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 64850,
+      "merchant": "네이버페이 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-16-coupang-drive-case-sd-card",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 100750,
+      "merchant": "쿠팡 · 외장하드케이스/SD카드 256G",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-16-hottracks-sd-card-phone-case",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 130000,
+      "merchant": "핫트랙스 · SD카드 256G/휴대폰케이스",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-medical-2026-06-18-vaccination",
+      "date": "2026-06-18",
+      "time": "",
+      "amount": 680000,
+      "merchant": "여행 의료비",
+      "category": "medical",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-24-airtag-soap-case",
+      "date": "2026-06-24",
+      "time": "",
+      "amount": 66000,
+      "merchant": "에어태그/비누케이스",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-25-windbreaker",
+      "date": "2026-06-25",
+      "time": "",
+      "amount": 200000,
+      "merchant": "바람막이",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-visa-2026-06-30-esta",
+      "date": "2026-06-30",
+      "time": "20:23",
+      "amount": 62788,
+      "merchant": "USCUSTOMS ESTA APPL PMT",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/1121"
+    },
+    {
+      "id": "manual-visa-2026-06-30-uk-eta",
+      "date": "2026-06-30",
+      "time": "20:42",
+      "amount": 42909,
+      "merchant": "UKVI ETAWEB00000121936",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/1121"
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_84q42ghn6l34cb9p88o38b9k70pjib9o8p33cba38kpk8gi56gs38d1n84",
+      "date": "2026-07-13",
+      "time": "10:23",
+      "amount": 12188,
+      "merchant": "LIME*PASS ZKWT",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_8ks38gq570sj6ba16sqj4b9k84r46ba170rkab9i6gqk8di168sj8d1g8o",
+      "date": "2026-07-13",
+      "time": "10:23",
+      "amount": 12188,
+      "merchant": "LIME*PASS DWYJ",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6oq3achi6oo4ab9h6h346b9k60o38b9o6523ib9p611j0h1g64pjig9i6c",
+      "date": "2026-07-13",
+      "time": "08:42",
+      "amount": 10118,
+      "merchant": "Curry61 HM",
+      "category": "groceries",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6grj4cq46h0j2ba48gr46b9k6cqjaba18l136b9h88o4aha289144dhk68",
+      "date": "2026-07-13",
+      "time": "08:38",
+      "amount": 1521,
+      "merchant": "LIME*RIDE ZKWT",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_74q44g9p8gpk4ba170sk6b9k6p2jgba28l0kcba56sq38h1j6d338c226s",
+      "date": "2026-07-13",
+      "time": "08:38",
+      "amount": 4549,
+      "merchant": "LIME*RIDE DWYJ",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_74o34d2664s38ba2751jcb9k60r44b9o6ks46b9k6t2j8gpj8l34cchk88",
+      "date": "2026-07-13",
+      "time": "07:30",
+      "amount": 12598,
+      "merchant": "Baecker Wiedemann GmbH",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6133gd228csj0b9n6kr3ab9k8oqk4ba16h344ba170p3gg9j8os34d1i6c",
+      "date": "2026-07-12",
+      "time": "09:34",
+      "amount": 17422,
+      "merchant": "Kirsch GmbH & Co. KG",
+      "category": "other",
+      "location": "하노버, 독일",
+      "travel": true
+    },
+    {
+      "id": "_8cr30dpp60rj2b9h88oj6b9k6t0kcb9p6h1k4b9l6spj8gi284o3cd9p70",
+      "date": "2026-07-12",
+      "time": "09:34",
+      "amount": 17422,
+      "merchant": "Kirsch GmbH & Co. KG",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6oq4ccpm8l0jcba58gr30b9k8p246ba274q36b9n6h2kccpl6p138cq58c",
+      "date": "2026-07-12",
+      "time": "06:00",
+      "amount": 6071,
+      "merchant": "Lekkerland REWE To Go",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_750j2gi56orjaba3611kab9k8opj2ba268qj8b9p8go46e9l70q36hhh6g",
+      "date": "2026-07-12",
+      "time": "06:00",
+      "amount": 6071,
+      "merchant": "Lekkerland REWE To Go",
+      "category": "other",
+      "location": "하노버, 독일",
+      "travel": true
+    },
+    {
+      "id": "_8p232h226123gba18p2jgb9k84sjcb9p70p3aba46osjce1p8kqjge9j84",
+      "date": "2026-07-12",
+      "time": "06:00",
+      "amount": 6071,
+      "merchant": "Lekkerland REWE To Go",
+      "category": "other",
+      "location": "Köln Hbf, Breslauer Platz 479",
+      "travel": true
+    },
+    {
+      "id": "_68q36c1n8koj6b9l8p13cb9k650k8b9p6soj0ba3690j4ghg6d0jgc1p68",
+      "date": "2026-07-12",
+      "time": "03:29",
+      "amount": 27906,
+      "merchant": "Hohe Domkirche zu Koeln K",
+      "category": "other",
+      "location": "Köln Hbf, Breslauer Platz 479",
+      "travel": true
+    },
+    {
+      "id": "_6t0k8dph8h24cb9l88r44b9k6l348b9p6cp44ba460p46dhg6cqkcca68o",
+      "date": "2026-07-12",
+      "time": "03:29",
+      "amount": 27906,
+      "merchant": "Hohe Domkirche zu Koeln K",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6t330ghh84rj6b9g8cp34b9k6oqk2ba164r42ba66d0kagpm6h144chj64",
+      "date": "2026-07-12",
+      "time": "03:29",
+      "amount": 27906,
+      "merchant": "Hohe Domkirche zu Koeln K",
+      "category": "other",
+      "location": "하노버, 독일",
+      "travel": true
+    },
+    {
+      "id": "_652j0gpn6cs3eb9j68r3ib9k6l14cb9o8p2kab9l6l14ce1n88rjge2664",
+      "date": "2026-07-12",
+      "time": "02:32",
+      "amount": 12644,
+      "merchant": "SumUp  *Gastro Faraj Koel",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_8533ada370p34b9k8osjgb9k6t14cb9p6l23ab9m84qj8c9h8gr46c1j6g",
+      "date": "2026-07-12",
+      "time": "02:32",
+      "amount": 12644,
+      "merchant": "SumUp  *Gastro Faraj Koel",
+      "category": "other",
+      "location": "하노버, 독일",
+      "travel": true
+    },
+    {
+      "id": "_892k8gpi6sok6ba38h0j4b9k692j0ba26ss3ab9p89248gi56t1jeh9p8k",
+      "date": "2026-07-12",
+      "time": "02:32",
+      "amount": 12644,
+      "merchant": "SumUp  *Gastro Faraj Koel",
+      "category": "other",
+      "location": "Köln Hbf, Breslauer Platz 479",
+      "travel": true
+    },
+    {
+      "id": "_6h2kcgpi85230ba160o4cb9k6kr38b9o8ko4cb9m6osjegph64r3id9h60",
+      "date": "2026-07-10",
+      "time": "05:25",
+      "amount": 33320,
+      "merchant": "Koelner Verkehrs-Betri",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_64ok2cq38d348ba274r46b9k8913cb9p6cr44ba38krj6d1g68rkac1p60",
+      "date": "2026-07-10",
+      "time": "01:32",
+      "amount": 8500,
+      "merchant": "Ditsch Frankfurt Hbf. Qu",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_690jidpj8kp46ba484ojeb9k8or38ba1652j6b9m6csjid9j75132gq374",
+      "date": "2026-07-09",
+      "time": "09:13",
+      "amount": 13152,
+      "merchant": "63210150 Frankfurt Main H",
+      "category": "other",
+      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "travel": true
+    },
+    {
+      "id": "_88r44cpk8914ab9p6h33ib9k6grkab9p8co3eb9o84qk4dhh64ok4d256c",
+      "date": "2026-07-09",
+      "time": "08:21",
+      "amount": 7037,
+      "merchant": "IntercityHotel",
+      "category": "stay",
+      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "travel": true
+    },
+    {
+      "id": "_7533ce268gpjib9p6p246b9k6h1jiba1752jgba16d1j6h256op3ac1p8o",
+      "date": "2026-07-09",
+      "time": "07:47",
+      "amount": 24276,
+      "merchant": "FFM Flughafen Regional Bh",
+      "category": "other",
+      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "travel": true
+    },
+    {
+      "id": "manual-stay-2026-07-04-plitvice-airbnb",
+      "date": "2026-07-04",
+      "time": "",
+      "amount": 190000,
+      "merchant": "Plitvice Airbnb",
+      "category": "stay",
+      "location": "Plitvice",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
+      "id": "manual-transport-2026-07-02-flixbus-budapest-zagreb",
+      "date": "2026-07-02",
+      "time": "",
+      "amount": 156361,
+      "merchant": "FlixBus · Budapest -> Zagreb",
+      "category": "transport",
+      "location": "Budapest / Zagreb",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
+      "id": "manual-transport-2026-07-02-flixbus-zagreb-plitvice",
+      "date": "2026-07-02",
+      "time": "",
+      "amount": 74534,
+      "merchant": "FlixBus · Zagreb -> Plitvice",
+      "category": "transport",
+      "location": "Zagreb / Plitvice",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
+      "id": "manual-visa-2026-06-30-uk-eta",
+      "date": "2026-06-30",
+      "time": "20:42",
+      "amount": 42909,
+      "merchant": "UKVI ETAWEB00000121936",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/1121"
+    },
+    {
+      "id": "manual-visa-2026-06-30-esta",
+      "date": "2026-06-30",
+      "time": "20:23",
+      "amount": 62788,
+      "merchant": "USCUSTOMS ESTA APPL PMT",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/1121"
+    },
+    {
+      "id": "manual-shopping-2026-06-25-windbreaker",
+      "date": "2026-06-25",
+      "time": "",
+      "amount": 200000,
+      "merchant": "바람막이",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-24-airtag-soap-case",
+      "date": "2026-06-24",
+      "time": "",
+      "amount": 66000,
+      "merchant": "에어태그/비누케이스",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "_6ss44gpi6d332ba68p2jeb9k60p3eba26d146ba4892j6dhl8p1kaga38k",
+      "date": "2026-06-18",
+      "time": "19:38",
+      "amount": 62490,
+      "merchant": "FLIX",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
+      "id": "_6cqjadi1711jab9i8d2jcb9k88p3ab9o8kpj6b9h6or34ga464q30e2174",
+      "date": "2026-06-18",
+      "time": "19:30",
+      "amount": 131151,
+      "merchant": "Flix SE",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
+      "id": "_89138c1o68q3cba68534ab9k6kskcb9o60o44ba571146ghn84pj6da468",
+      "date": "2026-06-18",
+      "time": "18:27",
+      "amount": 70446,
+      "merchant": "RegioJet · Prague → Vienna",
+      "category": "transport",
+      "location": "Prague → Vienna",
+      "travel": true
+    },
+    {
+      "id": "_6go32dq47533ib9i74q3gb9k65232b9p71244b9j8533ge9p6t23cc1i60",
+      "date": "2026-06-18",
+      "time": "18:14",
+      "amount": 19665,
+      "merchant": "DB · Berlin → Prague seat reservation",
+      "category": "transport",
+      "location": "Berlin → Prague",
+      "travel": true
+    },
+    {
+      "id": "_64o3gdq374r38ba16gsj0b9k84pjcb9p84p32b9m84qjagpi8ksj0d228c",
+      "date": "2026-06-18",
+      "time": "18:06",
+      "amount": 21450,
+      "merchant": "RegioJet · Vienna → Budapest add-on",
+      "category": "transport",
+      "location": "Vienna → Budapest",
+      "travel": true
+    },
+    {
+      "id": "_6gs3gdq26so4cb9k74qk8b9k8l2jab9p8kskaba58h2jici46cqkag9o6g",
+      "date": "2026-06-18",
+      "time": "17:51",
+      "amount": 59720,
+      "merchant": "RegioJet · Vienna → Budapest",
+      "category": "transport",
+      "location": "Vienna → Budapest",
+      "travel": true
+    },
+    {
+      "id": "manual-medical-2026-06-18-vaccination",
+      "date": "2026-06-18",
+      "time": "",
+      "amount": 680000,
+      "merchant": "여행 의료비",
+      "category": "medical",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
     {
       "id": "_71148h9l6gq34b9n8os4cb9k8h34cba26933gb9i8l230dhl6p0kadhk6k",
       "date": "2026-06-17",
@@ -205,6 +842,83 @@
       "category": "stay",
       "location": "서울특별시",
       "travel": true
+    },
+    {
+      "id": "manual-shopping-2026-06-16-naverpay",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 64850,
+      "merchant": "네이버페이 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-16-coupang-drive-case-sd-card",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 100750,
+      "merchant": "쿠팡 · 외장하드케이스/SD카드 256G",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-16-hottracks-sd-card-phone-case",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 130000,
+      "merchant": "핫트랙스 · SD카드 256G/휴대폰케이스",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-15-naver-physiogel",
+      "date": "2026-06-15",
+      "time": "",
+      "amount": 23520,
+      "merchant": "네이버페이 · 피지오겔크림",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-15-coupang-tripod-card-soap",
+      "date": "2026-06-15",
+      "time": "",
+      "amount": 30410,
+      "merchant": "쿠팡 · 삼각대/소니 SD카드/도브비누",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-14-hottracks",
+      "date": "2026-06-14",
+      "time": "",
+      "amount": 110000,
+      "merchant": "핫트랙스 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-14-nua-customs",
+      "date": "2026-06-14",
+      "time": "",
+      "amount": 44139,
+      "merchant": "누아옷 관세",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
     },
     {
       "id": "_690k6c2569134ba46co42b9k70p3eb9o8gqk2ba26gqj4d1j6gs32e1j70",
@@ -375,6 +1089,374 @@
   ],
   "expenses": [
     {
+      "id": "_84q42ghn6l34cb9p88o38b9k70pjib9o8p33cba38kpk8gi56gs38d1n84",
+      "date": "2026-07-13",
+      "time": "10:23",
+      "amount": 12188,
+      "merchant": "LIME*PASS ZKWT",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_8ks38gq570sj6ba16sqj4b9k84r46ba170rkab9i6gqk8di168sj8d1g8o",
+      "date": "2026-07-13",
+      "time": "10:23",
+      "amount": 12188,
+      "merchant": "LIME*PASS DWYJ",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6oq3achi6oo4ab9h6h346b9k60o38b9o6523ib9p611j0h1g64pjig9i6c",
+      "date": "2026-07-13",
+      "time": "08:42",
+      "amount": 10118,
+      "merchant": "Curry61 HM",
+      "category": "groceries",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6grj4cq46h0j2ba48gr46b9k6cqjaba18l136b9h88o4aha289144dhk68",
+      "date": "2026-07-13",
+      "time": "08:38",
+      "amount": 1521,
+      "merchant": "LIME*RIDE ZKWT",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_74q44g9p8gpk4ba170sk6b9k6p2jgba28l0kcba56sq38h1j6d338c226s",
+      "date": "2026-07-13",
+      "time": "08:38",
+      "amount": 4549,
+      "merchant": "LIME*RIDE DWYJ",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_74o34d2664s38ba2751jcb9k60r44b9o6ks46b9k6t2j8gpj8l34cchk88",
+      "date": "2026-07-13",
+      "time": "07:30",
+      "amount": 12598,
+      "merchant": "Baecker Wiedemann GmbH",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6133gd228csj0b9n6kr3ab9k8oqk4ba16h344ba170p3gg9j8os34d1i6c",
+      "date": "2026-07-12",
+      "time": "09:34",
+      "amount": 17422,
+      "merchant": "Kirsch GmbH & Co. KG",
+      "category": "other",
+      "location": "하노버, 독일",
+      "travel": true
+    },
+    {
+      "id": "_8cr30dpp60rj2b9h88oj6b9k6t0kcb9p6h1k4b9l6spj8gi284o3cd9p70",
+      "date": "2026-07-12",
+      "time": "09:34",
+      "amount": 17422,
+      "merchant": "Kirsch GmbH & Co. KG",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6oq4ccpm8l0jcba58gr30b9k8p246ba274q36b9n6h2kccpl6p138cq58c",
+      "date": "2026-07-12",
+      "time": "06:00",
+      "amount": 6071,
+      "merchant": "Lekkerland REWE To Go",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_750j2gi56orjaba3611kab9k8opj2ba268qj8b9p8go46e9l70q36hhh6g",
+      "date": "2026-07-12",
+      "time": "06:00",
+      "amount": 6071,
+      "merchant": "Lekkerland REWE To Go",
+      "category": "other",
+      "location": "하노버, 독일",
+      "travel": true
+    },
+    {
+      "id": "_8p232h226123gba18p2jgb9k84sjcb9p70p3aba46osjce1p8kqjge9j84",
+      "date": "2026-07-12",
+      "time": "06:00",
+      "amount": 6071,
+      "merchant": "Lekkerland REWE To Go",
+      "category": "other",
+      "location": "Köln Hbf, Breslauer Platz 479",
+      "travel": true
+    },
+    {
+      "id": "_68q36c1n8koj6b9l8p13cb9k650k8b9p6soj0ba3690j4ghg6d0jgc1p68",
+      "date": "2026-07-12",
+      "time": "03:29",
+      "amount": 27906,
+      "merchant": "Hohe Domkirche zu Koeln K",
+      "category": "other",
+      "location": "Köln Hbf, Breslauer Platz 479",
+      "travel": true
+    },
+    {
+      "id": "_6t0k8dph8h24cb9l88r44b9k6l348b9p6cp44ba460p46dhg6cqkcca68o",
+      "date": "2026-07-12",
+      "time": "03:29",
+      "amount": 27906,
+      "merchant": "Hohe Domkirche zu Koeln K",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6t330ghh84rj6b9g8cp34b9k6oqk2ba164r42ba66d0kagpm6h144chj64",
+      "date": "2026-07-12",
+      "time": "03:29",
+      "amount": 27906,
+      "merchant": "Hohe Domkirche zu Koeln K",
+      "category": "other",
+      "location": "하노버, 독일",
+      "travel": true
+    },
+    {
+      "id": "_652j0gpn6cs3eb9j68r3ib9k6l14cb9o8p2kab9l6l14ce1n88rjge2664",
+      "date": "2026-07-12",
+      "time": "02:32",
+      "amount": 12644,
+      "merchant": "SumUp  *Gastro Faraj Koel",
+      "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_8533ada370p34b9k8osjgb9k6t14cb9p6l23ab9m84qj8c9h8gr46c1j6g",
+      "date": "2026-07-12",
+      "time": "02:32",
+      "amount": 12644,
+      "merchant": "SumUp  *Gastro Faraj Koel",
+      "category": "other",
+      "location": "하노버, 독일",
+      "travel": true
+    },
+    {
+      "id": "_892k8gpi6sok6ba38h0j4b9k692j0ba26ss3ab9p89248gi56t1jeh9p8k",
+      "date": "2026-07-12",
+      "time": "02:32",
+      "amount": 12644,
+      "merchant": "SumUp  *Gastro Faraj Koel",
+      "category": "other",
+      "location": "Köln Hbf, Breslauer Platz 479",
+      "travel": true
+    },
+    {
+      "id": "_6h2kcgpi85230ba160o4cb9k6kr38b9o8ko4cb9m6osjegph64r3id9h60",
+      "date": "2026-07-10",
+      "time": "05:25",
+      "amount": 33320,
+      "merchant": "Koelner Verkehrs-Betri",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_64ok2cq38d348ba274r46b9k8913cb9p6cr44ba38krj6d1g68rkac1p60",
+      "date": "2026-07-10",
+      "time": "01:32",
+      "amount": 8500,
+      "merchant": "Ditsch Frankfurt Hbf. Qu",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_690jidpj8kp46ba484ojeb9k8or38ba1652j6b9m6csjid9j75132gq374",
+      "date": "2026-07-09",
+      "time": "09:13",
+      "amount": 13152,
+      "merchant": "63210150 Frankfurt Main H",
+      "category": "other",
+      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "travel": true
+    },
+    {
+      "id": "_88r44cpk8914ab9p6h33ib9k6grkab9p8co3eb9o84qk4dhh64ok4d256c",
+      "date": "2026-07-09",
+      "time": "08:21",
+      "amount": 7037,
+      "merchant": "IntercityHotel",
+      "category": "stay",
+      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "travel": true
+    },
+    {
+      "id": "_7533ce268gpjib9p6p246b9k6h1jiba1752jgba16d1j6h256op3ac1p8o",
+      "date": "2026-07-09",
+      "time": "07:47",
+      "amount": 24276,
+      "merchant": "FFM Flughafen Regional Bh",
+      "category": "other",
+      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "travel": true
+    },
+    {
+      "id": "manual-stay-2026-07-04-plitvice-airbnb",
+      "date": "2026-07-04",
+      "time": "",
+      "amount": 190000,
+      "merchant": "Plitvice Airbnb",
+      "category": "stay",
+      "location": "Plitvice",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
+      "id": "manual-transport-2026-07-02-flixbus-budapest-zagreb",
+      "date": "2026-07-02",
+      "time": "",
+      "amount": 156361,
+      "merchant": "FlixBus · Budapest -> Zagreb",
+      "category": "transport",
+      "location": "Budapest / Zagreb",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
+      "id": "manual-transport-2026-07-02-flixbus-zagreb-plitvice",
+      "date": "2026-07-02",
+      "time": "",
+      "amount": 74534,
+      "merchant": "FlixBus · Zagreb -> Plitvice",
+      "category": "transport",
+      "location": "Zagreb / Plitvice",
+      "travel": true,
+      "source": "Notion TO DO"
+    },
+    {
+      "id": "manual-visa-2026-06-30-uk-eta",
+      "date": "2026-06-30",
+      "time": "20:42",
+      "amount": 42909,
+      "merchant": "UKVI ETAWEB00000121936",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/1121"
+    },
+    {
+      "id": "manual-visa-2026-06-30-esta",
+      "date": "2026-06-30",
+      "time": "20:23",
+      "amount": 62788,
+      "merchant": "USCUSTOMS ESTA APPL PMT",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/1121"
+    },
+    {
+      "id": "manual-shopping-2026-06-25-windbreaker",
+      "date": "2026-06-25",
+      "time": "",
+      "amount": 200000,
+      "merchant": "바람막이",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-24-airtag-soap-case",
+      "date": "2026-06-24",
+      "time": "",
+      "amount": 66000,
+      "merchant": "에어태그/비누케이스",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "_6ss44gpi6d332ba68p2jeb9k60p3eba26d146ba4892j6dhl8p1kaga38k",
+      "date": "2026-06-18",
+      "time": "19:38",
+      "amount": 62490,
+      "merchant": "FLIX",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
+      "id": "_6cqjadi1711jab9i8d2jcb9k88p3ab9o8kpj6b9h6or34ga464q30e2174",
+      "date": "2026-06-18",
+      "time": "19:30",
+      "amount": 131151,
+      "merchant": "Flix SE",
+      "category": "transport",
+      "location": "서울특별시",
+      "travel": true
+    },
+    {
+      "id": "_89138c1o68q3cba68534ab9k6kskcb9o60o44ba571146ghn84pj6da468",
+      "date": "2026-06-18",
+      "time": "18:27",
+      "amount": 70446,
+      "merchant": "RegioJet · Prague → Vienna",
+      "category": "transport",
+      "location": "Prague → Vienna",
+      "travel": true
+    },
+    {
+      "id": "_6go32dq47533ib9i74q3gb9k65232b9p71244b9j8533ge9p6t23cc1i60",
+      "date": "2026-06-18",
+      "time": "18:14",
+      "amount": 19665,
+      "merchant": "DB · Berlin → Prague seat reservation",
+      "category": "transport",
+      "location": "Berlin → Prague",
+      "travel": true
+    },
+    {
+      "id": "_64o3gdq374r38ba16gsj0b9k84pjcb9p84p32b9m84qjagpi8ksj0d228c",
+      "date": "2026-06-18",
+      "time": "18:06",
+      "amount": 21450,
+      "merchant": "RegioJet · Vienna → Budapest add-on",
+      "category": "transport",
+      "location": "Vienna → Budapest",
+      "travel": true
+    },
+    {
+      "id": "_6gs3gdq26so4cb9k74qk8b9k8l2jab9p8kskaba58h2jici46cqkag9o6g",
+      "date": "2026-06-18",
+      "time": "17:51",
+      "amount": 59720,
+      "merchant": "RegioJet · Vienna → Budapest",
+      "category": "transport",
+      "location": "Vienna → Budapest",
+      "travel": true
+    },
+    {
+      "id": "manual-medical-2026-06-18-vaccination",
+      "date": "2026-06-18",
+      "time": "",
+      "amount": 680000,
+      "merchant": "여행 의료비",
+      "category": "medical",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
       "id": "_71148h9l6gq34b9n8os4cb9k8h34cba26933gb9i8l230dhl6p0kadhk6k",
       "date": "2026-06-17",
       "time": "21:54",
@@ -383,6 +1465,83 @@
       "category": "stay",
       "location": "서울특별시",
       "travel": true
+    },
+    {
+      "id": "manual-shopping-2026-06-16-naverpay",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 64850,
+      "merchant": "네이버페이 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-16-coupang-drive-case-sd-card",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 100750,
+      "merchant": "쿠팡 · 외장하드케이스/SD카드 256G",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-16-hottracks-sd-card-phone-case",
+      "date": "2026-06-16",
+      "time": "",
+      "amount": 130000,
+      "merchant": "핫트랙스 · SD카드 256G/휴대폰케이스",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-15-naver-physiogel",
+      "date": "2026-06-15",
+      "time": "",
+      "amount": 23520,
+      "merchant": "네이버페이 · 피지오겔크림",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-15-coupang-tripod-card-soap",
+      "date": "2026-06-15",
+      "time": "",
+      "amount": 30410,
+      "merchant": "쿠팡 · 삼각대/소니 SD카드/도브비누",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-14-hottracks",
+      "date": "2026-06-14",
+      "time": "",
+      "amount": 110000,
+      "merchant": "핫트랙스 · 여행 준비",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
+    },
+    {
+      "id": "manual-shopping-2026-06-14-nua-customs",
+      "date": "2026-06-14",
+      "time": "",
+      "amount": 44139,
+      "merchant": "누아옷 관세",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/12071"
     },
     {
       "id": "_690k6c2569134ba46co42b9k70p3eb9o8gqk2ba26gqj4d1j6gs32e1j70",
@@ -554,30 +1713,74 @@
   "locations": [
     {
       "name": "서울특별시",
-      "count": 76,
+      "count": 95,
       "lat": 37.5665,
       "lng": 126.978
+    },
+    {
+      "name": "Kleine Andreasstraße 5, 10243 베를린",
+      "count": 10,
+      "lat": 52.5146525,
+      "lng": 13.4290744
     },
     {
       "name": "과천시",
       "count": 5,
       "lat": 37.4292,
       "lng": 126.9876
+    },
+    {
+      "name": "하노버, 독일",
+      "count": 4,
+      "lat": 52.3744779,
+      "lng": 9.7385532
+    },
+    {
+      "name": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "count": 3
+    },
+    {
+      "name": "Köln Hbf, Breslauer Platz 479",
+      "count": 3
+    },
+    {
+      "name": "Linzer Straße 33, 50939 쾰른",
+      "count": 2,
+      "lat": 50.9165529,
+      "lng": 6.9339308
     }
   ],
   "map": {
     "points": [
       {
         "name": "서울특별시",
-        "count": 76,
+        "count": 95,
         "lat": 37.5665,
         "lng": 126.978
+      },
+      {
+        "name": "Kleine Andreasstraße 5, 10243 베를린",
+        "count": 10,
+        "lat": 52.5146525,
+        "lng": 13.4290744
       },
       {
         "name": "과천시",
         "count": 5,
         "lat": 37.4292,
         "lng": 126.9876
+      },
+      {
+        "name": "하노버, 독일",
+        "count": 4,
+        "lat": 52.3744779,
+        "lng": 9.7385532
+      },
+      {
+        "name": "Linzer Straße 33, 50939 쾰른",
+        "count": 2,
+        "lat": 50.9165529,
+        "lng": 6.9339308
       }
     ],
     "routePoints": [
@@ -645,6 +1848,96 @@
         "name": "Athens, Greece",
         "lat": 37.9838,
         "lng": 23.7275
+      },
+      {
+        "name": "Istanbul, Turkey",
+        "lat": 41.0082,
+        "lng": 28.9784
+      },
+      {
+        "name": "Cappadocia / Pamukkale / Antalya, Turkey",
+        "lat": 37.9245,
+        "lng": 29.1231
+      },
+      {
+        "name": "Cairo / Giza, Egypt",
+        "lat": 30.0444,
+        "lng": 31.2357
+      },
+      {
+        "name": "Dahab, Egypt",
+        "lat": 28.5097,
+        "lng": 34.5134
+      },
+      {
+        "name": "Morocco, Morocco",
+        "lat": 31.6295,
+        "lng": -7.9811
+      },
+      {
+        "name": "Portugal, Portugal",
+        "lat": 38.7223,
+        "lng": -9.1393
+      },
+      {
+        "name": "Spain, Spain",
+        "lat": 41.3874,
+        "lng": 2.1686
+      },
+      {
+        "name": "Southern France / Paris, France",
+        "lat": 48.8566,
+        "lng": 2.3522
+      },
+      {
+        "name": "Northern Italy / Switzerland, Italy / Switzerland",
+        "lat": 45.4642,
+        "lng": 9.19
+      },
+      {
+        "name": "France Revisit, France",
+        "lat": 48.8566,
+        "lng": 2.3522
+      },
+      {
+        "name": "London, United Kingdom",
+        "lat": 51.5072,
+        "lng": -0.1276
+      },
+      {
+        "name": "Copenhagen, Denmark",
+        "lat": 55.6761,
+        "lng": 12.5683
+      },
+      {
+        "name": "Reykjavik, Iceland",
+        "lat": 64.1466,
+        "lng": -21.9426
+      },
+      {
+        "name": "New York, United States",
+        "lat": 40.7128,
+        "lng": -74.006
+      },
+      {
+        "name": "Las Vegas / Los Angeles, United States",
+        "lat": 34.0522,
+        "lng": -118.2437
+      },
+      {
+        "name": "Peru, Peru",
+        "lat": -13.5319,
+        "lng": -71.9675
+      },
+      {
+        "name": "Bolivia, Bolivia",
+        "lat": -20.1338,
+        "lng": -67.4891
+      },
+      {
+        "name": "Argentina, Argentina",
+        "lat": -34.6037,
+        "lng": -58.3816
       }
     ]
   },
@@ -719,6 +2012,15 @@
       "checkIn": null,
       "checkOut": null,
       "amount": 189506,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "IntercityHotel",
+      "city": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 7037,
       "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
@@ -801,26 +2103,26 @@
       "note": "Thermal baths, food, Danube; 7/23 Budapest -> Zagreb -> Plitvice by linked FlixBus legs"
     },
     {
-      "name": "Park entrance B&B / guesthouse",
+      "name": "Plitvice Airbnb",
       "city": "Plitvice",
       "country": "Croatia",
-      "status": "urgent",
+      "status": "booked",
       "checkIn": "2026-07-23",
-      "checkOut": "2026-07-24",
-      "amount": null,
-      "source": "7/23 FlixBus from Zagreb",
-      "note": "1 night near national park entrance for early morning entry; book budget B&B or hotel"
+      "checkOut": "2026-07-25",
+      "amount": 190000,
+      "source": "Notion TO DO / 숙소 예약",
+      "note": "2 nights near national park entrance; booked Airbnb for 190,000 KRW"
     },
     {
       "name": "Split stay TBD",
       "city": "Split",
       "country": "Croatia",
       "status": "urgent",
-      "checkIn": "2026-07-24",
+      "checkIn": "2026-07-25",
       "checkOut": "2026-07-26",
       "amount": null,
-      "source": "7/24 FlixBus from Plitvice",
-      "note": "2 nights; peak season coastal stay, book quickly"
+      "source": "7/25 FlixBus from Plitvice",
+      "note": "1 night; peak season coastal stay, book quickly"
     },
     {
       "name": "Dubrovnik stay TBD",
@@ -987,6 +2289,13 @@
       "note": "Old town, cafes, transit hub; 7/17 Prague -> Vienna by RegioJet or OBB",
       "transportIn": "2026-07-14 EC 열차 또는 FlixBus: 베를린 -> 프라하",
       "transportOut": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
+      "transportOutPayment": {
+        "status": "paid",
+        "amount": 70446,
+        "paidDate": "2026-06-18",
+        "merchant": "regiojet.cz",
+        "note": "Prague -> Vienna RegioJet booking logged in the travel ledger."
+      },
       "arrivalTransfer": {
         "title": "베를린 -> 프라하",
         "route": "Berlin Hbf -> Praha hl.n.",
@@ -1031,6 +2340,13 @@
       "note": "Museums, libraries, slower days; 7/20 Vienna -> Budapest by EuroCity",
       "transportIn": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
       "transportOut": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
+      "transportInPayment": {
+        "status": "paid",
+        "amount": 70446,
+        "paidDate": "2026-06-18",
+        "merchant": "regiojet.cz",
+        "note": "Prague -> Vienna RegioJet booking logged in the travel ledger."
+      },
       "arrivalTransfer": {
         "title": "프라하 -> 빈",
         "route": "Praha hl.n. -> Wien Hbf",
@@ -1046,7 +2362,15 @@
       },
       "schengen": true,
       "lat": 48.2082,
-      "lng": 16.3738
+      "lng": 16.3738,
+      "journeyAmount": 70446,
+      "journeyPayment": {
+        "status": "paid",
+        "amount": 70446,
+        "paidDate": "2026-06-18",
+        "merchant": "regiojet.cz",
+        "note": "Prague -> Vienna RegioJet booking logged in the travel ledger."
+      }
     },
     {
       "city": "Budapest",
@@ -1060,12 +2384,26 @@
       "note": "Thermal baths, food, Danube; 7/23 Budapest -> Zagreb -> Plitvice by linked FlixBus legs",
       "transportIn": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
       "transportOut": "2026-07-23 FlixBus: 부다페스트 -> 자그레브 -> 플리트비체",
+      "transportInPayment": {
+        "status": "paid",
+        "amount": 81170,
+        "paidDate": "2026-06-18",
+        "merchant": "regiojet.cz",
+        "note": "Vienna -> Budapest RegioJet booking split across two ledger charges."
+      },
+      "transportOutPayment": {
+        "status": "paid",
+        "amount": 156361,
+        "paidDate": "2026-07-02",
+        "merchant": "FlixBus",
+        "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35."
+      },
       "arrivalTransfer": {
         "title": "빈 -> 부다페스트",
         "route": "Wien Hbf -> Budapest Keleti",
         "duration": "Railjet/EuroCity 약 2시간 24분-2시간 55분",
-        "statusNote": "OBB는 빈과 부다페스트 사이 Railjet/EuroCity가 정기 운행된다고 안내.",
-        "nextCheck": "Budapest Keleti 도착 기준 숙소 위치와 야간 이동 여부를 함께 본다.",
+        "statusNote": "RegioJet 13:27-15:58 예매 완료. 7/23 FlixBus 부다페스트 -> 자그레브도 08:25-12:20 예매 완료.",
+        "nextCheck": "부다페스트 숙소에서 7/23 FlixBus 출발 터미널까지 새벽 이동 시간을 확인한다.",
         "steps": [
           "Wien Hbf에서 Budapest Keleti행 Railjet 또는 EuroCity 탑승.",
           "Budapest Keleti 도착 후 지하철/택시로 숙소 이동."
@@ -1075,7 +2413,15 @@
       },
       "schengen": true,
       "lat": 47.4979,
-      "lng": 19.0402
+      "lng": 19.0402,
+      "journeyAmount": 81170,
+      "journeyPayment": {
+        "status": "paid",
+        "amount": 81170,
+        "paidDate": "2026-06-18",
+        "merchant": "regiojet.cz",
+        "note": "Vienna -> Budapest RegioJet booking split across two ledger charges."
+      }
     },
     {
       "city": "Zagreb",
@@ -1087,12 +2433,26 @@
       "note": "Budapest -> Zagreb morning/early leg, then Zagreb -> Plitvice onward bus",
       "transportIn": "2026-07-23 FlixBus: 부다페스트 -> 자그레브",
       "transportOut": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
+      "transportInPayment": {
+        "status": "paid",
+        "amount": 156361,
+        "paidDate": "2026-07-02",
+        "merchant": "FlixBus",
+        "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35."
+      },
+      "transportOutPayment": {
+        "status": "paid",
+        "amount": 74534,
+        "paidDate": "2026-07-02",
+        "merchant": "FlixBus",
+        "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95."
+      },
       "arrivalTransfer": {
         "title": "부다페스트 -> 자그레브",
         "route": "Budapest bus station -> Zagreb bus station",
-        "duration": "FlixBus 최단 약 4시간 15분",
-        "statusNote": "부다페스트-자그레브 버스 구간은 FlixBus 기준 약 4시간대.",
-        "nextCheck": "같은 날 자그레브->플리트비체 환승 시간이 충분한지 먼저 본다.",
+        "duration": "FlixBus 08:25-12:20",
+        "statusNote": "부다페스트 -> 자그레브 08:25-12:20, 자그레브 -> 플리트비체 14:30-16:20 예매 완료.",
+        "nextCheck": "자그레브 터미널에서 2시간 10분 환승. 점심/화장실/수하물 위치만 확인하면 됨.",
         "steps": [
           "부다페스트에서 자그레브행 FlixBus 탑승.",
           "자그레브 버스 터미널에서 플리트비체행 버스로 환승."
@@ -1102,25 +2462,41 @@
       },
       "schengen": true,
       "lat": 45.815,
-      "lng": 15.9819
+      "lng": 15.9819,
+      "journeyAmount": 156361,
+      "journeyPayment": {
+        "status": "paid",
+        "amount": 156361,
+        "paidDate": "2026-07-02",
+        "merchant": "FlixBus",
+        "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35."
+      }
     },
     {
       "city": "Plitvice",
       "country": "Croatia",
-      "status": "urgent",
+      "status": "booked",
       "startDate": "2026-07-23",
-      "endDate": "2026-07-24",
-      "lodging": "Park entrance B&B / guesthouse",
-      "source": "7/23 FlixBus from Zagreb",
-      "note": "1 night near national park entrance for early morning entry; book budget B&B or hotel",
+      "endDate": "2026-07-25",
+      "lodging": "Plitvice Airbnb",
+      "source": "Notion TO DO / 숙소 예약",
+      "amount": 190000,
+      "note": "2 nights near national park entrance; booked Airbnb for 190,000 KRW",
       "transportIn": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
-      "transportOut": "2026-07-24 FlixBus 또는 버스: 플리트비체 -> 스플리트",
+      "transportOut": "2026-07-25 FlixBus 또는 버스: 플리트비체 -> 스플리트",
+      "transportInPayment": {
+        "status": "paid",
+        "amount": 74534,
+        "paidDate": "2026-07-02",
+        "merchant": "FlixBus",
+        "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95."
+      },
       "arrivalTransfer": {
         "title": "자그레브 -> 플리트비체",
         "route": "Zagreb bus station -> Plitvice Lakes",
-        "duration": "FlixBus 최단 약 1시간 50분",
-        "statusNote": "자그레브-플리트비체 버스는 FlixBus 기준 약 1시간 50분.",
-        "nextCheck": "플리트비체 하차 지점이 Entrance 1/2 중 어디인지 숙소 위치와 맞춘다.",
+        "duration": "FlixBus 14:30-16:20",
+        "statusNote": "자그레브 -> 플리트비체 14:30-16:20 예매 완료. 숙소도 7/23-25 2박 예약 완료.",
+        "nextCheck": "플리트비체 하차 지점이 Entrance 1/2 중 어디인지 Airbnb 위치와 맞춘다.",
         "steps": [
           "자그레브에서 Plitvice Lakes행 버스를 탄다.",
           "도착 후 숙소가 입구에서 도보/셔틀 가능한지 확인한다."
@@ -1130,25 +2506,33 @@
       },
       "schengen": true,
       "lat": 44.8806,
-      "lng": 15.6168
+      "lng": 15.6168,
+      "journeyAmount": 74534,
+      "journeyPayment": {
+        "status": "paid",
+        "amount": 74534,
+        "paidDate": "2026-07-02",
+        "merchant": "FlixBus",
+        "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95."
+      }
     },
     {
       "city": "Split",
       "country": "Croatia",
       "status": "urgent",
-      "startDate": "2026-07-24",
+      "startDate": "2026-07-25",
       "endDate": "2026-07-26",
       "lodging": "Split stay TBD",
-      "source": "7/24 FlixBus from Plitvice",
-      "note": "2 nights; peak season coastal stay, book quickly",
-      "transportIn": "2026-07-24 FlixBus 또는 버스: 플리트비체 -> 스플리트",
+      "source": "7/25 FlixBus from Plitvice",
+      "note": "1 night; peak season coastal stay, book quickly",
+      "transportIn": "2026-07-25 FlixBus 또는 버스: 플리트비체 -> 스플리트",
       "transportOut": "2026-07-26 Kapetan Luka 또는 TP Line 페리: 스플리트 -> 두브로브니크",
       "arrivalTransfer": {
         "title": "플리트비체 -> 스플리트",
         "route": "Plitvice Lakes -> Split",
         "duration": "직행/환승 버스 시간표 확인 필요",
         "statusNote": "FlixBus는 Plitvice Lakes에서 Split을 도달 가능 목적지로 표시함.",
-        "nextCheck": "7/24 실제 직행 여부, 자그레브/자다르 환승 여부, 숙소 체크인 가능 시간을 함께 본다.",
+        "nextCheck": "7/25 실제 직행 여부, 자그레브/자다르 환승 여부, 숙소 체크인 가능 시간을 함께 본다.",
         "steps": [
           "Plitvice Lakes 출발 버스 시간표에서 Split 도착편을 확인한다.",
           "직행이 없거나 시간이 나쁘면 Zagreb/Zadar 환승안을 비교한다."
@@ -1247,8 +2631,10 @@
       "country": "Greece",
       "status": "planned",
       "startDate": "2026-08-06",
+      "endDate": "2026-08-10",
       "source": "8/6 CTA -> ATH direct flight",
-      "note": "Aegean or Ryanair direct from Catania",
+      "note": "Athens buffer before Turkey; keep Schengen count conservative.",
+      "transportOut": "2026-08-10 항공: 아테네 -> 이스탄불",
       "transportIn": "2026-08-06 Aegean 또는 Ryanair 직항: 카타니아 CTA -> 아테네 ATH",
       "arrivalTransfer": {
         "title": "카타니아 -> 아테네",
@@ -1266,16 +2652,267 @@
       "schengen": true,
       "lat": 37.9838,
       "lng": 23.7275
+    },
+    {
+      "city": "Istanbul",
+      "country": "Turkey",
+      "status": "planned",
+      "startDate": "2026-08-10",
+      "endDate": "2026-08-14",
+      "source": "master route sketch",
+      "note": "Non-Schengen break starts; libraries, food, and Bosphorus city days.",
+      "transportIn": "2026-08-10 항공: 아테네 -> 이스탄불",
+      "transportOut": "터키 국내 이동: 이스탄불 -> 카파도키아/파묵칼레/안탈리아",
+      "schengen": false,
+      "lat": 41.0082,
+      "lng": 28.9784
+    },
+    {
+      "city": "Cappadocia / Pamukkale / Antalya",
+      "country": "Turkey",
+      "status": "planned",
+      "startDate": "2026-08-14",
+      "endDate": "2026-08-22",
+      "source": "master route sketch / wishlist",
+      "note": "Turkey nature leg; Pamukkale is on wishlist. Sequence still flexible.",
+      "transportIn": "터키 국내 이동",
+      "transportOut": "항공 후보: 안탈리아/이스탄불 -> 카이로",
+      "schengen": false,
+      "lat": 37.9245,
+      "lng": 29.1231
+    },
+    {
+      "city": "Cairo / Giza",
+      "country": "Egypt",
+      "status": "planned",
+      "startDate": "2026-08-22",
+      "endDate": "2026-08-28",
+      "source": "master route sketch / wishlist",
+      "note": "Pyramids and Egyptian Museum; non-Schengen buffer continues.",
+      "transportIn": "항공 후보: 터키 -> 카이로",
+      "transportOut": "이집트 국내 이동 또는 항공: 카이로 -> 다합",
+      "schengen": false,
+      "lat": 30.0444,
+      "lng": 31.2357
+    },
+    {
+      "city": "Dahab",
+      "country": "Egypt",
+      "status": "planned",
+      "startDate": "2026-08-28",
+      "endDate": "2026-09-01",
+      "source": "master route sketch",
+      "note": "Rest, swimming, Red Sea base before returning toward Europe/Africa routing.",
+      "transportIn": "카이로 -> 다합",
+      "transportOut": "항공 후보: 이집트 -> 모로코/이탈리아",
+      "schengen": false,
+      "lat": 28.5097,
+      "lng": 34.5134
+    },
+    {
+      "city": "Morocco",
+      "country": "Morocco",
+      "status": "planned",
+      "startDate": "2026-09-01",
+      "endDate": "2026-09-06",
+      "source": "Schengen buffer plan",
+      "note": "Non-Schengen side trip used as Schengen buffer before Iberia.",
+      "transportIn": "항공 후보: 이집트/이탈리아 -> 모로코",
+      "transportOut": "항공/페리 후보: 모로코 -> 포르투갈/스페인",
+      "schengen": false,
+      "lat": 31.6295,
+      "lng": -7.9811
+    },
+    {
+      "city": "Portugal",
+      "country": "Portugal",
+      "status": "planned",
+      "startDate": "2026-09-06",
+      "endDate": "2026-09-14",
+      "source": "master route sketch",
+      "note": "Portugal west-Europe leg; pacing and city choices still flexible.",
+      "transportIn": "모로코 -> 포르투갈/스페인",
+      "transportOut": "육로/항공: 포르투갈 -> 스페인",
+      "schengen": true,
+      "lat": 38.7223,
+      "lng": -9.1393
+    },
+    {
+      "city": "Spain",
+      "country": "Spain",
+      "status": "planned",
+      "startDate": "2026-09-14",
+      "endDate": "2026-09-26",
+      "source": "master route sketch / wishlist",
+      "note": "Barcelona, Bilbao/Guggenheim candidates; Sagrada Familia prebooking needed.",
+      "transportIn": "포르투갈 -> 스페인",
+      "transportOut": "육로/항공: 스페인 -> 남프랑스",
+      "schengen": true,
+      "lat": 41.3874,
+      "lng": 2.1686
+    },
+    {
+      "city": "Southern France / Paris",
+      "country": "France",
+      "status": "planned",
+      "startDate": "2026-09-26",
+      "endDate": "2026-10-07",
+      "source": "master route sketch / wishlist",
+      "note": "Lyon Biennale, Paris, Louvre, Pompidou, possible Mont-Saint-Michel.",
+      "transportIn": "스페인 -> 프랑스",
+      "transportOut": "열차/항공: 프랑스 -> 이탈리아/스위스",
+      "schengen": true,
+      "lat": 48.8566,
+      "lng": 2.3522
+    },
+    {
+      "city": "Northern Italy / Switzerland",
+      "country": "Italy / Switzerland",
+      "status": "planned",
+      "startDate": "2026-10-07",
+      "endDate": "2026-10-18",
+      "source": "master route sketch",
+      "note": "Northern Italy, possible Dolomites, Switzerland, then back toward France/UK.",
+      "transportIn": "프랑스 -> 이탈리아/스위스",
+      "transportOut": "열차/항공: 스위스/프랑스 -> 런던",
+      "schengen": true,
+      "lat": 45.4642,
+      "lng": 9.19
+    },
+    {
+      "city": "France Revisit",
+      "country": "France",
+      "status": "planned",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-23",
+      "source": "master route sketch",
+      "note": "Buffer before UK; use for Paris, Normandy, or cheaper London connection.",
+      "transportIn": "스위스/이탈리아 -> 프랑스",
+      "transportOut": "열차/항공: 프랑스 -> 런던",
+      "schengen": true,
+      "lat": 48.8566,
+      "lng": 2.3522
+    },
+    {
+      "city": "London",
+      "country": "United Kingdom",
+      "status": "planned",
+      "startDate": "2026-10-23",
+      "endDate": "2026-10-27",
+      "source": "Schengen buffer plan / wishlist",
+      "note": "UK break; Tate Modern and Hatchards are wishlist anchors.",
+      "transportIn": "프랑스/스위스 -> 런던",
+      "transportOut": "항공 후보: 런던 -> 코펜하겐",
+      "schengen": false,
+      "lat": 51.5072,
+      "lng": -0.1276
+    },
+    {
+      "city": "Copenhagen",
+      "country": "Denmark",
+      "status": "planned",
+      "startDate": "2026-10-27",
+      "endDate": "2026-10-30",
+      "source": "wishlist",
+      "note": "Royal Library, Glyptotek, HAY House; short final Schengen leg.",
+      "transportIn": "런던 -> 코펜하겐",
+      "transportOut": "항공 후보: 코펜하겐 -> 레이캬비크",
+      "schengen": true,
+      "lat": 55.6761,
+      "lng": 12.5683
+    },
+    {
+      "city": "Reykjavik",
+      "country": "Iceland",
+      "status": "planned",
+      "startDate": "2026-10-30",
+      "endDate": "2026-11-02",
+      "source": "master route sketch",
+      "note": "Iceland finale before Americas; aurora hunting is optional.",
+      "transportIn": "코펜하겐 -> 레이캬비크",
+      "transportOut": "장거리 항공: 아이슬란드 -> 미국",
+      "schengen": true,
+      "lat": 64.1466,
+      "lng": -21.9426
+    },
+    {
+      "city": "New York",
+      "country": "United States",
+      "status": "planned",
+      "startDate": "2026-11-02",
+      "endDate": "2026-11-09",
+      "source": "master route sketch / wishlist",
+      "note": "MoMA, Guggenheim, Central Park; possible Peabody Library side trip.",
+      "transportIn": "아이슬란드 -> 뉴욕",
+      "transportOut": "미국 국내 이동: 뉴욕 -> 라스베이거스/로스앤젤레스",
+      "schengen": false,
+      "lat": 40.7128,
+      "lng": -74.006
+    },
+    {
+      "city": "Las Vegas / Los Angeles",
+      "country": "United States",
+      "status": "planned",
+      "startDate": "2026-11-09",
+      "endDate": "2026-11-18",
+      "source": "master route sketch",
+      "note": "Western US leg; stamina and flight price should decide exact split.",
+      "transportIn": "미국 국내 이동",
+      "transportOut": "장거리 항공: 미국 -> 페루",
+      "schengen": false,
+      "lat": 34.0522,
+      "lng": -118.2437
+    },
+    {
+      "city": "Peru",
+      "country": "Peru",
+      "status": "planned",
+      "startDate": "2026-11-18",
+      "endDate": "2026-11-28",
+      "source": "wishlist",
+      "note": "Machu Picchu / Cusco region candidate; altitude pacing needed.",
+      "transportIn": "미국 -> 리마/쿠스코",
+      "transportOut": "육로/항공: 페루 -> 볼리비아",
+      "schengen": false,
+      "lat": -13.5319,
+      "lng": -71.9675
+    },
+    {
+      "city": "Bolivia",
+      "country": "Bolivia",
+      "status": "planned",
+      "startDate": "2026-11-28",
+      "endDate": "2026-12-06",
+      "source": "wishlist",
+      "note": "Uyuni is the main anchor; altitude and night bus fatigue need care.",
+      "transportIn": "페루 -> 볼리비아",
+      "transportOut": "육로/항공: 볼리비아 -> 아르헨티나",
+      "schengen": false,
+      "lat": -20.1338,
+      "lng": -67.4891
+    },
+    {
+      "city": "Argentina",
+      "country": "Argentina",
+      "status": "planned",
+      "startDate": "2026-12-06",
+      "source": "master route sketch",
+      "note": "Final South America block; exact return date still open.",
+      "transportIn": "볼리비아 -> 아르헨티나",
+      "transportOut": "귀국편 TBD",
+      "schengen": false,
+      "lat": -34.6037,
+      "lng": -58.3816
     }
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-06-18",
+    "asOf": "2026-07-13",
     "limitDays": 90,
-    "usedDays": 0,
-    "remainingDays": 90,
+    "usedDays": 6,
+    "remainingDays": 84,
     "window": "180 days",
-    "status": "pre-trip",
+    "status": "active",
     "projection": {
       "label": "예상 전체 일정",
       "rule": "90 days in any rolling 180-day period; entry and exit days are counted.",
@@ -1362,36 +2999,6 @@
   },
   "sleep": [
     {
-      "date": "2026-06-03",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "5.97"
-    },
-    {
-      "date": "2026-06-04",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "5.50"
-    },
-    {
-      "date": "2026-06-05",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "5.40"
-    },
-    {
-      "date": "2026-06-07",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "5.76"
-    },
-    {
-      "date": "2026-06-08",
-      "sleepHours": 6.65,
-      "recharge": 83.0,
-      "balance": "6.16"
-    },
-    {
       "date": "2026-06-09",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -1444,127 +3051,157 @@
       "sleepHours": 7.62,
       "recharge": 95.0,
       "balance": "5.99"
+    },
+    {
+      "date": "2026-06-18",
+      "sleepHours": 7.16,
+      "recharge": 90.0,
+      "balance": "6.33"
+    },
+    {
+      "date": "2026-06-21",
+      "sleepHours": 3.77,
+      "recharge": 47.0,
+      "balance": "5.78"
+    },
+    {
+      "date": "2026-06-22",
+      "sleepHours": 5.93,
+      "recharge": 74.0,
+      "balance": "5.74"
+    },
+    {
+      "date": "2026-06-24",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "5.45"
+    },
+    {
+      "date": "2026-07-13",
+      "sleepHours": 0.5,
+      "recharge": 6.0,
+      "balance": "2.59"
     }
   ],
   "reflections": [
     {
-      "id": "omso37nm1k9rljhges8a1nj038",
-      "date": "2026-06-06",
-      "title": "실제 흐름 / 사진 인사이트와 카드뉴스 라이브러리 구축",
-      "intent": "새 표면마다 매일 갱신할 최소 상태 1개를 먼저 고정한다.",
-      "did": "사진 인사이트를 카드뉴스로 만들고, 라이브러리 정적 사이트와 registry 기반 배포 구조를 만들었다.",
-      "why": "마스터님이 인사이트를 메모가 아니라 즉시 Threads용 산출물로 만들길 원했고, 대화가 재현성·라이브러리·배포로 이동했다.",
-      "carry": "다음 입력도 카드 구성, 렌더링, 업로드, 검증, 라이브러리 등록까지 닫는 반복 파이프라인.",
-      "drop": "텍스트 해석만 하고 산출물·배포·등록을 놓치는 흐름."
+      "id": "b65s6oljj275eaohic82r4q2fk",
+      "date": "2026-07-02",
+      "title": "실제 흐름 / A/B 작업 규칙 고정과 작업 환경 정리",
+      "intent": "앱·광고·구독 수익화를 말로만 두지 않고 실제 사업 운영 구조의 빈칸을 하나 줄인다.",
+      "did": "카드뉴스 규칙을 스킬에 반영하고, 산출물 작업 전반을 A/B 비교와 피드백 루프로 고정했으며, 툴 큐레이션 모바일 폭과 런타임 메모리 부담까지 실제 사용 감각 기준으로 정리했다.",
+      "why": "오늘은 세미 쪽 빈칸을 메우기보다, 같은 설명과 수정이 반복되지 않게 만드는 작업 규칙과 작업 환경의 마찰을 먼저 줄여야 한다는 신호가 더 컸다.",
+      "carry": "비교형 작업 루프, 모바일에서 실제 보이는 폭 기준 점검, 세미의 사업 운영 빈칸 메우기.",
+      "drop": "단일 초안으로 바로 닫는 방식과, 무거워진 작업 환경을 그냥 참고 넘기는 습관."
     },
     {
-      "id": "q644fe0l1ffjrqpb2ha2g6cank",
-      "date": "2026-06-07",
-      "title": "실제 흐름 / 형식 판단과 Virtue 배포 정리",
-      "intent": "사진+인사이트가 들어오면 텍스트 해석이 아니라 반복 가능한 카드뉴스 출력 흐름으로 바로 닫는다.",
-      "did": "Infinity 형식/비틀기 리서치, Knowledge Lab output-bridge 진단, GPX 여행 기록 입력, Infinity/Virtue 정적 배포, Virtue Lambda AI 채점과 메모-only/사진첩 UX 수정을 진행했다.",
-      "why": "마스터님 질문이 개별 입력 처리에서 시스템이 실제 산출물에 영향을 주는지 확인하는 쪽으로 커졌다.",
-      "carry": "소스 -> 판단 기준 -> 산출물 -> 공개/재사용 위치까지 닫는 흐름.",
-      "drop": "좋은 소스와 리서치를 쌓아두고 다음 출력에서 다시 꺼내 쓰는 손잡이를 남기지 않는 흐름."
+      "id": "e67jgmhr764trrsllpqdm6k928",
+      "date": "2026-07-03",
+      "title": "실제 흐름 / 4개 지표로 줄이고 첫 진입 길 다시 보기",
+      "intent": "다음 산출물을 감으로 하나 고르지 말고, 두 안을 먼저 놓고 어떤 판단이 맞는지 비교한다.",
+      "did": "4레이어 품질 지표를 각 1개로 줄여 운영 기준을 압축했고, Virtue 홈 첫 진입에서 설명보다 목적별 첫 길을 먼저 열어야 한다는 비교 문서를 정리했다.",
+      "why": "오늘은 새 산출물을 많이 늘리기보다, 기준을 줄여 판단을 선명하게 하고 첫 방문자가 어디서 멈추는지 다시 정의하는 쪽이 더 중요했다.",
+      "carry": "레이어별 1개 지표 운영, Virtue 홈 J1/J3 첫 길 비교, 설명보다 시작선 먼저 보기.",
+      "drop": "지표를 많이 늘려 관리하는 방식, 첫 화면에서 사용자가 스스로 목적을 해석하게 두는 흐름."
     },
     {
-      "id": "9vpdj7vtpq3rostdrd2kbompj0",
-      "date": "2026-06-08",
-      "title": "실제 흐름 / 배포 단순화와 판단 카드 고정",
-      "intent": "새 소스를 더 모으기보다, 최근 소스 1개가 실제 산출물로 이어지는 손잡이를 만든다.",
-      "did": "Koco/AX/Bubcar 배포와 인프라 단순화를 밀고, Infinity Waiting 판단 카드를 배포했으며, Naver read-only 세션 차단과 Virtue agent-led growth 경계를 정리했다.",
-      "why": "오늘의 실제 질문이 Knowledge Lab 소스 1건보다 \"무엇을 자동화하고 무엇을 사람이 판단해야 하는가\"로 커졌기 때문이다.",
-      "carry": "배포/자동화는 승인 직전까지 좁히고, 사용자 판단이 필요한 순간은 한 장짜리 선택 카드로 남긴다.",
-      "drop": "긴 로그와 구현 맥락을 사용자 판단 카드에 그대로 올리는 흐름."
-    },
-    {
-      "id": "diuppdedc91bgl2b4amjg8goeo",
-      "date": "2026-06-09",
-      "title": "실제 흐름 / 구매 언어 검증과 운영 지식 자산화",
-      "intent": "배포·쇼핑·Virtue 판단 중 사용자가 다시 봐야 할 손잡이를 줄인다.",
-      "did": "네이버쇼핑 가설은 트래블러스노트 속지 피벗으로 좁히고, KOCO/AX/운영 문서와 Travel 대시보드, Asana·버티컬 위키 자산화를 함께 밀었다.",
-      "why": "오늘의 중심 질문이 선택 카드 1장보다, 실제 구매 언어와 반복 가능한 운영 지식을 어떻게 남길지로 넓어졌다.",
-      "carry": "큰 검색량보다 구매 맥락을 먼저 보고, 운영 경험은 팀원이 다시 쓸 수 있는 문서·위키·가이드로 낮춘다.",
-      "drop": "검색량이 큰 단어를 곧바로 상품 제목이나 실행 우선순위로 올리는 흐름."
-    },
-    {
-      "id": "q1dth9vrn8ac2e8ifk22012ka8",
-      "date": "2026-06-10",
-      "title": "실제 흐름 / 업무 보안 처리와 상품 가설 재정렬",
-      "intent": "상품을 바로 키우기보다, 트래블러스노트 속지 피벗이 등록 전 검증표 수준에서 충분히 좁아졌는지 본다.",
-      "did": "속지 후보는 너무 일반적이라 내리고, 질문/워크숍 카드는 AI·creator 워크숍 진행 도구로만 draft 유지했다. KOCO SDK, 보안성 검토, purple-auth, Terraform, 법무 repo, 팀 위키 작업이 하루의 주 흐름이었다.",
-      "why": "회사 보안·배포·문서 작업의 실제 책임이 컸고, 상품 쪽은 증거 없는 승격을 막는 판단이 더 중요했다.",
-      "carry": "후보별 구매 언어, 사용 장면, 증거 부족, 승인 경계를 한 표로 낮춘다.",
-      "drop": "검색량이나 그럴듯한 콘셉트만 보고 등록 후보로 올리는 흐름."
-    },
-    {
-      "id": "u0fanurjdfe6r1d6b1keuuctek",
-      "date": "2026-06-12",
-      "title": "실제 흐름 / CMS 실사용 전환과 publish 경계 대기",
-      "intent": "KOCO SDK/보안성검토 잔여를 새 후보보다 먼저 닫는다.",
-      "did": "KOCO 보안/데이터 폴더 검토도 이어갔지만, 하루의 큰 흐름은 Control Center CMS를 실제 웹 CRUD와 shadcn 운영툴로 배포하고 publish/rollback 경계를 결정 대기 상태로 분리한 것이었습니다.",
-      "why": "마스터님이 CMS를 설계로 끊지 않고 웹에서 직접 데이터 조작까지 해보고 싶다고 하셨고, 품질 중요한 프론트엔드 작업은 Claude Code에 맡기는 방향을 주셨기 때문입니다.",
-      "carry": "공개 반영 전 diff preview, 승인 경계, rollback 손잡이를 먼저 보여주는 방식.",
-      "drop": "설계 산출물만 Archive하고 다음 intent 없이 끊는 흐름."
-    },
-    {
-      "id": "ulijih3g00rjcf0e285i9okbck",
-      "date": "2026-06-13",
-      "title": "내일 의도 / Control Center 공개 반영 범위 먼저 고르기",
-      "intent": "CMS를 더 키우기 전에 실제 공개 반영을 어느 범위까지 열지 먼저 고른다.",
+      "id": "2em11er5qo5qokn8iebfvgibkk",
+      "date": "2026-07-04",
+      "title": "내일 의도 / Virtue 홈 첫 길 문구를 두 갈래로 비교하기",
+      "intent": "첫 방문자가 자기 시작점을 스스로 해석하지 않게, Virtue 홈에서 기록형과 AI 호기심형의 첫 길을 두 갈래로 비교한다.",
       "did": null,
       "why": null,
-      "carry": "build-09의 기본값인 dry-run preview만 먼저 열지, 단일 target publish까지 갈지 한 줄로 정한다.",
+      "carry": "홈 첫 문장과 버튼 문구를 J1/J3 기준으로 2안씩만 적는다.",
       "drop": null
     },
     {
-      "id": "hv6gnqmt70p0kqcc1fhu51fdfc",
-      "date": "2026-06-14",
-      "title": "실제 흐름 / 여행 비용 상태판과 리뷰 전달 보정",
-      "intent": "고객 접점 3레이어를 한 화면에 낮추기",
-      "did": "Travel/Status 화면 보정, DB route와 여행 준비 비용 반영, Infinity Waiting 표시 기준 강화, 주간 리뷰 본문 재전달",
-      "why": "새 접점 설계보다 이미 드러난 화면 깨짐·비용 누락·Waiting 미표시·리뷰 전달 부족을 먼저 닫아야 했음",
-      "carry": "화면/리뷰마다 돈, 승인, Waiting, 다음 행동 중 빠진 칸을 확인",
-      "drop": "저장 완료나 overflow 해결만 보고 실제 사용 의도를 놓치는 방식"
+      "id": "5djt9lbkfmajknq6rftqrnc4g0",
+      "date": "2026-07-05",
+      "title": "실제 흐름 / 공개 접점과 문체 기준 정렬",
+      "intent": "카드뉴스 샘 장면 기준으로 다음 세트를 만들고 동일성·여백·내부 텍스트 없음 기준을 확인한다.",
+      "did": "Threads @minimal_collector, Instagram, 카드뉴스 CTA, 아카이브 링크와 Threads 문체 기준을 정렬했다.",
+      "why": "핀된 Threads 글 반응이 먼저 신호를 줘 새 카드 제작보다 공개 접점 정리가 더 급했다.",
+      "carry": "@minimal_collector와 아카이브 링크를 공개 결과물의 기본 경로로 유지한다.",
+      "drop": "내부 제작 과정과 자동화 처리를 공개 글/회고의 중심 소재로 올리는 습관."
     },
     {
-      "id": "7m59dph7cb3dd0nbno1vrghk9c",
-      "date": "2026-06-15",
-      "title": "실제 흐름 / 여행 비용 확정과 상품 후보 보류선",
-      "intent": "여행 준비 비용과 이동비가 같은 값과 category로 보이게 맞춘다.",
-      "did": "Travel 비용 상태를 2026-06-15 기준으로 맞추고, 나래 상품 후보를 휴대폰 도난방지 스트랩 WATCH lead, 압축 파우치 WATCH, 케이블 파우치 HOLD로 낮췄으며, 회사 보안·인수인계·PPTX·대시보드 점검을 처리했다.",
-      "why": "여행 비용 상태 확인은 이어졌지만 낮 시간의 실제 부하는 회사 보안/인수인계 대응과 나래 후보 검증이 더 컸다.",
-      "carry": "숫자가 확정된 것은 Travel 상태판에 남기고, 아직 위험이 남은 상품 후보는 승인 후보가 아니라 WATCH/HOLD로 둔다.",
-      "drop": "검색량이나 상품 수만 보고 바로 팔 후보로 올리는 방식."
+      "id": "qcrvun0kbqtn5bub285brq6944",
+      "date": "2026-07-06",
+      "title": "실제 흐름 / 실제 확인 기준과 CMS 막힘 정리",
+      "intent": "핀된 Threads 글, 카드뉴스 끝 장, 프로필/아카이브가 같은 약속으로 읽히게 한다.",
+      "did": "샘 카드 이미지 검증 기준을 다시 잠그고, Virtue 첫 가치 후보 묶음과 카드뉴스 산출물 경계를 정리했으며, CMS L1 업데이트 막힘이 남았다.",
+      "why": "출국 전날에는 새 산출물보다 실제 파일과 화면에서 보이는지 확인하는 일이 더 급했다.",
+      "carry": "공개 경로 정렬은 유지하되, CMS L1 반영 원인을 한 갈래로 좁힌다.",
+      "drop": "프롬프트 조건이나 내부 처리 완료를 실제 검증으로 착각하는 방식."
     },
     {
-      "id": "m5obs9ehba7hs24l7ifmf52dq0",
-      "date": "2026-06-16",
-      "title": "실제 흐름 / 3D 배경 우선과 리소스 옆 설명",
-      "intent": "휴대폰 도난방지 스트랩을 승인 후보로 올리기 전에 위험이 남은 지점만 좁게 본다.",
-      "did": "회사 보안·KOCO·purple-auth·wiki 인수인계 정리가 하루의 대부분을 차지했고, Status 페이지는 마스터님 피드백에 따라 3D 풀 이미지가 주인공이고 메뉴가 그 위에 살짝 떠 있는 방향으로 후속 intent를 분리했다.",
-      "why": "회사 보안/인수인계 업무가 넓게 들어왔고, Status 페이지의 핵심 시각 방향이 마스터님 피드백으로 명확히 바뀌었다.",
-      "carry": "Status는 3D 이미지 우선 구조로 다시 잡고, 회사 자료는 설명을 실제 리소스 옆에 붙이는 방식을 유지한다.",
-      "drop": "큰 카드와 설명 박스를 만들면 충분하다고 보는 방식."
-    },
-    {
-      "id": "i3hcu7e05962vje1fe20ioaalo",
-      "date": "2026-06-17",
-      "title": "실제 흐름 / 사각 카드 밖의 Status 화면과 인프라 인수인계",
-      "intent": "Status 첫 화면에서 3D 풀 이미지가 먼저 보이고, 메뉴와 상태 정보는 얇게 떠 있는 구조로 다시 잡는다.",
-      "did": "Status 화면은 사각 카드 그리드를 깨고 더 투명한 유리 레이어로 풀었고, 낮에는 AX/KOCO 인수인계와 인프라 흐름 도식화가 크게 들어왔다. Kimnoz Travel Notion 키도 연결 확인됐다.",
-      "why": "사용자가 화면 느낌은 맞지만 카드 배치와 투명도를 더 열어 달라고 직접 피드백했고, 회사 쪽 인수인계·보안·인프라 설명 작업이 실제 마감 흐름이었다.",
-      "carry": "화면은 주인공 이미지와 필요한 정보 위치를 먼저 잡고, 인수인계 산출물은 받는 사람이 바로 읽는 그림으로 낮춘다.",
-      "drop": "카드 그리드를 기본값으로 깔고 정보를 같은 높이에 정렬하는 방식."
-    },
-    {
-      "id": "r7jejjamkja7hvsn5kk6h6bsm8",
-      "date": "2026-06-18",
-      "title": "내일 의도 / 인수인계에서 헷갈릴 지점 1개 줄이기",
-      "intent": "인프라 인수인계에서 받는 사람이 헷갈릴 지점 1개만 먼저 줄인다.",
+      "id": "cj9sq70n0ufmr7cgjdk7ga00go",
+      "date": "2026-07-07",
+      "title": "실제 흐름 / 출국일 버전 기준 정리와 CMS 막힘 유지",
+      "intent": "CMS L1 업데이트 원인을 저장, 반영, 조회 중 한 갈래로 먼저 나눈다.\\n실제로 한 일: 출국일 이동 중 kube-prometheus-stack, Grafana, Prometheus 최신 기준을 트래커와 Terraform 기본값에 맞췄다.\\n변경 이유: 넓은 CMS 분석보다 반복 알림을 만들던 버전 불일치를 먼저 닫는 것이 현실적이었다.\\n이어갈 것: CMS L1 막힘은 저장 데이터 확인부터 다시 좁힌다.\\n버릴 것: 최신 처리를 트래커 숫자만 바꾸는 일로 끝내는 방식.",
       "did": null,
       "why": null,
-      "carry": "내일 1시 인프라 인수인계 전에 Purple-access → KOCO → infra GitLab → 사용자 접속 흐름에서 설명이 가장 흐린 화살표 하나를 고른다.",
+      "carry": null,
+      "drop": null
+    },
+    {
+      "id": "9c9tql79uidh2f19o0s4gq1d1s",
+      "date": "2026-07-08",
+      "title": "실제 흐름 / 이동일, CMS 확인은 다음 손잡이로 유지",
+      "intent": "CMS L1 막힘을 새 작업으로 키우지 않고, 업데이트가 저장 단계에서 끊겼는지 먼저 본다.",
+      "did": "이동 일정 속에서 CMS 수정은 깊게 들어가지 않았고, Virtue 첫 가치/마케팅 판단 기준과 도구 후보 근거 정리가 주로 쌓였다.",
+      "why": "출국 이동과 시차 전환이 있는 날에는 넓은 디버깅보다 다음에 다시 잡을 한 줄 손잡이를 남기는 편이 부담이 적었다.",
+      "carry": "CMS L1이 저장 데이터에 존재하는지부터 확인한다.",
+      "drop": "이동일에 막힌 작업을 끝까지 밀어붙여 새 피로와 새 작업을 동시에 만드는 방식."
+    },
+    {
+      "id": "2jqj7cnhrfrev5cq4na3djm7js",
+      "date": "2026-07-09",
+      "title": "실제 흐름 / 쾰른 이동과 첫 문장 재정렬",
+      "intent": "CMS L1 막힘을 새 작업으로 키우지 않고, 저장 데이터에 있는지만 먼저 본다.",
+      "did": "CMS 확인은 깊게 들어가지 않았고, 쾰른 이동 중 세계여행 첫 공개 문구를 현재 위치에 맞게 다시 잡았다. 보조로 Virtue 첫 가치 판단과 크론 정리가 처리됐다.",
+      "why": "여행 첫날에는 막힌 관리 화면보다 공개 기록이 실제 이동 흐름과 맞는지가 더 급했다.",
+      "carry": "첫 도시는 쾰른이라는 기준으로 세계여행 첫 문장과 기록 흐름을 이어간다.",
+      "drop": "이동일에 CMS 막힘까지 억지로 닫으려는 방식과 출발지 인천을 첫 도시처럼 보이게 하는 표현."
+    },
+    {
+      "id": "s5vncmlvc9sore8581sr9cjqr0",
+      "date": "2026-07-10",
+      "title": "실제 흐름 / 쾰른 이동과 운영 기준 정리",
+      "intent": "쾰른에서 실제로 본 첫 장면을 기록의 첫 손잡이로 잡는다.",
+      "did": "쾰른 이동/결제 신호가 남았고, kube-prometheus-stack 및 TypeScript 최신화 상태를 정리했다.",
+      "why": "이동 첫날에는 긴 기록보다 작은 장면 손잡이와 필요한 운영 기준 정리가 적합했다.",
+      "carry": "쾰른 첫 장면을 장소, 감정, 한 문장으로 남긴다.",
+      "drop": "이동 중 넓은 기술 정비를 계속 벌리는 흐름."
+    },
+    {
+      "id": "nugoqhaq25s4nmunpevj8pg4lc",
+      "date": "2026-07-11",
+      "title": "실제 흐름 / 쾰른 기록보다 선택 흐름 정리",
+      "intent": "쾰른에서 실제로 본 장면 하나를 공개 기록의 첫 손잡이로 남긴다.",
+      "did": "쾰른 첫 장면을 크게 확장하기보다, OpenClaw 문서 정렬·상태 대시보드·업로드/완료 화면 선택 흐름을 손봤고 Infinity에서는 Tool-Failure 수리 프롬프트와 Marketing 학습 승격이 이어졌다.",
+      "why": "이동 직후에는 공개 기록을 무리하게 키우기보다, 다음 기록과 제품 작업이 막히지 않게 선택지와 운영 기준을 줄이는 일이 먼저 필요했다.",
+      "carry": "쾰른에서 본 장면은 장소, 감정, 한 문장 수준으로 작게 남긴다.",
+      "drop": "여행 중 한 장면을 바로 큰 콘텐츠나 넓은 정비로 키우는 흐름."
+    },
+    {
+      "id": "kr6n83p6u2rvj3nenefk2q8e84",
+      "date": "2026-07-12",
+      "title": "실제 흐름 / 힙키치 템플릿 리서치 보드",
+      "intent": "여행 기록을 큰 글감으로 밀어붙이기보다, 실제 동선에서 다시 볼 수 있는 장면 하나만 고른다.",
+      "did": "쾰른 장면 한 문장보다 인스타그램 카드뉴스용 힙/키치 템플릿 리서치 보드와 영상 자동화 업로드/완료 화면 선택 흐름 간소화가 중심이 됐다.",
+      "why": "오늘은 이동 기록보다 앞으로 반복 산출물로 쓸 카드뉴스 형식과 선택 부담을 줄이는 일이 더 직접적인 손잡이였다.",
+      "carry": "쾰른 장면은 결제/장소 신호를 바탕으로 작게 남기고, 템플릿은 실제 제작 후보 1개로 좁힌다.",
+      "drop": "레퍼런스 이미지만 쌓고 실제 적용 조건을 남기지 않는 방식."
+    },
+    {
+      "id": "dprifttitggdm6ghdhijbg6jgo",
+      "date": "2026-07-13",
+      "title": "내일 의도 / 카드뉴스 템플릿 1개만 고르기",
+      "intent": "오늘 뽑은 카드뉴스 템플릿을 더 늘리지 않고, 실제 제작 후보 1개로 좁힌다.",
+      "did": null,
+      "why": null,
+      "carry": "Scrapbook Tape Grid와 Type Sticker Stack 중 하나를 골라 한국어 제목 2줄과 본문 위치가 버티는지 첫 장 구조만 확인한다.",
       "drop": null
     }
   ]

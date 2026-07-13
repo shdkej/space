@@ -1917,9 +1917,11 @@
           const stops = data?.map?.routePoints?.length ? data.map.routePoints : [];
           const curName = data?.current?.location || "";
           if (!stops.length) return;
-          let curIdx = stops.findIndex((s) => s.name?.toLowerCase().includes(curName.toLowerCase()));
-          if (curIdx < 0) curIdx = 0;
-          const cur = { name: curName || stops[curIdx].name, lat: stops[curIdx].lat, lng: stops[curIdx].lng };
+          let curIdx = curName ? stops.findIndex((s) => s.name?.toLowerCase().includes(curName.toLowerCase())) : -1;
+          const matched = curIdx >= 0;
+          if (!matched) curIdx = 0;
+          // label must describe the anchored point — only use the live name when it matched a stop
+          const cur = { name: matched ? curName : stops[curIdx].name, lat: stops[curIdx].lat, lng: stops[curIdx].lng };
           document.getElementById("locName").textContent = cur.name;
 
           for (let i = 0; i < stops.length - 1; i++) {

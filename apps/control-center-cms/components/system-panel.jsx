@@ -78,6 +78,7 @@ function layerCheckStatus(payload) {
   const latest = rows[rows.length - 1];
   const ageDays = (Date.now() - new Date(latest.date).getTime()) / 86400000;
   if (!latest.date || Number.isNaN(ageDays) || ageDays > 2) return "down";
+  if (LAYER_KEYS.every((k) => latest[k] == null)) return "none"; // 판정 보류 라인 (블록 답 없음)
   const fails = LAYER_KEYS.filter((k) => latest[k] !== true).length;
   if (fails >= 2) return "down";
   if (fails === 1) return "degraded";

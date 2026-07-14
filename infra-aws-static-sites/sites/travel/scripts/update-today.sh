@@ -45,4 +45,20 @@ aws cloudfront create-invalidation \
   --distribution-id "$DIST_ID" \
   --paths "/travel-data.json" >/dev/null
 
+# git에도 같은 데이터를 남긴다 — Actions의 `s3 sync --delete`가 push 때마다
+# git 커밋본으로 S3를 덮으므로, 여기서 커밋하지 않으면 오래된 데이터로 회귀한다.
+sync_data_to_git() {
+  local repo data_rel="infra-aws-static-sites/sites/travel/dist/travel-data.json"
+  repo="$(git -C "$ROOT" rev-parse --show-toplevel)" || return 1
+  git -C "$repo" diff --quiet -- "$data_rel" && return 0
+  git -C "$repo" add "$data_rel" || return 1
+  git -C "$repo" commit -m "chore(travel): travel-data.json $TODAY 동기화" -- "$data_rel" >/dev/null || return 1
+  if ! git -C "$repo" push origin master >/dev/null 2>&1; then
+    git -C "$repo" pull --rebase --autostash origin master >/dev/null 2>&1 || return 1
+    git -C "$repo" push origin master >/dev/null 2>&1 || return 1
+  fi
+  echo "[$(date -u +%FT%TZ)] Committed travel-data.json to git"
+}
+sync_data_to_git || echo "[$(date -u +%FT%TZ)] WARN: git sync failed — S3 is fresh but git may lag"
+
 echo "[$(date -u +%FT%TZ)] Updated Travel Ledger for $TODAY"

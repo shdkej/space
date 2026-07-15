@@ -89,18 +89,26 @@ function traceLine(it) {
   return parts.join(" → ");
 }
 
+const NOTIFIED_RULE_SINCE = "2026-07-16"; // notified 마커 규약 시행일 — 이전 완료분은 미통보로 따지지 않는다
+
 function IntentCard({ it, done }) {
+  const ruled = done && it.date >= NOTIFIED_RULE_SINCE;
   return (
     <div className="rounded-md border px-2.5 py-2">
       <div className="flex items-center gap-2">
         <Badge variant="outline" className="shrink-0 font-mono text-[10px]">{it.id}</Badge>
-        {done && <Dot status={it.notified ? "operational" : "maintenance"} />}
+        {ruled && <Dot status={it.notified ? "operational" : "maintenance"} />}
       </div>
       <p className="mt-1 text-xs leading-snug">{it.title || it.summary}</p>
       {!done && traceLine(it) && (
         <p className="mt-1 text-[11px] text-muted-foreground">{traceLine(it)}</p>
       )}
-      {done && <p className="mt-1 text-[11px] text-muted-foreground">{it.date?.slice(5)}{it.notified ? " · 통보됨" : " · 미통보"}</p>}
+      {done && (
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {it.date?.slice(5)}
+          {ruled ? (it.notified ? " · 통보됨" : " · 미통보") : ""}
+        </p>
+      )}
     </div>
   );
 }

@@ -74,7 +74,11 @@ function freshnessStatuses(payload) {
 
 function daysSince(iso) {
   if (!iso) return null;
-  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  // 아침 리캡과 동일하게 달력일 차이로 센다 (KST)
+  const now = new Date(Date.now() + 9 * 3600000);
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const then = new Date(`${iso}T00:00:00Z`).getTime();
+  const d = Math.round((today - then) / 86400000);
   return Number.isNaN(d) ? null : d;
 }
 

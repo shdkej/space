@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-14T22:34:13.966724+00:00",
+  "generatedAt": "2026-07-15T08:48:02.525983+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,14 +8,14 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 6018080,
-    "travelLoggedKrw": 6018080,
-    "remainingMinKrw": 23981920,
-    "remainingMaxKrw": 33981920,
-    "reservedPctMin": 20.1,
+    "loggedKrw": 6895115,
+    "travelLoggedKrw": 6895115,
+    "remainingMinKrw": 23104885,
+    "remainingMaxKrw": 33104885,
+    "reservedPctMin": 23.0,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 89822,
+    "reserveBurnKrw": 102912,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
@@ -26,31 +26,33 @@
     "mapQuery": "Prague, Czechia"
   },
   "categoryTotals": {
-    "stay": 2539115,
-    "gear": 1406099,
-    "transport": 877401,
+    "stay": 2899805,
+    "gear": 1446349,
+    "transport": 1024948,
     "medical": 680000,
-    "other": 399650,
-    "visa": 105697,
-    "groceries": 10118
+    "other": 451796,
+    "visa": 211394,
+    "food": 152774,
+    "groceries": 28049
   },
   "travelCategoryTotals": {
-    "stay": 2539115,
-    "gear": 1406099,
-    "transport": 877401,
+    "stay": 2899805,
+    "gear": 1446349,
+    "transport": 1024948,
     "medical": 680000,
-    "other": 399650,
-    "visa": 105697,
-    "groceries": 10118
+    "other": 451796,
+    "visa": 211394,
+    "food": 152774,
+    "groceries": 28049
   },
   "countryCategoryTotals": [
     {
       "country": "여행 준비",
-      "total": 2191796,
+      "total": 2337743,
       "categories": {
-        "gear": 1406099,
+        "gear": 1446349,
         "medical": 680000,
-        "visa": 105697
+        "visa": 211394
       }
     },
     {
@@ -63,12 +65,22 @@
     },
     {
       "country": "Germany",
-      "total": 1039966,
+      "total": 1363285,
       "categories": {
         "stay": 414210,
-        "other": 399650,
-        "transport": 215988,
-        "groceries": 10118
+        "other": 411546,
+        "transport": 357975,
+        "food": 152774,
+        "groceries": 26780
+      }
+    },
+    {
+      "country": "Czechia",
+      "total": 523226,
+      "categories": {
+        "stay": 360690,
+        "transport": 161267,
+        "groceries": 1269
       }
     },
     {
@@ -87,17 +99,11 @@
       }
     },
     {
-      "country": "Czechia",
-      "total": 155707,
-      "categories": {
-        "transport": 155707
-      }
-    },
-    {
       "country": "South Korea",
-      "total": 94000,
+      "total": 134250,
       "categories": {
-        "stay": 94000
+        "stay": 94000,
+        "other": 40250
       }
     },
     {
@@ -138,12 +144,24 @@
       "amount": 364922
     },
     {
+      "date": "2026-06-30",
+      "amount": 211394
+    },
+    {
+      "date": "2026-07-08",
+      "amount": 40250
+    },
+    {
       "date": "2026-07-09",
-      "amount": 44465
+      "amount": 77161
     },
     {
       "date": "2026-07-10",
       "amount": 41820
+    },
+    {
+      "date": "2026-07-11",
+      "amount": 439264
     },
     {
       "date": "2026-07-12",
@@ -151,11 +169,15 @@
     },
     {
       "date": "2026-07-13",
-      "amount": 53162
+      "amount": 106324
     },
     {
       "date": "2026-07-14",
       "amount": 113921
+    },
+    {
+      "date": "2026-07-15",
+      "amount": 367519
     }
   ],
   "bookedCosts": [
@@ -446,41 +468,231 @@
       "source": "telegram:433493318/message/12071"
     },
     {
-      "id": "manual-visa-2026-06-30-esta",
-      "date": "2026-06-30",
-      "time": "20:23",
-      "amount": 62788,
-      "merchant": "USCUSTOMS ESTA APPL PMT",
-      "category": "visa",
+      "id": "manual-card-2026-07-08-naverpay",
+      "date": "2026-07-08",
+      "time": "09:28",
+      "amount": 40250,
+      "merchant": "네이버페이",
+      "category": "gear",
       "location": "여행 준비",
       "travel": true,
-      "source": "telegram:433493318/message/1121"
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
     },
     {
-      "id": "manual-visa-2026-06-30-uk-eta",
-      "date": "2026-06-30",
-      "time": "20:42",
-      "amount": 42909,
-      "merchant": "UKVI ETAWEB00000121936",
-      "category": "visa",
-      "location": "여행 준비",
+      "id": "manual-card-2026-07-09-frankfurt-hbf",
+      "date": "2026-07-09",
+      "time": "13:59",
+      "amount": 8151,
+      "merchant": "Frankfurt (Main) Hbf",
+      "category": "transport",
+      "location": "Frankfurt",
       "travel": true,
-      "source": "telegram:433493318/message/1121"
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-metzgerei-brueder-ullm",
+      "date": "2026-07-09",
+      "time": "15:27",
+      "amount": 10975,
+      "merchant": "Metzgerei Brueder Ullm",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-backerei-huck",
+      "date": "2026-07-09",
+      "time": "15:30",
+      "amount": 4857,
+      "merchant": "BACKEREI+KONDITOREI HUCK",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-ayse-yikit",
+      "date": "2026-07-09",
+      "time": "15:31",
+      "amount": 8713,
+      "merchant": "Ayse Yikit",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-10-aldi-sued",
+      "date": "2026-07-10",
+      "time": "17:47",
+      "amount": 14698,
+      "merchant": "ALDI SUED",
+      "category": "groceries",
+      "location": "Cologne",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-11-db-vertrieb-0200",
+      "date": "2026-07-11",
+      "time": "02:00",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "Germany",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-11-db-vertrieb-0210",
+      "date": "2026-07-11",
+      "time": "02:10",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "Germany",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-11-mggs-gastronomie",
+      "date": "2026-07-11",
+      "time": "04:00",
+      "amount": 74604,
+      "merchant": "SumUp *MGGS Gastronomie",
+      "category": "food",
+      "location": "Cologne",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-12-shoppopulaire",
+      "date": "2026-07-12",
+      "time": "23:51",
+      "amount": 17437,
+      "merchant": "ShopPopulaire c/omuse-sto",
+      "category": "other",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-14-zagros",
+      "date": "2026-07-14",
+      "time": "19:30",
+      "amount": 53625,
+      "merchant": "LS Zagros Gemuesekebap",
+      "category": "food",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-14-nyx-photoautomat",
+      "date": "2026-07-14",
+      "time": "21:29",
+      "amount": 6920,
+      "merchant": "NYX*Photoautomat",
+      "category": "other",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-14-rewe",
+      "date": "2026-07-14",
+      "time": "22:03",
+      "amount": 1964,
+      "merchant": "REWE Markt GmbH-Zw",
+      "category": "groceries",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
     }
   ],
   "travelExpenses": [
     {
-      "id": "_64pj2d9g651kcb9o84ok8b9k8914cb9o88qj2b9l6ksj6da48kqjgdq66g",
-      "date": "2026-07-14",
-      "time": "09:14",
-      "amount": 9969,
-      "merchant": "Edeka Schnelle 6835",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "id": "_8ko46dpp70qj0b9i6h2jab9k6kp42ba26d334b9h64p32ea270o3cd236c",
+      "date": "2026-07-15",
+      "time": "14:57",
+      "amount": 360690,
+      "merchant": "AIRBNB * HMZ59JR8CZ",
+      "category": "stay",
+      "location": "Prague",
       "travel": true
     },
     {
-      "id": "_8p136h1n6133cba474p3ab9k7123eba16t2jib9j8crk2e9h6gqjecpg64",
+      "id": "_6p34cdhj70o46ba484sk4b9k7133ab9o60qj6ba58d146di56csj8h1p88",
+      "date": "2026-07-15",
+      "time": "11:41",
+      "amount": 1269,
+      "merchant": "ALBERT VAM DEKUJE",
+      "category": "groceries",
+      "location": "Prague",
+      "travel": true
+    },
+    {
+      "id": "_650k6e2684s46b9m74o3cb9k751jeba274sj2b9k8cq3cdhh84s3ed9p84",
+      "date": "2026-07-15",
+      "time": "09:26",
+      "amount": 5560,
+      "merchant": "DPP - Nadrazi Holesovi",
+      "category": "transport",
+      "location": "Prague",
+      "travel": true
+    },
+    {
+      "id": "manual-card-2026-07-14-rewe",
+      "date": "2026-07-14",
+      "time": "22:03",
+      "amount": 1964,
+      "merchant": "REWE Markt GmbH-Zw",
+      "category": "groceries",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-14-nyx-photoautomat",
+      "date": "2026-07-14",
+      "time": "21:29",
+      "amount": 6920,
+      "merchant": "NYX*Photoautomat",
+      "category": "other",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-14-zagros",
+      "date": "2026-07-14",
+      "time": "19:30",
+      "amount": 53625,
+      "merchant": "LS Zagros Gemuesekebap",
+      "category": "food",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "_64pj2d9g651kcb9o84ok8b9k8914cb9o88qj2b9l6ksj6da48kqjgdq66g",
       "date": "2026-07-14",
       "time": "09:14",
       "amount": 9969,
@@ -500,27 +712,7 @@
       "travel": true
     },
     {
-      "id": "_70r42ci67534cb9o8oqjab9k6523cb9o84sjcb9p6orj6hi18l23ah9o88",
-      "date": "2026-07-14",
-      "time": "08:29",
-      "amount": 6913,
-      "merchant": "LIME*PASS DWYJ",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
-    },
-    {
       "id": "_6h134da164s30b9o71144b9k75332b9p88pjeba28goj4g9i8kp4cgpk70",
-      "date": "2026-07-14",
-      "time": "08:29",
-      "amount": 6913,
-      "merchant": "LIME*PASS ZKWT",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
-    },
-    {
-      "id": "_6oq3ed2688sj0ba274oj0b9k84qj6ba284sjab9i70r3ehhi6924aca58c",
       "date": "2026-07-14",
       "time": "08:29",
       "amount": 6913,
@@ -680,7 +872,7 @@
       "travel": true
     },
     {
-      "id": "_74o34d2664s38ba2751jcb9k60r44b9o6ks46b9k6t2j8gpj8l34cchk88",
+      "id": "_6ks42cpn68sj0b9j6t234b9k6co3cba16h134b9h6gp3gda468p4cd9m8c",
       "date": "2026-07-13",
       "time": "07:30",
       "amount": 12598,
@@ -690,6 +882,18 @@
       "travel": true
     },
     {
+      "id": "manual-card-2026-07-12-shoppopulaire",
+      "date": "2026-07-12",
+      "time": "23:51",
+      "amount": 17437,
+      "merchant": "ShopPopulaire c/omuse-sto",
+      "category": "other",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
       "id": "_6133gd228csj0b9n6kr3ab9k8oqk4ba16h344ba170p3gg9j8os34d1i6c",
       "date": "2026-07-12",
       "time": "09:34",
@@ -697,16 +901,6 @@
       "merchant": "Kirsch GmbH & Co. KG",
       "category": "other",
       "location": "하노버, 독일",
-      "travel": true
-    },
-    {
-      "id": "_8cr30dpp60rj2b9h88oj6b9k6t0kcb9p6h1k4b9l6spj8gi284o3cd9p70",
-      "date": "2026-07-12",
-      "time": "09:34",
-      "amount": 17422,
-      "merchant": "Kirsch GmbH & Co. KG",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
       "travel": true
     },
     {
@@ -720,26 +914,6 @@
       "travel": true
     },
     {
-      "id": "_750j2gi56orjaba3611kab9k8opj2ba268qj8b9p8go46e9l70q36hhh6g",
-      "date": "2026-07-12",
-      "time": "06:00",
-      "amount": 6071,
-      "merchant": "Lekkerland REWE To Go",
-      "category": "other",
-      "location": "하노버, 독일",
-      "travel": true
-    },
-    {
-      "id": "_8p232h226123gba18p2jgb9k84sjcb9p70p3aba46osjce1p8kqjge9j84",
-      "date": "2026-07-12",
-      "time": "06:00",
-      "amount": 6071,
-      "merchant": "Lekkerland REWE To Go",
-      "category": "other",
-      "location": "Köln Hbf, Breslauer Platz 479",
-      "travel": true
-    },
-    {
       "id": "_68q36c1n8koj6b9l8p13cb9k650k8b9p6soj0ba3690j4ghg6d0jgc1p68",
       "date": "2026-07-12",
       "time": "03:29",
@@ -747,26 +921,6 @@
       "merchant": "Hohe Domkirche zu Koeln K",
       "category": "other",
       "location": "Köln Hbf, Breslauer Platz 479",
-      "travel": true
-    },
-    {
-      "id": "_6t0k8dph8h24cb9l88r44b9k6l348b9p6cp44ba460p46dhg6cqkcca68o",
-      "date": "2026-07-12",
-      "time": "03:29",
-      "amount": 27906,
-      "merchant": "Hohe Domkirche zu Koeln K",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
-    },
-    {
-      "id": "_6t330ghh84rj6b9g8cp34b9k6oqk2ba164r42ba66d0kagpm6h144chj64",
-      "date": "2026-07-12",
-      "time": "03:29",
-      "amount": 27906,
-      "merchant": "Hohe Domkirche zu Koeln K",
-      "category": "other",
-      "location": "하노버, 독일",
       "travel": true
     },
     {
@@ -780,24 +934,92 @@
       "travel": true
     },
     {
-      "id": "_8533ada370p34b9k8osjgb9k6t14cb9p6l23ab9m84qj8c9h8gr46c1j6g",
-      "date": "2026-07-12",
-      "time": "02:32",
-      "amount": 12644,
-      "merchant": "SumUp  *Gastro Faraj Koel",
+      "id": "_60rjccpm8os4ab9o68p3ab9k84ojeba265138b9p6t34ch1i6l0k4e236k",
+      "date": "2026-07-11",
+      "time": "11:00",
+      "amount": 74604,
+      "merchant": "SumUp  *MGGS Gastronomie",
       "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_64ojgh1n712j2ba368sjib9k7133cba284q38ba688pj2gq26p2jidpl60",
+      "date": "2026-07-11",
+      "time": "09:10",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6gq3ehi56os46b9p6gqjcb9k6spk8ba16t13eba26924cd9m8p230e1p74",
+      "date": "2026-07-11",
+      "time": "09:00",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
       "location": "하노버, 독일",
       "travel": true
     },
     {
-      "id": "_892k8gpi6sok6ba38h0j4b9k692j0ba26ss3ab9p89248gi56t1jeh9p8k",
-      "date": "2026-07-12",
-      "time": "02:32",
-      "amount": 12644,
-      "merchant": "SumUp  *Gastro Faraj Koel",
+      "id": "manual-card-2026-07-11-mggs-gastronomie",
+      "date": "2026-07-11",
+      "time": "04:00",
+      "amount": 74604,
+      "merchant": "SumUp *MGGS Gastronomie",
+      "category": "food",
+      "location": "Cologne",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-11-db-vertrieb-0210",
+      "date": "2026-07-11",
+      "time": "02:10",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "Germany",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-11-db-vertrieb-0200",
+      "date": "2026-07-11",
+      "time": "02:00",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "Germany",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "_8opkcd1m6l13ib9o6t13ib9k6oq48ba28p1jaba674qk8g9n6t33ah9g74",
+      "date": "2026-07-11",
+      "time": "00:47",
+      "amount": 14698,
+      "merchant": "ALDI SUED",
       "category": "other",
       "location": "Köln Hbf, Breslauer Platz 479",
       "travel": true
+    },
+    {
+      "id": "manual-card-2026-07-10-aldi-sued",
+      "date": "2026-07-10",
+      "time": "17:47",
+      "amount": 14698,
+      "merchant": "ALDI SUED",
+      "category": "groceries",
+      "location": "Cologne",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
     },
     {
       "id": "_6h2kcgpi85230ba160o4cb9k6kr38b9o8ko4cb9m6osjegph64r3id9h60",
@@ -820,6 +1042,94 @@
       "travel": true
     },
     {
+      "id": "_70s3ggi264r38b9n8p23ib9k8kskab9o60oj8ba18l1k4hhh6csjeh1j6s",
+      "date": "2026-07-09",
+      "time": "22:31",
+      "amount": 8713,
+      "merchant": "Ayse Yikit",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_8oo48gpk64rj0b9j8ork6b9k70pj6b9o74sk8b9n6133cdi188ok2d1n8g",
+      "date": "2026-07-09",
+      "time": "22:30",
+      "amount": 4857,
+      "merchant": "BACKEREI+KONDITOREI HUCK",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_6gs3ig9i60rj0b9i6crj2b9k7523ab9p70rk6b9h88q48d9o8l1j2c9p74",
+      "date": "2026-07-09",
+      "time": "22:27",
+      "amount": 10975,
+      "merchant": "Metzgerei Brueder Ullm",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_8krjgc9i6soj2b9o6ko46b9k6so3iba26ss44ba68or3idpm8crjggpl88",
+      "date": "2026-07-09",
+      "time": "20:59",
+      "amount": 8151,
+      "merchant": "Frankfurt (Main) Hbf",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "manual-card-2026-07-09-ayse-yikit",
+      "date": "2026-07-09",
+      "time": "15:31",
+      "amount": 8713,
+      "merchant": "Ayse Yikit",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-backerei-huck",
+      "date": "2026-07-09",
+      "time": "15:30",
+      "amount": 4857,
+      "merchant": "BACKEREI+KONDITOREI HUCK",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-metzgerei-brueder-ullm",
+      "date": "2026-07-09",
+      "time": "15:27",
+      "amount": 10975,
+      "merchant": "Metzgerei Brueder Ullm",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-frankfurt-hbf",
+      "date": "2026-07-09",
+      "time": "13:59",
+      "amount": 8151,
+      "merchant": "Frankfurt (Main) Hbf",
+      "category": "transport",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
       "id": "_690jidpj8kp46ba484ojeb9k8or38ba1652j6b9m6csjid9j75132gq374",
       "date": "2026-07-09",
       "time": "09:13",
@@ -830,13 +1140,13 @@
       "travel": true
     },
     {
-      "id": "_88r44cpk8914ab9p6h33ib9k6grkab9p8co3eb9o84qk4dhh64ok4d256c",
+      "id": "_6l336d2570pk6b9h8cqj2b9k690jaba168okcba56crj2dhi6l1j2h1k60",
       "date": "2026-07-09",
       "time": "08:21",
       "amount": 7037,
       "merchant": "IntercityHotel",
       "category": "stay",
-      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "location": "Linzer Straße 33, 50939 쾰른",
       "travel": true
     },
     {
@@ -848,6 +1158,28 @@
       "category": "other",
       "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
       "travel": true
+    },
+    {
+      "id": "_8gp3cd9h64pj6b9n64sjab9k70q3gba26l142ba670sj6c9o6d1jgchj6k",
+      "date": "2026-07-08",
+      "time": "16:28",
+      "amount": 40250,
+      "merchant": "네이버페이",
+      "category": "other",
+      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "travel": true
+    },
+    {
+      "id": "manual-card-2026-07-08-naverpay",
+      "date": "2026-07-08",
+      "time": "09:28",
+      "amount": 40250,
+      "merchant": "네이버페이",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
     },
     {
       "id": "manual-stay-2026-07-04-plitvice-airbnb",
@@ -883,26 +1215,44 @@
       "source": "Notion TO DO"
     },
     {
-      "id": "manual-visa-2026-06-30-uk-eta",
+      "id": "_68oj8g9o70o48ba17523eb9k74ojiba26h0k6b9j6sr38dhm64qj4gq364",
+      "date": "2026-06-30",
+      "time": "21:05",
+      "amount": 62788,
+      "merchant": "US ESTA application",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true
+    },
+    {
+      "id": "_6h346gpn6913iba16t23eb9k60s3gb9o8p1j4b9n64pk2dho8kr34ga668",
+      "date": "2026-06-30",
+      "time": "20:50",
+      "amount": 42909,
+      "merchant": "UK ETA application",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true
+    },
+    {
+      "id": "_8csj4e2460q36ba46sp4cb9k6l244b9o8p1jcb9i6h142d1n88rk8c9n8k",
       "date": "2026-06-30",
       "time": "20:42",
       "amount": 42909,
-      "merchant": "UKVI ETAWEB00000121936",
+      "merchant": "UK ETA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true,
-      "source": "telegram:433493318/message/1121"
+      "travel": true
     },
     {
-      "id": "manual-visa-2026-06-30-esta",
+      "id": "_6oqj4hhg8l236b9k6p0jcb9k84rjiba184qkab9j64ok6dpg68sk2dhj6g",
       "date": "2026-06-30",
       "time": "20:23",
       "amount": 62788,
-      "merchant": "USCUSTOMS ESTA APPL PMT",
+      "merchant": "US ESTA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true,
-      "source": "telegram:433493318/message/1121"
+      "travel": true
     },
     {
       "id": "manual-shopping-2026-06-25-windbreaker",
@@ -1253,17 +1603,73 @@
   ],
   "expenses": [
     {
-      "id": "_64pj2d9g651kcb9o84ok8b9k8914cb9o88qj2b9l6ksj6da48kqjgdq66g",
-      "date": "2026-07-14",
-      "time": "09:14",
-      "amount": 9969,
-      "merchant": "Edeka Schnelle 6835",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "id": "_8ko46dpp70qj0b9i6h2jab9k6kp42ba26d334b9h64p32ea270o3cd236c",
+      "date": "2026-07-15",
+      "time": "14:57",
+      "amount": 360690,
+      "merchant": "AIRBNB * HMZ59JR8CZ",
+      "category": "stay",
+      "location": "Prague",
       "travel": true
     },
     {
-      "id": "_8p136h1n6133cba474p3ab9k7123eba16t2jib9j8crk2e9h6gqjecpg64",
+      "id": "_6p34cdhj70o46ba484sk4b9k7133ab9o60qj6ba58d146di56csj8h1p88",
+      "date": "2026-07-15",
+      "time": "11:41",
+      "amount": 1269,
+      "merchant": "ALBERT VAM DEKUJE",
+      "category": "groceries",
+      "location": "Prague",
+      "travel": true
+    },
+    {
+      "id": "_650k6e2684s46b9m74o3cb9k751jeba274sj2b9k8cq3cdhh84s3ed9p84",
+      "date": "2026-07-15",
+      "time": "09:26",
+      "amount": 5560,
+      "merchant": "DPP - Nadrazi Holesovi",
+      "category": "transport",
+      "location": "Prague",
+      "travel": true
+    },
+    {
+      "id": "manual-card-2026-07-14-rewe",
+      "date": "2026-07-14",
+      "time": "22:03",
+      "amount": 1964,
+      "merchant": "REWE Markt GmbH-Zw",
+      "category": "groceries",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-14-nyx-photoautomat",
+      "date": "2026-07-14",
+      "time": "21:29",
+      "amount": 6920,
+      "merchant": "NYX*Photoautomat",
+      "category": "other",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-14-zagros",
+      "date": "2026-07-14",
+      "time": "19:30",
+      "amount": 53625,
+      "merchant": "LS Zagros Gemuesekebap",
+      "category": "food",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "_64pj2d9g651kcb9o84ok8b9k8914cb9o88qj2b9l6ksj6da48kqjgdq66g",
       "date": "2026-07-14",
       "time": "09:14",
       "amount": 9969,
@@ -1283,27 +1689,7 @@
       "travel": true
     },
     {
-      "id": "_70r42ci67534cb9o8oqjab9k6523cb9o84sjcb9p6orj6hi18l23ah9o88",
-      "date": "2026-07-14",
-      "time": "08:29",
-      "amount": 6913,
-      "merchant": "LIME*PASS DWYJ",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
-    },
-    {
       "id": "_6h134da164s30b9o71144b9k75332b9p88pjeba28goj4g9i8kp4cgpk70",
-      "date": "2026-07-14",
-      "time": "08:29",
-      "amount": 6913,
-      "merchant": "LIME*PASS ZKWT",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
-    },
-    {
-      "id": "_6oq3ed2688sj0ba274oj0b9k84qj6ba284sjab9i70r3ehhi6924aca58c",
       "date": "2026-07-14",
       "time": "08:29",
       "amount": 6913,
@@ -1463,7 +1849,7 @@
       "travel": true
     },
     {
-      "id": "_74o34d2664s38ba2751jcb9k60r44b9o6ks46b9k6t2j8gpj8l34cchk88",
+      "id": "_6ks42cpn68sj0b9j6t234b9k6co3cba16h134b9h6gp3gda468p4cd9m8c",
       "date": "2026-07-13",
       "time": "07:30",
       "amount": 12598,
@@ -1473,6 +1859,18 @@
       "travel": true
     },
     {
+      "id": "manual-card-2026-07-12-shoppopulaire",
+      "date": "2026-07-12",
+      "time": "23:51",
+      "amount": 17437,
+      "merchant": "ShopPopulaire c/omuse-sto",
+      "category": "other",
+      "location": "Berlin",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
       "id": "_6133gd228csj0b9n6kr3ab9k8oqk4ba16h344ba170p3gg9j8os34d1i6c",
       "date": "2026-07-12",
       "time": "09:34",
@@ -1480,16 +1878,6 @@
       "merchant": "Kirsch GmbH & Co. KG",
       "category": "other",
       "location": "하노버, 독일",
-      "travel": true
-    },
-    {
-      "id": "_8cr30dpp60rj2b9h88oj6b9k6t0kcb9p6h1k4b9l6spj8gi284o3cd9p70",
-      "date": "2026-07-12",
-      "time": "09:34",
-      "amount": 17422,
-      "merchant": "Kirsch GmbH & Co. KG",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
       "travel": true
     },
     {
@@ -1503,26 +1891,6 @@
       "travel": true
     },
     {
-      "id": "_750j2gi56orjaba3611kab9k8opj2ba268qj8b9p8go46e9l70q36hhh6g",
-      "date": "2026-07-12",
-      "time": "06:00",
-      "amount": 6071,
-      "merchant": "Lekkerland REWE To Go",
-      "category": "other",
-      "location": "하노버, 독일",
-      "travel": true
-    },
-    {
-      "id": "_8p232h226123gba18p2jgb9k84sjcb9p70p3aba46osjce1p8kqjge9j84",
-      "date": "2026-07-12",
-      "time": "06:00",
-      "amount": 6071,
-      "merchant": "Lekkerland REWE To Go",
-      "category": "other",
-      "location": "Köln Hbf, Breslauer Platz 479",
-      "travel": true
-    },
-    {
       "id": "_68q36c1n8koj6b9l8p13cb9k650k8b9p6soj0ba3690j4ghg6d0jgc1p68",
       "date": "2026-07-12",
       "time": "03:29",
@@ -1530,26 +1898,6 @@
       "merchant": "Hohe Domkirche zu Koeln K",
       "category": "other",
       "location": "Köln Hbf, Breslauer Platz 479",
-      "travel": true
-    },
-    {
-      "id": "_6t0k8dph8h24cb9l88r44b9k6l348b9p6cp44ba460p46dhg6cqkcca68o",
-      "date": "2026-07-12",
-      "time": "03:29",
-      "amount": 27906,
-      "merchant": "Hohe Domkirche zu Koeln K",
-      "category": "other",
-      "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
-    },
-    {
-      "id": "_6t330ghh84rj6b9g8cp34b9k6oqk2ba164r42ba66d0kagpm6h144chj64",
-      "date": "2026-07-12",
-      "time": "03:29",
-      "amount": 27906,
-      "merchant": "Hohe Domkirche zu Koeln K",
-      "category": "other",
-      "location": "하노버, 독일",
       "travel": true
     },
     {
@@ -1563,24 +1911,92 @@
       "travel": true
     },
     {
-      "id": "_8533ada370p34b9k8osjgb9k6t14cb9p6l23ab9m84qj8c9h8gr46c1j6g",
-      "date": "2026-07-12",
-      "time": "02:32",
-      "amount": 12644,
-      "merchant": "SumUp  *Gastro Faraj Koel",
+      "id": "_60rjccpm8os4ab9o68p3ab9k84ojeba265138b9p6t34ch1i6l0k4e236k",
+      "date": "2026-07-11",
+      "time": "11:00",
+      "amount": 74604,
+      "merchant": "SumUp  *MGGS Gastronomie",
       "category": "other",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_64ojgh1n712j2ba368sjib9k7133cba284q38ba688pj2gq26p2jidpl60",
+      "date": "2026-07-11",
+      "time": "09:10",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "Kleine Andreasstraße 5, 10243 베를린",
+      "travel": true
+    },
+    {
+      "id": "_6gq3ehi56os46b9p6gqjcb9k6spk8ba16t13eba26924cd9m8p230e1p74",
+      "date": "2026-07-11",
+      "time": "09:00",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
       "location": "하노버, 독일",
       "travel": true
     },
     {
-      "id": "_892k8gpi6sok6ba38h0j4b9k692j0ba26ss3ab9p89248gi56t1jeh9p8k",
-      "date": "2026-07-12",
-      "time": "02:32",
-      "amount": 12644,
-      "merchant": "SumUp  *Gastro Faraj Koel",
+      "id": "manual-card-2026-07-11-mggs-gastronomie",
+      "date": "2026-07-11",
+      "time": "04:00",
+      "amount": 74604,
+      "merchant": "SumUp *MGGS Gastronomie",
+      "category": "food",
+      "location": "Cologne",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-11-db-vertrieb-0210",
+      "date": "2026-07-11",
+      "time": "02:10",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "Germany",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-11-db-vertrieb-0200",
+      "date": "2026-07-11",
+      "time": "02:00",
+      "amount": 33459,
+      "merchant": "DB Vertrieb GmbH",
+      "category": "transport",
+      "location": "Germany",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "_8opkcd1m6l13ib9o6t13ib9k6oq48ba28p1jaba674qk8g9n6t33ah9g74",
+      "date": "2026-07-11",
+      "time": "00:47",
+      "amount": 14698,
+      "merchant": "ALDI SUED",
       "category": "other",
       "location": "Köln Hbf, Breslauer Platz 479",
       "travel": true
+    },
+    {
+      "id": "manual-card-2026-07-10-aldi-sued",
+      "date": "2026-07-10",
+      "time": "17:47",
+      "amount": 14698,
+      "merchant": "ALDI SUED",
+      "category": "groceries",
+      "location": "Cologne",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
     },
     {
       "id": "_6h2kcgpi85230ba160o4cb9k6kr38b9o8ko4cb9m6osjegph64r3id9h60",
@@ -1603,6 +2019,94 @@
       "travel": true
     },
     {
+      "id": "_70s3ggi264r38b9n8p23ib9k8kskab9o60oj8ba18l1k4hhh6csjeh1j6s",
+      "date": "2026-07-09",
+      "time": "22:31",
+      "amount": 8713,
+      "merchant": "Ayse Yikit",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_8oo48gpk64rj0b9j8ork6b9k70pj6b9o74sk8b9n6133cdi188ok2d1n8g",
+      "date": "2026-07-09",
+      "time": "22:30",
+      "amount": 4857,
+      "merchant": "BACKEREI+KONDITOREI HUCK",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_6gs3ig9i60rj0b9i6crj2b9k7523ab9p70rk6b9h88q48d9o8l1j2c9p74",
+      "date": "2026-07-09",
+      "time": "22:27",
+      "amount": 10975,
+      "merchant": "Metzgerei Brueder Ullm",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "_8krjgc9i6soj2b9o6ko46b9k6so3iba26ss44ba68or3idpm8crjggpl88",
+      "date": "2026-07-09",
+      "time": "20:59",
+      "amount": 8151,
+      "merchant": "Frankfurt (Main) Hbf",
+      "category": "other",
+      "location": "Linzer Straße 33, 50939 쾰른",
+      "travel": true
+    },
+    {
+      "id": "manual-card-2026-07-09-ayse-yikit",
+      "date": "2026-07-09",
+      "time": "15:31",
+      "amount": 8713,
+      "merchant": "Ayse Yikit",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-backerei-huck",
+      "date": "2026-07-09",
+      "time": "15:30",
+      "amount": 4857,
+      "merchant": "BACKEREI+KONDITOREI HUCK",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-metzgerei-brueder-ullm",
+      "date": "2026-07-09",
+      "time": "15:27",
+      "amount": 10975,
+      "merchant": "Metzgerei Brueder Ullm",
+      "category": "food",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
+      "id": "manual-card-2026-07-09-frankfurt-hbf",
+      "date": "2026-07-09",
+      "time": "13:59",
+      "amount": 8151,
+      "merchant": "Frankfurt (Main) Hbf",
+      "category": "transport",
+      "location": "Frankfurt",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
+    },
+    {
       "id": "_690jidpj8kp46ba484ojeb9k8or38ba1652j6b9m6csjid9j75132gq374",
       "date": "2026-07-09",
       "time": "09:13",
@@ -1613,13 +2117,13 @@
       "travel": true
     },
     {
-      "id": "_88r44cpk8914ab9p6h33ib9k6grkab9p8co3eb9o84qk4dhh64ok4d256c",
+      "id": "_6l336d2570pk6b9h8cqj2b9k690jaba168okcba56crj2dhi6l1j2h1k60",
       "date": "2026-07-09",
       "time": "08:21",
       "amount": 7037,
       "merchant": "IntercityHotel",
       "category": "stay",
-      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "location": "Linzer Straße 33, 50939 쾰른",
       "travel": true
     },
     {
@@ -1631,6 +2135,28 @@
       "category": "other",
       "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
       "travel": true
+    },
+    {
+      "id": "_8gp3cd9h64pj6b9n64sjab9k70q3gba26l142ba670sj6c9o6d1jgchj6k",
+      "date": "2026-07-08",
+      "time": "16:28",
+      "amount": 40250,
+      "merchant": "네이버페이",
+      "category": "other",
+      "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "travel": true
+    },
+    {
+      "id": "manual-card-2026-07-08-naverpay",
+      "date": "2026-07-08",
+      "time": "09:28",
+      "amount": 40250,
+      "merchant": "네이버페이",
+      "category": "gear",
+      "location": "여행 준비",
+      "travel": true,
+      "source": "telegram:433493318/message/1339",
+      "note": "Added from updated card approval list."
     },
     {
       "id": "manual-stay-2026-07-04-plitvice-airbnb",
@@ -1666,26 +2192,44 @@
       "source": "Notion TO DO"
     },
     {
-      "id": "manual-visa-2026-06-30-uk-eta",
+      "id": "_68oj8g9o70o48ba17523eb9k74ojiba26h0k6b9j6sr38dhm64qj4gq364",
+      "date": "2026-06-30",
+      "time": "21:05",
+      "amount": 62788,
+      "merchant": "US ESTA application",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true
+    },
+    {
+      "id": "_6h346gpn6913iba16t23eb9k60s3gb9o8p1j4b9n64pk2dho8kr34ga668",
+      "date": "2026-06-30",
+      "time": "20:50",
+      "amount": 42909,
+      "merchant": "UK ETA application",
+      "category": "visa",
+      "location": "여행 준비",
+      "travel": true
+    },
+    {
+      "id": "_8csj4e2460q36ba46sp4cb9k6l244b9o8p1jcb9i6h142d1n88rk8c9n8k",
       "date": "2026-06-30",
       "time": "20:42",
       "amount": 42909,
-      "merchant": "UKVI ETAWEB00000121936",
+      "merchant": "UK ETA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true,
-      "source": "telegram:433493318/message/1121"
+      "travel": true
     },
     {
-      "id": "manual-visa-2026-06-30-esta",
+      "id": "_6oqj4hhg8l236b9k6p0jcb9k84rjiba184qkab9j64ok6dpg68sk2dhj6g",
       "date": "2026-06-30",
       "time": "20:23",
       "amount": 62788,
-      "merchant": "USCUSTOMS ESTA APPL PMT",
+      "merchant": "US ESTA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true,
-      "source": "telegram:433493318/message/1121"
+      "travel": true
     },
     {
       "id": "manual-shopping-2026-06-25-windbreaker",
@@ -2037,15 +2581,31 @@
   "locations": [
     {
       "name": "서울특별시",
-      "count": 95,
+      "count": 120,
       "lat": 37.5665,
       "lng": 126.978
     },
     {
       "name": "Kleine Andreasstraße 5, 10243 베를린",
-      "count": 26,
+      "count": 35,
       "lat": 52.5146525,
       "lng": 13.4290744
+    },
+    {
+      "name": "Linzer Straße 33, 50939 쾰른",
+      "count": 7,
+      "lat": 50.9165529,
+      "lng": 6.9339308
+    },
+    {
+      "name": "Köln Hbf, Breslauer Platz 479",
+      "count": 7
+    },
+    {
+      "name": "하노버, 독일",
+      "count": 7,
+      "lat": 52.3744779,
+      "lng": 9.7385532
     },
     {
       "name": "과천시",
@@ -2054,39 +2614,45 @@
       "lng": 126.9876
     },
     {
-      "name": "하노버, 독일",
-      "count": 4,
-      "lat": 52.3744779,
-      "lng": 9.7385532
+      "name": "인천광역시",
+      "count": 5
     },
     {
       "name": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
       "count": 3
     },
     {
-      "name": "Köln Hbf, Breslauer Platz 479",
-      "count": 3
-    },
-    {
-      "name": "Linzer Straße 33, 50939 쾰른",
-      "count": 2,
-      "lat": 50.9165529,
-      "lng": 6.9339308
+      "name": "Opletalova 958/27, 110 00 Prague 1",
+      "count": 3,
+      "lat": 50.0834272,
+      "lng": 14.4322565
     }
   ],
   "map": {
     "points": [
       {
         "name": "서울특별시",
-        "count": 95,
+        "count": 120,
         "lat": 37.5665,
         "lng": 126.978
       },
       {
         "name": "Kleine Andreasstraße 5, 10243 베를린",
-        "count": 26,
+        "count": 35,
         "lat": 52.5146525,
         "lng": 13.4290744
+      },
+      {
+        "name": "Linzer Straße 33, 50939 쾰른",
+        "count": 7,
+        "lat": 50.9165529,
+        "lng": 6.9339308
+      },
+      {
+        "name": "하노버, 독일",
+        "count": 7,
+        "lat": 52.3744779,
+        "lng": 9.7385532
       },
       {
         "name": "과천시",
@@ -2095,16 +2661,10 @@
         "lng": 126.9876
       },
       {
-        "name": "하노버, 독일",
-        "count": 4,
-        "lat": 52.3744779,
-        "lng": 9.7385532
-      },
-      {
-        "name": "Linzer Straße 33, 50939 쾰른",
-        "count": 2,
-        "lat": 50.9165529,
-        "lng": 6.9339308
+        "name": "Opletalova 958/27, 110 00 Prague 1",
+        "count": 3,
+        "lat": 50.0834272,
+        "lng": 14.4322565
       }
     ],
     "routePoints": [
@@ -2340,12 +2900,21 @@
     },
     {
       "name": "IntercityHotel",
-      "city": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
+      "city": "Linzer Straße 33, 50939 쾰른",
       "status": "paid",
       "checkIn": null,
       "checkOut": null,
       "amount": 7037,
       "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMZ59JR8CZ",
+      "city": "Prague",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 360690,
+      "note": "Prague Airbnb charge from updated card approval list."
     }
   ],
   "plannedAccommodations": [
@@ -3323,76 +3892,64 @@
   },
   "sleep": [
     {
-      "date": "2026-06-09",
-      "sleepHours": 6.65,
-      "recharge": 83.0,
-      "balance": "6.16"
+      "date": "2026-06-30",
+      "sleepHours": 7.07,
+      "recharge": 88.0,
+      "balance": "7.20"
     },
     {
-      "date": "2026-06-11",
+      "date": "2026-07-01",
+      "sleepHours": 7.07,
+      "recharge": 88.0,
+      "balance": "7.20"
+    },
+    {
+      "date": "2026-07-04",
+      "sleepHours": 6.52,
+      "recharge": 81.0,
+      "balance": "6.66"
+    },
+    {
+      "date": "2026-07-05",
+      "sleepHours": 5.75,
+      "recharge": 72.0,
+      "balance": "6.40"
+    },
+    {
+      "date": "2026-07-07",
       "sleepHours": 0.0,
       "recharge": 0.0,
-      "balance": "4.75"
+      "balance": "6.14"
     },
     {
-      "date": "2026-06-12",
+      "date": "2026-07-08",
+      "sleepHours": 1.57,
+      "recharge": 20.0,
+      "balance": "4.14"
+    },
+    {
+      "date": "2026-07-09",
       "sleepHours": 0.0,
       "recharge": 0.0,
-      "balance": "6.50"
+      "balance": "4.77"
     },
     {
-      "date": "2026-06-13",
+      "date": "2026-07-11",
       "sleepHours": 0.0,
       "recharge": 0.0,
-      "balance": "4.91"
+      "balance": "4.62"
     },
     {
-      "date": "2026-06-14",
-      "sleepHours": 7.73,
-      "recharge": 97.0,
-      "balance": "5.62"
-    },
-    {
-      "date": "2026-06-15",
+      "date": "2026-07-11",
       "sleepHours": 0.0,
       "recharge": 0.0,
-      "balance": "5.54"
+      "balance": "4.62"
     },
     {
-      "date": "2026-06-16",
-      "sleepHours": 4.93,
-      "recharge": 62.0,
-      "balance": "5.31"
-    },
-    {
-      "date": "2026-06-17",
-      "sleepHours": 7.62,
-      "recharge": 95.0,
-      "balance": "5.99"
-    },
-    {
-      "date": "2026-06-18",
-      "sleepHours": 7.16,
-      "recharge": 90.0,
-      "balance": "6.33"
-    },
-    {
-      "date": "2026-06-21",
-      "sleepHours": 3.77,
-      "recharge": 47.0,
-      "balance": "5.78"
-    },
-    {
-      "date": "2026-06-22",
-      "sleepHours": 5.93,
-      "recharge": 74.0,
-      "balance": "5.74"
-    },
-    {
-      "date": "2026-06-24",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "5.45"
+      "date": "2026-07-11",
+      "sleepHours": 0.5,
+      "recharge": 6.0,
+      "balance": "2.59"
     },
     {
       "date": "2026-07-13",
@@ -3401,10 +3958,22 @@
       "balance": "2.59"
     },
     {
+      "date": "2026-07-13",
+      "sleepHours": 7.96,
+      "recharge": 99.0,
+      "balance": "7.04"
+    },
+    {
       "date": "2026-07-14",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "6.32"
+    },
+    {
+      "date": "2026-07-15",
+      "sleepHours": 7.2,
+      "recharge": 90.0,
+      "balance": "7.38"
     }
   ],
   "reflections": [

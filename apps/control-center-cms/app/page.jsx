@@ -88,6 +88,11 @@ function fmt(ts) {
 const emptyDraft = { kind: "surface", parent_id: null, title: "", subtitle: "", url: "", status: "none", visible: true };
 
 export default function Page() {
+  const [tab, setTab] = useState("composition");
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("tab");
+    if (t) setTab(t);
+  }, []);
   const [nodes, setNodes] = useState([]);
   const [items, setItems] = useState([]);
   const [activity, setActivity] = useState([]);
@@ -374,7 +379,7 @@ export default function Page() {
       />
 
       <main className="container max-w-[1320px] overflow-x-hidden pb-20 pt-4 sm:pt-6">
-        <Tabs defaultValue="composition">
+        <Tabs value={tab} onValueChange={setTab}>
           <TabsList>
             <TabsTrigger value="composition">
               <Layers className="h-3.5 w-3.5" /> Status 구성

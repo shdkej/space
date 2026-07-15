@@ -72,6 +72,91 @@ function freshnessStatuses(payload) {
   return (payload?.freshness || []).map((f) => f.status);
 }
 
+function daysSince(iso) {
+  if (!iso) return null;
+  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  return Number.isNaN(d) ? null : d;
+}
+
+function traceLine(it) {
+  const parts = [];
+  if (it.approval_date) parts.push(`승인 ${it.approval_date.slice(5)}`);
+  if (it.last_progress) parts.push(`진행 ${it.last_progress.slice(5)}`);
+  return parts.join(" → ");
+}
+
+function IntentCard({ it, done }) {
+  return (
+    <div className="rounded-md border px-2.5 py-2">
+      <div className="flex items-center gap-2">
+        <Badge variant="outline" className="shrink-0 font-mono text-[10px]">{it.id}</Badge>
+        {done && <Dot status={it.notified ? "operational" : "maintenance"} />}
+      </div>
+      <p className="mt-1 text-xs leading-snug">{it.title || it.summary}</p>
+      {!done && traceLine(it) && (
+        <p className="mt-1 text-[11px] text-muted-foreground">{traceLine(it)}</p>
+      )}
+      {done && <p className="mt-1 text-[11px] text-muted-foreground">{it.date?.slice(5)}{it.notified ? " · 통보됨" : " · 미통보"}</p>}
+    </div>
+  );
+}
+
+function PipelineBoard({ intents }) {
+  const items = intents?.items || {};
+  const waiting = items.waiting || [];
+  const yourTurn = waiting.filter((it) => (it.waiting_on || "").toLowerCase() === "user");
+  const otherWaiting = waiting.filter((it) => (it.waiting_on || "").toLowerCase() !== "user");
+  const completed = (intents?.completed || []).slice(0, 6);
+  const columns = [
+    { key: "inbox", label: "접수", list: items.inbox || [] },
+    { key: "active", label: "실행중", list: items.active || [] },
+    { key: "waiting", label: "대기 (외부·에이전트)", list: otherWaiting },
+    { key: "done", label: "완료 (7일)", list: completed, done: true }
+  ];
+  return (
+    <div className="space-y-3">
+      {yourTurn.length > 0 && (
+        <div className="rounded-md border border-[hsl(var(--warn))] bg-[hsl(var(--warn))]/10 px-4 py-3">
+          <p className="text-sm font-medium">🙋 내 공 — 내 손을 기다리는 요청 {yourTurn.length}건</p>
+          <div className="mt-2 space-y-2">
+            {yourTurn.map((it) => {
+              const days = daysSince(it.approval_date);
+              return (
+                <div key={it.id} className="text-sm">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="font-mono text-[10px]">{it.id}</Badge>
+                    <span>{it.title}</span>
+                    {days >= 2 && <span className="text-xs text-[hsl(var(--down))]">{days}일째</span>}
+                  </div>
+                  {it.next_action && (
+                    <p className="mt-0.5 pl-1 text-xs text-muted-foreground">첫 액션: {it.next_action}</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      <div className="grid gap-3 md:grid-cols-4">
+        {columns.map((col) => (
+          <div key={col.key} className="rounded-md border bg-muted/30 p-2">
+            <p className="px-1 pb-2 text-xs font-medium text-muted-foreground">
+              {col.label} · {col.list.length}
+            </p>
+            <div className="space-y-2">
+              {col.list.length === 0 ? (
+                <p className="px-1 text-xs text-muted-foreground/60">비어 있음</p>
+              ) : (
+                col.list.map((it) => <IntentCard key={it.id} it={it} done={col.done} />)
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function layerCheckStatus(payload) {
   const rows = payload?.layer_checks || [];
   if (!rows.length) return "none";
@@ -180,6 +265,16 @@ export default function SystemPanel() {
           </Button>
         </p>
       )}
+
+      <LayerHeader
+        title="요청 파이프라인 — 발화 → 승인(L2) → 실행(L3) → 산출(L4) → 통보"
+        status={
+          (payload.intents?.items?.waiting || []).some((it) => (it.waiting_on || "").toLowerCase() === "user")
+            ? "degraded"
+            : "operational"
+        }
+      />
+      <PipelineBoard intents={payload.intents} />
 
       <LayerHeader title="L1 삶 — PDCA 4지표" status={l1Status} />
       <div className="grid gap-4 md:grid-cols-2">
@@ -351,18 +446,13 @@ export default function SystemPanel() {
           </CardHeader>
           <CardContent className="space-y-2">
             {["active", "waiting", "inbox"].flatMap((section) =>
-              (payload.intents?.items?.[section] || []).map((it) => (
-                <div key={it.id} className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="font-mono text-[10px]">{it.id}</Badge>
-                    <span className="truncate">{it.title}</span>
-                  </div>
-                  {it.gate && (
-                    <p className="mt-0.5 pl-1 text-xs text-[hsl(var(--warn))]">gate: {it.gate}</p>
-                  )}
-                </div>
+              (payload.intents?.items?.[section] || []).filter((it) => it.gate).map((it) => (
+                <p key={it.id} className="text-xs text-[hsl(var(--warn))]">
+                  <span className="font-mono">{it.id}</span> gate: {it.gate}
+                </p>
               ))
             )}
+            <p className="text-sm text-muted-foreground">항목 상세는 상단 요청 파이프라인 보드에서 봅니다.</p>
             {!payload.intents && <p className="text-sm text-muted-foreground">인텐트 수집 실패</p>}
           </CardContent>
         </Card>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-15T08:48:02.525983+00:00",
+  "generatedAt": "2026-07-15T14:40:02.305352+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 23.0,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 102912,
+    "reserveBurnKrw": 101399,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-07-15",
+    "date": "2026-07-16",
     "location": "Prague",
     "mapQuery": "Prague, Czechia"
   },
@@ -3800,10 +3800,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-07-15",
+    "asOf": "2026-07-16",
     "limitDays": 90,
-    "usedDays": 8,
-    "remainingDays": 82,
+    "usedDays": 9,
+    "remainingDays": 81,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -3978,16 +3978,6 @@
   ],
   "reflections": [
     {
-      "id": "2em11er5qo5qokn8iebfvgibkk",
-      "date": "2026-07-04",
-      "title": "내일 의도 / Virtue 홈 첫 길 문구를 두 갈래로 비교하기",
-      "intent": "첫 방문자가 자기 시작점을 스스로 해석하지 않게, Virtue 홈에서 기록형과 AI 호기심형의 첫 길을 두 갈래로 비교한다.",
-      "did": null,
-      "why": null,
-      "carry": "홈 첫 문장과 버튼 문구를 J1/J3 기준으로 2안씩만 적는다.",
-      "drop": null
-    },
-    {
       "id": "5djt9lbkfmajknq6rftqrnc4g0",
       "date": "2026-07-05",
       "title": "실제 흐름 / 공개 접점과 문체 기준 정렬",
@@ -4090,11 +4080,21 @@
     {
       "id": "i0ecujn3mhbjtm5voal2c5mnjk",
       "date": "2026-07-15",
-      "title": "내일 의도 / 카드뉴스 본문 역할 먼저 확인하기",
+      "title": "실제 흐름 / 카드뉴스 이미지와 제목 역할 재정렬",
       "intent": "카드뉴스에서 제목과 본문 역할이 섞이지 않게 먼저 본다.",
+      "did": "카드뉴스 이미지 어둡게 처리, 제목 스타일, 본문 크기 기준을 수정판과 규칙에 반영했다.",
+      "why": "단순 블러보다 전체 화면이 어둡게 눌리는 문제가 더 큰 품질 저하로 드러났다.",
+      "carry": "이미지 선명도, 제목 얼굴, 본문 역할을 216px 프리뷰에서 먼저 본다.",
+      "drop": "가독성을 이유로 전체 화면을 어둡게 누르는 기본값."
+    },
+    {
+      "id": "pf2rvlqv93f9rg7sacjcaspt6g",
+      "date": "2026-07-16",
+      "title": "내일 의도 / 카드뉴스 이미지 선명도 먼저 확인하기",
+      "intent": "다음 카드뉴스에서 전체 화면이 어둡게 눌리지 않는지 먼저 본다.",
       "did": null,
       "why": null,
-      "carry": "다음 카드 1장을 만들기 전 216px 프리뷰에서 하단 body를 확인한다.",
+      "carry": "카드 1장 216px 프리뷰를 열어 이미지 선명도, 제목 얼굴, 본문 역할만 확인한다.",
       "drop": null
     }
   ]

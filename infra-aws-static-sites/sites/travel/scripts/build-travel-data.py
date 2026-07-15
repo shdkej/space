@@ -83,7 +83,6 @@ ROUTE = [
         "endDate": "2026-07-11",
         "lodging": "Schiltz Airbnb",
         "source": "7/9 DB ICE from Frankfurt",
-        "amount": 330000,
         "note": "Cathedral, city walks; 7/11 Cologne -> Berlin by DB ICE",
         "transportIn": "2026-07-09 DB ICE: 프랑크푸르트 -> 쾰른",
         "transportOut": "2026-07-11 DB ICE: 쾰른 -> 베를린",
@@ -151,6 +150,13 @@ ROUTE = [
         "note": "Old town, cafes, transit hub; 7/17 Prague -> Vienna by RegioJet or OBB",
         "transportIn": "2026-07-14 EC 열차 또는 FlixBus: 베를린 -> 프라하",
         "transportOut": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
+        "transportOutPayment": {
+            "status": "paid",
+            "amount": 70446,
+            "paidDate": "2026-06-18",
+            "merchant": "regiojet.cz",
+            "note": "Prague -> Vienna RegioJet booking logged in the travel ledger.",
+        },
         "arrivalTransfer": {
             "title": "베를린 -> 프라하",
             "route": "Berlin Hbf -> Praha hl.n.",
@@ -187,6 +193,13 @@ ROUTE = [
         "note": "Museums, libraries, slower days; 7/20 Vienna -> Budapest by EuroCity",
         "transportIn": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
         "transportOut": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
+        "transportInPayment": {
+            "status": "paid",
+            "amount": 70446,
+            "paidDate": "2026-06-18",
+            "merchant": "regiojet.cz",
+            "note": "Prague -> Vienna RegioJet booking logged in the travel ledger.",
+        },
         "arrivalTransfer": {
             "title": "프라하 -> 빈",
             "route": "Praha hl.n. -> Wien Hbf",
@@ -216,12 +229,26 @@ ROUTE = [
         "note": "Thermal baths, food, Danube; 7/23 Budapest -> Zagreb -> Plitvice by linked FlixBus legs",
         "transportIn": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
         "transportOut": "2026-07-23 FlixBus: 부다페스트 -> 자그레브 -> 플리트비체",
+        "transportInPayment": {
+            "status": "paid",
+            "amount": 81170,
+            "paidDate": "2026-06-18",
+            "merchant": "regiojet.cz",
+            "note": "Vienna -> Budapest RegioJet booking split across two ledger charges.",
+        },
+        "transportOutPayment": {
+            "status": "paid",
+            "amount": 156361,
+            "paidDate": "2026-07-02",
+            "merchant": "FlixBus",
+            "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35.",
+        },
         "arrivalTransfer": {
             "title": "빈 -> 부다페스트",
             "route": "Wien Hbf -> Budapest Keleti",
             "duration": "Railjet/EuroCity 약 2시간 24분-2시간 55분",
-            "statusNote": "OBB는 빈과 부다페스트 사이 Railjet/EuroCity가 정기 운행된다고 안내.",
-            "nextCheck": "Budapest Keleti 도착 기준 숙소 위치와 야간 이동 여부를 함께 본다.",
+            "statusNote": "RegioJet 13:27-15:58 예매 완료. 7/23 FlixBus 부다페스트 -> 자그레브도 08:25-12:20 예매 완료.",
+            "nextCheck": "부다페스트 숙소에서 7/23 FlixBus 출발 터미널까지 새벽 이동 시간을 확인한다.",
             "steps": [
                 "Wien Hbf에서 Budapest Keleti행 Railjet 또는 EuroCity 탑승.",
                 "Budapest Keleti 도착 후 지하철/택시로 숙소 이동.",
@@ -243,12 +270,26 @@ ROUTE = [
         "note": "Budapest -> Zagreb morning/early leg, then Zagreb -> Plitvice onward bus",
         "transportIn": "2026-07-23 FlixBus: 부다페스트 -> 자그레브",
         "transportOut": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
+        "transportInPayment": {
+            "status": "paid",
+            "amount": 156361,
+            "paidDate": "2026-07-02",
+            "merchant": "FlixBus",
+            "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35.",
+        },
+        "transportOutPayment": {
+            "status": "paid",
+            "amount": 74534,
+            "paidDate": "2026-07-02",
+            "merchant": "FlixBus",
+            "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95.",
+        },
         "arrivalTransfer": {
             "title": "부다페스트 -> 자그레브",
             "route": "Budapest bus station -> Zagreb bus station",
-            "duration": "FlixBus 최단 약 4시간 15분",
-            "statusNote": "부다페스트-자그레브 버스 구간은 FlixBus 기준 약 4시간대.",
-            "nextCheck": "같은 날 자그레브->플리트비체 환승 시간이 충분한지 먼저 본다.",
+            "duration": "FlixBus 08:25-12:20",
+            "statusNote": "부다페스트 -> 자그레브 08:25-12:20, 자그레브 -> 플리트비체 14:30-16:20 예매 완료.",
+            "nextCheck": "자그레브 터미널에서 2시간 10분 환승. 점심/화장실/수하물 위치만 확인하면 됨.",
             "steps": [
                 "부다페스트에서 자그레브행 FlixBus 탑승.",
                 "자그레브 버스 터미널에서 플리트비체행 버스로 환승.",
@@ -263,20 +304,28 @@ ROUTE = [
     {
         "city": "Plitvice",
         "country": "Croatia",
-        "status": "urgent",
+        "status": "booked",
         "startDate": "2026-07-23",
-        "endDate": "2026-07-24",
-        "lodging": "Park entrance B&B / guesthouse",
-        "source": "7/23 FlixBus from Zagreb",
-        "note": "1 night near national park entrance for early morning entry; book budget B&B or hotel",
+        "endDate": "2026-07-25",
+        "lodging": "Plitvice Airbnb",
+        "source": "Notion TO DO / 숙소 예약",
+        "amount": 190000,
+        "note": "2 nights near national park entrance; booked Airbnb for 190,000 KRW",
         "transportIn": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
-        "transportOut": "2026-07-24 FlixBus 또는 버스: 플리트비체 -> 스플리트",
+        "transportOut": "2026-07-25 FlixBus 또는 버스: 플리트비체 -> 스플리트",
+        "transportInPayment": {
+            "status": "paid",
+            "amount": 74534,
+            "paidDate": "2026-07-02",
+            "merchant": "FlixBus",
+            "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95.",
+        },
         "arrivalTransfer": {
             "title": "자그레브 -> 플리트비체",
             "route": "Zagreb bus station -> Plitvice Lakes",
-            "duration": "FlixBus 최단 약 1시간 50분",
-            "statusNote": "자그레브-플리트비체 버스는 FlixBus 기준 약 1시간 50분.",
-            "nextCheck": "플리트비체 하차 지점이 Entrance 1/2 중 어디인지 숙소 위치와 맞춘다.",
+            "duration": "FlixBus 14:30-16:20",
+            "statusNote": "자그레브 -> 플리트비체 14:30-16:20 예매 완료. 숙소도 7/23-25 2박 예약 완료.",
+            "nextCheck": "플리트비체 하차 지점이 Entrance 1/2 중 어디인지 Airbnb 위치와 맞춘다.",
             "steps": [
                 "자그레브에서 Plitvice Lakes행 버스를 탄다.",
                 "도착 후 숙소가 입구에서 도보/셔틀 가능한지 확인한다.",
@@ -292,19 +341,19 @@ ROUTE = [
         "city": "Split",
         "country": "Croatia",
         "status": "urgent",
-        "startDate": "2026-07-24",
+        "startDate": "2026-07-25",
         "endDate": "2026-07-26",
         "lodging": "Split stay TBD",
-        "source": "7/24 FlixBus from Plitvice",
-        "note": "2 nights; peak season coastal stay, book quickly",
-        "transportIn": "2026-07-24 FlixBus 또는 버스: 플리트비체 -> 스플리트",
+        "source": "7/25 FlixBus from Plitvice",
+        "note": "1 night; peak season coastal stay, book quickly",
+        "transportIn": "2026-07-25 FlixBus 또는 버스: 플리트비체 -> 스플리트",
         "transportOut": "2026-07-26 Kapetan Luka 또는 TP Line 페리: 스플리트 -> 두브로브니크",
         "arrivalTransfer": {
             "title": "플리트비체 -> 스플리트",
             "route": "Plitvice Lakes -> Split",
             "duration": "직행/환승 버스 시간표 확인 필요",
             "statusNote": "FlixBus는 Plitvice Lakes에서 Split을 도달 가능 목적지로 표시함.",
-            "nextCheck": "7/24 실제 직행 여부, 자그레브/자다르 환승 여부, 숙소 체크인 가능 시간을 함께 본다.",
+            "nextCheck": "7/25 실제 직행 여부, 자그레브/자다르 환승 여부, 숙소 체크인 가능 시간을 함께 본다.",
             "steps": [
                 "Plitvice Lakes 출발 버스 시간표에서 Split 도착편을 확인한다.",
                 "직행이 없거나 시간이 나쁘면 Zagreb/Zadar 환승안을 비교한다.",
@@ -403,8 +452,10 @@ ROUTE = [
         "country": "Greece",
         "status": "planned",
         "startDate": "2026-08-06",
+        "endDate": "2026-08-10",
         "source": "8/6 CTA -> ATH direct flight",
-        "note": "Aegean or Ryanair direct from Catania",
+        "note": "Athens buffer before Turkey; keep Schengen count conservative.",
+        "transportOut": "2026-08-10 항공: 아테네 -> 이스탄불",
         "transportIn": "2026-08-06 Aegean 또는 Ryanair 직항: 카타니아 CTA -> 아테네 ATH",
         "arrivalTransfer": {
             "title": "카타니아 -> 아테네",
@@ -422,6 +473,257 @@ ROUTE = [
         "schengen": True,
         "lat": 37.9838,
         "lng": 23.7275,
+    },
+    {
+        "city": "Istanbul",
+        "country": "Turkey",
+        "status": "planned",
+        "startDate": "2026-08-10",
+        "endDate": "2026-08-14",
+        "source": "master route sketch",
+        "note": "Non-Schengen break starts; libraries, food, and Bosphorus city days.",
+        "transportIn": "2026-08-10 항공: 아테네 -> 이스탄불",
+        "transportOut": "터키 국내 이동: 이스탄불 -> 카파도키아/파묵칼레/안탈리아",
+        "schengen": False,
+        "lat": 41.0082,
+        "lng": 28.9784,
+    },
+    {
+        "city": "Cappadocia / Pamukkale / Antalya",
+        "country": "Turkey",
+        "status": "planned",
+        "startDate": "2026-08-14",
+        "endDate": "2026-08-22",
+        "source": "master route sketch / wishlist",
+        "note": "Turkey nature leg; Pamukkale is on wishlist. Sequence still flexible.",
+        "transportIn": "터키 국내 이동",
+        "transportOut": "항공 후보: 안탈리아/이스탄불 -> 카이로",
+        "schengen": False,
+        "lat": 37.9245,
+        "lng": 29.1231,
+    },
+    {
+        "city": "Cairo / Giza",
+        "country": "Egypt",
+        "status": "planned",
+        "startDate": "2026-08-22",
+        "endDate": "2026-08-28",
+        "source": "master route sketch / wishlist",
+        "note": "Pyramids and Egyptian Museum; non-Schengen buffer continues.",
+        "transportIn": "항공 후보: 터키 -> 카이로",
+        "transportOut": "이집트 국내 이동 또는 항공: 카이로 -> 다합",
+        "schengen": False,
+        "lat": 30.0444,
+        "lng": 31.2357,
+    },
+    {
+        "city": "Dahab",
+        "country": "Egypt",
+        "status": "planned",
+        "startDate": "2026-08-28",
+        "endDate": "2026-09-01",
+        "source": "master route sketch",
+        "note": "Rest, swimming, Red Sea base before returning toward Europe/Africa routing.",
+        "transportIn": "카이로 -> 다합",
+        "transportOut": "항공 후보: 이집트 -> 모로코/이탈리아",
+        "schengen": False,
+        "lat": 28.5097,
+        "lng": 34.5134,
+    },
+    {
+        "city": "Morocco",
+        "country": "Morocco",
+        "status": "planned",
+        "startDate": "2026-09-01",
+        "endDate": "2026-09-06",
+        "source": "Schengen buffer plan",
+        "note": "Non-Schengen side trip used as Schengen buffer before Iberia.",
+        "transportIn": "항공 후보: 이집트/이탈리아 -> 모로코",
+        "transportOut": "항공/페리 후보: 모로코 -> 포르투갈/스페인",
+        "schengen": False,
+        "lat": 31.6295,
+        "lng": -7.9811,
+    },
+    {
+        "city": "Portugal",
+        "country": "Portugal",
+        "status": "planned",
+        "startDate": "2026-09-06",
+        "endDate": "2026-09-14",
+        "source": "master route sketch",
+        "note": "Portugal west-Europe leg; pacing and city choices still flexible.",
+        "transportIn": "모로코 -> 포르투갈/스페인",
+        "transportOut": "육로/항공: 포르투갈 -> 스페인",
+        "schengen": True,
+        "lat": 38.7223,
+        "lng": -9.1393,
+    },
+    {
+        "city": "Spain",
+        "country": "Spain",
+        "status": "planned",
+        "startDate": "2026-09-14",
+        "endDate": "2026-09-26",
+        "source": "master route sketch / wishlist",
+        "note": "Barcelona, Bilbao/Guggenheim candidates; Sagrada Familia prebooking needed.",
+        "transportIn": "포르투갈 -> 스페인",
+        "transportOut": "육로/항공: 스페인 -> 남프랑스",
+        "schengen": True,
+        "lat": 41.3874,
+        "lng": 2.1686,
+    },
+    {
+        "city": "Southern France / Paris",
+        "country": "France",
+        "status": "planned",
+        "startDate": "2026-09-26",
+        "endDate": "2026-10-07",
+        "source": "master route sketch / wishlist",
+        "note": "Lyon Biennale, Paris, Louvre, Pompidou, possible Mont-Saint-Michel.",
+        "transportIn": "스페인 -> 프랑스",
+        "transportOut": "열차/항공: 프랑스 -> 이탈리아/스위스",
+        "schengen": True,
+        "lat": 48.8566,
+        "lng": 2.3522,
+    },
+    {
+        "city": "Northern Italy / Switzerland",
+        "country": "Italy / Switzerland",
+        "status": "planned",
+        "startDate": "2026-10-07",
+        "endDate": "2026-10-18",
+        "source": "master route sketch",
+        "note": "Northern Italy, possible Dolomites, Switzerland, then back toward France/UK.",
+        "transportIn": "프랑스 -> 이탈리아/스위스",
+        "transportOut": "열차/항공: 스위스/프랑스 -> 런던",
+        "schengen": True,
+        "lat": 45.4642,
+        "lng": 9.19,
+    },
+    {
+        "city": "France Revisit",
+        "country": "France",
+        "status": "planned",
+        "startDate": "2026-10-18",
+        "endDate": "2026-10-23",
+        "source": "master route sketch",
+        "note": "Buffer before UK; use for Paris, Normandy, or cheaper London connection.",
+        "transportIn": "스위스/이탈리아 -> 프랑스",
+        "transportOut": "열차/항공: 프랑스 -> 런던",
+        "schengen": True,
+        "lat": 48.8566,
+        "lng": 2.3522,
+    },
+    {
+        "city": "London",
+        "country": "United Kingdom",
+        "status": "planned",
+        "startDate": "2026-10-23",
+        "endDate": "2026-10-27",
+        "source": "Schengen buffer plan / wishlist",
+        "note": "UK break; Tate Modern and Hatchards are wishlist anchors.",
+        "transportIn": "프랑스/스위스 -> 런던",
+        "transportOut": "항공 후보: 런던 -> 코펜하겐",
+        "schengen": False,
+        "lat": 51.5072,
+        "lng": -0.1276,
+    },
+    {
+        "city": "Copenhagen",
+        "country": "Denmark",
+        "status": "planned",
+        "startDate": "2026-10-27",
+        "endDate": "2026-10-30",
+        "source": "wishlist",
+        "note": "Royal Library, Glyptotek, HAY House; short final Schengen leg.",
+        "transportIn": "런던 -> 코펜하겐",
+        "transportOut": "항공 후보: 코펜하겐 -> 레이캬비크",
+        "schengen": True,
+        "lat": 55.6761,
+        "lng": 12.5683,
+    },
+    {
+        "city": "Reykjavik",
+        "country": "Iceland",
+        "status": "planned",
+        "startDate": "2026-10-30",
+        "endDate": "2026-11-02",
+        "source": "master route sketch",
+        "note": "Iceland finale before Americas; aurora hunting is optional.",
+        "transportIn": "코펜하겐 -> 레이캬비크",
+        "transportOut": "장거리 항공: 아이슬란드 -> 미국",
+        "schengen": True,
+        "lat": 64.1466,
+        "lng": -21.9426,
+    },
+    {
+        "city": "New York",
+        "country": "United States",
+        "status": "planned",
+        "startDate": "2026-11-02",
+        "endDate": "2026-11-09",
+        "source": "master route sketch / wishlist",
+        "note": "MoMA, Guggenheim, Central Park; possible Peabody Library side trip.",
+        "transportIn": "아이슬란드 -> 뉴욕",
+        "transportOut": "미국 국내 이동: 뉴욕 -> 라스베이거스/로스앤젤레스",
+        "schengen": False,
+        "lat": 40.7128,
+        "lng": -74.006,
+    },
+    {
+        "city": "Las Vegas / Los Angeles",
+        "country": "United States",
+        "status": "planned",
+        "startDate": "2026-11-09",
+        "endDate": "2026-11-18",
+        "source": "master route sketch",
+        "note": "Western US leg; stamina and flight price should decide exact split.",
+        "transportIn": "미국 국내 이동",
+        "transportOut": "장거리 항공: 미국 -> 페루",
+        "schengen": False,
+        "lat": 34.0522,
+        "lng": -118.2437,
+    },
+    {
+        "city": "Peru",
+        "country": "Peru",
+        "status": "planned",
+        "startDate": "2026-11-18",
+        "endDate": "2026-11-28",
+        "source": "wishlist",
+        "note": "Machu Picchu / Cusco region candidate; altitude pacing needed.",
+        "transportIn": "미국 -> 리마/쿠스코",
+        "transportOut": "육로/항공: 페루 -> 볼리비아",
+        "schengen": False,
+        "lat": -13.5319,
+        "lng": -71.9675,
+    },
+    {
+        "city": "Bolivia",
+        "country": "Bolivia",
+        "status": "planned",
+        "startDate": "2026-11-28",
+        "endDate": "2026-12-06",
+        "source": "wishlist",
+        "note": "Uyuni is the main anchor; altitude and night bus fatigue need care.",
+        "transportIn": "페루 -> 볼리비아",
+        "transportOut": "육로/항공: 볼리비아 -> 아르헨티나",
+        "schengen": False,
+        "lat": -20.1338,
+        "lng": -67.4891,
+    },
+    {
+        "city": "Argentina",
+        "country": "Argentina",
+        "status": "planned",
+        "startDate": "2026-12-06",
+        "source": "master route sketch",
+        "note": "Final South America block; exact return date still open.",
+        "transportIn": "볼리비아 -> 아르헨티나",
+        "transportOut": "귀국편 TBD",
+        "schengen": False,
+        "lat": -34.6037,
+        "lng": -58.3816,
     },
 ]
 
@@ -471,13 +773,49 @@ SCHENGEN_PROJECTION_SEGMENTS = [
 ]
 
 CATEGORY_RULES = [
-    ("transport", ["티머니", "지하철", "버스", "택시", "uber", "bolt", "rail", "train", "항공", "flight", "ferry", "db vertrieb", "deutsche bahn", "bahn", "ice"]),
+    ("transport", ["티머니", "지하철", "버스", "택시", "uber", "bolt", "rail", "train", "항공", "flight", "ferry", "flix", "flixbus", "db vertrieb", "deutsche bahn", "bahn", "ice"]),
+    ("visa", ["esta", "eta", "ukvi", "uscustoms", "visa", "비자"]),
     ("food", ["찌개", "식당", "restaurant", "food", "김밥", "국밥", "맥도날드", "버거", "분식", "고기"]),
     ("cafe", ["카페", "coffee", "커피", "스타벅스", "투썸", "밀크바", "bakery", "베이커리"]),
     ("groceries", ["마트", "이마트", "홈플러스", "편의점", "cu", "gs25", "세븐", "리테일"]),
     ("stay", ["숙소", "hotel", "hostel", "airbnb", "booking", "agoda", "호텔", "호스텔"]),
     ("gear", ["무신사", "쿠팡", "다이소", "올리브영", "전자", "gear"]),
 ]
+
+PREPARATION = {
+    "source": "Notion · 여행 준비 / TO DO / TO BUY",
+    "updatedAt": "2026-07-04",
+    "summary": {
+        "packingTotal": 82,
+        "packingChecked": 56,
+        "packingReady": 58,
+        "toDoDone": 13,
+        "toDoTotal": 30,
+        "toBuyDone": 26,
+        "toBuyTotal": 30,
+    },
+    "urgentTasks": [
+        {"task": "해외 eSIM 구매", "group": "통신", "status": "pending"},
+        {"task": "여행자보험 가입", "group": "서류", "status": "pending"},
+        {"task": "여권 사본 3-4장 프린트", "group": "서류", "status": "pending"},
+        {"task": "베를린 교통권/패스 결정", "group": "교통", "status": "pending"},
+        {"task": "남유럽 항공권 3구간 예약", "group": "항공", "status": "pending"},
+    ],
+    "openPurchases": [
+        {"item": "지르텍", "category": "비상약"},
+        {"item": "웨딩사진용 베일", "category": "패션"},
+        {"item": "해외 eSIM", "category": "통신"},
+        {"item": "성호 바람막이", "category": "패션"},
+        {"item": "인스타 360 고 울트라", "category": "전자기기"},
+    ],
+    "recentReady": [
+        "카메라 장비",
+        "데이터 백업 장비",
+        "비상약 대부분",
+        "국제면허증",
+        "황열병 예방접종",
+    ],
+}
 
 MANUAL_TRAVEL_EXPENSES = [
     {
@@ -536,6 +874,39 @@ MANUAL_TRAVEL_EXPENSES = [
         "source": "telegram:433493318/message/10729",
     },
     {
+        "id": "manual-transport-2026-07-02-flixbus-budapest-zagreb",
+        "date": "2026-07-02",
+        "time": "",
+        "amount": 156361,
+        "merchant": "FlixBus · Budapest -> Zagreb",
+        "category": "transport",
+        "location": "Budapest / Zagreb",
+        "travel": True,
+        "source": "Notion TO DO",
+    },
+    {
+        "id": "manual-transport-2026-07-02-flixbus-zagreb-plitvice",
+        "date": "2026-07-02",
+        "time": "",
+        "amount": 74534,
+        "merchant": "FlixBus · Zagreb -> Plitvice",
+        "category": "transport",
+        "location": "Zagreb / Plitvice",
+        "travel": True,
+        "source": "Notion TO DO",
+    },
+    {
+        "id": "manual-stay-2026-07-04-plitvice-airbnb",
+        "date": "2026-07-04",
+        "time": "",
+        "amount": 190000,
+        "merchant": "Plitvice Airbnb",
+        "category": "stay",
+        "location": "Plitvice",
+        "travel": True,
+        "source": "Notion TO DO",
+    },
+    {
         "id": "manual-shopping-2026-06-07-international-license",
         "date": "2026-06-07",
         "time": "",
@@ -545,6 +916,272 @@ MANUAL_TRAVEL_EXPENSES = [
         "location": "여행 준비",
         "travel": True,
         "source": "telegram:433493318/message/10729",
+    },
+    {
+        "id": "manual-shopping-2026-06-14-hottracks",
+        "date": "2026-06-14",
+        "time": "",
+        "amount": 110000,
+        "merchant": "핫트랙스 · 여행 준비",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-shopping-2026-06-14-nua-customs",
+        "date": "2026-06-14",
+        "time": "",
+        "amount": 44139,
+        "merchant": "누아옷 관세",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-shopping-2026-06-15-naver-physiogel",
+        "date": "2026-06-15",
+        "time": "",
+        "amount": 23520,
+        "merchant": "네이버페이 · 피지오겔크림",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-shopping-2026-06-15-coupang-tripod-card-soap",
+        "date": "2026-06-15",
+        "time": "",
+        "amount": 30410,
+        "merchant": "쿠팡 · 삼각대/소니 SD카드/도브비누",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-shopping-2026-06-16-naverpay",
+        "date": "2026-06-16",
+        "time": "",
+        "amount": 64850,
+        "merchant": "네이버페이 · 여행 준비",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-shopping-2026-06-16-coupang-drive-case-sd-card",
+        "date": "2026-06-16",
+        "time": "",
+        "amount": 100750,
+        "merchant": "쿠팡 · 외장하드케이스/SD카드 256G",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-shopping-2026-06-16-hottracks-sd-card-phone-case",
+        "date": "2026-06-16",
+        "time": "",
+        "amount": 130000,
+        "merchant": "핫트랙스 · SD카드 256G/휴대폰케이스",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-medical-2026-06-18-vaccination",
+        "date": "2026-06-18",
+        "time": "",
+        "amount": 680000,
+        "merchant": "여행 의료비",
+        "category": "medical",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-shopping-2026-06-24-airtag-soap-case",
+        "date": "2026-06-24",
+        "time": "",
+        "amount": 66000,
+        "merchant": "에어태그/비누케이스",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-shopping-2026-06-25-windbreaker",
+        "date": "2026-06-25",
+        "time": "",
+        "amount": 200000,
+        "merchant": "바람막이",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/12071",
+    },
+    {
+        "id": "manual-card-2026-07-08-naverpay",
+        "date": "2026-07-08",
+        "time": "09:28",
+        "amount": 40250,
+        "merchant": "네이버페이",
+        "category": "gear",
+        "location": "여행 준비",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-09-frankfurt-hbf",
+        "date": "2026-07-09",
+        "time": "13:59",
+        "amount": 8151,
+        "merchant": "Frankfurt (Main) Hbf",
+        "category": "transport",
+        "location": "Frankfurt",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-09-metzgerei-brueder-ullm",
+        "date": "2026-07-09",
+        "time": "15:27",
+        "amount": 10975,
+        "merchant": "Metzgerei Brueder Ullm",
+        "category": "food",
+        "location": "Frankfurt",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-09-backerei-huck",
+        "date": "2026-07-09",
+        "time": "15:30",
+        "amount": 4857,
+        "merchant": "BACKEREI+KONDITOREI HUCK",
+        "category": "food",
+        "location": "Frankfurt",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-09-ayse-yikit",
+        "date": "2026-07-09",
+        "time": "15:31",
+        "amount": 8713,
+        "merchant": "Ayse Yikit",
+        "category": "food",
+        "location": "Frankfurt",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-10-aldi-sued",
+        "date": "2026-07-10",
+        "time": "17:47",
+        "amount": 14698,
+        "merchant": "ALDI SUED",
+        "category": "groceries",
+        "location": "Cologne",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-11-db-vertrieb-0200",
+        "date": "2026-07-11",
+        "time": "02:00",
+        "amount": 33459,
+        "merchant": "DB Vertrieb GmbH",
+        "category": "transport",
+        "location": "Germany",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-11-db-vertrieb-0210",
+        "date": "2026-07-11",
+        "time": "02:10",
+        "amount": 33459,
+        "merchant": "DB Vertrieb GmbH",
+        "category": "transport",
+        "location": "Germany",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-11-mggs-gastronomie",
+        "date": "2026-07-11",
+        "time": "04:00",
+        "amount": 74604,
+        "merchant": "SumUp *MGGS Gastronomie",
+        "category": "food",
+        "location": "Cologne",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-12-shoppopulaire",
+        "date": "2026-07-12",
+        "time": "23:51",
+        "amount": 17437,
+        "merchant": "ShopPopulaire c/omuse-sto",
+        "category": "other",
+        "location": "Berlin",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-14-zagros",
+        "date": "2026-07-14",
+        "time": "19:30",
+        "amount": 53625,
+        "merchant": "LS Zagros Gemuesekebap",
+        "category": "food",
+        "location": "Berlin",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-14-nyx-photoautomat",
+        "date": "2026-07-14",
+        "time": "21:29",
+        "amount": 6920,
+        "merchant": "NYX*Photoautomat",
+        "category": "other",
+        "location": "Berlin",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
+    },
+    {
+        "id": "manual-card-2026-07-14-rewe",
+        "date": "2026-07-14",
+        "time": "22:03",
+        "amount": 1964,
+        "merchant": "REWE Markt GmbH-Zw",
+        "category": "groceries",
+        "location": "Berlin",
+        "travel": True,
+        "source": "telegram:433493318/message/1339",
+        "note": "Added from updated card approval list.",
     },
 ]
 
@@ -557,6 +1194,8 @@ TRAVEL_MERCHANT_WORDS = [
     "항공",
     "flight",
     "ferry",
+    "flix",
+    "flixbus",
     "rail",
     "train",
     "db vertrieb",
@@ -565,6 +1204,11 @@ TRAVEL_MERCHANT_WORDS = [
     "jadrolinija",
     "ryanair",
     "ita airways",
+    "uscustoms",
+    "esta",
+    "ukvi",
+    "etaweb",
+    "visa",
 ]
 
 TRAVEL_PAYMENT_OVERRIDES = [
@@ -585,6 +1229,15 @@ TRAVEL_PAYMENT_OVERRIDES = [
         "note": "Mapped from 하나투어/온라인 payment",
     },
     {
+        "date": "2026-06-08",
+        "match": "Airbnb - 엔에이치엔케이씨피",
+        "amount": 330041,
+        "merchant": "Cologne · Schiltz Airbnb",
+        "category": "stay",
+        "location": "Cologne",
+        "note": "Mapped from the June Airbnb payment to the Cologne stay.",
+    },
+    {
         "date": "2026-06-13",
         "match": "DB Vertrieb GmbH",
         "amount": 113702,
@@ -601,6 +1254,87 @@ TRAVEL_PAYMENT_OVERRIDES = [
         "category": "transport",
         "location": "Berlin → Prague",
         "note": "User corrected this payment as Berlin -> Prague.",
+    },
+    {
+        "date": "2026-06-18",
+        "match": "regiojet.cz",
+        "amount": 70446,
+        "merchant": "RegioJet · Prague → Vienna",
+        "category": "transport",
+        "location": "Prague → Vienna",
+        "note": "Mapped from RegioJet booking confirmed in travel handover.",
+    },
+    {
+        "date": "2026-06-18",
+        "match": "regiojet.cz",
+        "amount": 59720,
+        "merchant": "RegioJet · Vienna → Budapest",
+        "category": "transport",
+        "location": "Vienna → Budapest",
+        "note": "Mapped from RegioJet booking logged on the same booking session.",
+    },
+    {
+        "date": "2026-06-18",
+        "match": "regiojet.cz",
+        "amount": 21450,
+        "merchant": "RegioJet · Vienna → Budapest add-on",
+        "category": "transport",
+        "location": "Vienna → Budapest",
+        "note": "Second RegioJet charge from the same Vienna -> Budapest booking session.",
+    },
+    {
+        "date": "2026-06-18",
+        "match": "DB Vertrieb GmbH",
+        "amount": 19665,
+        "merchant": "DB · Berlin → Prague seat reservation",
+        "category": "transport",
+        "location": "Berlin → Prague",
+        "note": "Mapped as the later Berlin -> Prague seat reservation charge.",
+    },
+    {
+        "date": "2026-06-30",
+        "match": "USCUSTOMS ESTA APPL PMT",
+        "amount": 62788,
+        "merchant": "US ESTA application",
+        "category": "visa",
+        "location": "여행 준비",
+        "note": "US ESTA fee treated as travel document cost.",
+    },
+    {
+        "date": "2026-06-30",
+        "match": "UKVI ETAWEB",
+        "amount": 42909,
+        "merchant": "UK ETA application",
+        "category": "visa",
+        "location": "여행 준비",
+        "note": "UK ETA fee treated as travel document cost.",
+    },
+    {
+        "date": "2026-07-15",
+        "match": "ALBERT VAM DEKUJE",
+        "amount": 1269,
+        "merchant": "ALBERT VAM DEKUJE",
+        "category": "groceries",
+        "location": "Prague",
+        "note": "Prague grocery charge from updated card approval list.",
+    },
+    {
+        "date": "2026-07-15",
+        "match": "DPP - Nadrazi Holesovi",
+        "amount": 5560,
+        "merchant": "DPP - Nadrazi Holesovi",
+        "category": "transport",
+        "location": "Prague",
+        "note": "Prague public transport charge from updated card approval list.",
+    },
+    {
+        "date": "2026-07-15",
+        "match": "AIRBNB * HMZ59JR8CZ",
+        "amount": 360690,
+        "merchant": "AIRBNB * HMZ59JR8CZ",
+        "category": "stay",
+        "location": "Prague",
+        "note": "Prague Airbnb charge from updated card approval list.",
     },
 ]
 
@@ -696,6 +1430,28 @@ def travel_payment_override(day, merchant, amount=None):
     return None
 
 
+def expense_dedupe_key(expense):
+    return (
+        expense.get("date") or "",
+        expense.get("time") or "",
+        int(expense.get("amount") or 0),
+        normalize_match_text(expense.get("merchant")),
+        expense.get("category") or "",
+    )
+
+
+def dedupe_expenses(expenses):
+    seen = set()
+    deduped = []
+    for expense in expenses:
+        key = expense_dedupe_key(expense)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(expense)
+    return deduped
+
+
 def normalize_match_text(value):
     return re.sub(r"[^0-9a-z가-힣]+", "", (value or "").lower())
 
@@ -733,6 +1489,74 @@ def route_with_mapped_amounts(travel_expenses):
             item["amount"] = mapped_amount
         route.append(item)
     return route
+
+
+def current_route_stop(route, today):
+    current = None
+    for stop in route:
+        start = date.fromisoformat(stop["startDate"])
+        end = date.fromisoformat(stop.get("endDate") or stop["startDate"])
+        if start <= today <= end:
+            current = stop
+    if current:
+        return current
+    past = [stop for stop in route if date.fromisoformat(stop["startDate"]) <= today]
+    if past:
+        return past[-1]
+    return route[0] if route else None
+
+
+def country_for_expense(expense, route):
+    raw_location = (expense.get("location") or "").strip()
+    if raw_location == "여행 준비":
+        return "여행 준비"
+
+    expense_amount = expense.get("amount")
+    if expense_amount:
+        for stop in route:
+            known_amounts = [
+                stop.get("amount"),
+                stop.get("journeyAmount"),
+                (stop.get("transportInPayment") or {}).get("amount"),
+                (stop.get("transportOutPayment") or {}).get("amount"),
+            ]
+            if expense_amount in known_amounts:
+                return stop["country"]
+
+    expense_date = expense.get("date")
+    if expense_date:
+        day = date.fromisoformat(expense_date)
+        for stop in route:
+            start = date.fromisoformat(stop["startDate"])
+            end = date.fromisoformat(stop.get("endDate") or stop["startDate"])
+            if start <= day <= end:
+                return stop["country"]
+
+    if raw_location:
+        normalized = normalize_match_text(f"{raw_location} {expense.get('merchant') or ''}")
+        for stop in route:
+            if normalize_match_text(stop.get("city")) in normalized:
+                return stop["country"]
+            if normalize_match_text(stop.get("country")) in normalized:
+                return stop["country"]
+    return "국가 미확인 예약"
+
+
+def country_category_totals(travel_expenses, route):
+    totals = defaultdict(lambda: defaultdict(int))
+    for expense in travel_expenses:
+        country = country_for_expense(expense, route)
+        totals[country][expense["category"]] += expense["amount"]
+
+    rows = []
+    for country, categories in totals.items():
+        total = sum(categories.values())
+        rows.append({
+            "country": country,
+            "total": total,
+            "categories": dict(sorted(categories.items(), key=lambda item: item[1], reverse=True)),
+        })
+    return sorted(rows, key=lambda item: item["total"], reverse=True)
 
 
 def clean_location(location):
@@ -978,6 +1802,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             })
 
     expenses.extend(dict(expense) for expense in MANUAL_TRAVEL_EXPENSES)
+    expenses = dedupe_expenses(expenses)
     travel_expenses = [expense for expense in expenses if expense["travel"]]
     route = route_with_mapped_amounts(travel_expenses)
 
@@ -988,12 +1813,17 @@ def build(events, geocode_cache=None, geocode_enabled=True):
     for expense in travel_expenses:
         travel_category_totals[expense["category"]] += expense["amount"]
 
-    latest_location = next((clean_location(event.get("location")) for event in reversed(raw_events) if event.get("location")), None)
-    latest_location = latest_location or "Frankfurt, Germany"
     travel_spend = sum(expense["amount"] for expense in travel_expenses)
     total_spend = travel_spend
     latest_day = raw_events[-1].get("startLocal", "")[:10] if raw_events else date.today().isoformat()
     today = date.fromisoformat(latest_day)
+    current_stop = current_route_stop(route, today)
+    latest_location = (
+        f"{current_stop['city']}, {current_stop['country']}"
+        if current_stop
+        else next((clean_location(event.get("location")) for event in reversed(raw_events) if event.get("location")), None)
+    )
+    current_location_label = current_stop["city"] if current_stop else (public_location_label(latest_location) or latest_location)
     travel_dates = [date.fromisoformat(expense["date"]) for expense in travel_expenses if expense.get("date")]
     first_travel_date = min(travel_dates).isoformat() if travel_dates else None
     days_since_first_travel_expense = ((today - min(travel_dates)).days + 1) if travel_dates else 0
@@ -1066,11 +1896,12 @@ def build(events, geocode_cache=None, geocode_enabled=True):
         },
         "current": {
             "date": latest_day,
-            "location": public_location_label(latest_location) or latest_location,
-            "mapQuery": public_location_label(latest_location) or latest_location,
+            "location": current_location_label,
+            "mapQuery": latest_location,
         },
         "categoryTotals": dict(sorted(category_totals.items(), key=lambda item: item[1], reverse=True)),
         "travelCategoryTotals": dict(sorted(travel_category_totals.items(), key=lambda item: item[1], reverse=True)),
+        "countryCategoryTotals": country_category_totals(travel_expenses, route),
         "dailyTotals": [{"date": day, "amount": amount} for day, amount in sorted(daily_total.items())],
         "bookedCosts": booked_costs,
         "travelExpenses": sorted(travel_expenses, key=lambda item: (item["date"], item["time"]), reverse=True),

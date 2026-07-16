@@ -422,16 +422,29 @@
       .led-amt { font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .led-empty { color: var(--faint); font-size: 13px; padding: 8px 0; }
       .country-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-      .country-card { display: grid; gap: 12px; padding: 16px; border-radius: var(--r-md); background: var(--surface-2); }
+      .country-card { display: grid; gap: 12px; padding: 16px; border: 1px solid transparent; border-radius: var(--r-md); background: var(--surface-2); }
+      .country-card[open] { border-color: color-mix(in srgb, var(--ink) 12%, transparent); background: color-mix(in srgb, var(--surface-2) 86%, white); }
+      .country-card summary { display: grid; gap: 12px; cursor: pointer; list-style: none; }
+      .country-card summary::-webkit-details-marker { display: none; }
       .country-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
       .country-top b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 17px; }
       .country-top span { flex: 0 0 auto; color: var(--ink); font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .country-top b::after { content: "보기"; display: inline-flex; margin-left: 8px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; vertical-align: 2px; }
+      .country-card[open] .country-top b::after { content: "닫기"; }
       .country-bars { display: grid; gap: 8px; }
       .country-line { display: grid; grid-template-columns: minmax(58px, 0.7fr) minmax(80px, 1.6fr) minmax(62px, 0.8fr); align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
       .country-line .label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .country-line .bar { height: 6px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--ink) 8%, transparent); }
       .country-line .bar span { display: block; width: 0%; height: 100%; border-radius: inherit; transition: width 900ms cubic-bezier(.2,.8,.2,1); }
       .country-line .amt { justify-self: end; color: var(--ink); font-variant-numeric: tabular-nums; }
+      .country-detail { display: grid; gap: 0; margin-top: 2px; border-top: 1px solid var(--line); }
+      .country-expense { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 11px 0; border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent); }
+      .country-expense:first-child { border-top: 0; }
+      .country-expense .date { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+      .country-expense .name { min-width: 0; overflow-wrap: anywhere; font-size: 12.5px; font-weight: 650; }
+      .country-expense .sub { margin-top: 3px; color: var(--muted); font-size: 11px; }
+      .country-expense .amount { white-space: nowrap; font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .country-more { padding: 10px 0 0; color: var(--faint); font-size: 11px; text-align: right; }
 
       /* budget */
       .budget-figure {
@@ -1595,26 +1608,85 @@
 
       function renderCountrySpend(data) {
         const countries = data.countryCategoryTotals || [];
+        const expenses = ((data.travelExpenses && data.travelExpenses.length ? data.travelExpenses : data.expenses) || []).filter((e) => e.travel !== false);
+        const route = data.route || [];
+        const normalize = (value) => String(value || "").toLowerCase().replace(/[^a-z0-9가-힣]+/g, "");
+        const expenseCountry = (expense) => {
+          if (expense.country) return expense.country;
+          if ((expense.location || "").trim() === "여행 준비") return "여행 준비";
+          const amount = Number(expense.amount || 0);
+          if (amount) {
+            for (const stop of route) {
+              const knownAmounts = [
+                stop.amount,
+                stop.journeyAmount,
+                stop.transportInPayment?.amount,
+                stop.transportOutPayment?.amount
+              ].map(Number).filter(Boolean);
+              if (knownAmounts.includes(amount)) return stop.country;
+            }
+          }
+          if (expense.date) {
+            const day = new Date(`${expense.date}T00:00:00+09:00`);
+            for (const stop of route) {
+              if (!stop.startDate) continue;
+              const start = new Date(`${stop.startDate}T00:00:00+09:00`);
+              const end = new Date(`${stop.endDate || stop.startDate}T00:00:00+09:00`);
+              if (start <= day && day <= end) return stop.country;
+            }
+          }
+          const locationKey = normalize(`${expense.location || ""} ${expense.merchant || ""}`);
+          if (locationKey) {
+            for (const stop of route) {
+              if (normalize(stop.city) && locationKey.includes(normalize(stop.city))) return stop.country;
+              if (normalize(stop.country) && locationKey.includes(normalize(stop.country))) return stop.country;
+            }
+          }
+          return "국가 미확인 예약";
+        };
+        const expensesByCountry = expenses.reduce((acc, expense) => {
+          const country = expenseCountry(expense) || "여행 준비";
+          (acc[country] ||= []).push(expense);
+          return acc;
+        }, {});
+        Object.values(expensesByCountry).forEach((rows) => rows.sort((a, b) => `${b.date || ""} ${b.time || ""}`.localeCompare(`${a.date || ""} ${a.time || ""}`)));
         const grandTotal = countries.reduce((sum, row) => sum + Number(row.total || 0), 0);
         $("countrySpendMeta").textContent = `${countries.length} countries · ${manWon(grandTotal)}원`;
         $("countrySpend").innerHTML = countries.length ? countries.map((row) => {
           const categories = Object.entries(row.categories || {}).slice(0, 5);
           const max = Math.max(...categories.map(([, amount]) => Number(amount || 0)), 1);
+          const detailRows = (expensesByCountry[row.country] || []).slice(0, 12);
+          const moreCount = Math.max(0, (expensesByCountry[row.country] || []).length - detailRows.length);
           return `
-            <div class="country-card">
-              <div class="country-top"><b>${escapeHtml(row.country || "Unmapped")}</b><span>${manWon(row.total)}원</span></div>
-              <div class="country-bars">
-                ${categories.map(([category, amount]) => `
-                  <div class="country-line">
-                    <span class="label">${escapeHtml(catNames[category] || category)}</span>
-                    <span class="bar"><span data-w="${Math.round((Number(amount || 0) / max) * 100)}" style="background:${catColor[category] || "#9a9a9a"}"></span></span>
-                    <span class="amt">${manWon(amount)}원</span>
+            <details class="country-card">
+              <summary>
+                <div class="country-top"><b>${escapeHtml(row.country || "Unmapped")}</b><span>${manWon(row.total)}원</span></div>
+                <div class="country-bars">
+                  ${categories.map(([category, amount]) => `
+                    <div class="country-line">
+                      <span class="label">${escapeHtml(catNames[category] || category)}</span>
+                      <span class="bar"><span data-w="${Math.round((Number(amount || 0) / max) * 100)}" style="background:${catColor[category] || "#9a9a9a"}"></span></span>
+                      <span class="amt">${manWon(amount)}원</span>
+                    </div>
+                  `).join("")}
+                </div>
+              </summary>
+              <div class="country-detail">
+                ${detailRows.length ? detailRows.map((expense) => `
+                  <div class="country-expense">
+                    <span class="date">${escapeHtml((expense.date || "").slice(5).replace("-", "."))}</span>
+                    <div>
+                      <div class="name">${escapeHtml(maskMerchant(expense.merchant))}</div>
+                      <div class="sub">${escapeHtml([expense.location, catNames[expense.category] || expense.category, expense.note].filter(Boolean).join(" · "))}</div>
+                    </div>
+                    <span class="amount">${won(expense.amount)}</span>
                   </div>
-                `).join("")}
+                `).join("") : `<div class="country-expense"><span class="date">—</span><div><div class="name">상세 지출 없음</div></div><span class="amount">0원</span></div>`}
+                ${moreCount ? `<div class="country-more">외 ${moreCount}건 더 있음</div>` : ""}
               </div>
-            </div>
+            </details>
           `;
-        }).join("") : `<div class="country-card"><div class="country-top"><b>지출 없음</b><span>0원</span></div></div>`;
+        }).join("") : `<details class="country-card"><summary><div class="country-top"><b>지출 없음</b><span>0원</span></div></summary></details>`;
         requestAnimationFrame(() => document.querySelectorAll(".country-line .bar span[data-w]").forEach((el) => { el.style.width = `${el.dataset.w}%`; }));
       }
 

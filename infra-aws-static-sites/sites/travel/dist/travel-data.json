@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-15T14:40:02.305352+00:00",
+  "generatedAt": "2026-07-16T00:52:26.626495+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,14 +8,14 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 6895115,
-    "travelLoggedKrw": 6895115,
-    "remainingMinKrw": 23104885,
-    "remainingMaxKrw": 33104885,
-    "reservedPctMin": 23.0,
+    "loggedKrw": 5333530,
+    "travelLoggedKrw": 5333530,
+    "remainingMinKrw": 24666470,
+    "remainingMaxKrw": 34666470,
+    "reservedPctMin": 17.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 101399,
+    "reserveBurnKrw": 78434,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
@@ -26,9 +26,9 @@
     "mapQuery": "Prague, Czechia"
   },
   "categoryTotals": {
-    "stay": 2899805,
+    "stay": 1569115,
     "gear": 1446349,
-    "transport": 1024948,
+    "transport": 794053,
     "medical": 680000,
     "other": 451796,
     "visa": 211394,
@@ -36,9 +36,9 @@
     "groceries": 28049
   },
   "travelCategoryTotals": {
-    "stay": 2899805,
+    "stay": 1569115,
     "gear": 1446349,
-    "transport": 1024948,
+    "transport": 794053,
     "medical": 680000,
     "other": 451796,
     "visa": 211394,
@@ -56,14 +56,6 @@
       }
     },
     {
-      "country": "국가 미확인 예약",
-      "total": 2034546,
-      "categories": {
-        "stay": 1840905,
-        "transport": 193641
-      }
-    },
-    {
       "country": "Germany",
       "total": 1363285,
       "categories": {
@@ -75,27 +67,35 @@
       }
     },
     {
-      "country": "Czechia",
-      "total": 523226,
+      "country": "Austria",
+      "total": 497274,
       "categories": {
-        "stay": 360690,
-        "transport": 161267,
-        "groceries": 1269
+        "stay": 345658,
+        "transport": 151616
       }
     },
     {
       "country": "Croatia",
-      "total": 264534,
+      "total": 383147,
       "categories": {
-        "stay": 190000,
-        "transport": 74534
+        "transport": 193641,
+        "stay": 189506
+      }
+    },
+    {
+      "country": "Czechia",
+      "total": 324226,
+      "categories": {
+        "stay": 232136,
+        "transport": 90821,
+        "groceries": 1269
       }
     },
     {
       "country": "Hungary",
-      "total": 156361,
+      "total": 293605,
       "categories": {
-        "transport": 156361
+        "stay": 293605
       }
     },
     {
@@ -105,20 +105,9 @@
         "stay": 94000,
         "other": 40250
       }
-    },
-    {
-      "country": "Austria",
-      "total": 81170,
-      "categories": {
-        "transport": 81170
-      }
     }
   ],
   "dailyTotals": [
-    {
-      "date": "2026-05-23",
-      "amount": 780000
-    },
     {
       "date": "2026-05-29",
       "amount": 171132
@@ -177,7 +166,7 @@
     },
     {
       "date": "2026-07-15",
-      "amount": 367519
+      "amount": 6829
     }
   ],
   "bookedCosts": [
@@ -218,7 +207,7 @@
       "id": "manual-stay-prague",
       "date": "2026-07-14",
       "time": "",
-      "amount": 220000,
+      "amount": 232136,
       "merchant": "Prague · Central Station Airbnb",
       "category": "stay",
       "location": "Prague",
@@ -229,7 +218,7 @@
       "id": "manual-stay-vienna",
       "date": "2026-07-17",
       "time": "",
-      "amount": 330000,
+      "amount": 345658,
       "merchant": "Vienna · Airbnb",
       "category": "stay",
       "location": "Vienna",
@@ -240,7 +229,7 @@
       "id": "manual-stay-budapest",
       "date": "2026-07-20",
       "time": "",
-      "amount": 300000,
+      "amount": 293605,
       "merchant": "Budapest · Airbnb",
       "category": "stay",
       "location": "Budapest",
@@ -312,39 +301,6 @@
       "location": "여행 준비",
       "travel": true,
       "source": "telegram:433493318/message/10729"
-    },
-    {
-      "id": "manual-transport-2026-07-02-flixbus-budapest-zagreb",
-      "date": "2026-07-02",
-      "time": "",
-      "amount": 156361,
-      "merchant": "FlixBus · Budapest -> Zagreb",
-      "category": "transport",
-      "location": "Budapest / Zagreb",
-      "travel": true,
-      "source": "Notion TO DO"
-    },
-    {
-      "id": "manual-transport-2026-07-02-flixbus-zagreb-plitvice",
-      "date": "2026-07-02",
-      "time": "",
-      "amount": 74534,
-      "merchant": "FlixBus · Zagreb -> Plitvice",
-      "category": "transport",
-      "location": "Zagreb / Plitvice",
-      "travel": true,
-      "source": "Notion TO DO"
-    },
-    {
-      "id": "manual-stay-2026-07-04-plitvice-airbnb",
-      "date": "2026-07-04",
-      "time": "",
-      "amount": 190000,
-      "merchant": "Plitvice Airbnb",
-      "category": "stay",
-      "location": "Plitvice",
-      "travel": true,
-      "source": "Notion TO DO"
     },
     {
       "id": "manual-shopping-2026-06-07-international-license",
@@ -626,16 +582,6 @@
   ],
   "travelExpenses": [
     {
-      "id": "_8ko46dpp70qj0b9i6h2jab9k6kp42ba26d334b9h64p32ea270o3cd236c",
-      "date": "2026-07-15",
-      "time": "14:57",
-      "amount": 360690,
-      "merchant": "AIRBNB * HMZ59JR8CZ",
-      "category": "stay",
-      "location": "Prague",
-      "travel": true
-    },
-    {
       "id": "_6p34cdhj70o46ba484sk4b9k7133ab9o60qj6ba58d146di56csj8h1p88",
       "date": "2026-07-15",
       "time": "11:41",
@@ -643,7 +589,9 @@
       "merchant": "ALBERT VAM DEKUJE",
       "category": "groceries",
       "location": "Prague",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Prague grocery charge from updated card approval list."
     },
     {
       "id": "_650k6e2684s46b9m74o3cb9k751jeba274sj2b9k8cq3cdhh84s3ed9p84",
@@ -653,7 +601,9 @@
       "merchant": "DPP - Nadrazi Holesovi",
       "category": "transport",
       "location": "Prague",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Prague public transport charge from updated card approval list."
     },
     {
       "id": "manual-card-2026-07-14-rewe",
@@ -699,7 +649,9 @@
       "merchant": "Edeka Schnelle 6835",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6sojah216t14cb9h6d348b9k75344ba26l148b9m68q4ah258l342dpp6g",
@@ -709,7 +661,9 @@
       "merchant": "LIME*PASS DWYJ",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6h134da164s30b9o71144b9k75332b9p88pjeba28goj4g9i8kp4cgpk70",
@@ -719,7 +673,9 @@
       "merchant": "LIME*PASS ZKWT",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_88rkaghk8l1kcba26csk2b9k691kaba28oskcba16l2j8d9g71138da28g",
@@ -729,7 +685,9 @@
       "merchant": "ALDI SE & Co. KG  Seef",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6grk4e9g8oskcb9g6sq38b9k6t2k6ba189332ba28cq3ch1l60q34e2484",
@@ -739,7 +697,9 @@
       "merchant": "LIME*2  DWYJ",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_7133aga26d134ba4712j8b9k68qj4ba26t246b9l8l1j8ghh6oo4ae1n6k",
@@ -749,7 +709,9 @@
       "merchant": "LIME*2  ZKWT",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6d33ec9m74q44b9k65238b9k70qk8ba28kqk2b9g8csk4c22610jgc2164",
@@ -759,7 +721,9 @@
       "merchant": "Zettle_*Jones ice crea",
       "category": "transport",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_651k4e1n6ss32b9m8koj6b9k84qj0b9p84p3eb9h88qk8c9n8ks3gd9l6s",
@@ -769,7 +733,9 @@
       "merchant": "REWE Markt GmbH-Zw",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_74qjic238op3iba570pj4b9k8oqjaba268q3gba58l242g9j6cqj4cpl6g",
@@ -779,7 +745,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_89338d1i891jab9i8523cb9k6sr3gb9o8kr3ib9o84ojih2268q3ah1k6c",
@@ -789,7 +757,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8kp4ah1i8kpj0b9m8cskcb9k6ksjeba18cskcb9n8os4cd9m71138ha26c",
@@ -799,7 +769,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_64p3ic1l70rjeb9m6or3ib9k60qk6b9o691j0b9g8d148gi58krk8h1n8k",
@@ -809,7 +781,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_64oj8c1i8or4cb9o8oq3gb9k8kr3ib9o88r30ba36d23ghi670r4ae1h84",
@@ -819,7 +793,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_84q42ghn6l34cb9p88o38b9k70pjib9o8p33cba38kpk8gi56gs38d1n84",
@@ -829,7 +805,9 @@
       "merchant": "LIME*PASS ZKWT",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8ks38gq570sj6ba16sqj4b9k84r46ba170rkab9i6gqk8di168sj8d1g8o",
@@ -839,7 +817,9 @@
       "merchant": "LIME*PASS DWYJ",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6oq3achi6oo4ab9h6h346b9k60o38b9o6523ib9p611j0h1g64pjig9i6c",
@@ -849,7 +829,9 @@
       "merchant": "Curry61 HM",
       "category": "groceries",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6grj4cq46h0j2ba48gr46b9k6cqjaba18l136b9h88o4aha289144dhk68",
@@ -859,7 +841,9 @@
       "merchant": "LIME*RIDE ZKWT",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_74q44g9p8gpk4ba170sk6b9k6p2jgba28l0kcba56sq38h1j6d338c226s",
@@ -869,7 +853,9 @@
       "merchant": "LIME*RIDE DWYJ",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6ks42cpn68sj0b9j6t234b9k6co3cba16h134b9h6gp3gda468p4cd9m8c",
@@ -879,7 +865,9 @@
       "merchant": "Baecker Wiedemann GmbH",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-12-shoppopulaire",
@@ -901,7 +889,9 @@
       "merchant": "Kirsch GmbH & Co. KG",
       "category": "other",
       "location": "하노버, 독일",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6oq4ccpm8l0jcba58gr30b9k8p246ba274q36b9n6h2kccpl6p138cq58c",
@@ -911,7 +901,9 @@
       "merchant": "Lekkerland REWE To Go",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_68q36c1n8koj6b9l8p13cb9k650k8b9p6soj0ba3690j4ghg6d0jgc1p68",
@@ -921,7 +913,9 @@
       "merchant": "Hohe Domkirche zu Koeln K",
       "category": "other",
       "location": "Köln Hbf, Breslauer Platz 479",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_652j0gpn6cs3eb9j68r3ib9k6l14cb9o8p2kab9l6l14ce1n88rjge2664",
@@ -931,7 +925,9 @@
       "merchant": "SumUp  *Gastro Faraj Koel",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_60rjccpm8os4ab9o68p3ab9k84ojeba265138b9p6t34ch1i6l0k4e236k",
@@ -941,7 +937,9 @@
       "merchant": "SumUp  *MGGS Gastronomie",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_64ojgh1n712j2ba368sjib9k7133cba284q38ba688pj2gq26p2jidpl60",
@@ -951,7 +949,9 @@
       "merchant": "DB Vertrieb GmbH",
       "category": "transport",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6gq3ehi56os46b9p6gqjcb9k6spk8ba16t13eba26924cd9m8p230e1p74",
@@ -961,7 +961,9 @@
       "merchant": "DB Vertrieb GmbH",
       "category": "transport",
       "location": "하노버, 독일",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-11-mggs-gastronomie",
@@ -1007,7 +1009,9 @@
       "merchant": "ALDI SUED",
       "category": "other",
       "location": "Köln Hbf, Breslauer Platz 479",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-10-aldi-sued",
@@ -1029,7 +1033,9 @@
       "merchant": "Koelner Verkehrs-Betri",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_64ok2cq38d348ba274r46b9k8913cb9p6cr44ba38krj6d1g68rkac1p60",
@@ -1039,7 +1045,9 @@
       "merchant": "Ditsch Frankfurt Hbf. Qu",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_70s3ggi264r38b9n8p23ib9k8kskab9o60oj8ba18l1k4hhh6csjeh1j6s",
@@ -1049,7 +1057,9 @@
       "merchant": "Ayse Yikit",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8oo48gpk64rj0b9j8ork6b9k70pj6b9o74sk8b9n6133cdi188ok2d1n8g",
@@ -1059,7 +1069,9 @@
       "merchant": "BACKEREI+KONDITOREI HUCK",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6gs3ig9i60rj0b9i6crj2b9k7523ab9p70rk6b9h88q48d9o8l1j2c9p74",
@@ -1069,7 +1081,9 @@
       "merchant": "Metzgerei Brueder Ullm",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8krjgc9i6soj2b9o6ko46b9k6so3iba26ss44ba68or3idpm8crjggpl88",
@@ -1079,7 +1093,9 @@
       "merchant": "Frankfurt (Main) Hbf",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-09-ayse-yikit",
@@ -1137,7 +1153,9 @@
       "merchant": "63210150 Frankfurt Main H",
       "category": "other",
       "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6l336d2570pk6b9h8cqj2b9k690jaba168okcba56crj2dhi6l1j2h1k60",
@@ -1147,7 +1165,9 @@
       "merchant": "IntercityHotel",
       "category": "stay",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_7533ce268gpjib9p6p246b9k6h1jiba1752jgba16d1j6h256op3ac1p8o",
@@ -1157,7 +1177,9 @@
       "merchant": "FFM Flughafen Regional Bh",
       "category": "other",
       "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8gp3cd9h64pj6b9n64sjab9k70q3gba26l142ba670sj6c9o6d1jgchj6k",
@@ -1167,7 +1189,9 @@
       "merchant": "네이버페이",
       "category": "other",
       "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-08-naverpay",
@@ -1182,39 +1206,6 @@
       "note": "Added from updated card approval list."
     },
     {
-      "id": "manual-stay-2026-07-04-plitvice-airbnb",
-      "date": "2026-07-04",
-      "time": "",
-      "amount": 190000,
-      "merchant": "Plitvice Airbnb",
-      "category": "stay",
-      "location": "Plitvice",
-      "travel": true,
-      "source": "Notion TO DO"
-    },
-    {
-      "id": "manual-transport-2026-07-02-flixbus-budapest-zagreb",
-      "date": "2026-07-02",
-      "time": "",
-      "amount": 156361,
-      "merchant": "FlixBus · Budapest -> Zagreb",
-      "category": "transport",
-      "location": "Budapest / Zagreb",
-      "travel": true,
-      "source": "Notion TO DO"
-    },
-    {
-      "id": "manual-transport-2026-07-02-flixbus-zagreb-plitvice",
-      "date": "2026-07-02",
-      "time": "",
-      "amount": 74534,
-      "merchant": "FlixBus · Zagreb -> Plitvice",
-      "category": "transport",
-      "location": "Zagreb / Plitvice",
-      "travel": true,
-      "source": "Notion TO DO"
-    },
-    {
       "id": "_68oj8g9o70o48ba17523eb9k74ojiba26h0k6b9j6sr38dhm64qj4gq364",
       "date": "2026-06-30",
       "time": "21:05",
@@ -1222,7 +1213,9 @@
       "merchant": "US ESTA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "US ESTA fee treated as travel document cost."
     },
     {
       "id": "_6h346gpn6913iba16t23eb9k60s3gb9o8p1j4b9n64pk2dho8kr34ga668",
@@ -1232,7 +1225,9 @@
       "merchant": "UK ETA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "UK ETA fee treated as travel document cost."
     },
     {
       "id": "_8csj4e2460q36ba46sp4cb9k6l244b9o8p1jcb9i6h142d1n88rk8c9n8k",
@@ -1242,7 +1237,9 @@
       "merchant": "UK ETA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "UK ETA fee treated as travel document cost."
     },
     {
       "id": "_6oqj4hhg8l236b9k6p0jcb9k84rjiba184qkab9j64ok6dpg68sk2dhj6g",
@@ -1252,7 +1249,9 @@
       "merchant": "US ESTA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "US ESTA fee treated as travel document cost."
     },
     {
       "id": "manual-shopping-2026-06-25-windbreaker",
@@ -1281,20 +1280,24 @@
       "date": "2026-06-18",
       "time": "19:38",
       "amount": 62490,
-      "merchant": "FLIX",
+      "merchant": "FlixBus · Zagreb → Plitvice",
       "category": "transport",
-      "location": "서울특별시",
-      "travel": true
+      "location": "Plitvice",
+      "travel": true,
+      "country": "Croatia",
+      "note": "Mapped to the Zagreb -> Plitvice FlixBus leg per user correction."
     },
     {
       "id": "_6cqjadi1711jab9i8d2jcb9k88p3ab9o8kpj6b9h6or34ga464q30e2174",
       "date": "2026-06-18",
       "time": "19:30",
       "amount": 131151,
-      "merchant": "Flix SE",
+      "merchant": "FlixBus · Budapest → Zagreb",
       "category": "transport",
-      "location": "서울특별시",
-      "travel": true
+      "location": "Zagreb",
+      "travel": true,
+      "country": "Croatia",
+      "note": "Mapped to the Budapest -> Zagreb FlixBus leg per user correction."
     },
     {
       "id": "_89138c1o68q3cba68534ab9k6kskcb9o60o44ba571146ghn84pj6da468",
@@ -1304,7 +1307,9 @@
       "merchant": "RegioJet · Prague → Vienna",
       "category": "transport",
       "location": "Prague → Vienna",
-      "travel": true
+      "travel": true,
+      "country": "Austria",
+      "note": "Mapped from RegioJet booking confirmed in travel handover."
     },
     {
       "id": "_6go32dq47533ib9i74q3gb9k65232b9p71244b9j8533ge9p6t23cc1i60",
@@ -1314,7 +1319,9 @@
       "merchant": "DB · Berlin → Prague seat reservation",
       "category": "transport",
       "location": "Berlin → Prague",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped as the later Berlin -> Prague seat reservation charge."
     },
     {
       "id": "_64o3gdq374r38ba16gsj0b9k84pjcb9p84p32b9m84qjagpi8ksj0d228c",
@@ -1324,7 +1331,9 @@
       "merchant": "RegioJet · Vienna → Budapest add-on",
       "category": "transport",
       "location": "Vienna → Budapest",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Second RegioJet charge from the same Vienna -> Budapest booking session."
     },
     {
       "id": "_6gs3gdq26so4cb9k74qk8b9k8l2jab9p8kskaba58h2jici46cqkag9o6g",
@@ -1334,7 +1343,9 @@
       "merchant": "RegioJet · Vienna → Budapest",
       "category": "transport",
       "location": "Vienna → Budapest",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped from RegioJet booking logged on the same booking session."
     },
     {
       "id": "manual-medical-2026-06-18-vaccination",
@@ -1352,10 +1363,12 @@
       "date": "2026-06-17",
       "time": "21:54",
       "amount": 189506,
-      "merchant": "AIRBNB * HMP8R8ZN5W",
+      "merchant": "Plitvice · Airbnb",
       "category": "stay",
-      "location": "서울특별시",
-      "travel": true
+      "location": "Plitvice",
+      "travel": true,
+      "country": null,
+      "note": "Mapped to Plitvice, Croatia per user correction."
     },
     {
       "id": "manual-shopping-2026-06-16-naverpay",
@@ -1442,7 +1455,9 @@
       "merchant": "DB · Berlin → Prague",
       "category": "transport",
       "location": "Berlin → Prague",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "User corrected this payment as Berlin -> Prague."
     },
     {
       "id": "_6grk8gph70qkcb9m88qjib9k8grjiba18d330b9o64rk8c1p84p30chn8k",
@@ -1452,7 +1467,9 @@
       "merchant": "DB · Cologne → Berlin",
       "category": "transport",
       "location": "Cologne → Berlin",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "User corrected this payment as Cologne -> Berlin."
     },
     {
       "id": "_8osjighi64o32ba68h13gb9k8gokab9o6t246ba6610jge236d0j4chi6k",
@@ -1462,37 +1479,45 @@
       "merchant": "DB Vertrieb GmbH",
       "category": "transport",
       "location": "서울특별시",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8kp48e9l6d234b9m8d0j8b9k8cqj2b9o892kab9k88ojidi18kojihi68k",
       "date": "2026-06-08",
       "time": "23:25",
       "amount": 293605,
-      "merchant": "AIRBNB * HMQYWZCCWE",
+      "merchant": "Budapest · Airbnb",
       "category": "stay",
-      "location": "과천시",
-      "travel": true
+      "location": "Budapest",
+      "travel": true,
+      "country": null,
+      "note": "Mapped to Budapest per user correction."
     },
     {
       "id": "_6cq3ghi36oojcba46h1jcb9k6cs4ab9o612k6ba58h24ae1i8l248gpj6s",
       "date": "2026-06-08",
       "time": "23:20",
       "amount": 345658,
-      "merchant": "AIRBNB * HM8J5Q8ANN",
+      "merchant": "Vienna · Airbnb",
       "category": "stay",
-      "location": "과천시",
-      "travel": true
+      "location": "Vienna",
+      "travel": true,
+      "country": null,
+      "note": "Mapped to Vienna per user correction."
     },
     {
       "id": "_69334e218os3ab9m8krj4b9k6ko3gba18crk6ba46h2jedpm6l136d1o68",
       "date": "2026-06-08",
       "time": "22:14",
       "amount": 232136,
-      "merchant": "AIRBNB * HM8SKN5CSF",
+      "merchant": "Prague · Airbnb",
       "category": "stay",
-      "location": "과천시",
-      "travel": true
+      "location": "Prague",
+      "travel": true,
+      "country": null,
+      "note": "Mapped to Czechia per user correction."
     },
     {
       "id": "_84o4adhl8p1k8b9g6t13ib9k6113iba18orjcb9n70q3ggpl6513ih9j60",
@@ -1502,7 +1527,9 @@
       "merchant": "Cologne · Schiltz Airbnb",
       "category": "stay",
       "location": "Cologne",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped from the June Airbnb payment to the Cologne stay."
     },
     {
       "id": "manual-shopping-2026-06-07-international-license",
@@ -1534,7 +1561,9 @@
       "merchant": "Incheon Airport · Darakhyu",
       "category": "stay",
       "location": "Incheon Airport",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped from 한국정보통신/SK네트웍스 payment"
     },
     {
       "id": "_8cs3cchj690jcb9k8co3ab9k6gq36ba2611kcba4692j6gq28cpk6h1i60",
@@ -1544,7 +1573,9 @@
       "merchant": "Frankfurt · IntercityHotel",
       "category": "stay",
       "location": "Frankfurt",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped from 하나투어/온라인 payment"
     },
     {
       "id": "manual-shopping-2026-05-27-nua-clothes",
@@ -1556,16 +1587,6 @@
       "location": "여행 준비",
       "travel": true,
       "source": "telegram:433493318/message/10729"
-    },
-    {
-      "id": "_68q32hhl8h0kaba570s42b9k70rj8b9p6d24ab9i84q36ca68gq3cgpn6c",
-      "date": "2026-05-23",
-      "time": "13:16",
-      "amount": 780000,
-      "merchant": "호텔농심",
-      "category": "stay",
-      "location": "서울특별시",
-      "travel": true
     },
     {
       "id": "manual-shopping-2026-05-19-coupang",
@@ -1603,16 +1624,6 @@
   ],
   "expenses": [
     {
-      "id": "_8ko46dpp70qj0b9i6h2jab9k6kp42ba26d334b9h64p32ea270o3cd236c",
-      "date": "2026-07-15",
-      "time": "14:57",
-      "amount": 360690,
-      "merchant": "AIRBNB * HMZ59JR8CZ",
-      "category": "stay",
-      "location": "Prague",
-      "travel": true
-    },
-    {
       "id": "_6p34cdhj70o46ba484sk4b9k7133ab9o60qj6ba58d146di56csj8h1p88",
       "date": "2026-07-15",
       "time": "11:41",
@@ -1620,7 +1631,9 @@
       "merchant": "ALBERT VAM DEKUJE",
       "category": "groceries",
       "location": "Prague",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Prague grocery charge from updated card approval list."
     },
     {
       "id": "_650k6e2684s46b9m74o3cb9k751jeba274sj2b9k8cq3cdhh84s3ed9p84",
@@ -1630,7 +1643,9 @@
       "merchant": "DPP - Nadrazi Holesovi",
       "category": "transport",
       "location": "Prague",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Prague public transport charge from updated card approval list."
     },
     {
       "id": "manual-card-2026-07-14-rewe",
@@ -1676,7 +1691,9 @@
       "merchant": "Edeka Schnelle 6835",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6sojah216t14cb9h6d348b9k75344ba26l148b9m68q4ah258l342dpp6g",
@@ -1686,7 +1703,9 @@
       "merchant": "LIME*PASS DWYJ",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6h134da164s30b9o71144b9k75332b9p88pjeba28goj4g9i8kp4cgpk70",
@@ -1696,7 +1715,9 @@
       "merchant": "LIME*PASS ZKWT",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_88rkaghk8l1kcba26csk2b9k691kaba28oskcba16l2j8d9g71138da28g",
@@ -1706,7 +1727,9 @@
       "merchant": "ALDI SE & Co. KG  Seef",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6grk4e9g8oskcb9g6sq38b9k6t2k6ba189332ba28cq3ch1l60q34e2484",
@@ -1716,7 +1739,9 @@
       "merchant": "LIME*2  DWYJ",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_7133aga26d134ba4712j8b9k68qj4ba26t246b9l8l1j8ghh6oo4ae1n6k",
@@ -1726,7 +1751,9 @@
       "merchant": "LIME*2  ZKWT",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6d33ec9m74q44b9k65238b9k70qk8ba28kqk2b9g8csk4c22610jgc2164",
@@ -1736,7 +1763,9 @@
       "merchant": "Zettle_*Jones ice crea",
       "category": "transport",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_651k4e1n6ss32b9m8koj6b9k84qj0b9p84p3eb9h88qk8c9n8ks3gd9l6s",
@@ -1746,7 +1775,9 @@
       "merchant": "REWE Markt GmbH-Zw",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_74qjic238op3iba570pj4b9k8oqjaba268q3gba58l242g9j6cqj4cpl6g",
@@ -1756,7 +1787,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_89338d1i891jab9i8523cb9k6sr3gb9o8kr3ib9o84ojih2268q3ah1k6c",
@@ -1766,7 +1799,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8kp4ah1i8kpj0b9m8cskcb9k6ksjeba18cskcb9n8os4cd9m71138ha26c",
@@ -1776,7 +1811,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_64p3ic1l70rjeb9m6or3ib9k60qk6b9o691j0b9g8d148gi58krk8h1n8k",
@@ -1786,7 +1823,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_64oj8c1i8or4cb9o8oq3gb9k8kr3ib9o88r30ba36d23ghi670r4ae1h84",
@@ -1796,7 +1835,9 @@
       "merchant": "NYX*Photoautomat",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_84q42ghn6l34cb9p88o38b9k70pjib9o8p33cba38kpk8gi56gs38d1n84",
@@ -1806,7 +1847,9 @@
       "merchant": "LIME*PASS ZKWT",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8ks38gq570sj6ba16sqj4b9k84r46ba170rkab9i6gqk8di168sj8d1g8o",
@@ -1816,7 +1859,9 @@
       "merchant": "LIME*PASS DWYJ",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6oq3achi6oo4ab9h6h346b9k60o38b9o6523ib9p611j0h1g64pjig9i6c",
@@ -1826,7 +1871,9 @@
       "merchant": "Curry61 HM",
       "category": "groceries",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6grj4cq46h0j2ba48gr46b9k6cqjaba18l136b9h88o4aha289144dhk68",
@@ -1836,7 +1883,9 @@
       "merchant": "LIME*RIDE ZKWT",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_74q44g9p8gpk4ba170sk6b9k6p2jgba28l0kcba56sq38h1j6d338c226s",
@@ -1846,7 +1895,9 @@
       "merchant": "LIME*RIDE DWYJ",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6ks42cpn68sj0b9j6t234b9k6co3cba16h134b9h6gp3gda468p4cd9m8c",
@@ -1856,7 +1907,9 @@
       "merchant": "Baecker Wiedemann GmbH",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-12-shoppopulaire",
@@ -1878,7 +1931,9 @@
       "merchant": "Kirsch GmbH & Co. KG",
       "category": "other",
       "location": "하노버, 독일",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6oq4ccpm8l0jcba58gr30b9k8p246ba274q36b9n6h2kccpl6p138cq58c",
@@ -1888,7 +1943,9 @@
       "merchant": "Lekkerland REWE To Go",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_68q36c1n8koj6b9l8p13cb9k650k8b9p6soj0ba3690j4ghg6d0jgc1p68",
@@ -1898,7 +1955,9 @@
       "merchant": "Hohe Domkirche zu Koeln K",
       "category": "other",
       "location": "Köln Hbf, Breslauer Platz 479",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_652j0gpn6cs3eb9j68r3ib9k6l14cb9o8p2kab9l6l14ce1n88rjge2664",
@@ -1908,7 +1967,9 @@
       "merchant": "SumUp  *Gastro Faraj Koel",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_60rjccpm8os4ab9o68p3ab9k84ojeba265138b9p6t34ch1i6l0k4e236k",
@@ -1918,7 +1979,9 @@
       "merchant": "SumUp  *MGGS Gastronomie",
       "category": "other",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_64ojgh1n712j2ba368sjib9k7133cba284q38ba688pj2gq26p2jidpl60",
@@ -1928,7 +1991,9 @@
       "merchant": "DB Vertrieb GmbH",
       "category": "transport",
       "location": "Kleine Andreasstraße 5, 10243 베를린",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6gq3ehi56os46b9p6gqjcb9k6spk8ba16t13eba26924cd9m8p230e1p74",
@@ -1938,7 +2003,9 @@
       "merchant": "DB Vertrieb GmbH",
       "category": "transport",
       "location": "하노버, 독일",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-11-mggs-gastronomie",
@@ -1984,7 +2051,9 @@
       "merchant": "ALDI SUED",
       "category": "other",
       "location": "Köln Hbf, Breslauer Platz 479",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-10-aldi-sued",
@@ -2006,7 +2075,9 @@
       "merchant": "Koelner Verkehrs-Betri",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_64ok2cq38d348ba274r46b9k8913cb9p6cr44ba38krj6d1g68rkac1p60",
@@ -2016,7 +2087,9 @@
       "merchant": "Ditsch Frankfurt Hbf. Qu",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_70s3ggi264r38b9n8p23ib9k8kskab9o60oj8ba18l1k4hhh6csjeh1j6s",
@@ -2026,7 +2099,9 @@
       "merchant": "Ayse Yikit",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8oo48gpk64rj0b9j8ork6b9k70pj6b9o74sk8b9n6133cdi188ok2d1n8g",
@@ -2036,7 +2111,9 @@
       "merchant": "BACKEREI+KONDITOREI HUCK",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6gs3ig9i60rj0b9i6crj2b9k7523ab9p70rk6b9h88q48d9o8l1j2c9p74",
@@ -2046,7 +2123,9 @@
       "merchant": "Metzgerei Brueder Ullm",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8krjgc9i6soj2b9o6ko46b9k6so3iba26ss44ba68or3idpm8crjggpl88",
@@ -2056,7 +2135,9 @@
       "merchant": "Frankfurt (Main) Hbf",
       "category": "other",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-09-ayse-yikit",
@@ -2114,7 +2195,9 @@
       "merchant": "63210150 Frankfurt Main H",
       "category": "other",
       "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_6l336d2570pk6b9h8cqj2b9k690jaba168okcba56crj2dhi6l1j2h1k60",
@@ -2124,7 +2207,9 @@
       "merchant": "IntercityHotel",
       "category": "stay",
       "location": "Linzer Straße 33, 50939 쾰른",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_7533ce268gpjib9p6p246b9k6h1jiba1752jgba16d1j6h256op3ac1p8o",
@@ -2134,7 +2219,9 @@
       "merchant": "FFM Flughafen Regional Bh",
       "category": "other",
       "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8gp3cd9h64pj6b9n64sjab9k70q3gba26l142ba670sj6c9o6d1jgchj6k",
@@ -2144,7 +2231,9 @@
       "merchant": "네이버페이",
       "category": "other",
       "location": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "manual-card-2026-07-08-naverpay",
@@ -2159,39 +2248,6 @@
       "note": "Added from updated card approval list."
     },
     {
-      "id": "manual-stay-2026-07-04-plitvice-airbnb",
-      "date": "2026-07-04",
-      "time": "",
-      "amount": 190000,
-      "merchant": "Plitvice Airbnb",
-      "category": "stay",
-      "location": "Plitvice",
-      "travel": true,
-      "source": "Notion TO DO"
-    },
-    {
-      "id": "manual-transport-2026-07-02-flixbus-budapest-zagreb",
-      "date": "2026-07-02",
-      "time": "",
-      "amount": 156361,
-      "merchant": "FlixBus · Budapest -> Zagreb",
-      "category": "transport",
-      "location": "Budapest / Zagreb",
-      "travel": true,
-      "source": "Notion TO DO"
-    },
-    {
-      "id": "manual-transport-2026-07-02-flixbus-zagreb-plitvice",
-      "date": "2026-07-02",
-      "time": "",
-      "amount": 74534,
-      "merchant": "FlixBus · Zagreb -> Plitvice",
-      "category": "transport",
-      "location": "Zagreb / Plitvice",
-      "travel": true,
-      "source": "Notion TO DO"
-    },
-    {
       "id": "_68oj8g9o70o48ba17523eb9k74ojiba26h0k6b9j6sr38dhm64qj4gq364",
       "date": "2026-06-30",
       "time": "21:05",
@@ -2199,7 +2255,9 @@
       "merchant": "US ESTA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "US ESTA fee treated as travel document cost."
     },
     {
       "id": "_6h346gpn6913iba16t23eb9k60s3gb9o8p1j4b9n64pk2dho8kr34ga668",
@@ -2209,7 +2267,9 @@
       "merchant": "UK ETA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "UK ETA fee treated as travel document cost."
     },
     {
       "id": "_8csj4e2460q36ba46sp4cb9k6l244b9o8p1jcb9i6h142d1n88rk8c9n8k",
@@ -2219,7 +2279,9 @@
       "merchant": "UK ETA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "UK ETA fee treated as travel document cost."
     },
     {
       "id": "_6oqj4hhg8l236b9k6p0jcb9k84rjiba184qkab9j64ok6dpg68sk2dhj6g",
@@ -2229,7 +2291,9 @@
       "merchant": "US ESTA application",
       "category": "visa",
       "location": "여행 준비",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "US ESTA fee treated as travel document cost."
     },
     {
       "id": "manual-shopping-2026-06-25-windbreaker",
@@ -2258,20 +2322,24 @@
       "date": "2026-06-18",
       "time": "19:38",
       "amount": 62490,
-      "merchant": "FLIX",
+      "merchant": "FlixBus · Zagreb → Plitvice",
       "category": "transport",
-      "location": "서울특별시",
-      "travel": true
+      "location": "Plitvice",
+      "travel": true,
+      "country": "Croatia",
+      "note": "Mapped to the Zagreb -> Plitvice FlixBus leg per user correction."
     },
     {
       "id": "_6cqjadi1711jab9i8d2jcb9k88p3ab9o8kpj6b9h6or34ga464q30e2174",
       "date": "2026-06-18",
       "time": "19:30",
       "amount": 131151,
-      "merchant": "Flix SE",
+      "merchant": "FlixBus · Budapest → Zagreb",
       "category": "transport",
-      "location": "서울특별시",
-      "travel": true
+      "location": "Zagreb",
+      "travel": true,
+      "country": "Croatia",
+      "note": "Mapped to the Budapest -> Zagreb FlixBus leg per user correction."
     },
     {
       "id": "_89138c1o68q3cba68534ab9k6kskcb9o60o44ba571146ghn84pj6da468",
@@ -2281,7 +2349,9 @@
       "merchant": "RegioJet · Prague → Vienna",
       "category": "transport",
       "location": "Prague → Vienna",
-      "travel": true
+      "travel": true,
+      "country": "Austria",
+      "note": "Mapped from RegioJet booking confirmed in travel handover."
     },
     {
       "id": "_6go32dq47533ib9i74q3gb9k65232b9p71244b9j8533ge9p6t23cc1i60",
@@ -2291,7 +2361,9 @@
       "merchant": "DB · Berlin → Prague seat reservation",
       "category": "transport",
       "location": "Berlin → Prague",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped as the later Berlin -> Prague seat reservation charge."
     },
     {
       "id": "_64o3gdq374r38ba16gsj0b9k84pjcb9p84p32b9m84qjagpi8ksj0d228c",
@@ -2301,7 +2373,9 @@
       "merchant": "RegioJet · Vienna → Budapest add-on",
       "category": "transport",
       "location": "Vienna → Budapest",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Second RegioJet charge from the same Vienna -> Budapest booking session."
     },
     {
       "id": "_6gs3gdq26so4cb9k74qk8b9k8l2jab9p8kskaba58h2jici46cqkag9o6g",
@@ -2311,7 +2385,9 @@
       "merchant": "RegioJet · Vienna → Budapest",
       "category": "transport",
       "location": "Vienna → Budapest",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped from RegioJet booking logged on the same booking session."
     },
     {
       "id": "manual-medical-2026-06-18-vaccination",
@@ -2329,10 +2405,12 @@
       "date": "2026-06-17",
       "time": "21:54",
       "amount": 189506,
-      "merchant": "AIRBNB * HMP8R8ZN5W",
+      "merchant": "Plitvice · Airbnb",
       "category": "stay",
-      "location": "서울특별시",
-      "travel": true
+      "location": "Plitvice",
+      "travel": true,
+      "country": null,
+      "note": "Mapped to Plitvice, Croatia per user correction."
     },
     {
       "id": "manual-shopping-2026-06-16-naverpay",
@@ -2419,7 +2497,9 @@
       "merchant": "DB · Berlin → Prague",
       "category": "transport",
       "location": "Berlin → Prague",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "User corrected this payment as Berlin -> Prague."
     },
     {
       "id": "_6grk8gph70qkcb9m88qjib9k8grjiba18d330b9o64rk8c1p84p30chn8k",
@@ -2429,7 +2509,9 @@
       "merchant": "DB · Cologne → Berlin",
       "category": "transport",
       "location": "Cologne → Berlin",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "User corrected this payment as Cologne -> Berlin."
     },
     {
       "id": "_8osjighi64o32ba68h13gb9k8gokab9o6t246ba6610jge236d0j4chi6k",
@@ -2439,37 +2521,45 @@
       "merchant": "DB Vertrieb GmbH",
       "category": "transport",
       "location": "서울특별시",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": null
     },
     {
       "id": "_8kp48e9l6d234b9m8d0j8b9k8cqj2b9o892kab9k88ojidi18kojihi68k",
       "date": "2026-06-08",
       "time": "23:25",
       "amount": 293605,
-      "merchant": "AIRBNB * HMQYWZCCWE",
+      "merchant": "Budapest · Airbnb",
       "category": "stay",
-      "location": "과천시",
-      "travel": true
+      "location": "Budapest",
+      "travel": true,
+      "country": null,
+      "note": "Mapped to Budapest per user correction."
     },
     {
       "id": "_6cq3ghi36oojcba46h1jcb9k6cs4ab9o612k6ba58h24ae1i8l248gpj6s",
       "date": "2026-06-08",
       "time": "23:20",
       "amount": 345658,
-      "merchant": "AIRBNB * HM8J5Q8ANN",
+      "merchant": "Vienna · Airbnb",
       "category": "stay",
-      "location": "과천시",
-      "travel": true
+      "location": "Vienna",
+      "travel": true,
+      "country": null,
+      "note": "Mapped to Vienna per user correction."
     },
     {
       "id": "_69334e218os3ab9m8krj4b9k6ko3gba18crk6ba46h2jedpm6l136d1o68",
       "date": "2026-06-08",
       "time": "22:14",
       "amount": 232136,
-      "merchant": "AIRBNB * HM8SKN5CSF",
+      "merchant": "Prague · Airbnb",
       "category": "stay",
-      "location": "과천시",
-      "travel": true
+      "location": "Prague",
+      "travel": true,
+      "country": null,
+      "note": "Mapped to Czechia per user correction."
     },
     {
       "id": "_84o4adhl8p1k8b9g6t13ib9k6113iba18orjcb9n70q3ggpl6513ih9j60",
@@ -2479,7 +2569,9 @@
       "merchant": "Cologne · Schiltz Airbnb",
       "category": "stay",
       "location": "Cologne",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped from the June Airbnb payment to the Cologne stay."
     },
     {
       "id": "manual-shopping-2026-06-07-international-license",
@@ -2511,7 +2603,9 @@
       "merchant": "Incheon Airport · Darakhyu",
       "category": "stay",
       "location": "Incheon Airport",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped from 한국정보통신/SK네트웍스 payment"
     },
     {
       "id": "_8cs3cchj690jcb9k8co3ab9k6gq36ba2611kcba4692j6gq28cpk6h1i60",
@@ -2521,7 +2615,9 @@
       "merchant": "Frankfurt · IntercityHotel",
       "category": "stay",
       "location": "Frankfurt",
-      "travel": true
+      "travel": true,
+      "country": null,
+      "note": "Mapped from 하나투어/온라인 payment"
     },
     {
       "id": "manual-shopping-2026-05-27-nua-clothes",
@@ -2533,16 +2629,6 @@
       "location": "여행 준비",
       "travel": true,
       "source": "telegram:433493318/message/10729"
-    },
-    {
-      "id": "_68q32hhl8h0kaba570s42b9k70rj8b9p6d24ab9i84q36ca68gq3cgpn6c",
-      "date": "2026-05-23",
-      "time": "13:16",
-      "amount": 780000,
-      "merchant": "호텔농심",
-      "category": "stay",
-      "location": "서울특별시",
-      "travel": true
     },
     {
       "id": "manual-shopping-2026-05-19-coupang",
@@ -2828,12 +2914,12 @@
   "accommodations": [
     {
       "name": "호텔농심",
-      "city": "서울특별시",
+      "city": "South Korea",
       "status": "paid",
       "checkIn": null,
       "checkOut": null,
       "amount": 780000,
-      "note": "Calendar payment record; add dates later when booking details are logged"
+      "note": "Excluded from travel ledger per user correction."
     },
     {
       "name": "Frankfurt · IntercityHotel",
@@ -2863,40 +2949,40 @@
       "note": "Mapped from the June Airbnb payment to the Cologne stay."
     },
     {
-      "name": "AIRBNB * HM8SKN5CSF",
-      "city": "과천시",
+      "name": "Prague · Airbnb",
+      "city": "Prague",
       "status": "paid",
       "checkIn": null,
       "checkOut": null,
       "amount": 232136,
-      "note": "Calendar payment record; add dates later when booking details are logged"
+      "note": "Mapped to Czechia per user correction."
     },
     {
-      "name": "AIRBNB * HM8J5Q8ANN",
-      "city": "과천시",
+      "name": "Vienna · Airbnb",
+      "city": "Vienna",
       "status": "paid",
       "checkIn": null,
       "checkOut": null,
       "amount": 345658,
-      "note": "Calendar payment record; add dates later when booking details are logged"
+      "note": "Mapped to Vienna per user correction."
     },
     {
-      "name": "AIRBNB * HMQYWZCCWE",
-      "city": "과천시",
+      "name": "Budapest · Airbnb",
+      "city": "Budapest",
       "status": "paid",
       "checkIn": null,
       "checkOut": null,
       "amount": 293605,
-      "note": "Calendar payment record; add dates later when booking details are logged"
+      "note": "Mapped to Budapest per user correction."
     },
     {
-      "name": "AIRBNB * HMP8R8ZN5W",
-      "city": "서울특별시",
+      "name": "Plitvice · Airbnb",
+      "city": "Plitvice",
       "status": "paid",
       "checkIn": null,
       "checkOut": null,
       "amount": 189506,
-      "note": "Calendar payment record; add dates later when booking details are logged"
+      "note": "Mapped to Plitvice, Croatia per user correction."
     },
     {
       "name": "IntercityHotel",
@@ -2909,12 +2995,12 @@
     },
     {
       "name": "AIRBNB * HMZ59JR8CZ",
-      "city": "Prague",
+      "city": "Unknown Airbnb",
       "status": "paid",
       "checkIn": null,
       "checkOut": null,
       "amount": 360690,
-      "note": "Prague Airbnb charge from updated card approval list."
+      "note": "Excluded from Czechia lodging total per user correction; Prague lodging is already represented by the 232,136 KRW Airbnb payment."
     }
   ],
   "plannedAccommodations": [
@@ -2969,7 +3055,7 @@
       "status": "booked",
       "checkIn": "2026-07-14",
       "checkOut": "2026-07-17",
-      "amount": 220000,
+      "amount": 232136,
       "source": "7/14 EC train or FlixBus from Berlin",
       "note": "Old town, cafes, transit hub; 7/17 Prague -> Vienna by RegioJet or OBB"
     },
@@ -2980,7 +3066,7 @@
       "status": "booked",
       "checkIn": "2026-07-17",
       "checkOut": "2026-07-20",
-      "amount": 330000,
+      "amount": 345658,
       "source": "7/17 RegioJet or OBB from Prague",
       "note": "Museums, libraries, slower days; 7/20 Vienna -> Budapest by EuroCity"
     },
@@ -2991,7 +3077,7 @@
       "status": "booked",
       "checkIn": "2026-07-20",
       "checkOut": "2026-07-23",
-      "amount": 300000,
+      "amount": 293605,
       "source": "7/20 EuroCity from Vienna",
       "note": "Thermal baths, food, Danube; 7/23 Budapest -> Zagreb -> Plitvice by linked FlixBus legs"
     },
@@ -3004,7 +3090,7 @@
       "checkOut": "2026-07-25",
       "amount": 190000,
       "source": "Notion TO DO / 숙소 예약",
-      "note": "2 nights near national park entrance; booked Airbnb for 190,000 KRW"
+      "note": "2 nights near national park entrance; actual Airbnb card approval mapped per user correction."
     },
     {
       "name": "Split stay TBD",
@@ -3178,7 +3264,7 @@
       "endDate": "2026-07-17",
       "lodging": "Central Station Airbnb",
       "source": "7/14 EC train or FlixBus from Berlin",
-      "amount": 220000,
+      "amount": 232136,
       "note": "Old town, cafes, transit hub; 7/17 Prague -> Vienna by RegioJet or OBB",
       "transportIn": "2026-07-14 EC 열차 또는 FlixBus: 베를린 -> 프라하",
       "transportOut": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
@@ -3229,7 +3315,7 @@
       "endDate": "2026-07-20",
       "lodging": "Airbnb",
       "source": "7/17 RegioJet or OBB from Prague",
-      "amount": 330000,
+      "amount": 345658,
       "note": "Museums, libraries, slower days; 7/20 Vienna -> Budapest by EuroCity",
       "transportIn": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
       "transportOut": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
@@ -3273,7 +3359,7 @@
       "endDate": "2026-07-23",
       "lodging": "Airbnb",
       "source": "7/20 EuroCity from Vienna",
-      "amount": 300000,
+      "amount": 293605,
       "note": "Thermal baths, food, Danube; 7/23 Budapest -> Zagreb -> Plitvice by linked FlixBus legs",
       "transportIn": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
       "transportOut": "2026-07-23 FlixBus: 부다페스트 -> 자그레브 -> 플리트비체",
@@ -3286,10 +3372,10 @@
       },
       "transportOutPayment": {
         "status": "paid",
-        "amount": 156361,
-        "paidDate": "2026-07-02",
+        "amount": 131151,
+        "paidDate": "2026-06-18",
         "merchant": "FlixBus",
-        "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35."
+        "note": "Budapest -> Zagreb, 08:25-12:20; actual card approval mapped per user correction."
       },
       "arrivalTransfer": {
         "title": "빈 -> 부다페스트",
@@ -3328,17 +3414,17 @@
       "transportOut": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
       "transportInPayment": {
         "status": "paid",
-        "amount": 156361,
-        "paidDate": "2026-07-02",
+        "amount": 131151,
+        "paidDate": "2026-06-18",
         "merchant": "FlixBus",
-        "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35."
+        "note": "Budapest -> Zagreb, 08:25-12:20; actual card approval mapped per user correction."
       },
       "transportOutPayment": {
         "status": "paid",
-        "amount": 74534,
-        "paidDate": "2026-07-02",
+        "amount": 62490,
+        "paidDate": "2026-06-18",
         "merchant": "FlixBus",
-        "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95."
+        "note": "Zagreb -> Plitvice, 14:30-16:20; actual card approval mapped per user correction."
       },
       "arrivalTransfer": {
         "title": "부다페스트 -> 자그레브",
@@ -3356,13 +3442,13 @@
       "schengen": true,
       "lat": 45.815,
       "lng": 15.9819,
-      "journeyAmount": 156361,
+      "journeyAmount": 131151,
       "journeyPayment": {
         "status": "paid",
-        "amount": 156361,
-        "paidDate": "2026-07-02",
+        "amount": 131151,
+        "paidDate": "2026-06-18",
         "merchant": "FlixBus",
-        "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35."
+        "note": "Budapest -> Zagreb, 08:25-12:20; actual card approval mapped per user correction."
       }
     },
     {
@@ -3374,15 +3460,15 @@
       "lodging": "Plitvice Airbnb",
       "source": "Notion TO DO / 숙소 예약",
       "amount": 190000,
-      "note": "2 nights near national park entrance; booked Airbnb for 190,000 KRW",
+      "note": "2 nights near national park entrance; actual Airbnb card approval mapped per user correction.",
       "transportIn": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
       "transportOut": "2026-07-25 FlixBus 또는 버스: 플리트비체 -> 스플리트",
       "transportInPayment": {
         "status": "paid",
-        "amount": 74534,
-        "paidDate": "2026-07-02",
+        "amount": 62490,
+        "paidDate": "2026-06-18",
         "merchant": "FlixBus",
-        "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95."
+        "note": "Zagreb -> Plitvice, 14:30-16:20; actual card approval mapped per user correction."
       },
       "arrivalTransfer": {
         "title": "자그레브 -> 플리트비체",
@@ -3400,13 +3486,13 @@
       "schengen": true,
       "lat": 44.8806,
       "lng": 15.6168,
-      "journeyAmount": 74534,
+      "journeyAmount": 62490,
       "journeyPayment": {
         "status": "paid",
-        "amount": 74534,
-        "paidDate": "2026-07-02",
+        "amount": 62490,
+        "paidDate": "2026-06-18",
         "merchant": "FlixBus",
-        "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95."
+        "note": "Zagreb -> Plitvice, 14:30-16:20; actual card approval mapped per user correction."
       }
     },
     {

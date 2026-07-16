@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-16T00:52:26.626495+00:00",
+  "generatedAt": "2026-07-16T14:40:04.032337+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,39 +8,39 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 5333530,
-    "travelLoggedKrw": 5333530,
-    "remainingMinKrw": 24666470,
-    "remainingMaxKrw": 34666470,
-    "reservedPctMin": 17.8,
+    "loggedKrw": 5525621,
+    "travelLoggedKrw": 5525621,
+    "remainingMinKrw": 24474379,
+    "remainingMaxKrw": 34474379,
+    "reservedPctMin": 18.4,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 78434,
+    "reserveBurnKrw": 80081,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-07-16",
-    "location": "Prague",
-    "mapQuery": "Prague, Czechia"
+    "date": "2026-07-17",
+    "location": "Vienna",
+    "mapQuery": "Vienna, Austria"
   },
   "categoryTotals": {
-    "stay": 1569115,
+    "stay": 1696942,
     "gear": 1446349,
     "transport": 794053,
     "medical": 680000,
-    "other": 451796,
+    "other": 516060,
     "visa": 211394,
     "food": 152774,
     "groceries": 28049
   },
   "travelCategoryTotals": {
-    "stay": 1569115,
+    "stay": 1696942,
     "gear": 1446349,
     "transport": 794053,
     "medical": 680000,
-    "other": 451796,
+    "other": 516060,
     "visa": 211394,
     "food": 152774,
     "groceries": 28049
@@ -67,6 +67,16 @@
       }
     },
     {
+      "country": "Czechia",
+      "total": 516317,
+      "categories": {
+        "stay": 359963,
+        "transport": 90821,
+        "other": 64264,
+        "groceries": 1269
+      }
+    },
+    {
       "country": "Austria",
       "total": 497274,
       "categories": {
@@ -80,15 +90,6 @@
       "categories": {
         "transport": 193641,
         "stay": 189506
-      }
-    },
-    {
-      "country": "Czechia",
-      "total": 324226,
-      "categories": {
-        "stay": 232136,
-        "transport": 90821,
-        "groceries": 1269
       }
     },
     {
@@ -167,6 +168,14 @@
     {
       "date": "2026-07-15",
       "amount": 6829
+    },
+    {
+      "date": "2026-07-16",
+      "amount": 127827
+    },
+    {
+      "date": "2026-07-17",
+      "amount": 64264
     }
   ],
   "bookedCosts": [
@@ -581,6 +590,54 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_8ko36d266so3cb9i6kp34b9k6sr44ba284p46ba385136cpj690k4hi470",
+      "date": "2026-07-17",
+      "time": "05:09",
+      "amount": 11328,
+      "merchant": "SB Castle 05",
+      "category": "other",
+      "location": "Wallenstein Palace, 118 00 Prague 1",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_75236e9g6d0k4b9o88oj0b9k6p2j2b9p6ko3iba68gok4dhj6p2j4da66o",
+      "date": "2026-07-17",
+      "time": "03:13",
+      "amount": 8267,
+      "merchant": "Qerko  *Qerko",
+      "category": "other",
+      "location": "Wallenstein Palace, 118 00 Prague 1",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_890kcga6850j2b9l84p3ib9k8gpk8b9p84r3ab9j6t24cd2574qj0cq170",
+      "date": "2026-07-17",
+      "time": "01:48",
+      "amount": 44669,
+      "merchant": "NAM VIET KITCHEN",
+      "category": "other",
+      "location": "Wallenstein Palace, 118 00 Prague 1",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gqj6cph8h0kab9j74s34b9k6gq48b9p8ksj6ba36sq4agpj8gsk6dhl8o",
+      "date": "2026-07-16",
+      "time": "23:50",
+      "amount": 127827,
+      "merchant": "AIRBNB * HMPHBQZ3SB",
+      "category": "stay",
+      "location": "Wallenstein Palace, 118 00 Prague 1",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6p34cdhj70o46ba484sk4b9k7133ab9o60qj6ba58d146di56csj8h1p88",
       "date": "2026-07-15",
@@ -1623,6 +1680,54 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_8ko36d266so3cb9i6kp34b9k6sr44ba284p46ba385136cpj690k4hi470",
+      "date": "2026-07-17",
+      "time": "05:09",
+      "amount": 11328,
+      "merchant": "SB Castle 05",
+      "category": "other",
+      "location": "Wallenstein Palace, 118 00 Prague 1",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_75236e9g6d0k4b9o88oj0b9k6p2j2b9p6ko3iba68gok4dhj6p2j4da66o",
+      "date": "2026-07-17",
+      "time": "03:13",
+      "amount": 8267,
+      "merchant": "Qerko  *Qerko",
+      "category": "other",
+      "location": "Wallenstein Palace, 118 00 Prague 1",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_890kcga6850j2b9l84p3ib9k8gpk8b9p84r3ab9j6t24cd2574qj0cq170",
+      "date": "2026-07-17",
+      "time": "01:48",
+      "amount": 44669,
+      "merchant": "NAM VIET KITCHEN",
+      "category": "other",
+      "location": "Wallenstein Palace, 118 00 Prague 1",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gqj6cph8h0kab9j74s34b9k6gq48b9p8ksj6ba36sq4agpj8gsk6dhl8o",
+      "date": "2026-07-16",
+      "time": "23:50",
+      "amount": 127827,
+      "merchant": "AIRBNB * HMPHBQZ3SB",
+      "category": "stay",
+      "location": "Wallenstein Palace, 118 00 Prague 1",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6p34cdhj70o46ba484sk4b9k7133ab9o60qj6ba58d146di56csj8h1p88",
       "date": "2026-07-15",
@@ -2704,6 +2809,12 @@
       "count": 5
     },
     {
+      "name": "Wallenstein Palace, 118 00 Prague 1",
+      "count": 4,
+      "lat": 50.0900122,
+      "lng": 14.4055084
+    },
+    {
       "name": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
       "count": 3
     },
@@ -2745,6 +2856,12 @@
         "count": 5,
         "lat": 37.4292,
         "lng": 126.9876
+      },
+      {
+        "name": "Wallenstein Palace, 118 00 Prague 1",
+        "count": 4,
+        "lat": 50.0900122,
+        "lng": 14.4055084
       },
       {
         "name": "Opletalova 958/27, 110 00 Prague 1",
@@ -3001,6 +3118,15 @@
       "checkOut": null,
       "amount": 360690,
       "note": "Excluded from Czechia lodging total per user correction; Prague lodging is already represented by the 232,136 KRW Airbnb payment."
+    },
+    {
+      "name": "AIRBNB * HMPHBQZ3SB",
+      "city": "Wallenstein Palace, 118 00 Prague 1",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 127827,
+      "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
   "plannedAccommodations": [
@@ -3886,10 +4012,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-07-16",
+    "asOf": "2026-07-17",
     "limitDays": 90,
-    "usedDays": 9,
-    "remainingDays": 81,
+    "usedDays": 10,
+    "remainingDays": 80,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -3978,12 +4104,6 @@
   },
   "sleep": [
     {
-      "date": "2026-06-30",
-      "sleepHours": 7.07,
-      "recharge": 88.0,
-      "balance": "7.20"
-    },
-    {
       "date": "2026-07-01",
       "sleepHours": 7.07,
       "recharge": 88.0,
@@ -4060,19 +4180,15 @@
       "sleepHours": 7.2,
       "recharge": 90.0,
       "balance": "7.38"
+    },
+    {
+      "date": "2026-07-16",
+      "sleepHours": 3.86,
+      "recharge": 48.0,
+      "balance": "6.48"
     }
   ],
   "reflections": [
-    {
-      "id": "5djt9lbkfmajknq6rftqrnc4g0",
-      "date": "2026-07-05",
-      "title": "실제 흐름 / 공개 접점과 문체 기준 정렬",
-      "intent": "카드뉴스 샘 장면 기준으로 다음 세트를 만들고 동일성·여백·내부 텍스트 없음 기준을 확인한다.",
-      "did": "Threads @minimal_collector, Instagram, 카드뉴스 CTA, 아카이브 링크와 Threads 문체 기준을 정렬했다.",
-      "why": "핀된 Threads 글 반응이 먼저 신호를 줘 새 카드 제작보다 공개 접점 정리가 더 급했다.",
-      "carry": "@minimal_collector와 아카이브 링크를 공개 결과물의 기본 경로로 유지한다.",
-      "drop": "내부 제작 과정과 자동화 처리를 공개 글/회고의 중심 소재로 올리는 습관."
-    },
     {
       "id": "qcrvun0kbqtn5bub285brq6944",
       "date": "2026-07-06",
@@ -4176,11 +4292,21 @@
     {
       "id": "pf2rvlqv93f9rg7sacjcaspt6g",
       "date": "2026-07-16",
-      "title": "내일 의도 / 카드뉴스 이미지 선명도 먼저 확인하기",
+      "title": "실제 흐름 / 카드뉴스 기준과 산출물 확인 어긋남",
       "intent": "다음 카드뉴스에서 전체 화면이 어둡게 눌리지 않는지 먼저 본다.",
+      "did": "카드뉴스 표지 원본 이미지와 제목 스타일 기준을 스킬에 고정했지만, 산출물 확인 질문에는 한 번 엉뚱한 파일을 확인했다.",
+      "why": "오늘 문제는 이미지 처리만이 아니라 사용자가 지금 가리키는 결과물과 확인 대상이 어긋난 데 있었다.",
+      "carry": "카드뉴스 작업에서는 보고 전에 현재 산출물 1개를 같은 기준으로 다시 확인한다.",
+      "drop": "규칙 수정 보고만으로 실제 결과물 검증을 대신하는 흐름."
+    },
+    {
+      "id": "88mdtbo78bc4rnheaq0sh83d9o",
+      "date": "2026-07-17",
+      "title": "내일 의도 / 카드뉴스 산출물 기준 먼저 확인하기",
+      "intent": "카드뉴스 기준이 문서가 아니라 실제 결과물에 적용됐는지 먼저 본다.",
       "did": null,
       "why": null,
-      "carry": "카드 1장 216px 프리뷰를 열어 이미지 선명도, 제목 얼굴, 본문 역할만 확인한다.",
+      "carry": "최근 카드뉴스 한 세트를 열어 Card 1 원본 이미지 여부와 Cards 2-5 제목 스타일만 대조한다.",
       "drop": null
     }
   ]

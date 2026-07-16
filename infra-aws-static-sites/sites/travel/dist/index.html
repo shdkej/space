@@ -422,29 +422,37 @@
       .led-amt { font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .led-empty { color: var(--faint); font-size: 13px; padding: 8px 0; }
       .country-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-      .country-card { display: grid; gap: 12px; padding: 16px; border: 1px solid transparent; border-radius: var(--r-md); background: var(--surface-2); }
-      .country-card[open] { border-color: color-mix(in srgb, var(--ink) 12%, transparent); background: color-mix(in srgb, var(--surface-2) 86%, white); }
-      .country-card summary { display: grid; gap: 12px; cursor: pointer; list-style: none; }
-      .country-card summary::-webkit-details-marker { display: none; }
+      .country-card { display: grid; gap: 12px; width: 100%; padding: 16px; border: 1px solid transparent; border-radius: var(--r-md); background: var(--surface-2); color: inherit; text-align: left; cursor: pointer; }
+      .country-card:hover { border-color: color-mix(in srgb, var(--ink) 12%, transparent); background: color-mix(in srgb, var(--surface-2) 86%, white); }
       .country-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
       .country-top b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 17px; }
       .country-top span { flex: 0 0 auto; color: var(--ink); font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
-      .country-top b::after { content: "보기"; display: inline-flex; margin-left: 8px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; vertical-align: 2px; }
-      .country-card[open] .country-top b::after { content: "닫기"; }
+      .country-top b::after { content: "상세"; display: inline-flex; margin-left: 8px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; vertical-align: 2px; }
       .country-bars { display: grid; gap: 8px; }
       .country-line { display: grid; grid-template-columns: minmax(58px, 0.7fr) minmax(80px, 1.6fr) minmax(62px, 0.8fr); align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
       .country-line .label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .country-line .bar { height: 6px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--ink) 8%, transparent); }
       .country-line .bar span { display: block; width: 0%; height: 100%; border-radius: inherit; transition: width 900ms cubic-bezier(.2,.8,.2,1); }
       .country-line .amt { justify-self: end; color: var(--ink); font-variant-numeric: tabular-nums; }
-      .country-detail { display: grid; gap: 0; margin-top: 2px; border-top: 1px solid var(--line); }
+      .country-modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 24px; background: color-mix(in srgb, var(--ink) 34%, transparent); }
+      .country-modal.open { display: flex; }
+      .country-modal-panel { width: min(720px, 100%); max-height: min(760px, calc(100vh - 48px)); overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); box-shadow: 0 22px 70px color-mix(in srgb, var(--ink) 22%, transparent); }
+      .country-modal-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--line); }
+      .country-modal-title { min-width: 0; font-size: 20px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .country-modal-total { flex: 0 0 auto; font-weight: 800; font-variant-numeric: tabular-nums; }
+      .country-modal-close { display: grid; place-items: center; width: 34px; height: 34px; margin-left: 4px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; font-size: 22px; line-height: 1; }
+      .country-modal-body { max-height: calc(min(760px, 100vh - 48px) - 72px); overflow: auto; padding: 6px 20px 20px; }
+      .country-category { padding-top: 14px; }
+      .country-category-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 0 9px; border-bottom: 1px solid var(--line); }
+      .country-category-head b { font-size: 13px; }
+      .country-category-head span { color: var(--muted); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .country-detail { display: grid; gap: 0; }
       .country-expense { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 11px 0; border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent); }
       .country-expense:first-child { border-top: 0; }
       .country-expense .date { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
       .country-expense .name { min-width: 0; overflow-wrap: anywhere; font-size: 12.5px; font-weight: 650; }
       .country-expense .sub { margin-top: 3px; color: var(--muted); font-size: 11px; }
       .country-expense .amount { white-space: nowrap; font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
-      .country-more { padding: 10px 0 0; color: var(--faint); font-size: 11px; text-align: right; }
 
       /* budget */
       .budget-figure {
@@ -1032,6 +1040,13 @@
         .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line); padding-top: 14px; }
         .col-budget, .col-schengen, .col-itin, .col-map, .col-cat, .col-reflect, .col-prep, .col-ledger { grid-column: 1 / -1; }
         .country-grid { grid-template-columns: 1fr; }
+        .country-modal { padding: 12px; align-items: flex-end; }
+        .country-modal-panel { max-height: calc(100vh - 24px); }
+        .country-modal-head { padding: 15px 14px; gap: 10px; }
+        .country-modal-title { font-size: 18px; }
+        .country-modal-body { max-height: calc(100vh - 96px); padding: 4px 14px 16px; }
+        .country-expense { grid-template-columns: 42px minmax(0, 1fr); }
+        .country-expense .amount { grid-column: 2; justify-self: start; margin-top: -5px; }
         .led-grid { grid-template-columns: 1fr; }
         .led-grid .led-row:nth-child(2) { border-top: 1px solid var(--line); }
         #map { min-height: 300px; }
@@ -1296,6 +1311,17 @@
         <div class="card hoverable col-prep rise" style="animation-delay: 0.42s" id="countrySpendSection">
           <div class="card-head"><h2>국가별 지출</h2><span class="meta" id="countrySpendMeta">category split</span></div>
           <div id="countrySpend" class="country-grid"></div>
+        </div>
+
+        <div class="country-modal" id="countrySpendModal" aria-hidden="true">
+          <div class="country-modal-panel" role="dialog" aria-modal="true" aria-labelledby="countryModalTitle">
+            <div class="country-modal-head">
+              <div class="country-modal-title" id="countryModalTitle">—</div>
+              <div class="country-modal-total" id="countryModalTotal">—</div>
+              <button class="country-modal-close" type="button" id="countryModalClose" aria-label="닫기">×</button>
+            </div>
+            <div class="country-modal-body" id="countryModalBody"></div>
+          </div>
         </div>
 
         <div class="card hoverable col-ledger rise" style="animation-delay: 0.44s" id="ledgerSection">
@@ -1650,44 +1676,77 @@
           return acc;
         }, {});
         Object.values(expensesByCountry).forEach((rows) => rows.sort((a, b) => `${b.date || ""} ${b.time || ""}`.localeCompare(`${a.date || ""} ${a.time || ""}`)));
+        window.countrySpendState = { countries, expensesByCountry };
         const grandTotal = countries.reduce((sum, row) => sum + Number(row.total || 0), 0);
         $("countrySpendMeta").textContent = `${countries.length} countries · ${manWon(grandTotal)}원`;
         $("countrySpend").innerHTML = countries.length ? countries.map((row) => {
           const categories = Object.entries(row.categories || {}).slice(0, 5);
           const max = Math.max(...categories.map(([, amount]) => Number(amount || 0)), 1);
-          const detailRows = (expensesByCountry[row.country] || []).slice(0, 12);
-          const moreCount = Math.max(0, (expensesByCountry[row.country] || []).length - detailRows.length);
           return `
-            <details class="country-card">
-              <summary>
-                <div class="country-top"><b>${escapeHtml(row.country || "Unmapped")}</b><span>${manWon(row.total)}원</span></div>
-                <div class="country-bars">
-                  ${categories.map(([category, amount]) => `
-                    <div class="country-line">
-                      <span class="label">${escapeHtml(catNames[category] || category)}</span>
-                      <span class="bar"><span data-w="${Math.round((Number(amount || 0) / max) * 100)}" style="background:${catColor[category] || "#9a9a9a"}"></span></span>
-                      <span class="amt">${manWon(amount)}원</span>
-                    </div>
-                  `).join("")}
-                </div>
-              </summary>
+            <button class="country-card" type="button" data-country="${escapeHtml(row.country || "Unmapped")}">
+              <div class="country-top"><b>${escapeHtml(row.country || "Unmapped")}</b><span>${manWon(row.total)}원</span></div>
+              <div class="country-bars">
+                ${categories.map(([category, amount]) => `
+                  <div class="country-line">
+                    <span class="label">${escapeHtml(catNames[category] || category)}</span>
+                    <span class="bar"><span data-w="${Math.round((Number(amount || 0) / max) * 100)}" style="background:${catColor[category] || "#9a9a9a"}"></span></span>
+                    <span class="amt">${manWon(amount)}원</span>
+                  </div>
+                `).join("")}
+              </div>
+            </button>
+          `;
+        }).join("") : `<button class="country-card" type="button"><div class="country-top"><b>지출 없음</b><span>0원</span></div></button>`;
+        $("countrySpend").querySelectorAll(".country-card[data-country]").forEach((button) => {
+          button.addEventListener("click", () => openCountryModal(button.dataset.country));
+        });
+        requestAnimationFrame(() => document.querySelectorAll(".country-line .bar span[data-w]").forEach((el) => { el.style.width = `${el.dataset.w}%`; }));
+      }
+
+      function openCountryModal(country) {
+        const state = window.countrySpendState || {};
+        const row = (state.countries || []).find((item) => item.country === country) || {};
+        const rows = state.expensesByCountry?.[country] || [];
+        const grouped = rows.reduce((acc, expense) => {
+          const category = expense.category || "other";
+          (acc[category] ||= []).push(expense);
+          return acc;
+        }, {});
+        const orderedCategories = Object.entries(row.categories || {})
+          .sort((a, b) => Number(b[1] || 0) - Number(a[1] || 0))
+          .map(([category]) => category);
+        Object.keys(grouped).forEach((category) => {
+          if (!orderedCategories.includes(category)) orderedCategories.push(category);
+        });
+        $("countryModalTitle").textContent = country || "Unmapped";
+        $("countryModalTotal").textContent = `${manWon(row.total || rows.reduce((sum, expense) => sum + Number(expense.amount || 0), 0))}원`;
+        $("countryModalBody").innerHTML = orderedCategories.length ? orderedCategories.map((category) => {
+          const categoryRows = grouped[category] || [];
+          const categoryTotal = Number(row.categories?.[category] || categoryRows.reduce((sum, expense) => sum + Number(expense.amount || 0), 0));
+          return `
+            <section class="country-category">
+              <div class="country-category-head">
+                <b>${escapeHtml(catNames[category] || category)}</b>
+                <span>${manWon(categoryTotal)}원 · ${categoryRows.length}건</span>
+              </div>
               <div class="country-detail">
-                ${detailRows.length ? detailRows.map((expense) => `
+                ${categoryRows.length ? categoryRows.map((expense) => `
                   <div class="country-expense">
                     <span class="date">${escapeHtml((expense.date || "").slice(5).replace("-", "."))}</span>
                     <div>
                       <div class="name">${escapeHtml(maskMerchant(expense.merchant))}</div>
-                      <div class="sub">${escapeHtml([expense.location, catNames[expense.category] || expense.category, expense.note].filter(Boolean).join(" · "))}</div>
+                      <div class="sub">${escapeHtml([expense.location, expense.note].filter(Boolean).join(" · "))}</div>
                     </div>
                     <span class="amount">${won(expense.amount)}</span>
                   </div>
                 `).join("") : `<div class="country-expense"><span class="date">—</span><div><div class="name">상세 지출 없음</div></div><span class="amount">0원</span></div>`}
-                ${moreCount ? `<div class="country-more">외 ${moreCount}건 더 있음</div>` : ""}
               </div>
-            </details>
+            </section>
           `;
-        }).join("") : `<details class="country-card"><summary><div class="country-top"><b>지출 없음</b><span>0원</span></div></summary></details>`;
-        requestAnimationFrame(() => document.querySelectorAll(".country-line .bar span[data-w]").forEach((el) => { el.style.width = `${el.dataset.w}%`; }));
+        }).join("") : `<div class="country-expense"><span class="date">—</span><div><div class="name">상세 지출 없음</div></div><span class="amount">0원</span></div>`;
+        $("countrySpendModal").classList.add("open");
+        $("countrySpendModal").setAttribute("aria-hidden", "false");
+        $("countryModalClose").focus();
       }
 
       function renderMap(data) {
@@ -1739,7 +1798,18 @@
       function closeModal() { $("modal").classList.remove("open"); }
       $("mClose").addEventListener("click", closeModal);
       $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) closeModal(); });
-      document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+      function closeCountryModal() {
+        $("countrySpendModal").classList.remove("open");
+        $("countrySpendModal").setAttribute("aria-hidden", "true");
+      }
+      $("countryModalClose").addEventListener("click", closeCountryModal);
+      $("countrySpendModal").addEventListener("click", (e) => { if (e.target === $("countrySpendModal")) closeCountryModal(); });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeModal();
+          closeCountryModal();
+        }
+      });
 
       window.travelDataPromise = fetch("travel-data.json", { cache: "no-store" }).then((r) => r.json());
       window.travelDataPromise

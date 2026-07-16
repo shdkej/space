@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.fullname }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
   selector:
     matchLabels:
       app: {{ .Values.fullname }}

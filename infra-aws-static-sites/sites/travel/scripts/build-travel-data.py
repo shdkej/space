@@ -146,7 +146,7 @@ ROUTE = [
         "endDate": "2026-07-17",
         "lodging": "Central Station Airbnb",
         "source": "7/14 EC train or FlixBus from Berlin",
-        "amount": 220000,
+        "amount": 232136,
         "note": "Old town, cafes, transit hub; 7/17 Prague -> Vienna by RegioJet or OBB",
         "transportIn": "2026-07-14 EC 열차 또는 FlixBus: 베를린 -> 프라하",
         "transportOut": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
@@ -189,7 +189,7 @@ ROUTE = [
         "endDate": "2026-07-20",
         "lodging": "Airbnb",
         "source": "7/17 RegioJet or OBB from Prague",
-        "amount": 330000,
+        "amount": 345658,
         "note": "Museums, libraries, slower days; 7/20 Vienna -> Budapest by EuroCity",
         "transportIn": "2026-07-17 RegioJet 또는 OBB: 프라하 -> 빈",
         "transportOut": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
@@ -225,7 +225,7 @@ ROUTE = [
         "endDate": "2026-07-23",
         "lodging": "Airbnb",
         "source": "7/20 EuroCity from Vienna",
-        "amount": 300000,
+        "amount": 293605,
         "note": "Thermal baths, food, Danube; 7/23 Budapest -> Zagreb -> Plitvice by linked FlixBus legs",
         "transportIn": "2026-07-20 Railjet 또는 EuroCity: 빈 -> 부다페스트",
         "transportOut": "2026-07-23 FlixBus: 부다페스트 -> 자그레브 -> 플리트비체",
@@ -238,10 +238,10 @@ ROUTE = [
         },
         "transportOutPayment": {
             "status": "paid",
-            "amount": 156361,
-            "paidDate": "2026-07-02",
+            "amount": 131151,
+            "paidDate": "2026-06-18",
             "merchant": "FlixBus",
-            "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35.",
+            "note": "Budapest -> Zagreb, 08:25-12:20; actual card approval mapped per user correction.",
         },
         "arrivalTransfer": {
             "title": "빈 -> 부다페스트",
@@ -272,17 +272,17 @@ ROUTE = [
         "transportOut": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
         "transportInPayment": {
             "status": "paid",
-            "amount": 156361,
-            "paidDate": "2026-07-02",
+            "amount": 131151,
+            "paidDate": "2026-06-18",
             "merchant": "FlixBus",
-            "note": "Budapest -> Zagreb, 08:25-12:20, 2 seats, EUR 73.35.",
+            "note": "Budapest -> Zagreb, 08:25-12:20; actual card approval mapped per user correction.",
         },
         "transportOutPayment": {
             "status": "paid",
-            "amount": 74534,
-            "paidDate": "2026-07-02",
+            "amount": 62490,
+            "paidDate": "2026-06-18",
             "merchant": "FlixBus",
-            "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95.",
+            "note": "Zagreb -> Plitvice, 14:30-16:20; actual card approval mapped per user correction.",
         },
         "arrivalTransfer": {
             "title": "부다페스트 -> 자그레브",
@@ -310,15 +310,15 @@ ROUTE = [
         "lodging": "Plitvice Airbnb",
         "source": "Notion TO DO / 숙소 예약",
         "amount": 190000,
-        "note": "2 nights near national park entrance; booked Airbnb for 190,000 KRW",
+        "note": "2 nights near national park entrance; actual Airbnb card approval mapped per user correction.",
         "transportIn": "2026-07-23 FlixBus: 자그레브 -> 플리트비체",
         "transportOut": "2026-07-25 FlixBus 또는 버스: 플리트비체 -> 스플리트",
         "transportInPayment": {
             "status": "paid",
-            "amount": 74534,
-            "paidDate": "2026-07-02",
+            "amount": 62490,
+            "paidDate": "2026-06-18",
             "merchant": "FlixBus",
-            "note": "Zagreb -> Plitvice, 14:30-16:20, 2 seats, EUR 34.95.",
+            "note": "Zagreb -> Plitvice, 14:30-16:20; actual card approval mapped per user correction.",
         },
         "arrivalTransfer": {
             "title": "자그레브 -> 플리트비체",
@@ -874,39 +874,6 @@ MANUAL_TRAVEL_EXPENSES = [
         "source": "telegram:433493318/message/10729",
     },
     {
-        "id": "manual-transport-2026-07-02-flixbus-budapest-zagreb",
-        "date": "2026-07-02",
-        "time": "",
-        "amount": 156361,
-        "merchant": "FlixBus · Budapest -> Zagreb",
-        "category": "transport",
-        "location": "Budapest / Zagreb",
-        "travel": True,
-        "source": "Notion TO DO",
-    },
-    {
-        "id": "manual-transport-2026-07-02-flixbus-zagreb-plitvice",
-        "date": "2026-07-02",
-        "time": "",
-        "amount": 74534,
-        "merchant": "FlixBus · Zagreb -> Plitvice",
-        "category": "transport",
-        "location": "Zagreb / Plitvice",
-        "travel": True,
-        "source": "Notion TO DO",
-    },
-    {
-        "id": "manual-stay-2026-07-04-plitvice-airbnb",
-        "date": "2026-07-04",
-        "time": "",
-        "amount": 190000,
-        "merchant": "Plitvice Airbnb",
-        "category": "stay",
-        "location": "Plitvice",
-        "travel": True,
-        "source": "Notion TO DO",
-    },
-    {
         "id": "manual-shopping-2026-06-07-international-license",
         "date": "2026-06-07",
         "time": "",
@@ -1238,6 +1205,52 @@ TRAVEL_PAYMENT_OVERRIDES = [
         "note": "Mapped from the June Airbnb payment to the Cologne stay.",
     },
     {
+        "date": "2026-05-23",
+        "match": "호텔농심",
+        "amount": 780000,
+        "merchant": "호텔농심",
+        "category": "stay",
+        "location": "South Korea",
+        "travel": False,
+        "note": "Excluded from travel ledger per user correction.",
+    },
+    {
+        "date": "2026-06-08",
+        "match": "AIRBNB * HM8SKN5CSF",
+        "amount": 232136,
+        "merchant": "Prague · Airbnb",
+        "category": "stay",
+        "location": "Prague",
+        "note": "Mapped to Czechia per user correction.",
+    },
+    {
+        "date": "2026-06-08",
+        "match": "AIRBNB * HM8J5Q8ANN",
+        "amount": 345658,
+        "merchant": "Vienna · Airbnb",
+        "category": "stay",
+        "location": "Vienna",
+        "note": "Mapped to Vienna per user correction.",
+    },
+    {
+        "date": "2026-06-08",
+        "match": "AIRBNB * HMQYWZCCWE",
+        "amount": 293605,
+        "merchant": "Budapest · Airbnb",
+        "category": "stay",
+        "location": "Budapest",
+        "note": "Mapped to Budapest per user correction.",
+    },
+    {
+        "date": "2026-06-17",
+        "match": "AIRBNB * HMP8R8ZN5W",
+        "amount": 189506,
+        "merchant": "Plitvice · Airbnb",
+        "category": "stay",
+        "location": "Plitvice",
+        "note": "Mapped to Plitvice, Croatia per user correction.",
+    },
+    {
         "date": "2026-06-13",
         "match": "DB Vertrieb GmbH",
         "amount": 113702,
@@ -1257,10 +1270,31 @@ TRAVEL_PAYMENT_OVERRIDES = [
     },
     {
         "date": "2026-06-18",
+        "match": "Flix SE",
+        "amount": 131151,
+        "merchant": "FlixBus · Budapest → Zagreb",
+        "category": "transport",
+        "country": "Croatia",
+        "location": "Zagreb",
+        "note": "Mapped to the Budapest -> Zagreb FlixBus leg per user correction.",
+    },
+    {
+        "date": "2026-06-18",
+        "match": "FLIX",
+        "amount": 62490,
+        "merchant": "FlixBus · Zagreb → Plitvice",
+        "category": "transport",
+        "country": "Croatia",
+        "location": "Plitvice",
+        "note": "Mapped to the Zagreb -> Plitvice FlixBus leg per user correction.",
+    },
+    {
+        "date": "2026-06-18",
         "match": "regiojet.cz",
         "amount": 70446,
         "merchant": "RegioJet · Prague → Vienna",
         "category": "transport",
+        "country": "Austria",
         "location": "Prague → Vienna",
         "note": "Mapped from RegioJet booking confirmed in travel handover.",
     },
@@ -1333,8 +1367,9 @@ TRAVEL_PAYMENT_OVERRIDES = [
         "amount": 360690,
         "merchant": "AIRBNB * HMZ59JR8CZ",
         "category": "stay",
-        "location": "Prague",
-        "note": "Prague Airbnb charge from updated card approval list.",
+        "location": "Unknown Airbnb",
+        "travel": False,
+        "note": "Excluded from Czechia lodging total per user correction; Prague lodging is already represented by the 232,136 KRW Airbnb payment.",
     },
 ]
 
@@ -1507,6 +1542,9 @@ def current_route_stop(route, today):
 
 
 def country_for_expense(expense, route):
+    if expense.get("country"):
+        return expense["country"]
+
     raw_location = (expense.get("location") or "").strip()
     if raw_location == "여행 준비":
         return "여행 준비"
@@ -1751,7 +1789,7 @@ def build(events, geocode_cache=None, geocode_enabled=True):
             display_merchant = override.get("merchant") if override else merchant
             display_location = override.get("location") if override else public_location_label(location)
             category = override.get("category") if override else category_for(merchant)
-            travel = True if override else is_travel_expense(merchant, category, location)
+            travel = override.get("travel", True) if override else is_travel_expense(merchant, category, location)
             expenses.append({
                 "id": event.get("id"),
                 "date": day,
@@ -1761,6 +1799,8 @@ def build(events, geocode_cache=None, geocode_enabled=True):
                 "category": category,
                 "location": display_location,
                 "travel": travel,
+                "country": override.get("country") if override else None,
+                "note": override.get("note") if override else None,
             })
             if category == "stay":
                 accommodations.append({

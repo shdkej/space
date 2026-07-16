@@ -434,7 +434,8 @@
       .country-line .bar { height: 6px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--ink) 8%, transparent); }
       .country-line .bar span { display: block; width: 0%; height: 100%; border-radius: inherit; transition: width 900ms cubic-bezier(.2,.8,.2,1); }
       .country-line .amt { justify-self: end; color: var(--ink); font-variant-numeric: tabular-nums; }
-      .country-modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 24px; background: color-mix(in srgb, var(--ink) 34%, transparent); }
+      body.modal-open { overflow: hidden; }
+      .country-modal { position: fixed; inset: 0; z-index: 5000; display: none; align-items: center; justify-content: center; padding: 24px; background: color-mix(in srgb, var(--ink) 34%, transparent); }
       .country-modal.open { display: flex; }
       .country-modal-panel { width: min(720px, 100%); max-height: min(760px, calc(100vh - 48px)); overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); box-shadow: 0 22px 70px color-mix(in srgb, var(--ink) 22%, transparent); }
       .country-modal-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--line); }
@@ -1040,8 +1041,8 @@
         .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line); padding-top: 14px; }
         .col-budget, .col-schengen, .col-itin, .col-map, .col-cat, .col-reflect, .col-prep, .col-ledger { grid-column: 1 / -1; }
         .country-grid { grid-template-columns: 1fr; }
-        .country-modal { padding: 12px; align-items: flex-end; }
-        .country-modal-panel { max-height: calc(100vh - 24px); }
+        .country-modal { padding: 12px; align-items: center; }
+        .country-modal-panel { max-height: min(720px, calc(100vh - 24px)); }
         .country-modal-head { padding: 15px 14px; gap: 10px; }
         .country-modal-title { font-size: 18px; }
         .country-modal-body { max-height: calc(100vh - 96px); padding: 4px 14px 16px; }
@@ -1313,17 +1314,6 @@
           <div id="countrySpend" class="country-grid"></div>
         </div>
 
-        <div class="country-modal" id="countrySpendModal" aria-hidden="true">
-          <div class="country-modal-panel" role="dialog" aria-modal="true" aria-labelledby="countryModalTitle">
-            <div class="country-modal-head">
-              <div class="country-modal-title" id="countryModalTitle">—</div>
-              <div class="country-modal-total" id="countryModalTotal">—</div>
-              <button class="country-modal-close" type="button" id="countryModalClose" aria-label="닫기">×</button>
-            </div>
-            <div class="country-modal-body" id="countryModalBody"></div>
-          </div>
-        </div>
-
         <div class="card hoverable col-ledger rise" style="animation-delay: 0.44s" id="ledgerSection">
           <div class="card-head"><h2>최근 지출</h2><span class="meta" id="ledgerMeta">travel only</span></div>
           <div id="ledger" class="led-grid"></div>
@@ -1346,6 +1336,17 @@
         <span id="footRight">synced —</span>
       </footer>
     </main>
+
+    <div class="country-modal" id="countrySpendModal" aria-hidden="true">
+      <div class="country-modal-panel" role="dialog" aria-modal="true" aria-labelledby="countryModalTitle">
+        <div class="country-modal-head">
+          <div class="country-modal-title" id="countryModalTitle">—</div>
+          <div class="country-modal-total" id="countryModalTotal">—</div>
+          <button class="country-modal-close" type="button" id="countryModalClose" aria-label="닫기">×</button>
+        </div>
+        <div class="country-modal-body" id="countryModalBody"></div>
+      </div>
+    </div>
 
     <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
       <div class="modal-card">
@@ -1746,6 +1747,7 @@
         }).join("") : `<div class="country-expense"><span class="date">—</span><div><div class="name">상세 지출 없음</div></div><span class="amount">0원</span></div>`;
         $("countrySpendModal").classList.add("open");
         $("countrySpendModal").setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
         $("countryModalClose").focus();
       }
 
@@ -1801,6 +1803,7 @@
       function closeCountryModal() {
         $("countrySpendModal").classList.remove("open");
         $("countrySpendModal").setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
       }
       $("countryModalClose").addEventListener("click", closeCountryModal);
       $("countrySpendModal").addEventListener("click", (e) => { if (e.target === $("countrySpendModal")) closeCountryModal(); });

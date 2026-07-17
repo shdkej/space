@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-16T14:40:04.032337+00:00",
+  "generatedAt": "2026-07-17T14:40:04.896673+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,20 +8,20 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 5525621,
-    "travelLoggedKrw": 5525621,
-    "remainingMinKrw": 24474379,
-    "remainingMaxKrw": 34474379,
-    "reservedPctMin": 18.4,
+    "loggedKrw": 5675953,
+    "travelLoggedKrw": 5675953,
+    "remainingMinKrw": 24324047,
+    "remainingMaxKrw": 34324047,
+    "reservedPctMin": 18.9,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 80081,
+    "reserveBurnKrw": 81085,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-07-17",
+    "date": "2026-07-18",
     "location": "Vienna",
     "mapQuery": "Vienna, Austria"
   },
@@ -30,7 +30,7 @@
     "gear": 1446349,
     "transport": 794053,
     "medical": 680000,
-    "other": 516060,
+    "other": 666392,
     "visa": 211394,
     "food": 152774,
     "groceries": 28049
@@ -40,7 +40,7 @@
     "gear": 1446349,
     "transport": 794053,
     "medical": 680000,
-    "other": 516060,
+    "other": 666392,
     "visa": 211394,
     "food": 152774,
     "groceries": 28049
@@ -68,20 +68,21 @@
     },
     {
       "country": "Czechia",
-      "total": 516317,
+      "total": 621905,
       "categories": {
         "stay": 359963,
+        "other": 169852,
         "transport": 90821,
-        "other": 64264,
         "groceries": 1269
       }
     },
     {
       "country": "Austria",
-      "total": 497274,
+      "total": 542018,
       "categories": {
         "stay": 345658,
-        "transport": 151616
+        "transport": 151616,
+        "other": 44744
       }
     },
     {
@@ -175,7 +176,11 @@
     },
     {
       "date": "2026-07-17",
-      "amount": 64264
+      "amount": 169852
+    },
+    {
+      "date": "2026-07-18",
+      "amount": 44744
     }
   ],
   "bookedCosts": [
@@ -590,6 +595,66 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_850k6h2674sk4ba36cpk2b9k8gq36ba26d1j8b9o64sj2d9l84q44hi56s",
+      "date": "2026-07-18",
+      "time": "04:31",
+      "amount": 1980,
+      "merchant": "ALBERT VAM DEKUJE",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64p3ed1i6ko46b9h8gpkab9k6t1j6ba2650k2b9i8opj4e1n60q30e9m8g",
+      "date": "2026-07-18",
+      "time": "02:18",
+      "amount": 42764,
+      "merchant": "Kozlovna Apropos",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6sq36hhp6oo3cb9g6d1k6b9k64ojcba26p342ba174p36ha36oqk6ci474",
+      "date": "2026-07-17",
+      "time": "11:30",
+      "amount": 2685,
+      "merchant": "ALBERT VAM DEKUJE",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6cpjadhk74qjiba26h1k2b9k6h1jeba28d13iba674q38chm8l148ea36s",
+      "date": "2026-07-17",
+      "time": "09:31",
+      "amount": 23632,
+      "merchant": "ALBERT VAM DEKUJE",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6kq36d9m70s48b9n710j0b9k6p0kcb9p8kpj6b9n8oo3ida37114agho60",
+      "date": "2026-07-17",
+      "time": "08:44",
+      "amount": 79271,
+      "merchant": "Oest. Galerie Belvedere",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_8ko36d266so3cb9i6kp34b9k6sr44ba284p46ba385136cpj690k4hi470",
       "date": "2026-07-17",
@@ -1680,6 +1745,66 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_850k6h2674sk4ba36cpk2b9k8gq36ba26d1j8b9o64sj2d9l84q44hi56s",
+      "date": "2026-07-18",
+      "time": "04:31",
+      "amount": 1980,
+      "merchant": "ALBERT VAM DEKUJE",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64p3ed1i6ko46b9h8gpkab9k6t1j6ba2650k2b9i8opj4e1n60q30e9m8g",
+      "date": "2026-07-18",
+      "time": "02:18",
+      "amount": 42764,
+      "merchant": "Kozlovna Apropos",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6sq36hhp6oo3cb9g6d1k6b9k64ojcba26p342ba174p36ha36oqk6ci474",
+      "date": "2026-07-17",
+      "time": "11:30",
+      "amount": 2685,
+      "merchant": "ALBERT VAM DEKUJE",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6cpjadhk74qjiba26h1k2b9k6h1jeba28d13iba674q38chm8l148ea36s",
+      "date": "2026-07-17",
+      "time": "09:31",
+      "amount": 23632,
+      "merchant": "ALBERT VAM DEKUJE",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6kq36d9m70s48b9n710j0b9k6p0kcb9p8kpj6b9n8oo3ida37114agho60",
+      "date": "2026-07-17",
+      "time": "08:44",
+      "amount": 79271,
+      "merchant": "Oest. Galerie Belvedere",
+      "category": "other",
+      "location": "Vrch Žižkov, Prague 3",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_8ko36d266so3cb9i6kp34b9k6sr44ba284p46ba385136cpj690k4hi470",
       "date": "2026-07-17",
@@ -2809,6 +2934,12 @@
       "count": 5
     },
     {
+      "name": "Vrch Žižkov, Prague 3",
+      "count": 5,
+      "lat": 50.0851924,
+      "lng": 14.4606777
+    },
+    {
       "name": "Wallenstein Palace, 118 00 Prague 1",
       "count": 4,
       "lat": 50.0900122,
@@ -2856,6 +2987,12 @@
         "count": 5,
         "lat": 37.4292,
         "lng": 126.9876
+      },
+      {
+        "name": "Vrch Žižkov, Prague 3",
+        "count": 5,
+        "lat": 50.0851924,
+        "lng": 14.4606777
       },
       {
         "name": "Wallenstein Palace, 118 00 Prague 1",
@@ -4012,10 +4149,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-07-17",
+    "asOf": "2026-07-18",
     "limitDays": 90,
-    "usedDays": 10,
-    "remainingDays": 80,
+    "usedDays": 11,
+    "remainingDays": 79,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -4104,12 +4241,6 @@
   },
   "sleep": [
     {
-      "date": "2026-07-01",
-      "sleepHours": 7.07,
-      "recharge": 88.0,
-      "balance": "7.20"
-    },
-    {
       "date": "2026-07-04",
       "sleepHours": 6.52,
       "recharge": 81.0,
@@ -4186,19 +4317,15 @@
       "sleepHours": 3.86,
       "recharge": 48.0,
       "balance": "6.48"
+    },
+    {
+      "date": "2026-07-17",
+      "sleepHours": 8.23,
+      "recharge": 103.0,
+      "balance": "6.94"
     }
   ],
   "reflections": [
-    {
-      "id": "qcrvun0kbqtn5bub285brq6944",
-      "date": "2026-07-06",
-      "title": "실제 흐름 / 실제 확인 기준과 CMS 막힘 정리",
-      "intent": "핀된 Threads 글, 카드뉴스 끝 장, 프로필/아카이브가 같은 약속으로 읽히게 한다.",
-      "did": "샘 카드 이미지 검증 기준을 다시 잠그고, Virtue 첫 가치 후보 묶음과 카드뉴스 산출물 경계를 정리했으며, CMS L1 업데이트 막힘이 남았다.",
-      "why": "출국 전날에는 새 산출물보다 실제 파일과 화면에서 보이는지 확인하는 일이 더 급했다.",
-      "carry": "공개 경로 정렬은 유지하되, CMS L1 반영 원인을 한 갈래로 좁힌다.",
-      "drop": "프롬프트 조건이나 내부 처리 완료를 실제 검증으로 착각하는 방식."
-    },
     {
       "id": "cj9sq70n0ufmr7cgjdk7ga00go",
       "date": "2026-07-07",
@@ -4302,11 +4429,21 @@
     {
       "id": "88mdtbo78bc4rnheaq0sh83d9o",
       "date": "2026-07-17",
-      "title": "내일 의도 / 카드뉴스 산출물 기준 먼저 확인하기",
+      "title": "실제 흐름 / 첫 사용자 재방문 신호 정리",
       "intent": "카드뉴스 기준이 문서가 아니라 실제 결과물에 적용됐는지 먼저 본다.",
+      "did": "카드뉴스 검증보다 Virtue 첫 10명 관찰에서 저장 여부와 같은 job 재방문 근거를 분리하는 정리가 진행됐다.",
+      "why": "당일 새 사용자 발화가 없었고 자동 루틴이 첫 사용자 학습 기준 정리로 흘렀다.",
+      "carry": "다음 카드뉴스 확인은 Card 1 original, Cards 2-5 제목 스타일, local_config 경계 3가지만 좁게 본다.",
+      "drop": "산출물 확인 의도가 있었는데 운영 정리만으로 완료된 것처럼 보는 흐름."
+    },
+    {
+      "id": "48o06bkqrv8u2ja37ndc57o9u8",
+      "date": "2026-07-18",
+      "title": "내일 의도 / 카드뉴스 최신 항목 3가지만 확인하기",
+      "intent": "새 작업을 늘리기보다 전날 남긴 카드뉴스 확인 의도를 실제 산출물에서 닫는다.",
       "did": null,
       "why": null,
-      "carry": "최근 카드뉴스 한 세트를 열어 Card 1 원본 이미지 여부와 Cards 2-5 제목 스타일만 대조한다.",
+      "carry": "최신 카드뉴스 항목 1개를 열어 Card 1 original, Cards 2-5 제목 스타일, local_config 경계만 본다.",
       "drop": null
     }
   ]

@@ -1363,8 +1363,32 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
-      const catNames = { stay: "숙소", flight: "항공", transit: "이동", transport: "교통", visa: "비자", food: "식비", groceries: "장보기", cafe: "카페", gear: "준비물", medical: "의료", tool: "도구", other: "기타" };
-      const catColor = { stay: "#335c99", flight: "#564b96", transit: "#564b96", transport: "#564b96", visa: "#8a5cf6", food: "#c44536", groceries: "#2d5a27", cafe: "#d4a026", gear: "#7a5b2e", medical: "#2f7f73", tool: "#9a9a9a", other: "#9a9a9a" };
+      const catNames = {
+        stay: "숙소", flight: "항공", transit: "이동", transport: "교통", visa: "비자",
+        food: "식비", groceries: "장보기", cafe: "카페", gear: "준비물", medical: "의료",
+        tool: "도구", other: "기타",
+        "숙소": "숙소", "준비물/장비": "준비물/장비", "의료/보험": "의료/보험", "교통": "교통",
+        "외식": "외식", "비자": "비자", "항공": "항공", "장보기": "장보기", "간식/물": "간식/물",
+        "입장권": "입장권", "체험": "체험", "멍청비용": "멍청비용", "기타": "기타"
+      };
+      const catColor = {
+        stay: "#335c99", flight: "#4f46a5", transit: "#6b5fb5", transport: "#2870a6",
+        visa: "#8a5cf6", food: "#c44536", groceries: "#2d6a4f", cafe: "#d4a026",
+        gear: "#7a5b2e", medical: "#2f7f73", tool: "#7f7f7f", other: "#8a8a8a",
+        "숙소": "#335c99",
+        "준비물/장비": "#8b6f2f",
+        "의료/보험": "#2f7f73",
+        "교통": "#2870a6",
+        "외식": "#c44536",
+        "비자": "#8a5cf6",
+        "항공": "#4f46a5",
+        "장보기": "#2d6a4f",
+        "간식/물": "#d4a026",
+        "입장권": "#b8557a",
+        "체험": "#0f766e",
+        "멍청비용": "#7c3f1d",
+        "기타": "#8a8a8a"
+      };
 
       const won = (v) => new Intl.NumberFormat("ko-KR").format(Math.round(v || 0));
       const manWon = (v) => {

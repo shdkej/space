@@ -28,6 +28,8 @@ load_systemd_env() {
 
 load_systemd_env GOG_ACCOUNT
 load_systemd_env GOG_KEYRING_PASSWORD
+load_systemd_env NOTION_KIMNOZ_TRAVEL_API_KEY
+load_systemd_env NOTION_API_TOKEN
 
 echo "[$(date -u +%FT%TZ)] Updating Travel Ledger for $TODAY"
 
@@ -37,6 +39,10 @@ echo "[$(date -u +%FT%TZ)] Updating Travel Ledger for $TODAY"
   --output "$APP_DIR/dist/travel-data.json" \
   --state-output "$APP_DIR/data/raw-events-private.json" \
   --geocode-cache "$APP_DIR/data/geocode-cache.json"
+
+"$APP_DIR/scripts/sync-expenses-to-notion.py" \
+  --input "$APP_DIR/dist/travel-data.json" \
+  --from-date "$TODAY"
 
 aws s3 cp "$APP_DIR/dist/travel-data.json" "s3://$BUCKET/travel-data.json" \
   --cache-control "no-cache, max-age=60"

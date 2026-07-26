@@ -8,7 +8,7 @@
 - **한 화면 (one screen)**: 첫 화면에서 시스템 상태가 스크롤 없이 드러난다. 히어로(전체 온도) + 4카드(System / Surfaces / Agents / Output). Deploy 탭은 Surfaces와 중복이라 Output(산출물 신선도)으로 교체(2026-07-05) — Agents(누가 도는가)↔Output(뭐가 쌓이는가) 쌍.
 - **샘(Saem)이 주인공, HUD는 그 위에 뜬다**: 배경의 3D 샘 씬이 무대(主)이고, 상태 카드는 투명 글래스로 그 위에 떠 있다.
 - **브랜드 정본 준수**: 캐릭터는 BRAND.md의 샘 — 이끼 조약돌 정령. 과장된 귀여움·큰 눈 금지, 씬 안에 텍스트/로고 렌더 금지.
-- **팔레트**: 화이트 크림 `#f5f4f1` + 웜 그레이지 + 올리브 이끼 + 은은한 아침빛. 누런기 억제(2026-07-05 피드백 "너무 누래서 하얗게"), 그림자는 웜 그레이(pure black 금지).
+- **팔레트**: 맑은 수면 베이스 `#eef8f5` + 에메랄드 키컬러 `#4f9d8a` + 깊은 물빛 `#1f6566` + 웜 그레이지 조약돌. 2026-07-26 물결 사진 피드백 이후 status의 키컬러는 "물결에 비치는 에메랄드빛"이 기준이고, CMS의 같은 테마와 연결되되 status에서는 샘·수면·글래스 HUD에 맞게 더 밝고 투명하게 쓴다. 누런기 억제(2026-07-05 피드백 "너무 누래서 하얗게"), 그림자는 웜 그레이/물빛 회색(pure black 금지).
 
 ## 레이어 구조 (아래 → 위)
 
@@ -23,9 +23,9 @@
 
 - Three.js 0.166.1을 `dist/assets/vendor/three.module.min.js`로 **로컬 vendoring** — CDN 런타임 의존 없음 (과거 Three.js 롤백 원인이던 CDN 실패 리스크 제거).
 - 샘은 이미지가 아니라 **절차적 지오메트리**로, 정본 이미지(`~/workspace/prompt-archive/assets/saem-character/reference/`)를 기준 삼는다: speckle 질감 조약돌 + 우상단 유기 이끼 패치(작은 clump 22개) + 이끼에서 자라는 새싹 + 담담한 점 눈 2개. 숨쉬기 bob + 느린 좌우 바라보기.
-- 수면: 대형 circle 평면 + 동심원 ring 4개가 스케일/페이드로 퍼지는 물결. 가짜 컨택트 섀도(웜 그레이 radial 텍스처).
+- 수면: 대형 circle 평면 + 동심원 ring 4개가 스케일/페이드로 퍼지는 물결. 수면과 mote는 에메랄드 반사광으로 통일하고, 가짜 컨택트 섀도는 물빛 회색 radial 텍스처를 쓴다.
 - 카메라: 사인 드리프트 + 포인터 parallax(lerp 0.05). 데스크탑은 샘을 우측 스테이지에(stage.x 오프셋, lookAt은 원점 고정), 모바일은 히어로와 카드 사이 중앙에.
-- **상태 연동** (BRAND.md 상태 문법): `status.json` overall이 ok → 따뜻한 아침빛(`#fff8ee`) + 물결 진행 / warn·bad → 빛 강도·색온도 하강(`#eae6dd`) + 물결 정지(고요한 수면). `window.__SAEM_SCENE__.setMood()`로 전환.
+- **상태 연동** (BRAND.md 상태 문법): `status.json` overall이 ok → 맑은 에메랄드 아침빛(`#d5fff4`) + 물결 진행 / warn·bad → 빛 강도·색온도 하강(`#d9e8e2`) + 물결 정지(고요한 수면). `window.__SAEM_SCENE__.setMood()`로 전환.
 
 ## Fallback 체인
 
@@ -35,7 +35,7 @@
 
 ## HUD 글래스 문법
 
-- 토큰: `--glass: rgba(255,255,255,0.28)` / `--glass-strong: 0.42` / `--glass-border: 0.62` / `--glass-blur: none` — backdrop-blur는 밀키한 불투명감을 만들어 뺐다. 맑은 투명이 최종 상태다.
+- 토큰: `--glass: rgba(247,255,252,0.30)` / `--glass-strong: 0.44` / `--glass-border: rgba(170,226,211,0.58)` / `--glass-blur: none` — backdrop-blur는 밀키한 불투명감을 만들어 뺐다. 맑은 투명이 최종 상태이고, 보더와 반짝임만 에메랄드 물빛을 드러낸다.
 - 히어로·4카드·상세 타일·리스트 행·하단 내비·아이콘 버튼 전부 같은 토큰 사용. 내비 현재 탭도 불투명 배경 없이 보더+굵은 글자만(2026-07-05 피드백).
 - 카드는 상태를 보여준다: 상태 dot + label + 핵심 수치(score, OK/total) + 상태 문구.
 - 전환: 카드·내비·홈·뒤로가기 모두 화면 전체로 퍼지는 transition-flash를 쓴다(사용자가 가장 좋아하는 이펙트 — 빼지 말 것). 패널 전환은 transform만 애니메이션(opacity 금지).
@@ -57,5 +57,6 @@ Agents 패널은 `agents-live.json`이 30분 이내면 라이브 렌더, 아니�
 
 ## 이력
 
+- 2026-07-26: 물결 사진 기반 에메랄드 키컬러 적용. CMS 작업은 유지하고 status 정적 사이트에 별도 반영: `dist/index.html`의 HUD/배경/전환 플래시, `dist/assets/saem-scene.js`의 수면·조명·mote·이끼 색을 에메랄드 수면 계열로 갱신.
 - 2026-07-10: System 탭 판정 근거 모달 — warn/bad 행 클릭 시 이유(reason)를 모달로 표시. reason은 수집기가 레이어별로 내려주고(크론은 개수만, 백로그·산출물 이름은 기존 public 범위), Overall·Backlog 행은 프론트가 이미 받은 데이터로 조립.
 - 2026-07-05: 샘(Saem) 3D 리디자인. 이전의 Hers-inspired 정적 backdrop(spatial-presence.css)과 미커밋 여행 히어로 변경분은 이 리디자인으로 대체. 브랜드 정본과 어긋난 인물형 `status-companion-v1.webp` 제거.

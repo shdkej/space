@@ -26,12 +26,12 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
 
 | 상수 | 값 | 의미 |
 |------|-----|------|
-| `CREAM` | `#f5f4f1` | 배경·fog |
+| `CREAM` | `#eef8f5` | 배경·fog |
 | `STONE` | speckle CanvasTexture (`#d9d2c6` 바탕) | 조약돌 |
-| `MOSS` / `SPROUT` | `#87975f` 계열 3색 / `#7fa054` | 이끼(우상단 유기 패치) / 새싹 |
+| `MOSS` / `SPROUT` | `#4f9d8a` 계열 3색 / `#4f9d8a` | 이끼(우상단 유기 패치) / 새싹 — 물빛 키컬러와 연결 |
 | `EYE` | `#3d3a33` | 점 눈 |
-| `WATER` | `#f1efea` | 수면 |
-| `MORNING` / `DUSK` | `#fff8ee` / `#eae6dd` | ok / warn·bad 빛 |
+| `WATER` | `#d7f1e9` | 수면 |
+| `MORNING` / `DUSK` | `#d5fff4` / `#d9e8e2` | ok / warn·bad 빛 |
 
 ### 반응형 (layout())
 
@@ -47,12 +47,12 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
 
 | 토큰 | 값 |
 |------|-----|
-| `--glass` | `rgba(255,255,255,0.28)` |
-| `--glass-strong` | `rgba(255,255,255,0.42)` (hover) |
-| `--glass-border` | `rgba(255,255,255,0.62)` |
+| `--glass` | `rgba(247,255,252,0.30)` |
+| `--glass-strong` | `rgba(247,255,252,0.44)` (hover) |
+| `--glass-border` | `rgba(170,226,211,0.58)` |
 | `--glass-blur` | `none` — blur는 밀키한 불투명감을 만들어 제거(2026-07-05 피드백 "투명한 버전이 남아야") |
-| `--shadow-soft` | `0 12px 34px rgba(112,92,72,0.14)` |
-| `--ok` / `--warn` / `--bad` | `#8ba97c` / `#d9a84e` / `#c96f5f` |
+| `--shadow-soft` | `0 12px 34px rgba(48,97,92,0.13)` |
+| `--ok` / `--warn` / `--bad` | `#4f9d8a` / `#d9a84e` / `#c96f5f` |
 
 히어로·카드·상세 타일·리스트 행·하단 내비·아이콘 버튼이 모두 이 토큰만 쓴다. 새 표면을 추가할 때 개별 rgba를 만들지 말 것.
 

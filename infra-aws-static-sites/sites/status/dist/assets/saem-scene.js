@@ -6,14 +6,14 @@
 import * as THREE from "./vendor/three.module.min.js";
 
 /* 정본: prompt-archive/assets/saem-character/reference/saem-canonical-*.png */
-const CREAM = 0xf5f4f1;
+const CREAM = 0xeef8f5;
 const STONE = 0xd9d2c6;
-const MOSS = 0x87975f;
-const SPROUT = 0x7fa054;
+const MOSS = 0x4f9d8a;
+const SPROUT = 0x4f9d8a;
 const EYE = 0x3d3a33;
-const WATER = 0xf1efea;
-const MORNING = 0xfff8ee;
-const DUSK = 0xeae6dd;
+const WATER = 0xd7f1e9;
+const MORNING = 0xd5fff4;
+const DUSK = 0xd9e8e2;
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -78,7 +78,7 @@ function buildSaem() {
     seed = (seed * 16807) % 2147483647;
     return seed / 2147483647;
   };
-  const mossColors = [0x87975f, 0x93a26b, 0x7c8c55];
+  const mossColors = [0x4f9d8a, 0x7eb89f, 0x3c8075];
   for (let i = 0; i < 22; i += 1) {
     const theta = 0.3 + random() * 0.58; /* 위도: 정수리 부근 */
     const phi = 0.08 + random() * 1.1; /* 경도: 우측~우상단 */
@@ -150,9 +150,9 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
   const sun = new THREE.DirectionalLight(MORNING, 2.4);
   sun.position.set(-3.4, 4.6, 2.6);
   scene.add(sun);
-  const fill = new THREE.AmbientLight(0xf7f5f1, 1.4);
+  const fill = new THREE.AmbientLight(0xf7fffc, 1.4);
   scene.add(fill);
-  const bounce = new THREE.HemisphereLight(0xfdfcf9, 0xe2ddd3, 0.7);
+  const bounce = new THREE.HemisphereLight(0xf7fffc, 0xd1ebe3, 0.7);
   scene.add(bounce);
 
   const water = new THREE.Mesh(
@@ -165,7 +165,7 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
   const contactShadow = new THREE.Mesh(
     new THREE.PlaneGeometry(3.1, 2.6),
     new THREE.MeshBasicMaterial({
-      map: makeSoftCircleTexture("rgba(128, 118, 102, 0.26)", "rgba(128, 118, 102, 0)"),
+      map: makeSoftCircleTexture("rgba(58, 103, 96, 0.22)", "rgba(58, 103, 96, 0)"),
       transparent: true,
       depthWrite: false,
     })
@@ -199,7 +199,7 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
     return ring;
   });
 
-  const moteTexture = makeSoftCircleTexture("rgba(255, 250, 240, 0.95)", "rgba(255, 250, 240, 0)");
+  const moteTexture = makeSoftCircleTexture("rgba(213, 255, 244, 0.95)", "rgba(213, 255, 244, 0)");
   const moteCount = 26;
   const motePositions = new Float32Array(moteCount * 3);
   for (let i = 0; i < moteCount; i += 1) {

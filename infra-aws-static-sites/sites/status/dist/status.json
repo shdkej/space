@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-05T05:59:33Z",
+  "generatedAt": "2026-07-26T20:05:17Z",
   "overall": {
     "state": "ok",
     "label": "Status, Travel Ops, Schengen Calculator, Card News Library, Infinity, Virtue, Control Center CMS, and Reel Room are the active surfaces",
@@ -10,56 +10,56 @@
       "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 50,
+      "latencyMs": 685,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 131,
+      "latencyMs": 611,
       "detail": "World travel planning board deployed as a separate static app"
     },
     {
       "name": "Schengen Calculator",
       "url": "https://schengen.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 209,
+      "latencyMs": 574,
       "detail": "90/180 day Schengen travel calculator for long-term route planning"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 168,
+      "latencyMs": 595,
       "detail": "Growing public archive for photo insight card-news sets"
     },
     {
       "name": "Infinity",
       "url": "https://infinity.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 200,
+      "latencyMs": 587,
       "detail": "Intent dashboard for Infinity work queue and archive state"
     },
     {
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 411,
+      "latencyMs": 597,
       "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring"
     },
     {
       "name": "Control Center CMS",
       "url": "https://cms.oracle.shdkej.com",
       "state": "ok",
-      "latencyMs": 53,
+      "latencyMs": 54,
       "detail": "shadcn/ui operations CMS for Status composition and surface registry management"
     },
     {
       "name": "Reel Room",
       "url": "https://reel.oracle.shdkej.com",
       "state": "ok",
-      "latencyMs": 24,
+      "latencyMs": 30,
       "detail": "Video automation web UI for reel production (basic auth)"
     }
   ],
@@ -70,7 +70,7 @@
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-05T05:59:26Z",
+      "updatedAt": "2026-07-26T20:05:06Z",
       "state": "ok"
     },
     {
@@ -79,7 +79,7 @@
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-05T05:59:26Z",
+      "updatedAt": "2026-07-26T20:05:07Z",
       "state": "ok"
     },
     {
@@ -88,7 +88,7 @@
       "bucket": "static-schengen-aws-shdkej-com",
       "distribution": "E3PPXUUNA9KRGS",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-05T05:59:26Z",
+      "updatedAt": "2026-07-26T20:05:07Z",
       "state": "ok"
     },
     {
@@ -97,7 +97,7 @@
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-05T05:59:26Z",
+      "updatedAt": "2026-07-26T20:05:08Z",
       "state": "ok"
     },
     {
@@ -106,7 +106,7 @@
       "bucket": "static-infinity-aws-shdkej-com",
       "distribution": "E3JYGTLQKF0AXX",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-05T05:59:27Z",
+      "updatedAt": "2026-07-26T20:05:08Z",
       "state": "ok"
     },
     {
@@ -115,7 +115,7 @@
       "bucket": "static-virtue-aws-shdkej-com",
       "distribution": "EVCIL59LC6WJ6",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-05T05:59:27Z",
+      "updatedAt": "2026-07-26T20:05:09Z",
       "state": "ok"
     },
     {
@@ -124,7 +124,7 @@
       "bucket": "",
       "distribution": "",
       "hosting": "kubernetes ingress",
-      "updatedAt": "2026-07-05T05:59:31Z",
+      "updatedAt": "2026-07-26T20:05:13Z",
       "state": "ok"
     },
     {
@@ -133,7 +133,7 @@
       "bucket": "",
       "distribution": "",
       "hosting": "kubernetes ingress",
-      "updatedAt": "2026-07-05T05:59:33Z",
+      "updatedAt": "2026-07-26T20:05:17Z",
       "state": "ok"
     }
   ],

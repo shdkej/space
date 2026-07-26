@@ -15,6 +15,7 @@
 | z | 레이어 | 역할 |
 |---|--------|------|
 | body | 크림 본 그라데이션 | WebGL 무관 최종 안전망 |
+| body | `assets/emerald-water-background.jpg` | 2026-07-26 사용자가 지정한 실제 물결 사진 배경 |
 | 0 | `canvas.saem-canvas` (fixed, pointer-events:none) | Three.js 샘 씬 |
 | 0 | `.saem-fallback` | CSS 도형 샘 — `body[data-scene="webgl"]`일 때만 숨김 |
 | 10 | `.app-shell` | 글래스 HUD (히어로·카드·상세·하단 내비) |
@@ -23,7 +24,7 @@
 
 - Three.js 0.166.1을 `dist/assets/vendor/three.module.min.js`로 **로컬 vendoring** — CDN 런타임 의존 없음 (과거 Three.js 롤백 원인이던 CDN 실패 리스크 제거).
 - 샘은 이미지가 아니라 **절차적 지오메트리**로, 정본 이미지(`~/workspace/prompt-archive/assets/saem-character/reference/`)를 기준 삼는다: speckle 질감 조약돌 + 우상단 유기 이끼 패치(작은 clump 22개) + 이끼에서 자라는 새싹 + 담담한 점 눈 2개. 숨쉬기 bob + 느린 좌우 바라보기.
-- 수면: 대형 circle 평면 + 동심원 ring 4개가 스케일/페이드로 퍼지는 물결. 수면과 mote는 에메랄드 반사광으로 통일하고, 가짜 컨택트 섀도는 물빛 회색 radial 텍스처를 쓴다.
+- 수면: 실제 물결 사진을 CSS 배경으로 깔고, WebGL은 투명 캔버스 위에 대형 반투명 circle 평면 + 동심원 ring 4개가 스케일/페이드로 퍼지는 물결을 얹는다. 수면과 mote는 에메랄드 반사광으로 통일하고, 가짜 컨택트 섀도는 물빛 회색 radial 텍스처를 쓴다.
 - 카메라: 사인 드리프트 + 포인터 parallax(lerp 0.05). 데스크탑은 샘을 우측 스테이지에(stage.x 오프셋, lookAt은 원점 고정), 모바일은 히어로와 카드 사이 중앙에.
 - **상태 연동** (BRAND.md 상태 문법): `status.json` overall이 ok → 맑은 에메랄드 아침빛(`#d5fff4`) + 물결 진행 / warn·bad → 빛 강도·색온도 하강(`#d9e8e2`) + 물결 정지(고요한 수면). `window.__SAEM_SCENE__.setMood()`로 전환.
 
@@ -57,6 +58,7 @@ Agents 패널은 `agents-live.json`이 30분 이내면 라이브 렌더, 아니�
 
 ## 이력
 
+- 2026-07-26: 사용자가 보낸 실제 물결 사진을 status 배경으로 적용. `assets/emerald-water-background.jpg`를 추가하고, WebGL 씬을 투명 렌더링으로 바꿔 사진 위에 샘·수면·반짝임이 얹히게 조정.
 - 2026-07-26: 물결 사진 기반 에메랄드 키컬러 적용. CMS 작업은 유지하고 status 정적 사이트에 별도 반영: `dist/index.html`의 HUD/배경/전환 플래시, `dist/assets/saem-scene.js`의 수면·조명·mote·이끼 색을 에메랄드 수면 계열로 갱신.
 - 2026-07-10: System 탭 판정 근거 모달 — warn/bad 행 클릭 시 이유(reason)를 모달로 표시. reason은 수집기가 레이어별로 내려주고(크론은 개수만, 백로그·산출물 이름은 기존 public 범위), Overall·Backlog 행은 프론트가 이미 받은 데이터로 조립.
 - 2026-07-05: 샘(Saem) 3D 리디자인. 이전의 Hers-inspired 정적 backdrop(spatial-presence.css)과 미커밋 여행 히어로 변경분은 이 리디자인으로 대체. 브랜드 정본과 어긋난 인물형 `status-companion-v1.webp` 제거.

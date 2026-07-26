@@ -7,8 +7,9 @@
 컴포넌트: `canvas.saem-canvas`(Three.js) + `.saem-fallback`(CSS 도형 샘) + `.app-shell`(글래스 HUD).
 
 ```
+body background        실제 물결 사진 `assets/emerald-water-background.jpg` + 가독성용 light veil
 canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
-                       body[data-scene="webgl"]일 때만 opacity 1 (fade-in)
+                       transparent WebGL, body[data-scene="webgl"]일 때만 opacity 1 (fade-in)
 .saem-fallback         CSS 조약돌+이끼+새싹+점눈+물결 — webgl 성공 시에만 display:none
 .app-shell             z-index:10, 글래스 HUD
 ```
@@ -26,7 +27,7 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
 
 | 상수 | 값 | 의미 |
 |------|-----|------|
-| `CREAM` | `#eef8f5` | 배경·fog |
+| `CREAM` | `#eef8f5` | fog·WebGL 안전 톤. 실제 배경은 CSS 사진 레이어 |
 | `STONE` | speckle CanvasTexture (`#d9d2c6` 바탕) | 조약돌 |
 | `MOSS` / `SPROUT` | `#4f9d8a` 계열 3색 / `#4f9d8a` | 이끼(우상단 유기 패치) / 새싹 — 물빛 키컬러와 연결 |
 | `EYE` | `#3d3a33` | 점 눈 |
@@ -53,6 +54,7 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
 | `--glass-blur` | `none` — blur는 밀키한 불투명감을 만들어 제거(2026-07-05 피드백 "투명한 버전이 남아야") |
 | `--shadow-soft` | `0 12px 34px rgba(48,97,92,0.13)` |
 | `--ok` / `--warn` / `--bad` | `#4f9d8a` / `#d9a84e` / `#c96f5f` |
+| `--photo-veil` | `rgba(238,248,245,0.28)` — 사진 위 가독성 안전 톤 |
 
 히어로·카드·상세 타일·리스트 행·하단 내비·아이콘 버튼이 모두 이 토큰만 쓴다. 새 표면을 추가할 때 개별 rgba를 만들지 말 것.
 

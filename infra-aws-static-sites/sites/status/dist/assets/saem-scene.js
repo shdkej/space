@@ -129,7 +129,7 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
 
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "low-power" });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "low-power" });
   } catch (_error) {
     return null;
   }
@@ -138,7 +138,7 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(CREAM);
+  scene.background = null;
   scene.fog = new THREE.Fog(CREAM, 6, 16);
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 40);
@@ -157,7 +157,7 @@ export function initSaemScene({ canvas, mood = "ok" } = {}) {
 
   const water = new THREE.Mesh(
     new THREE.CircleGeometry(24, 64),
-    new THREE.MeshStandardMaterial({ color: WATER, roughness: 0.35, metalness: 0.05 })
+    new THREE.MeshStandardMaterial({ color: WATER, roughness: 0.35, metalness: 0.05, transparent: true, opacity: 0.32 })
   );
   water.rotation.x = -Math.PI / 2;
   stage.add(water);

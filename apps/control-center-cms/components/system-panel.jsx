@@ -259,7 +259,7 @@ export default function SystemPanel() {
   const l4Status = worst(freshnessStatuses(payload));
 
   return (
-    <div className="space-y-2">
+    <div className="system-shell space-y-2">
       {heartbeatDead ? (
         <div className="rounded-md border border-[hsl(var(--down))] bg-[hsl(var(--down))]/10 px-4 py-3 text-sm">
           수집기 죽음 — 마지막 스냅샷이 {fmtAge(snapshotAge / 3600000)}입니다. 이 화면의 모든 값은 그 시점 기준입니다.

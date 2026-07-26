@@ -10,7 +10,7 @@ const TabsList = React.forwardRef(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "flex h-auto w-full flex-wrap items-center rounded-lg bg-muted p-1 text-muted-foreground sm:inline-flex sm:w-auto",
+      "flex h-auto w-full max-w-full flex-nowrap items-center overflow-x-auto rounded-lg bg-muted p-1 text-muted-foreground [scrollbar-width:none] sm:inline-flex sm:w-auto [&::-webkit-scrollbar]:hidden",
       className
     )}
     {...props}
@@ -18,16 +18,30 @@ const TabsList = React.forwardRef(({ className, ...props }, ref) => (
 ));
 TabsList.displayName = TabsPrimitive.List.displayName;
 
-const TabsTrigger = React.forwardRef(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm sm:flex-none sm:px-3 sm:py-1 sm:text-sm",
-      className
-    )}
-    {...props}
-  />
-));
+const TabsTrigger = React.forwardRef(({ className, ...props }, ref) => {
+  const innerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (innerRef.current?.dataset.state === "active") {
+      innerRef.current.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
+  });
+
+  return (
+    <TabsPrimitive.Trigger
+      ref={(node) => {
+        innerRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      }}
+      className={cn(
+        "inline-flex min-w-max flex-none items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm sm:px-3 sm:py-1 sm:text-sm",
+        className
+      )}
+      {...props}
+    />
+  );
+});
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
 const TabsContent = React.forwardRef(({ className, ...props }, ref) => (

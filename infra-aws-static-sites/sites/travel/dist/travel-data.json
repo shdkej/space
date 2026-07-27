@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T14:17:08.363311+00:00",
+  "generatedAt": "2026-07-27T15:51:36.225109+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -3894,14 +3894,9 @@
         "lng": 18.0944
       },
       {
-        "name": "Rome / Naples, Italy",
-        "lat": 41.9028,
-        "lng": 12.4964
-      },
-      {
-        "name": "Palermo / Catania, Italy",
-        "lat": 38.1157,
-        "lng": 13.3615
+        "name": "Milos, Greece",
+        "lat": 36.7381,
+        "lng": 24.4299
       },
       {
         "name": "Athens, Greece",
@@ -3929,6 +3924,21 @@
         "lng": 34.5134
       },
       {
+        "name": "Dahab, Egypt",
+        "lat": 28.5097,
+        "lng": 34.5134
+      },
+      {
+        "name": "Italy, Italy",
+        "lat": 41.9028,
+        "lng": 12.4964
+      },
+      {
+        "name": "Switzerland, Switzerland",
+        "lat": 46.8182,
+        "lng": 8.2275
+      },
+      {
         "name": "Morocco, Morocco",
         "lat": 31.6295,
         "lng": -7.9811
@@ -3949,17 +3959,7 @@
         "lng": 2.3522
       },
       {
-        "name": "Northern Italy / Switzerland, Italy / Switzerland",
-        "lat": 45.4642,
-        "lng": 9.19
-      },
-      {
-        "name": "France Revisit, France",
-        "lat": 48.8566,
-        "lng": 2.3522
-      },
-      {
-        "name": "London, United Kingdom",
+        "name": "London & Seven Sisters, United Kingdom",
         "lat": 51.5072,
         "lng": -0.1276
       },
@@ -4677,81 +4677,41 @@
       "lng": 18.0944
     },
     {
-      "city": "Rome / Naples",
-      "country": "Italy",
+      "city": "Milos",
+      "country": "Greece",
       "status": "planned",
-      "startDate": "2026-07-28",
-      "endDate": "2026-08-03",
-      "source": "7/28 Ryanair DBV -> FCO",
-      "note": "Italy bridge leg; reach Naples for 8/3 overnight ferry to Sicily",
-      "transportIn": "2026-07-28 Ryanair 직항: 두브로브니크 DBV -> 로마 FCO, 수하물 필요",
-      "transportOut": "2026-08-03 Tirrenia 또는 GNV 야간페리: 나폴리 -> 팔레르모",
-      "arrivalTransfer": {
-        "title": "두브로브니크 -> 로마 / 나폴리",
-        "route": "Dubrovnik DBV -> Rome FCO -> Napoli Centrale",
-        "duration": "DBV-FCO 직항 약 1시간 20분 + 공항-나폴리 철도 약 3시간대",
-        "statusNote": "DBV-FCO 직항은 약 1시간 20분, Fiumicino-나폴리 철도는 약 3시간대 후보.",
-        "nextCheck": "Ryanair 수하물 포함가, FCO 도착 후 당일 나폴리 이동 여부를 확정한다.",
-        "steps": [
-          "Dubrovnik 공항에서 Rome Fiumicino행 직항 탑승.",
-          "FCO 도착 후 Roma Termini 환승 또는 직행편으로 Napoli Centrale 이동."
-        ],
-        "sourceName": "Skyscanner / ItaliaRail",
-        "sourceUrl": "https://www.skyscanner.com/routes/dbv/fco/dubrovnik-to-rome-fiumicino.html"
-      },
+      "startDate": "2026-07-29",
+      "endDate": "2026-07-31",
+      "source": "7/29 ferry or flight from Dubrovnik",
+      "note": "2 nights of island rest before Athens; keep the pace soft.",
+      "transportIn": "도브로브니크/전구간 -> 밀로스",
+      "transportOut": "2026-07-31 ferry or flight: Milos -> Athens",
       "schengen": true,
-      "lat": 41.9028,
-      "lng": 12.4964
-    },
-    {
-      "city": "Palermo / Catania",
-      "country": "Italy",
-      "status": "planned",
-      "startDate": "2026-08-03",
-      "endDate": "2026-08-06",
-      "source": "8/3 overnight ferry cabin from Naples",
-      "note": "Sicily leg; depart Catania CTA to Athens on 8/6",
-      "transportIn": "2026-08-03 Tirrenia 또는 GNV 야간페리: 나폴리 -> 팔레르모",
-      "transportOut": "2026-08-06 Aegean 또는 Ryanair 직항: 카타니아 CTA -> 아테네 ATH",
-      "arrivalTransfer": {
-        "title": "나폴리 -> 팔레르모 / 카타니아",
-        "route": "Naples port -> Palermo port -> Catania",
-        "duration": "야간페리 약 8시간 30분-12시간, 팔레르모-카타니아 이동 별도",
-        "statusNote": "나폴리-팔레르모 페리는 Tirrenia/GNV/Grimaldi 후보가 있고 야간 이동 가능.",
-        "nextCheck": "선실 포함가, 도착항-카타니아 이동, 8/6 항공편과의 여유 시간을 확인한다.",
-        "steps": [
-          "Naples 항구에서 Palermo행 야간페리 탑승.",
-          "Palermo 도착 후 Catania 이동편을 별도로 연결한다."
-        ],
-        "sourceName": "Tirrenia / Ferryhopper",
-        "sourceUrl": "https://en.tirrenia.it/ferry-sicily/naples-palermo/"
-      },
-      "schengen": true,
-      "lat": 38.1157,
-      "lng": 13.3615
+      "lat": 36.7381,
+      "lng": 24.4299
     },
     {
       "city": "Athens",
       "country": "Greece",
       "status": "planned",
-      "startDate": "2026-08-06",
-      "endDate": "2026-08-10",
-      "source": "8/6 CTA -> ATH direct flight",
-      "note": "Athens buffer before Turkey; keep Schengen count conservative.",
-      "transportOut": "2026-08-10 항공: 아테네 -> 이스탄불",
-      "transportIn": "2026-08-06 Aegean 또는 Ryanair 직항: 카타니아 CTA -> 아테네 ATH",
+      "startDate": "2026-07-31",
+      "endDate": "2026-08-02",
+      "source": "7/31 Milos -> Athens",
+      "note": "2 nights in Athens before Turkey.",
+      "transportIn": "2026-07-31 ferry or flight: Milos -> Athens ATH",
+      "transportOut": "2026-08-02 항공: 아테네 -> 이스탄불",
       "arrivalTransfer": {
-        "title": "카타니아 -> 아테네",
-        "route": "Catania CTA -> Athens ATH",
-        "duration": "직항 약 1시간 35분",
-        "statusNote": "Catania-Athens 직항은 Aegean/Ryanair 후보가 있고 약 1시간 35분으로 잡힘.",
-        "nextCheck": "8/6 실제 운항 요일, 수하물 포함가, 아테네 도착 후 숙소 이동을 확정한다.",
+        "title": "밀로스 -> 아테네",
+        "route": "Milos -> Athens ATH",
+        "duration": "직항/페리 조합 후보가 있고, 항공은 40분대, 페리는 더 길다.",
+        "statusNote": "밀로스에서 아테네 이동은 항공/페리 둘 다 후보라 표 시간 먼저 본다.",
+        "nextCheck": "7/31 실제 이동 수단과 아테네 도착 뒤 숙소 이동을 확정한다.",
         "steps": [
-          "Catania Fontanarossa 공항에서 Athens행 직항 탑승.",
-          "Athens ATH 도착 후 시내/숙소 이동 수단을 붙인다."
+          "Milos 출발편에서 Athens행 항공 또는 페리를 확인한다.",
+          "Athens 도착 후 시내 숙소로 이동해 다음날 터키 출국을 준비한다."
         ],
-        "sourceName": "FlightsFrom / FlightConnections",
-        "sourceUrl": "https://www.flightsfrom.com/CTA-ATH"
+        "sourceName": "Aegean / Ferryhopper",
+        "sourceUrl": "https://www.ferryhopper.com/en/ferry-routes/direct/milos-athens"
       },
       "schengen": true,
       "lat": 37.9838,
@@ -4761,12 +4721,12 @@
       "city": "Istanbul",
       "country": "Turkey",
       "status": "planned",
-      "startDate": "2026-08-10",
-      "endDate": "2026-08-14",
-      "source": "master route sketch",
-      "note": "Non-Schengen break starts; libraries, food, and Bosphorus city days.",
-      "transportIn": "2026-08-10 항공: 아테네 -> 이스탄불",
-      "transportOut": "터키 국내 이동: 이스탄불 -> 카파도키아/파묵칼레/안탈리아",
+      "startDate": "2026-08-02",
+      "endDate": "2026-08-06",
+      "source": "8/2 ATH -> IST direct flight",
+      "note": "City infrastructure and history-first days; non-Schengen break starts here.",
+      "transportIn": "2026-08-02 항공: 아테네 -> 이스탄불",
+      "transportOut": "2026-08-06 터키 국내 이동: 이스탄불 -> 카파도키아",
       "schengen": false,
       "lat": 41.0082,
       "lng": 28.9784
@@ -4775,12 +4735,12 @@
       "city": "Cappadocia / Pamukkale / Antalya",
       "country": "Turkey",
       "status": "planned",
-      "startDate": "2026-08-14",
-      "endDate": "2026-08-22",
+      "startDate": "2026-08-06",
+      "endDate": "2026-08-12",
       "source": "master route sketch / wishlist",
-      "note": "Turkey nature leg; Pamukkale is on wishlist. Sequence still flexible.",
+      "note": "Walking hikes, geology, and Antalya coast downtime. Pamukkale is a day trip.",
       "transportIn": "터키 국내 이동",
-      "transportOut": "항공 후보: 안탈리아/이스탄불 -> 카이로",
+      "transportOut": "항공 후보: 안탈리아 -> 카이로",
       "schengen": false,
       "lat": 37.9245,
       "lng": 29.1231
@@ -4789,15 +4749,29 @@
       "city": "Cairo / Giza",
       "country": "Egypt",
       "status": "planned",
-      "startDate": "2026-08-22",
-      "endDate": "2026-08-28",
+      "startDate": "2026-08-12",
+      "endDate": "2026-08-15",
       "source": "master route sketch / wishlist",
-      "note": "Pyramids and Egyptian Museum; non-Schengen buffer continues.",
+      "note": "Pyramids and Egyptian Museum; short Cairo block before Dahab.",
       "transportIn": "항공 후보: 터키 -> 카이로",
       "transportOut": "이집트 국내 이동 또는 항공: 카이로 -> 다합",
       "schengen": false,
       "lat": 30.0444,
       "lng": 31.2357
+    },
+    {
+      "city": "Dahab",
+      "country": "Egypt",
+      "status": "planned",
+      "startDate": "2026-08-15",
+      "endDate": "2026-09-02",
+      "source": "master route sketch",
+      "note": "Red Sea long stay for diving and low-motion living.",
+      "transportIn": "카이로 -> 다합",
+      "transportOut": "항공 후보: 이집트 -> 이탈리아 남부 / 유럽 복귀",
+      "schengen": false,
+      "lat": 28.5097,
+      "lng": 34.5134
     },
     {
       "city": "Dahab",
@@ -4814,15 +4788,43 @@
       "lng": 34.5134
     },
     {
+      "city": "Italy",
+      "country": "Italy",
+      "status": "planned",
+      "startDate": "2026-09-02",
+      "endDate": "2026-09-18",
+      "source": "master route sketch / wishlist",
+      "note": "Sicily -> Naples -> Rome -> Florence -> Milan; swimming-focused Italy block.",
+      "transportIn": "이집트 샤름엘셰이크 -> 이탈리아 남부",
+      "transportOut": "열차/항공: 이탈리아 -> 스위스",
+      "schengen": true,
+      "lat": 41.9028,
+      "lng": 12.4964
+    },
+    {
+      "city": "Switzerland",
+      "country": "Switzerland",
+      "status": "planned",
+      "startDate": "2026-09-18",
+      "endDate": "2026-09-21",
+      "source": "master route sketch",
+      "note": "Interlaken and Zermatt; short alpine recovery block.",
+      "transportIn": "이탈리아 -> 스위스",
+      "transportOut": "항공 후보: 스위스 -> 모로코",
+      "schengen": true,
+      "lat": 46.8182,
+      "lng": 8.2275
+    },
+    {
       "city": "Morocco",
       "country": "Morocco",
       "status": "planned",
-      "startDate": "2026-09-01",
-      "endDate": "2026-09-06",
+      "startDate": "2026-09-21",
+      "endDate": "2026-09-25",
       "source": "Schengen buffer plan",
-      "note": "Non-Schengen side trip used as Schengen buffer before Iberia.",
-      "transportIn": "항공 후보: 이집트/이탈리아 -> 모로코",
-      "transportOut": "항공/페리 후보: 모로코 -> 포르투갈/스페인",
+      "note": "Marrakech and desert leg; non-Schengen buffer before Iberia.",
+      "transportIn": "항공 후보: 스위스 -> 모로코",
+      "transportOut": "항공 후보: 모로코 -> 포르투갈",
       "schengen": false,
       "lat": 31.6295,
       "lng": -7.9811
@@ -4831,11 +4833,11 @@
       "city": "Portugal",
       "country": "Portugal",
       "status": "planned",
-      "startDate": "2026-09-06",
-      "endDate": "2026-09-14",
+      "startDate": "2026-09-25",
+      "endDate": "2026-10-01",
       "source": "master route sketch",
-      "note": "Portugal west-Europe leg; pacing and city choices still flexible.",
-      "transportIn": "모로코 -> 포르투갈/스페인",
+      "note": "Porto / Lisbon reset; calmer west-Europe stretch.",
+      "transportIn": "모로코 -> 포르투갈",
       "transportOut": "육로/항공: 포르투갈 -> 스페인",
       "schengen": true,
       "lat": 38.7223,
@@ -4845,10 +4847,10 @@
       "city": "Spain",
       "country": "Spain",
       "status": "planned",
-      "startDate": "2026-09-14",
-      "endDate": "2026-09-26",
+      "startDate": "2026-10-01",
+      "endDate": "2026-10-07",
       "source": "master route sketch / wishlist",
-      "note": "Barcelona, Bilbao/Guggenheim candidates; Sagrada Familia prebooking needed.",
+      "note": "Madrid / Barcelona leg; book key museums early.",
       "transportIn": "포르투갈 -> 스페인",
       "transportOut": "육로/항공: 스페인 -> 남프랑스",
       "schengen": true,
@@ -4859,53 +4861,25 @@
       "city": "Southern France / Paris",
       "country": "France",
       "status": "planned",
-      "startDate": "2026-09-26",
-      "endDate": "2026-10-07",
-      "source": "master route sketch / wishlist",
-      "note": "Lyon Biennale, Paris, Louvre, Pompidou, possible Mont-Saint-Michel.",
-      "transportIn": "스페인 -> 프랑스",
-      "transportOut": "열차/항공: 프랑스 -> 이탈리아/스위스",
-      "schengen": true,
-      "lat": 48.8566,
-      "lng": 2.3522
-    },
-    {
-      "city": "Northern Italy / Switzerland",
-      "country": "Italy / Switzerland",
-      "status": "planned",
       "startDate": "2026-10-07",
-      "endDate": "2026-10-18",
-      "source": "master route sketch",
-      "note": "Northern Italy, possible Dolomites, Switzerland, then back toward France/UK.",
-      "transportIn": "프랑스 -> 이탈리아/스위스",
-      "transportOut": "열차/항공: 스위스/프랑스 -> 런던",
-      "schengen": true,
-      "lat": 45.4642,
-      "lng": 9.19
-    },
-    {
-      "city": "France Revisit",
-      "country": "France",
-      "status": "planned",
-      "startDate": "2026-10-18",
-      "endDate": "2026-10-23",
-      "source": "master route sketch",
-      "note": "Buffer before UK; use for Paris, Normandy, or cheaper London connection.",
-      "transportIn": "스위스/이탈리아 -> 프랑스",
+      "endDate": "2026-10-14",
+      "source": "master route sketch / wishlist",
+      "note": "Avignon / Arles plus Paris block before UK.",
+      "transportIn": "스페인 -> 프랑스",
       "transportOut": "열차/항공: 프랑스 -> 런던",
       "schengen": true,
       "lat": 48.8566,
       "lng": 2.3522
     },
     {
-      "city": "London",
+      "city": "London & Seven Sisters",
       "country": "United Kingdom",
       "status": "planned",
-      "startDate": "2026-10-23",
-      "endDate": "2026-10-27",
-      "source": "Schengen buffer plan / wishlist",
-      "note": "UK break; Tate Modern and Hatchards are wishlist anchors.",
-      "transportIn": "프랑스/스위스 -> 런던",
+      "startDate": "2026-10-14",
+      "endDate": "2026-10-18",
+      "source": "master route sketch / wishlist",
+      "note": "Eurostar entry and Seven Sisters day trip.",
+      "transportIn": "프랑스 -> 런던",
       "transportOut": "항공 후보: 런던 -> 코펜하겐",
       "schengen": false,
       "lat": 51.5072,
@@ -4915,10 +4889,10 @@
       "city": "Copenhagen",
       "country": "Denmark",
       "status": "planned",
-      "startDate": "2026-10-27",
-      "endDate": "2026-10-30",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-20",
       "source": "wishlist",
-      "note": "Royal Library, Glyptotek, HAY House; short final Schengen leg.",
+      "note": "Short hygge stop before Iceland.",
       "transportIn": "런던 -> 코펜하겐",
       "transportOut": "항공 후보: 코펜하겐 -> 레이캬비크",
       "schengen": true,
@@ -4929,8 +4903,8 @@
       "city": "Reykjavik",
       "country": "Iceland",
       "status": "planned",
-      "startDate": "2026-10-30",
-      "endDate": "2026-11-02",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-23",
       "source": "master route sketch",
       "note": "Iceland finale before Americas; aurora hunting is optional.",
       "transportIn": "코펜하겐 -> 레이캬비크",
@@ -4943,8 +4917,8 @@
       "city": "New York",
       "country": "United States",
       "status": "planned",
-      "startDate": "2026-11-02",
-      "endDate": "2026-11-09",
+      "startDate": "2026-10-23",
+      "endDate": "2026-10-30",
       "source": "master route sketch / wishlist",
       "note": "MoMA, Guggenheim, Central Park; possible Peabody Library side trip.",
       "transportIn": "아이슬란드 -> 뉴욕",
@@ -5022,8 +4996,8 @@
       "rule": "90 days in any rolling 180-day period; entry and exit days are counted.",
       "source": "https://home-affairs.ec.europa.eu/policies/schengen/border-crossing/short-stay-calculator_en",
       "limitDays": 90,
-      "projectedUsedDays": 77,
-      "projectedRemainingDays": 13,
+      "projectedUsedDays": 73,
+      "projectedRemainingDays": 17,
       "riskBand": "comfortable",
       "segments": [
         {
@@ -5043,59 +5017,93 @@
           "schengenDays": 22
         },
         {
-          "label": "터키·이집트 브레이크",
+          "label": "그리스 쉥겐",
           "startDate": "2026-07-29",
-          "endDate": "2026-09-01",
+          "endDate": "2026-08-02",
+          "schengen": true,
+          "countries": [
+            "Greece"
+          ],
+          "note": "밀로스/아테네 5일 블록.",
+          "calendarDays": 5,
+          "schengenDays": 5
+        },
+        {
+          "label": "터키·이집트 브레이크",
+          "startDate": "2026-08-02",
+          "endDate": "2026-09-02",
           "schengen": false,
           "countries": [
             "Turkey",
             "Egypt"
           ],
           "note": "쉥겐 카운트 정지 구간.",
-          "calendarDays": 34,
+          "calendarDays": 31,
           "schengenDays": 0
         },
         {
           "label": "2차 쉥겐",
-          "startDate": "2026-09-01",
-          "endDate": "2026-10-23",
+          "startDate": "2026-09-02",
+          "endDate": "2026-09-21",
           "schengen": true,
           "countries": [
             "Italy",
-            "Switzerland",
-            "Spain",
-            "France"
+            "Switzerland"
           ],
-          "excludedDays": 5,
-          "excludedLabel": "Morocco side trip",
-          "note": "모로코 4박 5일은 비쉥겐으로 제외.",
-          "calendarDays": 53,
-          "schengenDays": 48
+          "note": "이탈리아 16박 + 스위스 3박.",
+          "calendarDays": 20,
+          "schengenDays": 20
         },
         {
-          "label": "런던 브레이크",
-          "startDate": "2026-10-23",
-          "endDate": "2026-10-27",
+          "label": "모로코 브레이크",
+          "startDate": "2026-09-21",
+          "endDate": "2026-09-25",
           "schengen": false,
           "countries": [
-            "United Kingdom"
+            "Morocco"
           ],
-          "note": "파리 이후 영국 체류로 쉥겐 카운트 정지.",
+          "note": "사막 구간은 비쉥겐으로 분리.",
           "calendarDays": 4,
           "schengenDays": 0
         },
         {
           "label": "3차 쉥겐",
-          "startDate": "2026-10-27",
-          "endDate": "2026-11-02",
+          "startDate": "2026-09-25",
+          "endDate": "2026-10-14",
+          "schengen": true,
+          "countries": [
+            "Portugal",
+            "Spain",
+            "France"
+          ],
+          "note": "포르투갈/스페인/프랑스 본구간.",
+          "calendarDays": 20,
+          "schengenDays": 20
+        },
+        {
+          "label": "런던 브레이크",
+          "startDate": "2026-10-14",
+          "endDate": "2026-10-18",
+          "schengen": false,
+          "countries": [
+            "United Kingdom"
+          ],
+          "note": "유로스타로 런던 진입 후 쉥겐 정지.",
+          "calendarDays": 4,
+          "schengenDays": 0
+        },
+        {
+          "label": "4차 쉥겐",
+          "startDate": "2026-10-18",
+          "endDate": "2026-10-23",
           "schengen": true,
           "countries": [
             "Denmark",
             "Iceland"
           ],
-          "note": "레이캬비크 출국일까지 보수적으로 포함.",
-          "calendarDays": 7,
-          "schengenDays": 7
+          "note": "코펜하겐/레이캬비크 구간.",
+          "calendarDays": 6,
+          "schengenDays": 6
         }
       ],
       "note": "EU 90/180 rolling 기준(입국일·출국일 포함) 추정치. 실제 입출국일/항공권 확정 시 재계산한다."

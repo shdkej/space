@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T15:51:36.225109+00:00",
+  "generatedAt": "2026-07-27T15:53:12.292557+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -3924,11 +3924,6 @@
         "lng": 34.5134
       },
       {
-        "name": "Dahab, Egypt",
-        "lat": 28.5097,
-        "lng": 34.5134
-      },
-      {
         "name": "Italy, Italy",
         "lat": 41.9028,
         "lng": 12.4964
@@ -4769,20 +4764,6 @@
       "note": "Red Sea long stay for diving and low-motion living.",
       "transportIn": "카이로 -> 다합",
       "transportOut": "항공 후보: 이집트 -> 이탈리아 남부 / 유럽 복귀",
-      "schengen": false,
-      "lat": 28.5097,
-      "lng": 34.5134
-    },
-    {
-      "city": "Dahab",
-      "country": "Egypt",
-      "status": "planned",
-      "startDate": "2026-08-28",
-      "endDate": "2026-09-01",
-      "source": "master route sketch",
-      "note": "Rest, swimming, Red Sea base before returning toward Europe/Africa routing.",
-      "transportIn": "카이로 -> 다합",
-      "transportOut": "항공 후보: 이집트 -> 모로코/이탈리아",
       "schengen": false,
       "lat": 28.5097,
       "lng": 34.5134

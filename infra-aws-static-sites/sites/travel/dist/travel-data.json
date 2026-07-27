@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-19T14:40:02.721156+00:00",
+  "generatedAt": "2026-07-27T14:17:08.363311+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,38 +8,38 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 5856625,
-    "travelLoggedKrw": 5856625,
-    "remainingMinKrw": 24143375,
-    "remainingMaxKrw": 34143375,
-    "reservedPctMin": 19.5,
+    "loggedKrw": 8389687,
+    "travelLoggedKrw": 8389687,
+    "remainingMinKrw": 21610313,
+    "remainingMaxKrw": 31610313,
+    "reservedPctMin": 28.0,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 81342,
+    "reserveBurnKrw": 106199,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-07-20",
-    "location": "Budapest",
-    "mapQuery": "Budapest, Hungary"
+    "date": "2026-07-27",
+    "location": "Dubrovnik",
+    "mapQuery": "Dubrovnik, Croatia"
   },
   "categoryTotals": {
-    "stay": 1696942,
+    "other": 2481735,
+    "stay": 2457485,
     "gear": 1446349,
-    "other": 847064,
-    "transport": 794053,
+    "transport": 931901,
     "medical": 680000,
     "visa": 211394,
     "food": 152774,
     "groceries": 28049
   },
   "travelCategoryTotals": {
-    "stay": 1696942,
+    "other": 2481735,
+    "stay": 2457485,
     "gear": 1446349,
-    "other": 847064,
-    "transport": 794053,
+    "transport": 931901,
     "medical": 680000,
     "visa": 211394,
     "food": 152774,
@@ -56,6 +56,15 @@
       }
     },
     {
+      "country": "Hungary",
+      "total": 2222999,
+      "categories": {
+        "other": 1304344,
+        "stay": 780807,
+        "transport": 137848
+      }
+    },
+    {
       "country": "Germany",
       "total": 1363285,
       "categories": {
@@ -67,11 +76,20 @@
       }
     },
     {
+      "country": "Croatia",
+      "total": 906375,
+      "categories": {
+        "stay": 462847,
+        "other": 249887,
+        "transport": 193641
+      }
+    },
+    {
       "country": "Austria",
-      "total": 722690,
+      "total": 803130,
       "categories": {
         "stay": 345658,
-        "other": 225416,
+        "other": 305856,
         "transport": 151616
       }
     },
@@ -83,21 +101,6 @@
         "other": 169852,
         "transport": 90821,
         "groceries": 1269
-      }
-    },
-    {
-      "country": "Croatia",
-      "total": 383147,
-      "categories": {
-        "transport": 193641,
-        "stay": 189506
-      }
-    },
-    {
-      "country": "Hungary",
-      "total": 293605,
-      "categories": {
-        "stay": 293605
       }
     },
     {
@@ -185,6 +188,38 @@
     {
       "date": "2026-07-19",
       "amount": 70103
+    },
+    {
+      "date": "2026-07-20",
+      "amount": 80440
+    },
+    {
+      "date": "2026-07-21",
+      "amount": 231150
+    },
+    {
+      "date": "2026-07-22",
+      "amount": 352356
+    },
+    {
+      "date": "2026-07-23",
+      "amount": 1345888
+    },
+    {
+      "date": "2026-07-24",
+      "amount": 39096
+    },
+    {
+      "date": "2026-07-25",
+      "amount": 92176
+    },
+    {
+      "date": "2026-07-26",
+      "amount": 109544
+    },
+    {
+      "date": "2026-07-27",
+      "amount": 282412
     }
   ],
   "bookedCosts": [
@@ -599,6 +634,342 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_6coj8hi588pkcb9m8533cb9k8p334b9o84q30b9h6l1j4ga16ss34da288",
+      "date": "2026-07-27",
+      "time": "03:21",
+      "amount": 9071,
+      "merchant": "TOMMY266",
+      "category": "other",
+      "location": "Put umca, 21220 Seget Vranjica",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64r34chp8p0k4ba2692jcb9k8co3cb9o8kq30ba174s48ea660qj6c1p6s",
+      "date": "2026-07-27",
+      "time": "01:00",
+      "amount": 273341,
+      "merchant": "AIRBNB * HMTRKWRTEF",
+      "category": "stay",
+      "location": "Put umca, 21220 Seget Vranjica",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6krj2cpi75134b9i611jcb9k8l142ba16d330b9n6kr30h2470q3ie1g84",
+      "date": "2026-07-26",
+      "time": "06:20",
+      "amount": 15283,
+      "merchant": "MOJ.PROMET APP",
+      "category": "other",
+      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_65238e2388s44b9n612jcb9k8gpjcba26d1k6b9p6opjcd1j6gojehhk68",
+      "date": "2026-07-26",
+      "time": "05:36",
+      "amount": 94261,
+      "merchant": "LOLA KONOBA",
+      "category": "other",
+      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6ko4cc1j70o46b9k8l134b9k6d2jeb9p6os32b9p8gokad22851kad1n6o",
+      "date": "2026-07-25",
+      "time": "03:53",
+      "amount": 8684,
+      "merchant": "NAC. PARK PLITVICKA JE",
+      "category": "other",
+      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_68pj6c1m74qj0b9g8opk2b9k8gpj4ba174q44ba16krk6c9p8923edpo8c",
+      "date": "2026-07-25",
+      "time": "03:18",
+      "amount": 83492,
+      "merchant": "NAC. PARK PLITVICKA JE",
+      "category": "other",
+      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cs46da575334b9h60rj0b9k70q3eb9p64qk8b9p7524ch1n8l132ga388",
+      "date": "2026-07-24",
+      "time": "04:08",
+      "amount": 13275,
+      "merchant": "Caffe bar Atrium",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60pjcci164okcb9j6534cb9k8gpkaba2610kcb9o8grk4d1i84sjchi18o",
+      "date": "2026-07-24",
+      "time": "02:58",
+      "amount": 25821,
+      "merchant": "TOMMY142",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60sk4e258opjcba56ss3eb9k6t23ab9p84qj6b9m6d13acpj8gq46h1o6s",
+      "date": "2026-07-23",
+      "time": "22:17",
+      "amount": 7897,
+      "merchant": "SZENDVICS BAR",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6ssj0dhm68p48b9j6cpj0b9k6cqjab9p8d0kaba6691kcdhp6gok6d1m88",
+      "date": "2026-07-23",
+      "time": "21:53",
+      "amount": 4708,
+      "merchant": "BKK AUTOMATA - H07",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_68qkagi5711k4b9h691jgb9k6t248b9o6h1jgba2610k4g9n75344d256s",
+      "date": "2026-07-23",
+      "time": "11:00",
+      "amount": 17565,
+      "merchant": "Kurtissimo",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6kr3ic1l84ojcb9k8p23eb9k64pj4ba288p36b9h852j6ci36ssk6ghi68",
+      "date": "2026-07-23",
+      "time": "10:25",
+      "amount": 24127,
+      "merchant": "Ami Bistro",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6t130c9k68sjcba668q3cb9k6gojgba28oo30b9k70pjcg9p74sj0h1o6o",
+      "date": "2026-07-23",
+      "time": "05:32",
+      "amount": 56985,
+      "merchant": "JA PALATINUS STRAND",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8h0j4cpj6kqkaba664rj6b9k6so46ba26gq38ba26t336d1i84q38h1m70",
+      "date": "2026-07-23",
+      "time": "05:14",
+      "amount": 10688,
+      "merchant": "Harmas Bufe",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cq3ed1g64s3eba38go42b9k651kab9p70pk8b9i8ookac236srjid9i84",
+      "date": "2026-07-23",
+      "time": "03:37",
+      "amount": 231455,
+      "merchant": "CARJET.COM",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6grj8chn710j0b9k6t13gb9k6so44b9o8p23eb9j6kp48cpi8csjegpj68",
+      "date": "2026-07-23",
+      "time": "02:54",
+      "amount": 32529,
+      "merchant": "Mor's",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60s34c9o6l23gba560q36b9k68rjgb9p6123gb9i8l2j8e258orj8d1m6g",
+      "date": "2026-07-23",
+      "time": "02:18",
+      "amount": 110488,
+      "merchant": "Discovercars",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_88qj2chj84pjgb9j6srkcb9k8h2j6b9o6d1kab9o8op44ca36d0kae9i68",
+      "date": "2026-07-23",
+      "time": "02:10",
+      "amount": 399467,
+      "merchant": "AIRBNB * HM8K9ERW82",
+      "category": "stay",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8op4cgpi61242b9p6cqkcb9k652j0b9o84pk4b9m6go3cc9l6h1k6c268o",
+      "date": "2026-07-23",
+      "time": "02:08",
+      "amount": 87735,
+      "merchant": "AIRBNB * HMY9B2995K",
+      "category": "stay",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60ojgh1g70qj0b9m6gpjgb9k6t1jiba164qjgb9p8h144ghk65238ca58c",
+      "date": "2026-07-23",
+      "time": "01:51",
+      "amount": 362244,
+      "merchant": "MINOAN LINES",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64p30gi38kq48ba18p242b9k88q4aba160skab9n8h14ae9m64s3ah2184",
+      "date": "2026-07-22",
+      "time": "05:34",
+      "amount": 275645,
+      "merchant": "Aegean Web",
+      "category": "other",
+      "location": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_890k6h9l6sqjaba38h1kab9k6krkcb9o6ksk4ba58l2j0g9g68o38dq188",
+      "date": "2026-07-22",
+      "time": "03:26",
+      "amount": 76711,
+      "merchant": "HELOPAY*PULI ES JUHASZ",
+      "category": "other",
+      "location": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6csj4ca56h1j8b9g6923gb9k8ork8b9o6gr3cba26p242g9p8grjehhn64",
+      "date": "2026-07-21",
+      "time": "06:36",
+      "amount": 21482,
+      "merchant": "BKK AUTOMATA G74",
+      "category": "other",
+      "location": "1115 부다페스트, Vasút utca 1.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gqjaghi6l0jeb9h8kqj0b9k8oskaba18kok8b9m8h13cc9h8co34e9i70",
+      "date": "2026-07-21",
+      "time": "03:56",
+      "amount": 137848,
+      "merchant": "NP PLITVICE ULAZNICE",
+      "category": "transport",
+      "location": "1115 부다페스트, Vasút utca 1.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6h242e2188rj8b9j88pjib9k8grk8b9p6sp32ba184r3ch1l6gr48e9h84",
+      "date": "2026-07-21",
+      "time": "02:20",
+      "amount": 71820,
+      "merchant": "FiglmuellerBaeckerstr.",
+      "category": "other",
+      "location": "1115 부다페스트, Vasút utca 1.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8ko46cph8csjab9k8oo4cb9k8kpjib9p8grkcb9g6gp38c1n692j2c1n70",
+      "date": "2026-07-20",
+      "time": "04:22",
+      "amount": 10833,
+      "merchant": "WURSTELSTAND SUDTIRO",
+      "category": "other",
+      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8oo36dpk8h0jeba1650k8b9k8kskcb9p8cq3gb9o85242gi26l0j2h2270",
+      "date": "2026-07-20",
+      "time": "03:57",
+      "amount": 4291,
+      "merchant": "LEOPOLD MUSEUM SHOP 2",
+      "category": "other",
+      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gqj2ci48l348b9g6p23ib9k6p2jeba188qk8b9p6opjid9k68sk6c2464",
+      "date": "2026-07-20",
+      "time": "01:40",
+      "amount": 65316,
+      "merchant": "LEOPOLD MUSEUM TICKET 2",
+      "category": "other",
+      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6p0k8h1l68p3eb9k6t236b9k8ks48ba188ojeb9n711k2ea48cr44e9o64",
       "date": "2026-07-19",
@@ -1797,6 +2168,342 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_6coj8hi588pkcb9m8533cb9k8p334b9o84q30b9h6l1j4ga16ss34da288",
+      "date": "2026-07-27",
+      "time": "03:21",
+      "amount": 9071,
+      "merchant": "TOMMY266",
+      "category": "other",
+      "location": "Put umca, 21220 Seget Vranjica",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64r34chp8p0k4ba2692jcb9k8co3cb9o8kq30ba174s48ea660qj6c1p6s",
+      "date": "2026-07-27",
+      "time": "01:00",
+      "amount": 273341,
+      "merchant": "AIRBNB * HMTRKWRTEF",
+      "category": "stay",
+      "location": "Put umca, 21220 Seget Vranjica",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6krj2cpi75134b9i611jcb9k8l142ba16d330b9n6kr30h2470q3ie1g84",
+      "date": "2026-07-26",
+      "time": "06:20",
+      "amount": 15283,
+      "merchant": "MOJ.PROMET APP",
+      "category": "other",
+      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_65238e2388s44b9n612jcb9k8gpjcba26d1k6b9p6opjcd1j6gojehhk68",
+      "date": "2026-07-26",
+      "time": "05:36",
+      "amount": 94261,
+      "merchant": "LOLA KONOBA",
+      "category": "other",
+      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6ko4cc1j70o46b9k8l134b9k6d2jeb9p6os32b9p8gokad22851kad1n6o",
+      "date": "2026-07-25",
+      "time": "03:53",
+      "amount": 8684,
+      "merchant": "NAC. PARK PLITVICKA JE",
+      "category": "other",
+      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_68pj6c1m74qj0b9g8opk2b9k8gpj4ba174q44ba16krk6c9p8923edpo8c",
+      "date": "2026-07-25",
+      "time": "03:18",
+      "amount": 83492,
+      "merchant": "NAC. PARK PLITVICKA JE",
+      "category": "other",
+      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cs46da575334b9h60rj0b9k70q3eb9p64qk8b9p7524ch1n8l132ga388",
+      "date": "2026-07-24",
+      "time": "04:08",
+      "amount": 13275,
+      "merchant": "Caffe bar Atrium",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60pjcci164okcb9j6534cb9k8gpkaba2610kcb9o8grk4d1i84sjchi18o",
+      "date": "2026-07-24",
+      "time": "02:58",
+      "amount": 25821,
+      "merchant": "TOMMY142",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60sk4e258opjcba56ss3eb9k6t23ab9p84qj6b9m6d13acpj8gq46h1o6s",
+      "date": "2026-07-23",
+      "time": "22:17",
+      "amount": 7897,
+      "merchant": "SZENDVICS BAR",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6ssj0dhm68p48b9j6cpj0b9k6cqjab9p8d0kaba6691kcdhp6gok6d1m88",
+      "date": "2026-07-23",
+      "time": "21:53",
+      "amount": 4708,
+      "merchant": "BKK AUTOMATA - H07",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_68qkagi5711k4b9h691jgb9k6t248b9o6h1jgba2610k4g9n75344d256s",
+      "date": "2026-07-23",
+      "time": "11:00",
+      "amount": 17565,
+      "merchant": "Kurtissimo",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6kr3ic1l84ojcb9k8p23eb9k64pj4ba288p36b9h852j6ci36ssk6ghi68",
+      "date": "2026-07-23",
+      "time": "10:25",
+      "amount": 24127,
+      "merchant": "Ami Bistro",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6t130c9k68sjcba668q3cb9k6gojgba28oo30b9k70pjcg9p74sj0h1o6o",
+      "date": "2026-07-23",
+      "time": "05:32",
+      "amount": 56985,
+      "merchant": "JA PALATINUS STRAND",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8h0j4cpj6kqkaba664rj6b9k6so46ba26gq38ba26t336d1i84q38h1m70",
+      "date": "2026-07-23",
+      "time": "05:14",
+      "amount": 10688,
+      "merchant": "Harmas Bufe",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cq3ed1g64s3eba38go42b9k651kab9p70pk8b9i8ookac236srjid9i84",
+      "date": "2026-07-23",
+      "time": "03:37",
+      "amount": 231455,
+      "merchant": "CARJET.COM",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6grj8chn710j0b9k6t13gb9k6so44b9o8p23eb9j6kp48cpi8csjegpj68",
+      "date": "2026-07-23",
+      "time": "02:54",
+      "amount": 32529,
+      "merchant": "Mor's",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60s34c9o6l23gba560q36b9k68rjgb9p6123gb9i8l2j8e258orj8d1m6g",
+      "date": "2026-07-23",
+      "time": "02:18",
+      "amount": 110488,
+      "merchant": "Discovercars",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_88qj2chj84pjgb9j6srkcb9k8h2j6b9o6d1kab9o8op44ca36d0kae9i68",
+      "date": "2026-07-23",
+      "time": "02:10",
+      "amount": 399467,
+      "merchant": "AIRBNB * HM8K9ERW82",
+      "category": "stay",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8op4cgpi61242b9p6cqkcb9k652j0b9o84pk4b9m6go3cc9l6h1k6c268o",
+      "date": "2026-07-23",
+      "time": "02:08",
+      "amount": 87735,
+      "merchant": "AIRBNB * HMY9B2995K",
+      "category": "stay",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60ojgh1g70qj0b9m6gpjgb9k6t1jiba164qjgb9p8h144ghk65238ca58c",
+      "date": "2026-07-23",
+      "time": "01:51",
+      "amount": 362244,
+      "merchant": "MINOAN LINES",
+      "category": "other",
+      "location": "Krnjak 64A, 47242 크르냐크",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64p30gi38kq48ba18p242b9k88q4aba160skab9n8h14ae9m64s3ah2184",
+      "date": "2026-07-22",
+      "time": "05:34",
+      "amount": 275645,
+      "merchant": "Aegean Web",
+      "category": "other",
+      "location": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_890k6h9l6sqjaba38h1kab9k6krkcb9o6ksk4ba58l2j0g9g68o38dq188",
+      "date": "2026-07-22",
+      "time": "03:26",
+      "amount": 76711,
+      "merchant": "HELOPAY*PULI ES JUHASZ",
+      "category": "other",
+      "location": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6csj4ca56h1j8b9g6923gb9k8ork8b9o6gr3cba26p242g9p8grjehhn64",
+      "date": "2026-07-21",
+      "time": "06:36",
+      "amount": 21482,
+      "merchant": "BKK AUTOMATA G74",
+      "category": "other",
+      "location": "1115 부다페스트, Vasút utca 1.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gqjaghi6l0jeb9h8kqj0b9k8oskaba18kok8b9m8h13cc9h8co34e9i70",
+      "date": "2026-07-21",
+      "time": "03:56",
+      "amount": 137848,
+      "merchant": "NP PLITVICE ULAZNICE",
+      "category": "transport",
+      "location": "1115 부다페스트, Vasút utca 1.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6h242e2188rj8b9j88pjib9k8grk8b9p6sp32ba184r3ch1l6gr48e9h84",
+      "date": "2026-07-21",
+      "time": "02:20",
+      "amount": 71820,
+      "merchant": "FiglmuellerBaeckerstr.",
+      "category": "other",
+      "location": "1115 부다페스트, Vasút utca 1.",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8ko46cph8csjab9k8oo4cb9k8kpjib9p8grkcb9g6gp38c1n692j2c1n70",
+      "date": "2026-07-20",
+      "time": "04:22",
+      "amount": 10833,
+      "merchant": "WURSTELSTAND SUDTIRO",
+      "category": "other",
+      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8oo36dpk8h0jeba1650k8b9k8kskcb9p8cq3gb9o85242gi26l0j2h2270",
+      "date": "2026-07-20",
+      "time": "03:57",
+      "amount": 4291,
+      "merchant": "LEOPOLD MUSEUM SHOP 2",
+      "category": "other",
+      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gqj2ci48l348b9g6p23ib9k6p2jeba188qk8b9p6opjid9k68sk6c2464",
+      "date": "2026-07-20",
+      "time": "01:40",
+      "amount": 65316,
+      "merchant": "LEOPOLD MUSEUM TICKET 2",
+      "category": "other",
+      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6p0k8h1l68p3eb9k6t236b9k8ks48ba188ojeb9n711k2ea48cr44e9o64",
       "date": "2026-07-19",
@@ -3008,6 +3715,10 @@
       "lng": 13.4290744
     },
     {
+      "name": "Krnjak 64A, 47242 크르냐크",
+      "count": 14
+    },
+    {
       "name": "Linzer Straße 33, 50939 쾰른",
       "count": 7,
       "lat": 50.9165529,
@@ -3050,6 +3761,10 @@
       "count": 4
     },
     {
+      "name": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "count": 4
+    },
+    {
       "name": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
       "count": 3
     },
@@ -3058,6 +3773,22 @@
       "count": 3,
       "lat": 50.0834272,
       "lng": 14.4322565
+    },
+    {
+      "name": "Österreichische Galerie, Prinz-Eugen-Straße 27",
+      "count": 3
+    },
+    {
+      "name": "1115 부다페스트, Vasút utca 1.",
+      "count": 3
+    },
+    {
+      "name": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "count": 2
+    },
+    {
+      "name": "Put umca, 21220 Seget Vranjica",
+      "count": 2
     }
   ],
   "map": {
@@ -3367,6 +4098,33 @@
       "checkIn": null,
       "checkOut": null,
       "amount": 127827,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMY9B2995K",
+      "city": "Krnjak 64A, 47242 크르냐크",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 87735,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HM8K9ERW82",
+      "city": "Krnjak 64A, 47242 크르냐크",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 399467,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMTRKWRTEF",
+      "city": "Put umca, 21220 Seget Vranjica",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 273341,
       "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
@@ -4253,10 +5011,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-07-20",
+    "asOf": "2026-07-27",
     "limitDays": 90,
-    "usedDays": 13,
-    "remainingDays": 77,
+    "usedDays": 20,
+    "remainingDays": 70,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -4345,12 +5103,6 @@
   },
   "sleep": [
     {
-      "date": "2026-07-05",
-      "sleepHours": 5.75,
-      "recharge": 72.0,
-      "balance": "6.40"
-    },
-    {
       "date": "2026-07-07",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -4427,39 +5179,15 @@
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "6.92"
+    },
+    {
+      "date": "2026-07-20",
+      "sleepHours": 9.36,
+      "recharge": 117.0,
+      "balance": "7.67"
     }
   ],
   "reflections": [
-    {
-      "id": "2jqj7cnhrfrev5cq4na3djm7js",
-      "date": "2026-07-09",
-      "title": "실제 흐름 / 쾰른 이동과 첫 문장 재정렬",
-      "intent": "CMS L1 막힘을 새 작업으로 키우지 않고, 저장 데이터에 있는지만 먼저 본다.",
-      "did": "CMS 확인은 깊게 들어가지 않았고, 쾰른 이동 중 세계여행 첫 공개 문구를 현재 위치에 맞게 다시 잡았다. 보조로 Virtue 첫 가치 판단과 크론 정리가 처리됐다.",
-      "why": "여행 첫날에는 막힌 관리 화면보다 공개 기록이 실제 이동 흐름과 맞는지가 더 급했다.",
-      "carry": "첫 도시는 쾰른이라는 기준으로 세계여행 첫 문장과 기록 흐름을 이어간다.",
-      "drop": "이동일에 CMS 막힘까지 억지로 닫으려는 방식과 출발지 인천을 첫 도시처럼 보이게 하는 표현."
-    },
-    {
-      "id": "s5vncmlvc9sore8581sr9cjqr0",
-      "date": "2026-07-10",
-      "title": "실제 흐름 / 쾰른 이동과 운영 기준 정리",
-      "intent": "쾰른에서 실제로 본 첫 장면을 기록의 첫 손잡이로 잡는다.",
-      "did": "쾰른 이동/결제 신호가 남았고, kube-prometheus-stack 및 TypeScript 최신화 상태를 정리했다.",
-      "why": "이동 첫날에는 긴 기록보다 작은 장면 손잡이와 필요한 운영 기준 정리가 적합했다.",
-      "carry": "쾰른 첫 장면을 장소, 감정, 한 문장으로 남긴다.",
-      "drop": "이동 중 넓은 기술 정비를 계속 벌리는 흐름."
-    },
-    {
-      "id": "nugoqhaq25s4nmunpevj8pg4lc",
-      "date": "2026-07-11",
-      "title": "실제 흐름 / 쾰른 기록보다 선택 흐름 정리",
-      "intent": "쾰른에서 실제로 본 장면 하나를 공개 기록의 첫 손잡이로 남긴다.",
-      "did": "쾰른 첫 장면을 크게 확장하기보다, OpenClaw 문서 정렬·상태 대시보드·업로드/완료 화면 선택 흐름을 손봤고 Infinity에서는 Tool-Failure 수리 프롬프트와 Marketing 학습 승격이 이어졌다.",
-      "why": "이동 직후에는 공개 기록을 무리하게 키우기보다, 다음 기록과 제품 작업이 막히지 않게 선택지와 운영 기준을 줄이는 일이 먼저 필요했다.",
-      "carry": "쾰른에서 본 장면은 장소, 감정, 한 문장 수준으로 작게 남긴다.",
-      "drop": "여행 중 한 장면을 바로 큰 콘텐츠나 넓은 정비로 키우는 흐름."
-    },
     {
       "id": "kr6n83p6u2rvj3nenefk2q8e84",
       "date": "2026-07-12",
@@ -4543,11 +5271,41 @@
     {
       "id": "snkauivl4s3fkpfttkhvgkmnt4",
       "date": "2026-07-20",
-      "title": "내일 의도 / 쾰른 셀프웨딩스냅 첫 페이지 결정",
-      "intent": "새 전략을 늘리지 않고 쾰른 원고의 첫 페이지를 정합니다.",
+      "title": "실제 흐름 / Pencil 무드보드로 작업장 좁히기",
+      "intent": "쾰른 원고의 첫 줄과 콜라주 첫 이미지 방향만 5분 보고 정한다.",
+      "did": "마케팅 조사 총결론을 정본 문서에 반영하고, 무드보드 작업장을 Figma가 아니라 Pencil로 좁혔다.",
+      "why": "오늘 실제 질문이 게시 문안 확정보다 조사 배움의 운영 기준화와 무드보드 협업 경로에 더 강하게 걸렸다.",
+      "carry": "Pencil 안에서 사진, 문장, 금지할 느낌을 한 화면에 모아 쾰른/오스트리아 첫 페이지 후보를 줄인다.",
+      "drop": "Figma/Pencil/문서 비교를 다시 넓혀 선택을 미루는 흐름."
+    },
+    {
+      "id": "9vj7m37o7phit9arcj73ctutq4",
+      "date": "2026-07-21",
+      "title": "실제 흐름 / 여행 사진 첫 프레임 선택",
+      "intent": "Pencil 안에서 콘텐츠 첫 페이지 후보를 고른다.",
+      "did": "최근 여행 사진 후보를 카드뉴스 제목과 Threads 첫 줄 후보로 번역했고, 쾰른 후보가 가장 강하다는 판단까지 좁혔다.",
+      "why": "게시 확정보다 먼저, 사진이 보여주는 선택 증거를 읽는 일이 필요했다.",
+      "carry": "쾰른 후보를 우선 두고, 첫 이미지가 인물·장소·어색함을 함께 보여주는지 확인한다.",
+      "drop": "Pencil/Figma/문서 비교를 다시 넓혀서 선택을 미루는 흐름."
+    },
+    {
+      "id": "jf036pkcnrvoljuihi4j8cssu0",
+      "date": "2026-07-22",
+      "title": "실제 흐름 / 부다페스트 카드뉴스와 NO_REPLY 흔적 보강",
+      "intent": "새 후보를 늘리지 않고 쾰른 사진 1장이 무엇을 남긴 사진인지 먼저 판정한다.",
+      "did": "부다페스트 야경 카드뉴스를 현재 장면 기준으로 다듬고, 마케팅 리뷰 크론의 NO_REPLY가 no_action trace로 남도록 보강했다.",
+      "why": "현재 여행 장면이 부다페스트로 넘어왔고, 조용한 성공의 이유를 남기는 운영 문제가 더 급했다.",
+      "carry": "현재 도시와 다음 이동에 맞춰 사진 후보를 하나만 고른다.",
+      "drop": "지난 도시 후보와 새 운영 점검을 동시에 넓히는 흐름."
+    },
+    {
+      "id": "3tjq3gjokj9i037l598vmdr9qo",
+      "date": "2026-07-23",
+      "title": "내일 의도 / 이동일 사진 후보 하나만 고르기",
+      "intent": "부다페스트에서 플리트비체로 이동하는 날에는 새 후보를 늘리지 않고 현재 사진 후보 하나만 본다.",
       "did": null,
       "why": null,
-      "carry": "첫 줄과 콜라주 첫 이미지 방향만 5분 봅니다.",
+      "carry": "올릴 사진 후보가 있으면 야경 / 음식 / 이동 중 하나만 고른다.",
       "drop": null
     }
   ]

@@ -1,27 +1,23 @@
 # Status Design System
 
-`dist/index.html`의 인라인 `<style>` + `dist/assets/saem-scene.js`에서 쓰는 패턴·토큰.
+`dist/index.html`의 인라인 `<style>` + `dist/assets/mascot-ambient.jpg`에서 쓰는 패턴·토큰.
 
-## SaemScene Pattern
+## Mascot image pattern
 
-컴포넌트: `canvas.saem-canvas`(Three.js) + `.saem-fallback`(CSS 도형 샘) + `.app-shell`(글래스 HUD).
+컴포넌트: `assets/mascot-ambient.jpg`(사용자 마스코트 공간 레이어) + `.app-shell`(글래스 HUD).
 
 ```
-body background        실제 물결 사진 `assets/emerald-water-background.jpg` + 가독성용 light veil
-canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
-                       transparent WebGL, body[data-scene="webgl"]일 때만 opacity 1 (fade-in)
-.saem-fallback         CSS 조약돌+이끼+새싹+점눈+물결 — webgl 성공 시에만 display:none
+body background        `assets/mascot-ambient.jpg` + 백색/골드 가독성용 veil
+canvas.saem-canvas     기존 Saem 씬의 롤백용 DOM. 공개 화면에서는 비활성화
+.saem-fallback         기존 CSS 샘 fallback. 공개 화면에서는 비활성화
 .app-shell             z-index:10, 글래스 HUD
 ```
 
-### JS 계약
+### 렌더 계약
 
-- `initSaemScene({ canvas, mood })` (ES module, `assets/saem-scene.js`)
-  - 성공: `body.dataset.scene = "webgl"` 설정, `window.__SAEM_SCENE__ = { ready:true, setMood }` 반환.
-  - 실패(renderer 예외 등): 아무것도 만지지 않고 `null` — CSS 샘이 그대로 남는다.
-  - `webglcontextlost` → `data-scene` 해제 → CSS 샘 복귀.
-- `setMood("ok" | "warn" | "bad")`: ok = 에메랄드 아침빛 `#d5fff4`·intensity 2.4·물결 진행 / 그 외 = 고요한 물빛 `#d9e8e2`·1.1·물결 정지.
-- 로더는 `index.html`의 `startSaemScene()` — dynamic `import()`라 모듈 로드 실패도 페이지를 죽이지 않는다.
+- `index.html`의 body background가 `assets/mascot-ambient.jpg`를 사용한다.
+- 이미지가 없어도 본문 그라데이션과 HUD가 남아 상태 정보가 유지된다.
+- `status.json`의 상태값은 기존 hero/cards/detail 렌더 계약으로만 전달한다.
 
 ### 씬 토큰 (saem-scene.js 상수)
 
@@ -53,7 +49,7 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
 | `--glass-border` | `rgba(170,226,211,0.58)` |
 | `--glass-blur` | `none` — blur는 밀키한 불투명감을 만들어 제거(2026-07-05 피드백 "투명한 버전이 남아야") |
 | `--shadow-soft` | `0 12px 34px rgba(48,97,92,0.13)` |
-| `--ok` / `--warn` / `--bad` | `#4f9d8a` / `#d9a84e` / `#c96f5f` |
+| `--ok` / `--warn` / `--bad` | `#4f9d8a` / `#d7b56b` / `#c96f5f` |
 | `--photo-veil` | `rgba(238,248,245,0.28)` — 사진 위 가독성 안전 톤 |
 
 히어로·philosophy cards·상세 타일·리스트 행·하단 내비·아이콘 버튼이 모두 이 토큰만 쓴다. 새 표면을 추가할 때 개별 rgba를 만들지 말 것.

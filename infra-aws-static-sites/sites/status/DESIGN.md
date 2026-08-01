@@ -1,6 +1,6 @@
 # Status Dashboard — Design Notes
 
-`https://status.aws.shdkej.com` 의 디자인 의사결정 기록. 구현은 `dist/index.html` + `dist/assets/saem-scene.js`.
+`https://status.aws.shdkej.com` 의 디자인 의사결정 기록. 구현은 `dist/index.html` + `dist/assets/mascot-ambient.jpg`.
 스펙: `docs/superpowers/specs/2026-07-05-status-saem-3d-redesign-design.md`
 
 ## 디자인 원칙
@@ -10,8 +10,8 @@
   - 균형: Surfaces·Agents·Output을 같은 무게로 나열하지 않고, 실행 중인 시스템과 쌓이는 산출물의 관계를 Balance 카드로 묶어 보여준다.
   - 순환: 완료 상태도 "끝"으로 닫지 않고 다음 확인 시점과 남길 조정점을 Loop 카드로 표시한다.
 - **한 화면 (one screen)**: 첫 화면에서 시스템 상태가 스크롤 없이 드러난다. 히어로(전체 온도) + 3 philosophy cards(Now / Balance / Loop) + 기존 상세 탭(System / Surfaces / Agents / Output). Deploy 탭은 Surfaces와 중복이라 Output(산출물 신선도)으로 교체(2026-07-05) — Agents(누가 도는가)↔Output(뭐가 쌓이는가) 쌍.
-- **샘(Saem)이 주인공, HUD는 그 위에 뜬다**: 배경의 3D 샘 씬이 무대(主)이고, 상태 카드는 투명 글래스로 그 위에 떠 있다.
-- **브랜드 정본 준수**: 캐릭터는 BRAND.md의 샘 — 이끼 조약돌 정령. 과장된 귀여움·큰 눈 금지, 씬 안에 텍스트/로고 렌더 금지.
+- **사용자 마스코트가 주인공, HUD는 그 위에 뜬다**: 사용자가 지정한 백색·골드 홀로그램 마스코트 이미지가 무대(主)이고, 상태 카드는 투명 글래스로 그 위에 떠 있다.
+- **마스코트 정본 준수**: `dist/assets/mascot-ambient.jpg`의 빛나는 휴머노이드 마스코트를 사용한다. 이미지 위 텍스트·로고를 별도로 렌더하지 않는다.
 - **팔레트**: 맑은 수면 베이스 `#eef8f5` + 에메랄드 키컬러 `#4f9d8a` + 깊은 물빛 `#1f6566` + 웜 그레이지 조약돌. 2026-07-26 물결 사진 피드백 이후 status의 키컬러는 "물결에 비치는 에메랄드빛"이 기준이고, CMS의 같은 테마와 연결되되 status에서는 샘·수면·글래스 HUD에 맞게 더 밝고 투명하게 쓴다. 누런기 억제(2026-07-05 피드백 "너무 누래서 하얗게"), 그림자는 웜 그레이/물빛 회색(pure black 금지).
 
 ## 레이어 구조 (아래 → 위)
@@ -20,23 +20,21 @@
 |---|--------|------|
 | body | 크림 본 그라데이션 | WebGL 무관 최종 안전망 |
 | body | `assets/emerald-water-background.jpg` | 2026-07-26 사용자가 지정한 실제 물결 사진 배경 |
-| 0 | `canvas.saem-canvas` (fixed, pointer-events:none) | Three.js 샘 씬 |
-| 0 | `.saem-fallback` | CSS 도형 샘 — `body[data-scene="webgl"]`일 때만 숨김 |
+| 0 | `assets/mascot-ambient.jpg` | 사용자가 지정한 홀로그램 마스코트 공간 레이어 |
+| 0 | `.saem-canvas` / `.saem-fallback` | 기존 Saem 씬 롤백용 DOM — 공개 화면에서는 비활성화 |
 | 10 | `.app-shell` | 글래스 HUD (히어로·카드·상세·하단 내비) |
 
-## SaemScene (Three.js)
+## Mascot Scene (image layer)
 
-- Three.js 0.166.1을 `dist/assets/vendor/three.module.min.js`로 **로컬 vendoring** — CDN 런타임 의존 없음 (과거 Three.js 롤백 원인이던 CDN 실패 리스크 제거).
-- 샘은 이미지가 아니라 **절차적 지오메트리**로, 정본 이미지(`~/workspace/prompt-archive/assets/saem-character/reference/`)를 기준 삼는다: speckle 질감 조약돌 + 우상단 유기 이끼 패치(작은 clump 22개) + 이끼에서 자라는 새싹 + 담담한 점 눈 2개. 숨쉬기 bob + 느린 좌우 바라보기.
-- 수면: 실제 물결 사진을 CSS 배경으로 깔고, WebGL은 투명 캔버스 위에 대형 반투명 circle 평면 + 동심원 ring 4개가 스케일/페이드로 퍼지는 물결을 얹는다. 수면과 mote는 에메랄드 반사광으로 통일하고, 가짜 컨택트 섀도는 물빛 회색 radial 텍스처를 쓴다.
-- 카메라: 사인 드리프트 + 포인터 parallax(lerp 0.05). 데스크탑은 샘을 우측 스테이지에(stage.x 오프셋, lookAt은 원점 고정), 모바일은 히어로와 카드 사이 중앙에.
-- **상태 연동** (BRAND.md 상태 문법): `status.json` overall이 ok → 맑은 에메랄드 아침빛(`#d5fff4`) + 물결 진행 / warn·bad → 빛 강도·색온도 하강(`#d9e8e2`) + 물결 정지(고요한 수면). `window.__SAEM_SCENE__.setMood()`로 전환.
+- `assets/mascot-ambient.jpg`를 body 배경으로 사용하고, 백색·골드 veil과 글래스 HUD를 위에 얹는다.
+- 기존 `saem-scene.js`는 공개 렌더 경로에서 호출하지 않는다. 상태 데이터 계약과 상세 탭은 그대로 유지한다.
+- `status.json`의 overall 상태는 텍스트·상태 카드·상세 패널에만 반영한다.
 
 ## Fallback 체인
 
-1. WebGL 정상 → 풀 3D 씬 (`body[data-scene="webgl"]`, 캔버스 fade-in).
-2. 모듈 로드 실패 / renderer 생성 예외 / context lost → `data-scene` 미설정(또는 해제) → CSS 도형 샘(`.saem-fallback`: 조약돌 div + 이끼 blob + 새싹 + 점 눈 + CSS 물결)이 그대로 남는다. **캐릭터가 사라지는 상태가 구조적으로 없다.**
-3. `prefers-reduced-motion: reduce` → 씬 시간 정지(정적 1프레임) + parallax 무시, CSS 애니메이션도 정지.
+1. 이미지 레이어 정상 → 마스코트 배경 + 백색·골드 veil.
+2. 이미지 로드 실패 → 본문 그라데이션과 글래스 HUD가 유지되어 상태 정보가 사라지지 않는다.
+3. `prefers-reduced-motion: reduce` → HUD 전환 애니메이션만 정지.
 
 ## HUD 글래스 문법
 
@@ -57,12 +55,13 @@ Agents 패널은 `agents-live.json`이 30분 이내면 라이브 렌더, 아니�
 
 ## 검증 기준
 
-- 390px·데스크탑 첫 화면 스크롤 없음 · `window.__SAEM_SCENE__.ready === true` + `body[data-scene="webgl"]` · 모듈 차단 시 CSS 샘 표시 · 카드 상태값 표시 · 클릭 → 상세 + 내비 동작 · setMood 무드 전환 · reduced-motion 정지.
+- 390px·데스크탑 첫 화면 스크롤 없음 · 마스코트 이미지 레이어 표시 · 이미지 로드 실패 시 그라데이션 fallback · 카드 상태값 표시 · 클릭 → 상세 + 내비 동작 · reduced-motion 정지.
 - 검증 스크립트: Playwright 헤드리스(chromium `--enable-unsafe-swiftshader`)로 12항목 자동 확인 (2026-07-05 전부 PASS).
 
 ## 이력
 
 - 2026-08-01: 제품 디자인 철학을 `미니멀 · 균형 · 순환`으로 고정하고 status 첫 화면을 Now / Balance / Loop 중심으로 재구성. 기존 상세 탭과 데이터 계약은 유지.
+- 2026-08-01: 사용자가 지정한 마스코트 이미지로 공간 레이어를 교체. 기존 Saem 절차적 씬은 롤백용 DOM/파일로 남기고 공개 화면에서는 비활성화.
 - 2026-07-26: 사용자가 보낸 실제 물결 사진을 status 배경으로 적용. `assets/emerald-water-background.jpg`를 추가하고, WebGL 씬을 투명 렌더링으로 바꿔 사진 위에 샘·수면·반짝임이 얹히게 조정.
 - 2026-07-26: 물결 사진 기반 에메랄드 키컬러 적용. CMS 작업은 유지하고 status 정적 사이트에 별도 반영: `dist/index.html`의 HUD/배경/전환 플래시, `dist/assets/saem-scene.js`의 수면·조명·mote·이끼 색을 에메랄드 수면 계열로 갱신.
 - 2026-07-10: System 탭 판정 근거 모달 — warn/bad 행 클릭 시 이유(reason)를 모달로 표시. reason은 수집기가 레이어별로 내려주고(크론은 개수만, 백로그·산출물 이름은 기존 public 범위), Overall·Backlog 행은 프론트가 이미 받은 데이터로 조립.

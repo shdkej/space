@@ -19,8 +19,9 @@
         --ok: #4f9d8a;
         --warn: #d9a84e;
         --bad: #c96f5f;
-        --water-spark: rgba(126, 198, 178, 0.42);
-        --water-depth: rgba(31, 101, 102, 0.18);
+        --gold: #d7b56b;
+        --gold-soft: rgba(215, 181, 107, 0.42);
+        --holo-ink: #3b3e3d;
         /* blur를 걷어낸 맑은 투명 — 물빛만 얹고 밀키한 불투명감은 만들지 않는다 */
         --glass: rgba(247, 255, 252, 0.3);
         --glass-strong: rgba(247, 255, 252, 0.44);
@@ -50,10 +51,10 @@
         font-feature-settings: "tnum";
         -webkit-font-smoothing: antialiased;
         background:
-          linear-gradient(90deg, rgba(247, 255, 252, 0.82) 0%, rgba(247, 255, 252, 0.54) 36%, var(--photo-veil) 100%),
-          linear-gradient(180deg, rgba(247, 255, 252, 0.2) 0%, rgba(222, 242, 236, 0.34) 62%, rgba(19, 77, 78, 0.34) 100%),
-          url("assets/emerald-water-background.jpg") center / cover no-repeat,
-          linear-gradient(168deg, #fbfdfa 0%, #eef8f5 48%, #e3f1ec 100%);
+          linear-gradient(90deg, rgba(250, 252, 249, 0.88) 0%, rgba(250, 252, 249, 0.54) 42%, rgba(250, 252, 249, 0.16) 100%),
+          linear-gradient(180deg, rgba(252, 253, 250, 0.08) 0%, rgba(238, 235, 218, 0.16) 62%, rgba(68, 67, 57, 0.26) 100%),
+          url("assets/mascot-ambient.jpg") center / cover no-repeat,
+          linear-gradient(168deg, #fbfdfa 0%, #f1f1ea 48%, #e7e8df 100%);
       }
 
       body::before {
@@ -63,14 +64,31 @@
         z-index: 0;
         pointer-events: none;
         background:
-          radial-gradient(ellipse at 16% 12%, rgba(255, 255, 255, 0.58), transparent 34%),
-          radial-gradient(ellipse at 76% 68%, rgba(12, 61, 62, 0.2), transparent 46%),
-          linear-gradient(112deg, transparent 0 18%, var(--water-spark) 19% 20%, transparent 21% 42%, rgba(126, 198, 178, 0.24) 43% 44%, transparent 45%),
-          linear-gradient(168deg, transparent 0 28%, var(--water-depth) 29% 30%, transparent 31% 63%, rgba(126, 198, 178, 0.28) 64% 65%, transparent 66%),
-          radial-gradient(circle at 82% 24%, rgba(255, 255, 255, 0.72), transparent 3%),
-          radial-gradient(circle at 63% 37%, rgba(255, 255, 255, 0.44), transparent 2.5%);
-        opacity: 0.74;
+          radial-gradient(ellipse at 16% 12%, rgba(255, 255, 255, 0.66), transparent 34%),
+          radial-gradient(ellipse at 74% 68%, rgba(79, 75, 54, 0.18), transparent 46%),
+          linear-gradient(112deg, transparent 0 18%, var(--gold-soft) 19% 20%, transparent 21% 42%, rgba(215, 181, 107, 0.22) 43% 44%, transparent 45%),
+          linear-gradient(168deg, transparent 0 28%, rgba(170, 158, 113, 0.12) 29% 30%, transparent 31% 63%, rgba(215, 181, 107, 0.18) 64% 65%, transparent 66%),
+          radial-gradient(circle at 82% 24%, rgba(255, 255, 255, 0.78), transparent 3%),
+          radial-gradient(circle at 63% 37%, rgba(255, 255, 255, 0.52), transparent 2.5%);
+        opacity: 0.86;
         mix-blend-mode: screen;
+      }
+
+      /* The user's mascot is the spatial layer for Status. The former Saem
+         procedural scene remains in the DOM only as a safe rollback seam. */
+      .saem-canvas,
+      .saem-fallback {
+        display: none !important;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: radial-gradient(circle at 50% 42%, transparent 0 22%, rgba(255, 255, 255, 0.04) 42%, rgba(80, 78, 68, 0.16) 100%);
+        mix-blend-mode: soft-light;
       }
 
       a,
@@ -268,6 +286,14 @@
         isolation: isolate;
       }
 
+      .app-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent 44%, rgba(255, 255, 255, 0.08));
+      }
+
       .overview {
         position: absolute;
         inset: 0;
@@ -294,7 +320,8 @@
         padding: 18px 22px 20px;
         border: 1px solid var(--glass-border);
         border-radius: 24px;
-        background: var(--glass);
+        background: rgba(250, 252, 247, 0.3);
+        border-color: rgba(215, 181, 107, 0.4);
         box-shadow: var(--shadow-soft);
         backdrop-filter: var(--glass-blur);
         -webkit-backdrop-filter: var(--glass-blur);
@@ -307,7 +334,7 @@
       }
 
       .hero-kicker {
-        color: var(--faint);
+        color: color-mix(in srgb, var(--holo-ink), var(--gold) 32%);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.18em;
@@ -327,7 +354,8 @@
 
       .hero-title .hero-emphasis {
         font-weight: 760;
-        color: rgba(24, 48, 45, 0.98);
+        color: var(--holo-ink);
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
       }
 
       .hero-line {
@@ -427,8 +455,8 @@
       .control-card:focus-visible {
         outline: none;
         transform: translateY(-3px);
-        border-color: rgba(190, 241, 226, 0.86);
-        background: var(--glass-strong);
+        border-color: rgba(215, 181, 107, 0.78);
+        background: rgba(250, 252, 247, 0.48);
         box-shadow: 0 18px 40px rgba(48, 97, 92, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.58);
       }
 
@@ -1637,14 +1665,9 @@
       }
 
       function startSaemScene(mood) {
-        import("./assets/saem-scene.js")
-          .then((module) => {
-            const scene = module.initSaemScene({ canvas: $("saemCanvas"), mood });
-            if (!scene) console.info("Saem scene unavailable — CSS fallback stays.");
-          })
-          .catch(() => {
-            console.info("Saem scene module failed to load — CSS fallback stays.");
-          });
+        // Status now uses the user's mascot image as its spatial layer.
+        // Keep the hook so the status-data render contract remains unchanged.
+        document.body.dataset.scene = "mascot-image";
       }
 
       function render(data, liveFeed) {

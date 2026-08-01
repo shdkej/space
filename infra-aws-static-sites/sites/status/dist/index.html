@@ -317,10 +317,10 @@
       .hero-title {
         max-width: min(15ch, 100%);
         margin: 0;
-        font-size: clamp(30px, 8.6vw, 58px);
+        font-size: clamp(30px, 3.6rem, 58px);
         line-height: 0.98;
         font-weight: 430;
-        letter-spacing: -0.05em;
+        letter-spacing: 0;
         color: rgba(37, 53, 48, 0.96);
         text-wrap: balance;
       }
@@ -342,9 +342,9 @@
         max-width: min(46ch, 100%);
         margin: 0;
         color: var(--muted);
-        font-size: clamp(12px, 3.2vw, 15px);
+        font-size: clamp(12px, 0.94rem, 15px);
         line-height: 1.42;
-        letter-spacing: -0.02em;
+        letter-spacing: 0;
       }
 
       .hero-meta {
@@ -362,9 +362,9 @@
 
       [data-reveal] .reveal-word {
         display: inline-block;
-        opacity: 0;
-        transform: translate3d(0, 1.1em, 0);
-        filter: blur(8px);
+        opacity: 1;
+        transform: none;
+        filter: none;
         animation: revealWord 0.84s var(--ease) forwards;
         animation-delay: calc(var(--word-index, 0) * 52ms + var(--reveal-delay, 0ms));
         will-change: transform, opacity, filter;
@@ -389,15 +389,14 @@
         }
       }
 
-      /* ─── 4 status cards ───────────────────────── */
+      /* ─── philosophy cards: Minimal · Balance · Loop ─ */
       .overview-grid {
         min-height: 0;
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-rows: repeat(2, minmax(96px, 0.5fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         align-self: end;
         gap: 10px;
-        height: min(30svh, 264px);
+        height: min(26svh, 210px);
       }
 
       .control-card {
@@ -407,8 +406,8 @@
         overflow: hidden;
         display: grid;
         grid-template-rows: auto minmax(0, 1fr) auto;
-        gap: 4px;
-        padding: 13px 15px 12px;
+        gap: 10px;
+        padding: 16px 17px 15px;
         border: 1px solid var(--glass-border);
         border-radius: 20px;
         background: var(--glass);
@@ -454,7 +453,7 @@
       .card-top {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
         min-width: 0;
       }
 
@@ -470,26 +469,30 @@
       }
 
       .card-mid {
-        display: flex;
-        align-items: baseline;
+        display: grid;
+        align-content: end;
         gap: 7px;
         min-width: 0;
       }
 
       .card-value {
-        font-size: clamp(26px, 6.4vw, 40px);
-        font-weight: 800;
-        line-height: 1;
-        letter-spacing: -0.04em;
+        display: -webkit-box;
+        overflow: hidden;
+        font-size: clamp(19px, 1.88rem, 30px);
+        font-weight: 760;
+        line-height: 1.04;
+        letter-spacing: 0;
         color: rgba(28, 50, 46, 0.96);
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
       }
 
       .card-title {
         overflow: hidden;
         color: var(--muted);
-        font-size: clamp(11px, 2.6vw, 13px);
+        font-size: clamp(11px, 0.82rem, 13px);
         font-weight: 600;
-        letter-spacing: -0.02em;
+        letter-spacing: 0;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
@@ -892,7 +895,7 @@
         overflow: hidden;
         font-size: 11px;
         font-weight: 650;
-        letter-spacing: -0.01em;
+        letter-spacing: 0;
         line-height: 1;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -967,7 +970,7 @@
 
         .overview-grid {
           gap: 10px;
-          height: min(30vh, 286px);
+          height: min(24vh, 224px);
         }
 
         .detail-view {
@@ -1006,7 +1009,7 @@
         }
 
         .overview-grid {
-          width: min(520px, 42vw);
+          width: min(720px, 58vw);
           justify-self: start;
         }
 
@@ -1029,7 +1032,7 @@
         }
 
         .hero-title {
-          font-size: clamp(26px, 8.8vw, 34px);
+          font-size: 26px;
         }
 
         .hero-lead {
@@ -1042,11 +1045,28 @@
 
         .overview-grid {
           gap: 8px;
+          grid-template-columns: 1fr;
+          height: min(34svh, 246px);
         }
 
         .control-card {
-          padding: 11px 12px 10px;
+          padding: 11px 13px 10px;
           border-radius: 16px;
+          gap: 5px;
+        }
+
+        .card-value {
+          font-size: 16px;
+          line-height: 1.12;
+          -webkit-line-clamp: 1;
+        }
+
+        .card-bottom {
+          display: none;
+        }
+
+        .control-card {
+          grid-template-rows: auto auto auto;
         }
 
         .detail-view {
@@ -1075,7 +1095,8 @@
 
       @media (max-width: 639px) {
         .overview-grid {
-          height: min(30svh, 236px);
+          grid-template-columns: 1fr;
+          height: min(34svh, 264px);
         }
 
         .saem-fallback {
@@ -1130,7 +1151,7 @@
           </div>
         </header>
 
-        <section class="overview-grid" id="overviewGrid" aria-label="Four status cards"></section>
+        <section class="overview-grid" id="overviewGrid" aria-label="Status philosophy cards"></section>
       </section>
 
       <section class="detail-view" aria-label="Status detail">
@@ -1380,10 +1401,43 @@
           ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length)
           : 0;
         const score = Number.isFinite(Number(overall.score)) ? Number(overall.score) : 0;
+        const weakSurface = checks.find((item) => item.state !== "ok");
+        const weakLayer = sys?.layers?.find((item) => item.state !== "ok");
+        const weakOutput = outputs.find((item) => item.state !== "ok");
+        const weakSignal = weakSurface || weakLayer || weakOutput || null;
+        const systemReady = (overall.state || "ok") === "ok" && okChecks === checks.length && !weakLayer && !weakOutput;
+        const balanceState = !isLive
+          ? "warn"
+          : okAgents === totalAgents && freshOutputs === outputs.length
+            ? "ok"
+            : "warn";
+        const nowLine = systemReady
+          ? "조용히 유지"
+          : weakSignal?.name || ((overall.state || "warn") === "warn" ? "확인 필요" : "복구 먼저");
+        const balanceLine = !isLive
+          ? "라이브 신호 대기"
+          : totalAgents === 0
+            ? "운영 신호 없음"
+            : `${okAgents}/${totalAgents} agents`;
+        const balanceTitle = !isLive
+          ? `${okChecks}/${checks.length} surfaces`
+          : `${freshOutputs}/${outputs.length} outputs`;
+        const loopLine = !isLive
+          ? "수집기 확인"
+          : freshOutputs === outputs.length
+            ? "다음 주기 대기"
+            : "산출물 재확인";
+        const nextLoop = !isLive
+          ? "agents-live.json"
+          : freshOutputs === outputs.length
+            ? `${liveFeed.ageMinutes}m ago`
+            : "Output 탭";
+
+        const displayState = systemReady ? (overall.state || "ok") : "warn";
 
         return {
           generatedAt: data.generatedAt,
-          overallState: overall.state || "ok",
+          overallState: displayState,
           overallLabel: overall.label || "Status feed loaded.",
           score,
           okChecks,
@@ -1391,34 +1445,26 @@
           cards: [
             {
               id: "system",
-              label: "System",
-              value: score,
-              title: "/ 100",
-              status: stateLabel(overall.state),
-              state: overall.state || "ok",
-            },
-            {
-              id: "surfaces",
-              label: "Surfaces",
-              value: `${okChecks}/${checks.length}`,
-              title: "OK",
-              status: `${avgLatency}ms avg`,
-              state: okChecks === checks.length ? "ok" : "warn",
+              label: "Now",
+              value: nowLine,
+              title: `${score}/100`,
+              status: systemReady ? "지금 할 일은 유지입니다" : "가장 약한 신호부터 봅니다",
+              state: systemReady ? "ok" : "warn",
             },
             {
               id: "agents",
-              label: "Agents",
-              value: `${okAgents}/${totalAgents}`,
-              title: "agents",
-              status: !isLive ? "feed silent" : okAgents === totalAgents ? "live · all quiet" : "check agents",
-              state: !isLive ? "warn" : okAgents === totalAgents ? "ok" : "warn",
+              label: "Balance",
+              value: balanceLine,
+              title: balanceTitle,
+              status: !isLive ? "라이브 피드가 조용합니다" : "운영과 산출물의 기울기",
+              state: balanceState,
             },
             {
               id: "output",
-              label: "Output",
-              value: !isLive ? "--" : `${freshOutputs}/${outputs.length}`,
-              title: "fresh",
-              status: !isLive ? "feed silent" : freshOutputs === outputs.length ? "all fresh" : "check outputs",
+              label: "Loop",
+              value: loopLine,
+              title: nextLoop,
+              status: "완료가 아니라 다음 확인점",
               state: !isLive ? "warn" : freshOutputs === outputs.length ? "ok" : "warn",
             },
           ],
@@ -1586,7 +1632,7 @@
 
       function heroLines(state, okChecks, totalChecks) {
         if (state === "ok") return ["All systems", "quiet & running"];
-        if (state === "warn") return ["Some surfaces", "need attention"];
+        if (state === "warn") return ["Some signals", "need attention"];
         return [`${totalChecks - okChecks} surfaces`, "are down now"];
       }
 

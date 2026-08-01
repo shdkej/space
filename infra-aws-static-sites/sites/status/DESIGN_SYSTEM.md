@@ -20,7 +20,7 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
   - 성공: `body.dataset.scene = "webgl"` 설정, `window.__SAEM_SCENE__ = { ready:true, setMood }` 반환.
   - 실패(renderer 예외 등): 아무것도 만지지 않고 `null` — CSS 샘이 그대로 남는다.
   - `webglcontextlost` → `data-scene` 해제 → CSS 샘 복귀.
-- `setMood("ok" | "warn" | "bad")`: ok = 아침빛 `#fff8ee`·intensity 2.4·물결 진행 / 그 외 = `#eae6dd`·1.1·물결 정지.
+- `setMood("ok" | "warn" | "bad")`: ok = 에메랄드 아침빛 `#d5fff4`·intensity 2.4·물결 진행 / 그 외 = 고요한 물빛 `#d9e8e2`·1.1·물결 정지.
 - 로더는 `index.html`의 `startSaemScene()` — dynamic `import()`라 모듈 로드 실패도 페이지를 죽이지 않는다.
 
 ### 씬 토큰 (saem-scene.js 상수)
@@ -56,7 +56,17 @@ canvas.saem-canvas     position:fixed; inset:0; z-index:0; pointer-events:none
 | `--ok` / `--warn` / `--bad` | `#4f9d8a` / `#d9a84e` / `#c96f5f` |
 | `--photo-veil` | `rgba(238,248,245,0.28)` — 사진 위 가독성 안전 톤 |
 
-히어로·카드·상세 타일·리스트 행·하단 내비·아이콘 버튼이 모두 이 토큰만 쓴다. 새 표면을 추가할 때 개별 rgba를 만들지 말 것.
+히어로·philosophy cards·상세 타일·리스트 행·하단 내비·아이콘 버튼이 모두 이 토큰만 쓴다. 새 표면을 추가할 때 개별 rgba를 만들지 말 것.
+
+### First-screen cards
+
+첫 화면 카드는 3개만 둔다.
+
+- `Now`: 지금 볼 것 하나. overall score와 가장 약한 신호를 System 상세로 연결한다.
+- `Balance`: 현재 기울어진 관계. Agents와 Output의 관계를 한 줄로 보여주고 Agents 상세로 연결한다.
+- `Loop`: 다음 확인점. 완료 상태도 다음 수집·재확인으로 이어지게 하고 Output 상세로 연결한다.
+
+Surfaces는 첫 화면 카드에서 빠지지만 하단 상세 내비에는 유지한다. 첫 화면은 운영 목록이 아니라 `미니멀 · 균형 · 순환`의 판단 손잡이다.
 
 ### 전환 문법
 

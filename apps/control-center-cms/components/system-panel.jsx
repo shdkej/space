@@ -64,6 +64,53 @@ function LayerHeader({ title, status }) {
   );
 }
 
+function SystemSignature({ snapshot, payload, layerStatuses }) {
+  const waitingForUser = (payload.intents?.items?.waiting || []).filter(
+    (it) => (it.waiting_on || "").toLowerCase() === "user"
+  ).length;
+  const activeCount = payload.intents?.counts?.active ?? 0;
+  const cronCount = payload.crons?.length ?? 0;
+  const layerLabels = ["L1", "L2", "L3", "L4"];
+
+  return (
+    <section className="system-signature" aria-label="SAM System signature">
+      <div className="system-signature__copy">
+        <p className="system-signature__eyebrow">SAM System</p>
+        <h2>샘이 지키는 운영 상태판</h2>
+        <p>
+          발화가 승인, 실행, 산출, 통보까지 닫히는지 한 번에 봅니다.
+        </p>
+        <div className="system-signature__metrics" aria-label="System quick metrics">
+          <span>Active {activeCount}</span>
+          <span>User wait {waitingForUser}</span>
+          <span>Cron {cronCount}</span>
+          <span>{fmtMs(new Date(snapshot.created_at).getTime())}</span>
+        </div>
+      </div>
+      <div className="system-signature__scene">
+        <img
+          src="/assets/saem-character/saem-system-signature.png"
+          alt=""
+          className="system-signature__image"
+          aria-hidden
+        />
+        <div className="system-signature__rings">
+          {layerStatuses.map((status, index) => (
+            <span
+              key={`${status}-${index}`}
+              className={`system-signature__ring is-${status}`}
+              aria-label={`${layerLabels[index]} ${STATUS_META[status]?.label || "미지정"}`}
+            >
+              <span className="system-signature__ring-label">{layerLabels[index]}</span>
+              <Dot status={status} />
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function cronRowStatuses(payload) {
   return (payload?.crons || []).map((c) => c.status);
 }
@@ -256,10 +303,16 @@ export default function SystemPanel() {
   const backlogStatuses = (payload.backlogs || []).map((b) => b.status);
   const l1Status = worst([layerCheckStatus(payload)]);
   const l2Status = worst([...cronRowStatuses(payload), ...backlogStatuses]);
+  const l3Status = worst([pdcaStatus]);
   const l4Status = worst(freshnessStatuses(payload));
 
   return (
     <div className="system-shell space-y-2">
+      <SystemSignature
+        snapshot={snapshot}
+        payload={payload}
+        layerStatuses={[l1Status, l2Status, l3Status, l4Status]}
+      />
       {heartbeatDead ? (
         <div className="rounded-md border border-[hsl(var(--down))] bg-[hsl(var(--down))]/10 px-4 py-3 text-sm">
           수집기 죽음 — 마지막 스냅샷이 {fmtAge(snapshotAge / 3600000)}입니다. 이 화면의 모든 값은 그 시점 기준입니다.
@@ -446,7 +499,7 @@ export default function SystemPanel() {
         </Card>
       </div>
 
-      <LayerHeader title="L3 워크플로우 — Infinity · PDCA 루프" status={worst([pdcaStatus])} />
+      <LayerHeader title="L3 워크플로우 — Infinity · PDCA 루프" status={l3Status} />
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">

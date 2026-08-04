@@ -1,7 +1,7 @@
-// OpenClaw 이미지 업로드 Worker
+// OpenClaw 미디어 업로드 Worker
 //
 // 흐름(책처럼 읽히게):
-//   POST /         -> 토큰 검증 -> 이미지 추출 -> 리사이즈 -> R2 저장 -> 공개 URL 반환
+//   POST /         -> 토큰 검증 -> 이미지/짧은 mp4 추출 -> R2 저장 -> 공개 URL 반환
 //   GET  /list     -> R2 목록 반환 (?limit=, ?cursor= 페이지네이션)
 //   GET  /random   -> R2 중 1장 무작위 선택 -> 공개 URL로 302 리다이렉트
 //   DELETE /object -> 토큰 검증 -> key를 deleted/ 아래로 이동(소프트 삭제)
@@ -14,6 +14,7 @@
 //   PUBLIC_BASE_URL  조회용 공개 베이스 URL (예: https://img.shdkej.com)
 //   MAX_WIDTH        리사이즈 최대 가로 픽셀
 //   OUTPUT_FORMAT    저장 포맷 (예: image/webp)
+//   MAX_VIDEO_BYTES  mp4 최대 바이트 수 (기본 25MB)
 
 export default {
   async fetch(request, env) {
@@ -42,15 +43,20 @@ export default {
       return json({ error: "unauthorized" }, 401);
     }
 
-    const source = await extractImage(request);
+    const source = await extractMedia(request, env);
     if (!source) {
       return json({ error: "no_image" }, 400);
     }
 
     const kind = uploadKind(url, request);
-    const resized = await resizeImage(source.stream, env);
-    const key = buildObjectKey(source.filename, resized.extension, kind);
-    await storeToR2(env, key, resized);
+    const media = source.mediaType === "video"
+      ? await passthroughVideo(source, env)
+      : await resizeImage(source.stream, env);
+    if (!media) {
+      return json({ error: "media_too_large" }, 413);
+    }
+    const key = buildObjectKey(source.filename, media.extension, kind, source.mediaType);
+    await storeToR2(env, key, media);
 
     return json({ url: `${env.PUBLIC_BASE_URL}/${key}`, key }, 201);
   },
@@ -66,19 +72,56 @@ function isDeleteAuthorized(request, env) {
   return Boolean(env.DELETE_TOKEN) && header === `Bearer ${env.DELETE_TOKEN}`;
 }
 
-// multipart/form-data(file 필드) 또는 raw body 둘 다 허용
-async function extractImage(request) {
+// 이미지는 multipart/form-data(file/image 필드) 또는 raw body를 허용한다.
+// mp4는 content-length를 먼저 검사할 수 있는 raw body만 허용한다.
+async function extractMedia(request, env) {
   const contentType = request.headers.get("content-type") || "";
 
   if (contentType.includes("multipart/form-data")) {
     const form = await request.formData();
     const file = form.get("file") || form.get("image");
     if (!file || typeof file === "string") return null;
-    return { stream: file.stream(), filename: file.name || "upload" };
+    return sourceFromFile(file, env);
   }
 
-  if (!contentType.startsWith("image/")) return null;
-  return { stream: request.body, filename: "upload" };
+  const mediaType = mediaTypeForContentType(contentType);
+  if (!mediaType) return null;
+  if (mediaType === "video" && !isAllowedVideoSize(request, env)) {
+    return null;
+  }
+  return { stream: request.body, filename: "upload", contentType, mediaType };
+}
+
+function sourceFromFile(file, env) {
+  const contentType = file.type || "";
+  const mediaType = mediaTypeForContentType(contentType);
+  if (!mediaType) return null;
+  if (mediaType === "video") return null;
+  return {
+    stream: file.stream(),
+    filename: file.name || "upload",
+    contentType,
+    mediaType,
+  };
+}
+
+function mediaTypeForContentType(contentType) {
+  if (contentType.startsWith("image/")) return "image";
+  if (contentType.toLowerCase().split(";", 1)[0].trim() === "video/mp4") return "video";
+  return "";
+}
+
+function isAllowedVideoSize(request, env) {
+  const rawLength = request.headers.get("content-length");
+  if (!rawLength) return false;
+  const length = parseInt(rawLength, 10);
+  return Number.isFinite(length) && length <= maxVideoBytes(env);
+}
+
+function maxVideoBytes(env) {
+  const value = parseInt(env.MAX_VIDEO_BYTES || String(25 * 1024 * 1024), 10);
+  if (!Number.isFinite(value) || value <= 0) return 0;
+  return Math.min(value, 100 * 1024 * 1024);
 }
 
 async function resizeImage(stream, env) {
@@ -103,6 +146,16 @@ async function storeToR2(env, key, resized) {
   });
 }
 
+async function passthroughVideo(source, env) {
+  const body = await new Response(source.stream).arrayBuffer();
+  if (body.byteLength > maxVideoBytes(env)) return null;
+  return {
+    body,
+    contentType: "video/mp4",
+    extension: "mp4",
+  };
+}
+
 async function listImages(request, env) {
   const url = new URL(request.url);
   const limit = clamp(parseInt(url.searchParams.get("limit") || "100", 10), 1, 1000);
@@ -110,7 +163,7 @@ async function listImages(request, env) {
   const cursor = url.searchParams.get("cursor") || undefined;
   const listed = await env.BUCKET.list({ prefix, cursor, limit });
   const images = listed.objects
-    .filter((object) => isImageKey(object.key))
+    .filter((object) => isMediaKey(object.key))
     .map((object) => ({
       key: object.key,
       url: `${env.PUBLIC_BASE_URL}/${object.key}`,
@@ -176,11 +229,15 @@ function isImageKey(key) {
   return /\.(avif|gif|jpe?g|png|webp)$/i.test(key);
 }
 
+function isMediaKey(key) {
+  return /\.(avif|gif|jpe?g|mp4|png|webp)$/i.test(key);
+}
+
 function normalizeDeletableKey(key) {
   const decoded = decodeURIComponent(key).replace(/^\/+/, "");
   if (!decoded.startsWith("original/")) return "";
   if (decoded.includes("..") || decoded.includes("//")) return "";
-  if (!isImageKey(decoded)) return "";
+  if (!isMediaKey(decoded)) return "";
   return decoded;
 }
 
@@ -216,10 +273,13 @@ function listingPrefix(url, fallback) {
   return fallback;
 }
 
-function buildObjectKey(filename, extension, kind) {
+function buildObjectKey(filename, extension, kind, mediaType = "image") {
   const now = new Date();
   const datePath = `${now.getUTCFullYear()}/${pad(now.getUTCMonth() + 1)}/${pad(now.getUTCDate())}`;
   const id = crypto.randomUUID();
+  if (mediaType === "video") {
+    return `${kind}/videos/${datePath}/${id}.${extension}`;
+  }
   return `${kind}/${datePath}/${id}.${extension}`;
 }
 

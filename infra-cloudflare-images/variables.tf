@@ -60,3 +60,14 @@ variable "output_quality" {
   type        = number
   default     = 80
 }
+
+variable "max_video_bytes" {
+  description = "업로드 가능한 mp4 최대 바이트 수. 짧은 여행 기록 영상만 보관하기 위한 안전장치"
+  type        = number
+  default     = 26214400
+
+  validation {
+    condition     = var.max_video_bytes > 0 && var.max_video_bytes <= 104857600
+    error_message = "max_video_bytes must be between 1 byte and 100 MiB."
+  }
+}

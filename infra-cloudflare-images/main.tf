@@ -69,6 +69,11 @@ resource "cloudflare_workers_script" "uploader" {
       type = "plain_text"
       text = tostring(var.output_quality)
     },
+    {
+      name = "MAX_VIDEO_BYTES"
+      type = "plain_text"
+      text = tostring(var.max_video_bytes)
+    },
   ]
 
   observability = {

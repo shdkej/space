@@ -1,16 +1,17 @@
-# Cloudflare 이미지 저장소 (OpenClaw 업로드용)
+# Cloudflare 미디어 저장소 (OpenClaw 업로드용)
 
-OpenClaw가 사진을 보내면 Cloudflare Worker가 리사이즈해서 R2에 저장하고, 공개 URL을 돌려준다.
+OpenClaw가 사진이나 짧은 mp4 영상을 보내면 Cloudflare Worker가 R2에 저장하고, 공개 URL을 돌려준다.
 
 ## 구조
 
 ```
 업로드:  OpenClaw → POST https://upload.<도메인> (Bearer 토큰)
-                     └─ Worker: 토큰검증 → Images 바인딩 리사이즈 → R2 put → URL 반환
+                     └─ Worker: 토큰검증 → 이미지 리사이즈 또는 mp4 보존 → R2 put → URL 반환
 조회:    https://img.<도메인>/<key>   (R2 커스텀 도메인, CDN 캐싱 / Worker 미경유)
 ```
 
 - **리사이즈**: Worker의 `IMAGES` 바인딩 사용. wasm을 Worker CPU에서 돌리는 게 아니라 Cloudflare 인프라가 변환을 처리해 안정적이다. **업로드 시 1회만** 변환하므로 변환 과금이 미미하고, 조회는 R2 정적 서빙이라 변환 비용 0.
+- **mp4**: `video/mp4`는 변환하지 않고 그대로 R2에 저장한다. 기본 최대 용량은 25MB이며, 실제 길이 제한은 OpenClaw/SAM 업로드 전에 `ffprobe`로 5초 내외인지 확인한다. Worker는 `Content-Length`가 있는 raw body mp4만 받는다.
 - **인증**: 업로드는 `Authorization: Bearer <UPLOAD_TOKEN>`. 소프트 삭제는 별도 `Authorization: Bearer <DELETE_TOKEN>`. 조회는 공개.
 - **공개**: R2 커스텀 도메인으로 CDN 캐싱.
 
@@ -73,7 +74,7 @@ curl https://upload.shdkej.com/random \
 # → {"url":"https://img.shdkej.com/original/2026/06/22/<uuid>.webp","key":"..."}
 ```
 
-최근 이미지 목록:
+최근 미디어 목록:
 
 ```bash
 curl "https://upload.shdkej.com/list?limit=100" \
@@ -103,6 +104,16 @@ curl -X POST "https://upload.shdkej.com?kind=original" \
 # → {"url":"https://img.shdkej.com/original/2026/05/25/<uuid>.webp","key":"..."}
 ```
 
+짧은 mp4 영상:
+
+```bash
+curl -X POST "https://upload.shdkej.com?kind=original" \
+  -H "Authorization: Bearer $UPLOAD_TOKEN" \
+  -H "Content-Type: video/mp4" \
+  --data-binary @clip.mp4
+# → {"url":"https://img.shdkej.com/original/videos/2026/08/05/<uuid>.mp4","key":"..."}
+```
+
 multipart 폼:
 
 ```bash
@@ -114,6 +125,8 @@ curl -X POST "https://upload.shdkej.com?kind=original" \
 카드뉴스, 썸네일, 재렌더 결과처럼 한 번 가공된 이미지는 기본값인 `derived/`에 저장한다. 명시하려면 `?kind=derived`를 붙인다.
 
 응답의 `url`을 OpenClaw가 받아서 관리하면 된다.
+
+mp4는 짧은 여행 기록 클립 보존용이다. Worker는 `MAX_VIDEO_BYTES`로 크기를 제한하고, OpenClaw 쪽 업로드 흐름은 `ffprobe -show_entries format=duration`으로 길이를 먼저 확인한 뒤 전송한다. 저장 key의 날짜는 R2 객체 정렬을 위해 UTC 기준이다.
 
 ## 비용 메모
 

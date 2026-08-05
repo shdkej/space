@@ -125,6 +125,16 @@
       white-space: nowrap;
     }
 
+    .sample-banner {
+      border: 1px solid rgba(178, 122, 52, 0.28);
+      background: var(--color-amber-soft);
+      color: #5f4423;
+      border-radius: var(--radius);
+      padding: 11px 13px;
+      margin-bottom: 18px;
+      font-size: 13px;
+    }
+
     .controls {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -500,10 +510,12 @@
         기간
         <select id="rangeSelect">
           <option value="7">최근 7일</option>
-          <option value="14">최근 14일</option>
-          <option value="30">최근 30일</option>
         </select>
       </label>
+    </section>
+
+    <section class="sample-banner" id="sampleBanner">
+      현재 숫자는 실제 운영값이 아니라 데이터 계약을 확인하기 위한 샘플입니다. daily generator가 연결되기 전까지는 구조와 흐름만 봅니다.
     </section>
 
     <section class="hero">
@@ -673,9 +685,12 @@
       const previous = rowsInRange().at(-2);
       const previousScore = previous ? config.score(previous) : score;
       const delta = score - previousScore;
-      document.getElementById("statusKicker").textContent = `${formatDate.format(new Date(row.date))} ${config.title}`;
+      const isSample = state.meta.source?.mode === "sample_contract";
+      document.getElementById("statusKicker").textContent = `${formatDate.format(new Date(row.date))} ${config.title}${isSample ? " 샘플" : ""}`;
       document.getElementById("statusValue").textContent = `${score}${config.unit}`;
-      document.getElementById("statusNote").textContent = `${config.copy} 전일 대비 ${delta > 0 ? "+" : ""}${delta}${config.unit || ""} 변화입니다.`;
+      document.getElementById("statusNote").textContent = isSample
+        ? `${config.copy} 이 숫자는 실제 운영값이 아니라 화면 구조를 검증하기 위한 예시입니다.`
+        : `${config.copy} 전일 대비 ${delta > 0 ? "+" : ""}${delta}${config.unit || ""} 변화입니다.`;
 
       const grid = document.getElementById("focusGrid");
       grid.innerHTML = "";
@@ -751,7 +766,7 @@
         {
           title: "일감 흐름",
           value: `${row.infinity.active}/${row.infinity.waiting}`,
-          body: `오늘 보관 ${row.infinity.archived}건, 신규 ${row.infinity.new_intents}건`
+          body: `보관 예시 ${row.infinity.archived}건, 신규 예시 ${row.infinity.new_intents}건`
         },
         {
           title: "하루 루프",

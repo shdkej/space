@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>오늘의 시스템</title>
+  <style>
+    :root {
+      --color-bg: #f0eee9;
+      --color-surface: #faf8f4;
+      --color-surface-raised: #fffdf8;
+      --color-surface-hover: #e7e4dd;
+      --color-text-primary: #211f1c;
+      --color-text-secondary: #6e6a63;
+      --color-text-muted: #9b968d;
+      --color-border: rgba(45, 40, 30, 0.1);
+      --color-border-strong: rgba(45, 40, 30, 0.2);
+      --color-primary: #3f5d49;
+      --color-primary-soft: #dfe9df;
+      --color-amber: #b27a34;
+      --color-amber-soft: #f2e2c8;
+      --color-rose: #b96156;
+      --color-rose-soft: #f2dbd7;
+      --color-blue: #496a7f;
+      --color-blue-soft: #dae5ea;
+      --shadow-soft: 0 18px 50px rgba(76, 68, 52, 0.14);
+      --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      --radius: 8px;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-width: 320px; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 253, 248, 0.95), transparent 26rem),
+        linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg) 55%, var(--color-surface-hover) 100%);
+      color: var(--color-text-primary);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      line-height: 1.5;
+    }
+
+    button, select {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 34px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .saem {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      flex: none;
+      background:
+        radial-gradient(circle at 50% 38%, #fff7e8 0 23%, transparent 24%),
+        radial-gradient(circle at 36% 34%, #2f2b26 0 4%, transparent 5%),
+        radial-gradient(circle at 63% 34%, #2f2b26 0 4%, transparent 5%),
+        radial-gradient(circle at 50% 57%, #df9986 0 9%, transparent 10%),
+        linear-gradient(145deg, #f4c79c, #c98d68);
+      border: 1px solid rgba(45, 40, 30, 0.13);
+      box-shadow: 0 10px 24px rgba(85, 68, 45, 0.18), var(--shadow-inset);
+      position: relative;
+    }
+
+    .saem::after {
+      content: "";
+      position: absolute;
+      left: 13px;
+      right: 13px;
+      bottom: 11px;
+      height: 5px;
+      border-bottom: 2px solid rgba(47, 43, 38, 0.64);
+      border-radius: 50%;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 42px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 5px 0 0;
+      color: var(--color-text-secondary);
+      font-size: 14px;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      color: var(--color-text-secondary);
+      font-size: 12px;
+    }
+
+    .pill {
+      border: 1px solid var(--color-border);
+      background: rgba(250, 248, 244, 0.78);
+      border-radius: 999px;
+      padding: 7px 11px;
+      box-shadow: var(--shadow-inset);
+      white-space: nowrap;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .tabs {
+      display: inline-grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      width: min(620px, 100%);
+      border: 1px solid var(--color-border);
+      background: rgba(250, 248, 244, 0.72);
+      border-radius: var(--radius);
+      padding: 4px;
+      box-shadow: var(--shadow-inset);
+    }
+
+    .tab {
+      min-height: 38px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      font-weight: 650;
+      font-size: 13px;
+    }
+
+    .tab[aria-selected="true"] {
+      color: var(--color-text-primary);
+      background: var(--color-surface-raised);
+      box-shadow: 0 8px 18px rgba(76, 68, 52, 0.12), var(--shadow-inset);
+    }
+
+    .range-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--color-text-secondary);
+      font-size: 13px;
+    }
+
+    select {
+      min-height: 38px;
+      border-radius: 7px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-raised);
+      color: var(--color-text-primary);
+      padding: 0 28px 0 10px;
+      box-shadow: var(--shadow-inset);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .status-panel,
+    .chart-panel,
+    .metric-card,
+    .contract-panel,
+    .empty-panel {
+      border: 1px solid var(--color-border);
+      background: rgba(250, 248, 244, 0.86);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft), var(--shadow-inset);
+    }
+
+    .status-panel {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 380px;
+    }
+
+    .status-kicker {
+      margin: 0 0 8px;
+      color: var(--color-text-secondary);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .status-value {
+      margin: 0;
+      font-size: clamp(40px, 7vw, 78px);
+      line-height: 0.94;
+      letter-spacing: 0;
+    }
+
+    .status-note {
+      margin: 14px 0 0;
+      color: var(--color-text-secondary);
+      max-width: 34rem;
+    }
+
+    .focus-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .focus-item {
+      border: 1px solid var(--color-border);
+      border-radius: 7px;
+      background: rgba(255, 253, 248, 0.68);
+      padding: 12px;
+    }
+
+    .focus-label {
+      display: block;
+      color: var(--color-text-secondary);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .focus-number {
+      display: block;
+      font-size: 24px;
+      font-weight: 780;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chart-panel {
+      min-height: 380px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .panel-copy {
+      margin: 4px 0 0;
+      color: var(--color-text-secondary);
+      font-size: 13px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+      background: var(--swatch);
+    }
+
+    .chart-wrap {
+      flex: 1;
+      min-height: 286px;
+      border-radius: 7px;
+      background: linear-gradient(180deg, rgba(255, 253, 248, 0.72), rgba(250, 248, 244, 0.38));
+      border: 1px solid var(--color-border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .axis-text {
+      fill: var(--color-text-muted);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .grid-line {
+      stroke: rgba(45, 40, 30, 0.09);
+      stroke-width: 1;
+    }
+
+    .line {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .dot {
+      stroke: var(--color-surface-raised);
+      stroke-width: 2;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric-card {
+      padding: 16px;
+      min-height: 132px;
+    }
+
+    .metric-card h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .metric-main {
+      margin: 14px 0 8px;
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-card p {
+      margin: 0;
+      color: var(--color-text-secondary);
+      font-size: 13px;
+    }
+
+    .contract-panel {
+      padding: 18px;
+    }
+
+    .contract-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .contract-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--color-text-secondary);
+      font-size: 14px;
+    }
+
+    .contract-list li + li {
+      margin-top: 7px;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid var(--color-border);
+      border-radius: 7px;
+      background: #211f1c;
+      color: #f8f2e8;
+      padding: 14px;
+      font-size: 12px;
+      line-height: 1.55;
+      overflow: auto;
+    }
+
+    .empty-panel {
+      padding: 18px;
+      color: var(--color-text-secondary);
+    }
+
+    .error {
+      color: #7d3029;
+      background: var(--color-rose-soft);
+      border-color: rgba(185, 97, 86, 0.25);
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .contract-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .topbar,
+      .controls,
+      .panel-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .controls {
+        display: flex;
+      }
+
+      .meta,
+      .legend {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .shell {
+        width: min(100% - 20px, 1180px);
+        padding-top: 18px;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .cards,
+      .focus-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .status-panel,
+      .chart-panel,
+      .contract-panel {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="saem" aria-hidden="true"></div>
+        <div>
+          <h1>오늘의 시스템</h1>
+          <p class="subtitle">매일 돌아온 신호와 멈춘 흐름을 한 화면에서 봅니다.</p>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="pill" id="updatedAt">불러오는 중</span>
+        <span class="pill" id="sourceMode">샘플 계약</span>
+      </div>
+    </header>
+
+    <section class="controls" aria-label="metric controls">
+      <div class="tabs" role="tablist" aria-label="metric group">
+        <button class="tab" type="button" role="tab" aria-selected="true" data-group="automation">자동화</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-group="infinity">일감 흐름</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-group="life">하루 운영</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-group="knowledge">지식 흐름</button>
+      </div>
+      <label class="range-control">
+        기간
+        <select id="rangeSelect">
+          <option value="7">최근 7일</option>
+          <option value="14">최근 14일</option>
+          <option value="30">최근 30일</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="hero">
+      <article class="status-panel">
+        <div>
+          <p class="status-kicker" id="statusKicker">오늘의 시스템</p>
+          <p class="status-value" id="statusValue">--</p>
+          <p class="status-note" id="statusNote">일별 집계 데이터를 읽고 있습니다.</p>
+        </div>
+        <div class="focus-grid" id="focusGrid"></div>
+      </article>
+
+      <article class="chart-panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title" id="chartTitle">Automation</h2>
+            <p class="panel-copy" id="chartCopy">cron 성공, 실패, 조용한 종료를 함께 봅니다.</p>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="chart-wrap" id="chartWrap" aria-live="polite"></div>
+      </article>
+    </section>
+
+    <section class="cards" id="metricCards" aria-label="latest metrics"></section>
+
+    <section class="contract-panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">데이터 계약</h2>
+          <p class="panel-copy">운영자는 매일 이 JSON만 갱신하면 페이지가 다시 그려집니다.</p>
+        </div>
+      </div>
+      <div class="contract-grid">
+        <ul class="contract-list">
+          <li><code>metrics[]</code>는 날짜별 1행입니다.</li>
+          <li>필수 지표군은 <code>life</code>, <code>infinity</code>, <code>automation</code>, <code>knowledge</code>입니다.</li>
+          <li>값은 원시 로그가 아니라 공개 가능한 일 단위 숫자 집계입니다.</li>
+          <li>새 지표는 기존 group 안에 숫자 필드를 추가하면 됩니다.</li>
+        </ul>
+        <pre>{
+  "date": "2026-08-05",
+  "automation": { "cron_ok": 8, "cron_failed": 1, "no_reply": 3 },
+  "infinity": { "active": 3, "archived": 0, "waiting": 1 },
+  "life": { "plan_blocks": 2, "check_done": 0, "energy": 4 },
+  "knowledge": { "daily_review": 0, "wiki_updates": 1, "query_gaps": 0 }
+}</pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const groupConfig = {
+      automation: {
+        title: "자동화",
+        copy: "cron 성공, 실패, 조용한 종료를 함께 봅니다.",
+        fields: [
+          { key: "cron_ok", label: "성공", color: "#3f5d49" },
+          { key: "cron_failed", label: "실패", color: "#b96156" },
+          { key: "no_reply", label: "무응답", color: "#496a7f" }
+        ],
+        score(row) {
+          const total = row.automation.cron_ok + row.automation.cron_failed;
+          return total ? Math.round((row.automation.cron_ok / total) * 100) : 0;
+        },
+        unit: "%"
+      },
+      infinity: {
+        title: "일감 흐름",
+        copy: "Active가 적정선을 지키고 Archive가 쌓이는지 봅니다.",
+        fields: [
+          { key: "active", label: "진행", color: "#496a7f" },
+          { key: "archived", label: "보관", color: "#3f5d49" },
+          { key: "waiting", label: "대기", color: "#b27a34" }
+        ],
+        score(row) {
+          return row.infinity.archived;
+        },
+        unit: ""
+      },
+      life: {
+        title: "하루 운영",
+        copy: "삶 레이어의 계획, 확인, 에너지 신호만 올립니다.",
+        fields: [
+          { key: "plan_blocks", label: "계획", color: "#496a7f" },
+          { key: "check_done", label: "확인", color: "#3f5d49" },
+          { key: "energy", label: "에너지", color: "#b27a34" }
+        ],
+        score(row) {
+          return row.life.energy;
+        },
+        unit: "/5"
+      },
+      knowledge: {
+        title: "지식 흐름",
+        copy: "리뷰, 위키 갱신, 지식 공백을 작은 신호로 봅니다.",
+        fields: [
+          { key: "daily_review", label: "회고", color: "#3f5d49" },
+          { key: "wiki_updates", label: "위키", color: "#496a7f" },
+          { key: "query_gaps", label: "공백", color: "#b96156" }
+        ],
+        score(row) {
+          return row.knowledge.daily_review + row.knowledge.wiki_updates;
+        },
+        unit: ""
+      }
+    };
+
+    const state = {
+      data: [],
+      meta: {},
+      group: "automation",
+      range: 7
+    };
+
+    const formatDate = new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric" });
+    const formatDateTime = new Intl.DateTimeFormat("ko-KR", {
+      dateStyle: "medium",
+      timeStyle: "short",
+      timeZone: "Asia/Seoul"
+    });
+
+    async function boot() {
+      try {
+        const response = await fetch("./data/system-metrics.json", { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        state.data = (payload.metrics || []).slice().sort((a, b) => a.date.localeCompare(b.date));
+        state.meta = payload;
+        render();
+      } catch (error) {
+        renderError(error);
+      }
+    }
+
+    function rowsInRange() {
+      return state.data.slice(-state.range);
+    }
+
+    function latestRow() {
+      const rows = rowsInRange();
+      return rows[rows.length - 1];
+    }
+
+    function render() {
+      document.getElementById("updatedAt").textContent = state.meta.generated_at
+        ? `갱신 ${formatDateTime.format(new Date(state.meta.generated_at))}`
+        : "갱신 시각 없음";
+      document.getElementById("sourceMode").textContent = state.meta.source?.mode === "sample_contract" ? "샘플 계약" : (state.meta.source?.mode || "출처 미확인");
+      renderTabs();
+      renderHero();
+      renderChart();
+      renderCards();
+    }
+
+    function renderTabs() {
+      document.querySelectorAll(".tab").forEach((button) => {
+        button.setAttribute("aria-selected", String(button.dataset.group === state.group));
+      });
+    }
+
+    function renderHero() {
+      const row = latestRow();
+      if (!row) return;
+      const config = groupConfig[state.group];
+      const score = config.score(row);
+      const previous = rowsInRange().at(-2);
+      const previousScore = previous ? config.score(previous) : score;
+      const delta = score - previousScore;
+      document.getElementById("statusKicker").textContent = `${formatDate.format(new Date(row.date))} ${config.title}`;
+      document.getElementById("statusValue").textContent = `${score}${config.unit}`;
+      document.getElementById("statusNote").textContent = `${config.copy} 전일 대비 ${delta > 0 ? "+" : ""}${delta}${config.unit || ""} 변화입니다.`;
+
+      const grid = document.getElementById("focusGrid");
+      grid.innerHTML = "";
+      config.fields.slice(0, 4).forEach((field) => {
+        const item = document.createElement("div");
+        item.className = "focus-item";
+        item.innerHTML = `<span class="focus-label">${field.label}</span><span class="focus-number">${row[state.group][field.key]}</span>`;
+        grid.appendChild(item);
+      });
+    }
+
+    function renderChart() {
+      const rows = rowsInRange();
+      const config = groupConfig[state.group];
+      document.getElementById("chartTitle").textContent = config.title;
+      document.getElementById("chartCopy").textContent = config.copy;
+      document.getElementById("legend").innerHTML = config.fields.map((field) =>
+        `<span class="legend-item"><span class="swatch" style="--swatch:${field.color}"></span>${field.label}</span>`
+      ).join("");
+
+      if (!rows.length) {
+        document.getElementById("chartWrap").innerHTML = `<div class="empty-panel">데이터가 아직 없습니다.</div>`;
+        return;
+      }
+
+      const width = 720;
+      const height = 300;
+      const pad = { top: 22, right: 22, bottom: 44, left: 42 };
+      const values = rows.flatMap((row) => config.fields.map((field) => Number(row[state.group][field.key] || 0)));
+      const maxValue = Math.max(1, ...values);
+      const yMax = Math.ceil(maxValue * 1.2);
+      const xStep = rows.length > 1 ? (width - pad.left - pad.right) / (rows.length - 1) : 0;
+
+      const x = (index) => pad.left + index * xStep;
+      const y = (value) => height - pad.bottom - (value / yMax) * (height - pad.top - pad.bottom);
+      const yTicks = [0, Math.round(yMax / 2), yMax];
+
+      const grid = yTicks.map((tick) =>
+        `<g><line class="grid-line" x1="${pad.left}" x2="${width - pad.right}" y1="${y(tick)}" y2="${y(tick)}"></line><text class="axis-text" x="12" y="${y(tick) + 4}">${tick}</text></g>`
+      ).join("");
+
+      const dates = rows.map((row, index) =>
+        `<text class="axis-text" text-anchor="middle" x="${x(index)}" y="${height - 16}">${formatDate.format(new Date(row.date))}</text>`
+      ).join("");
+
+      const series = config.fields.map((field) => {
+        const points = rows.map((row, index) => `${x(index)},${y(Number(row[state.group][field.key] || 0))}`).join(" ");
+        const dots = rows.map((row, index) => {
+          const value = Number(row[state.group][field.key] || 0);
+          return `<circle class="dot" cx="${x(index)}" cy="${y(value)}" r="4" fill="${field.color}"><title>${row.date} ${field.label}: ${value}</title></circle>`;
+        }).join("");
+        return `<polyline class="line" points="${points}" stroke="${field.color}"></polyline>${dots}`;
+      }).join("");
+
+      document.getElementById("chartWrap").innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${config.title} daily metric chart">
+          ${grid}
+          ${series}
+          ${dates}
+        </svg>
+      `;
+    }
+
+    function renderCards() {
+      const row = latestRow();
+      if (!row) return;
+      const cards = [
+        {
+          title: "자동화 건강도",
+          value: `${groupConfig.automation.score(row)}%`,
+          body: `실패 ${row.automation.cron_failed}건, 조용한 종료 ${row.automation.no_reply}건`
+        },
+        {
+          title: "일감 흐름",
+          value: `${row.infinity.active}/${row.infinity.waiting}`,
+          body: `오늘 보관 ${row.infinity.archived}건, 신규 ${row.infinity.new_intents}건`
+        },
+        {
+          title: "하루 루프",
+          value: `${row.life.plan_blocks}+${row.life.check_done}`,
+          body: `에너지 ${row.life.energy}/5, 확인 ${row.life.check_done ? "완료" : "열림"}`
+        },
+        {
+          title: "지식 흐름",
+          value: `${row.knowledge.daily_review + row.knowledge.wiki_updates}`,
+          body: `남은 지식 공백 ${row.knowledge.query_gaps}건`
+        }
+      ];
+      document.getElementById("metricCards").innerHTML = cards.map((card) => `
+        <article class="metric-card">
+          <h3>${card.title}</h3>
+          <div class="metric-main">${card.value}</div>
+          <p>${card.body}</p>
+        </article>
+      `).join("");
+    }
+
+    function renderError(error) {
+      document.getElementById("chartWrap").innerHTML = `<div class="empty-panel error">데이터를 읽지 못했습니다. ${escapeHtml(error.message)}</div>`;
+      document.getElementById("updatedAt").textContent = "불러오기 실패";
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    document.querySelectorAll(".tab").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.group = button.dataset.group;
+        render();
+      });
+    });
+
+    document.getElementById("rangeSelect").addEventListener("change", (event) => {
+      state.range = Number(event.target.value);
+      render();
+    });
+
+    boot();
+  </script>
+</body>
+</html>

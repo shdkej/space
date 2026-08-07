@@ -1,6 +1,15 @@
 {
   "sites": [
     {
+      "app": "instagram-maker",
+      "name": "Instagram Maker",
+      "domain_name": "instagram-maker.aws.shdkej.com",
+      "kind": "tool",
+      "detail": "Local-first 9:16 scene editor for Instagram story and reel-cover exports",
+      "deployment_name": "instagram maker",
+      "spa_fallback": false
+    },
+    {
       "app": "status",
       "name": "Status",
       "domain_name": "status.aws.shdkej.com",

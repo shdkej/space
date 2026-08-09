@@ -1144,6 +1144,112 @@
           transition-duration: 0.001ms !important;
         }
       }
+
+      /* Spatial Type surface: text is the primary object; controls appear as
+         an indexed reading path instead of a wall of glass panels. */
+      body {
+        background:
+          linear-gradient(90deg, rgba(252, 252, 248, 0.94) 0%, rgba(252, 252, 248, 0.74) 48%, rgba(252, 252, 248, 0.28) 100%),
+          url("assets/mascot-ambient.jpg") center / cover no-repeat,
+          #f5f6f0;
+      }
+
+      body::before {
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.82), transparent 58%),
+          linear-gradient(164deg, transparent 0 58%, rgba(79,157,138,.10) 58.2% 58.35%, transparent 58.5%),
+          radial-gradient(circle at 82% 24%, rgba(255,255,255,.7), transparent 3%);
+        opacity: .72;
+        mix-blend-mode: normal;
+      }
+
+      .overview {
+        width: min(1180px, calc(100vw - 40px));
+        margin: 0 auto;
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: 18px;
+        padding: max(24px, env(safe-area-inset-top)) 0 max(24px, env(safe-area-inset-bottom));
+      }
+
+      .hero-copy {
+        align-self: center;
+        width: min(650px, 72vw);
+        padding: 0 0 0 22px;
+        border: 0;
+        border-left: 2px solid var(--ok);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .hero-kicker {
+        color: var(--ok);
+        font-size: 11px;
+        letter-spacing: .22em;
+      }
+
+      .hero-title {
+        max-width: 13ch;
+        font-size: clamp(42px, 7vw, 86px);
+        line-height: .91;
+        letter-spacing: -.055em;
+      }
+
+      .hero-title .hero-emphasis { color: var(--ink); text-shadow: none; }
+      .hero-lead { max-width: 38ch; font-size: 14px; line-height: 1.55; }
+      .hero-meta { grid-template-columns: repeat(3, max-content); gap: 8px 22px; font-size: 11px; }
+
+      .overview-grid {
+        width: 100%;
+        height: auto;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0;
+        border-top: 1px solid rgba(38, 51, 47, .24);
+      }
+
+      .control-card {
+        min-height: 148px;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        gap: 14px;
+        padding: 16px 18px 14px 0;
+        margin-right: 18px;
+        border: 0;
+        border-right: 1px solid rgba(38, 51, 47, .18);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .control-card:last-child { margin-right: 0; border-right: 0; }
+      .control-card:hover, .control-card:focus-visible {
+        transform: none;
+        border-color: rgba(38, 51, 47, .18);
+        background: transparent;
+        box-shadow: none;
+      }
+      .card-top::before { content: "↳"; color: var(--ok); font-size: 15px; }
+      .card-label { color: var(--ink); font-size: 11px; letter-spacing: .12em; }
+      .card-mid { align-content: start; gap: 6px; }
+      .card-value { font-size: clamp(22px, 2.2vw, 34px); letter-spacing: -.04em; }
+      .card-title { color: var(--muted); font-size: 13px; white-space: normal; }
+      .card-bottom { color: var(--faint); font-size: 11px; }
+
+      @media (max-width: 639px) {
+        .overview { width: calc(100vw - 24px); gap: 12px; padding-top: max(15px, env(safe-area-inset-top)); padding-bottom: max(15px, env(safe-area-inset-bottom)); }
+        .hero-copy { width: min(100%, 560px); padding-left: 15px; }
+        .hero-title { font-size: clamp(38px, 13vw, 62px); }
+        .hero-lead { font-size: 12px; }
+        .hero-meta { grid-template-columns: 1fr; gap: 2px; }
+        .overview-grid { grid-template-columns: 1fr; }
+        .control-card, .control-card:last-child { min-height: 0; height: auto; grid-template-columns: 88px 1fr auto; grid-template-rows: auto; align-items: center; gap: 10px; padding: 11px 0; margin: 0; border-right: 0; border-bottom: 1px solid rgba(38, 51, 47, .18); }
+        .control-card:last-child { border-bottom: 0; }
+        .card-top { grid-column: 1; }
+        .card-mid { grid-column: 2; }
+        .card-bottom { grid-column: 3; justify-content: end; }
+        .card-bottom .card-status { display: none; }
+        .card-value { font-size: 20px; }
+        .card-title { font-size: 11px; }
+      }
     </style>
   </head>
   <body data-mode="overview">

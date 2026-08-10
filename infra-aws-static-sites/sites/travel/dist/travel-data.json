@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T16:03:45.532359+00:00",
+  "generatedAt": "2026-08-10T03:00:13.241655+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,51 +8,53 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 11236083,
-    "travelLoggedKrw": 11236083,
-    "remainingMinKrw": 18763917,
-    "remainingMaxKrw": 28763917,
-    "reservedPctMin": 37.5,
+    "loggedKrw": 14308078,
+    "travelLoggedKrw": 14308078,
+    "remainingMinKrw": 15691922,
+    "remainingMaxKrw": 25691922,
+    "reservedPctMin": 47.7,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 142229,
-    "firstTravelExpenseDate": "2026-05-10",
+    "reserveBurnKrw": 84165,
+    "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-07-27",
-    "location": "Dubrovnik",
-    "mapQuery": "Dubrovnik, Croatia"
+    "date": "2026-08-10",
+    "location": "Cappadocia / Pamukkale / Antalya",
+    "mapQuery": "Cappadocia / Pamukkale / Antalya, Turkey"
   },
   "categoryTotals": {
-    "stay": 2818175,
-    "gear": 2312539,
-    "other": 1811607,
-    "medical": 1796410,
-    "transport": 1091812,
-    "food": 581948,
-    "flight": 198994,
-    "ticket": 172493,
-    "groceries": 153406,
-    "snack": 145695,
+    "stay": 3300481,
+    "gear": 2272289,
+    "transport": 1937791,
+    "flight": 1857962,
+    "medical": 1800790,
+    "food": 1676035,
+    "ticket": 465991,
+    "groceries": 416761,
+    "snack": 354336,
     "visa": 105697,
+    "통신": 40250,
     "mistake": 33459,
+    "other": 32388,
     "activity": 13848
   },
   "travelCategoryTotals": {
-    "stay": 2818175,
-    "gear": 2312539,
-    "other": 1811607,
-    "medical": 1796410,
-    "transport": 1091812,
-    "food": 581948,
-    "flight": 198994,
-    "ticket": 172493,
-    "groceries": 153406,
-    "snack": 145695,
+    "stay": 3300481,
+    "gear": 2272289,
+    "transport": 1937791,
+    "flight": 1857962,
+    "medical": 1800790,
+    "food": 1676035,
+    "ticket": 465991,
+    "groceries": 416761,
+    "snack": 354336,
     "visa": 105697,
+    "통신": 40250,
     "mistake": 33459,
+    "other": 32388,
     "activity": 13848
   },
   "countryCategoryTotals": [
@@ -60,33 +62,64 @@
       "country": "여행 준비",
       "total": 4214646,
       "categories": {
-        "gear": 2312539,
+        "gear": 2272289,
         "medical": 1796410,
-        "visa": 105697
-      }
-    },
-    {
-      "country": "Hungary",
-      "total": 2354150,
-      "categories": {
-        "other": 1304344,
-        "stay": 780807,
-        "transport": 268999
+        "visa": 105697,
+        "통신": 40250
       }
     },
     {
       "country": "Germany",
-      "total": 1498823,
+      "total": 2095623,
       "categories": {
-        "transport": 436643,
+        "flight": 596800,
+        "transport": 463569,
         "stay": 414210,
         "food": 401525,
         "snack": 65468,
         "groceries": 54481,
-        "other": 51283,
         "mistake": 33459,
         "ticket": 27906,
+        "other": 24357,
         "activity": 13848
+      }
+    },
+    {
+      "country": "Hungary",
+      "total": 2055895,
+      "categories": {
+        "stay": 780807,
+        "transport": 729558,
+        "flight": 275645,
+        "food": 133367,
+        "ticket": 56985,
+        "snack": 49425,
+        "groceries": 30108
+      }
+    },
+    {
+      "country": "Croatia",
+      "total": 1442212,
+      "categories": {
+        "stay": 462847,
+        "flight": 392600,
+        "food": 294621,
+        "transport": 180600,
+        "groceries": 111544
+      }
+    },
+    {
+      "country": "Turkey",
+      "total": 1325983,
+      "categories": {
+        "flight": 393923,
+        "food": 316899,
+        "stay": 241807,
+        "snack": 120771,
+        "transport": 104814,
+        "ticket": 98665,
+        "groceries": 44724,
+        "medical": 4380
       }
     },
     {
@@ -103,31 +136,27 @@
     },
     {
       "country": "Austria",
-      "total": 918597,
+      "total": 960011,
       "categories": {
         "stay": 345658,
-        "other": 206093,
-        "transport": 167973,
+        "ticket": 203164,
+        "transport": 192230,
+        "food": 103644,
         "groceries": 70103,
-        "ticket": 65316,
-        "food": 31824,
-        "snack": 31630
-      }
-    },
-    {
-      "country": "Croatia",
-      "total": 775224,
-      "categories": {
-        "stay": 462847,
-        "other": 249887,
-        "transport": 62490
+        "snack": 37181,
+        "other": 8031
       }
     },
     {
       "country": "Greece",
-      "total": 198994,
+      "total": 938059,
       "categories": {
-        "flight": 198994
+        "food": 277380,
+        "stay": 240499,
+        "flight": 198994,
+        "transport": 111313,
+        "groceries": 76979,
+        "snack": 32894
       }
     },
     {
@@ -246,6 +275,62 @@
     {
       "date": "2026-07-27",
       "amount": 282412
+    },
+    {
+      "date": "2026-07-28",
+      "amount": 392600
+    },
+    {
+      "date": "2026-07-29",
+      "amount": 408745
+    },
+    {
+      "date": "2026-07-30",
+      "amount": 42709
+    },
+    {
+      "date": "2026-07-31",
+      "amount": 139608
+    },
+    {
+      "date": "2026-08-01",
+      "amount": 138708
+    },
+    {
+      "date": "2026-08-02",
+      "amount": 136438
+    },
+    {
+      "date": "2026-08-03",
+      "amount": 37793
+    },
+    {
+      "date": "2026-08-04",
+      "amount": 216001
+    },
+    {
+      "date": "2026-08-05",
+      "amount": 298371
+    },
+    {
+      "date": "2026-08-06",
+      "amount": 486350
+    },
+    {
+      "date": "2026-08-07",
+      "amount": 161313
+    },
+    {
+      "date": "2026-08-08",
+      "amount": 56048
+    },
+    {
+      "date": "2026-08-09",
+      "amount": 173469
+    },
+    {
+      "date": "2026-08-10",
+      "amount": 87836
     }
   ],
   "bookedCosts": [
@@ -650,224 +735,965 @@
   ],
   "travelExpenses": [
     {
-      "id": "3aa07aba-cae7-81da-b604-d8bd76330c8e",
-      "date": "2026-07-27",
+      "id": "3b507aba-cae7-8159-ad11-d873bfcbd024",
+      "date": "2026-08-07",
       "time": "",
-      "amount": 273341,
-      "merchant": "AIRBNB * HMTRKWRTEF",
-      "category": "stay",
-      "location": "Put umca, 21220 Seget Vranjica",
+      "amount": 15152,
+      "merchant": "GAZIANTEP KOZDE KUNE 베이란, 치킨수프, 차이티 1잔",
+      "category": "food",
+      "location": "튀르키예",
       "travel": true,
       "country": null,
-      "note": "결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8159-ad11-d873bfcbd024"
+    },
+    {
+      "id": "3b507aba-cae7-81f2-9ef4-cdccb5ddf2db",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 36651,
+      "merchant": "HAFIZ MUSTAFA 1864 퀴네페, 수틀라치, 라떼",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81f2-9ef4-cdccb5ddf2db"
+    },
+    {
+      "id": "3b507aba-cae7-81eb-8dd8-cf805c79f4ee",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 4245,
+      "merchant": "Mado 돈두르마 1개",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81eb-8dd8-cf805c79f4ee"
+    },
+    {
+      "id": "3b507aba-cae7-818d-812d-c9011747649d",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 54523,
+      "merchant": "DENIZLER KASAP 양고기, 치킨, 차이티 1잔",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-818d-812d-c9011747649d"
+    },
+    {
+      "id": "3b507aba-cae7-8177-b48d-c735bf6e3c69",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 15138,
+      "merchant": "WATSONS 클렌징밤",
+      "category": "groceries",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8177-b48d-c735bf6e3c69"
+    },
+    {
+      "id": "3b507aba-cae7-8116-acef-c946f7e85432",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 21052,
+      "merchant": "아쿠아 선크림",
+      "category": "groceries",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8116-acef-c946f7e85432"
+    },
+    {
+      "id": "3b507aba-cae7-8131-9c22-dcc4fd3240cd",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 3036,
+      "merchant": "옥수수 구이",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8131-9c22-dcc4fd3240cd"
+    },
+    {
+      "id": "3b507aba-cae7-8125-8da2-f9227278874f",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 4000,
+      "merchant": "장보기(물, 콜라, 아이스크림)",
+      "category": "groceries",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8125-8da2-f9227278874f"
+    },
+    {
+      "id": "3b507aba-cae7-8105-9f8d-f991e49128e0",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 53500,
+      "merchant": "SEHZADE CAG KEBAP 자흐케밥 2인분, 콜라, 아이란",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8105-9f8d-f991e49128e0"
+    },
+    {
+      "id": "3b507aba-cae7-8124-888c-c89f1206b974",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 3046,
+      "merchant": "슬러시 1잔",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8124-888c-c89f1206b974"
+    },
+    {
+      "id": "3b507aba-cae7-81e3-b2d4-e774f03d4d0c",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 4534,
+      "merchant": "GRATIS 머리끈",
+      "category": "groceries",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81e3-b2d4-e774f03d4d0c"
+    },
+    {
+      "id": "3b507aba-cae7-81cf-8bad-f24da2e33019",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 393923,
+      "merchant": "샤름엘셰이크-팔레르모 항공권 2인",
+      "category": "flight",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81cf-8bad-f24da2e33019"
+    },
+    {
+      "id": "3b507aba-cae7-810e-9d46-e5997e7a9d50",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 18137,
+      "merchant": "SAFIS KUMPIR 쿰피르 1개, 콜라 1병",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-810e-9d46-e5997e7a9d50"
+    },
+    {
+      "id": "3b507aba-cae7-8171-9c2d-e440367431de",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 4380,
+      "merchant": "알레르기약",
+      "category": "medical",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8171-9c2d-e440367431de"
+    },
+    {
+      "id": "3b507aba-cae7-81a2-862d-e9530ab50fe6",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 9650,
+      "merchant": "GULLUOGLU 바클라바 3개, 차이티 1잔",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a2-862d-e9530ab50fe6"
+    },
+    {
+      "id": "3b507aba-cae7-81fd-a246-d4d8eda5748c",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 9392,
+      "merchant": "이스탄불 교통카드 충전(성호 300리라)",
+      "category": "transport",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81fd-a246-d4d8eda5748c"
+    },
+    {
+      "id": "3b507aba-cae7-81d3-a4e0-f5cc3c895481",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 68932,
+      "merchant": "다합 에어비앤비(2박)",
+      "category": "stay",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81d3-a4e0-f5cc3c895481"
+    },
+    {
+      "id": "3b507aba-cae7-81f9-8f9a-d11f1fe93ffb",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 14820,
+      "merchant": "KADIKOY 스타벅스 음료 2잔",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81f9-8f9a-d11f1fe93ffb"
+    },
+    {
+      "id": "3b507aba-cae7-8176-b35e-f6e175878455",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 15122,
+      "merchant": "CHEEF MOSES 쿰피르 1개, 차이티 2잔",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8176-b35e-f6e175878455"
+    },
+    {
+      "id": "3b507aba-cae7-8153-bd94-fca0543551d5",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 11488,
+      "merchant": "MESHUR BALIKCI EYYUP USTA 고등어케밥 1개, 콜라 1캔",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8153-bd94-fca0543551d5"
+    },
+    {
+      "id": "3b507aba-cae7-81dc-82af-fdf6f12950a9",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 60991,
+      "merchant": "TEBEK KOREAN RESTAUR 김치찌개, 제육덮밥",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81dc-82af-fdf6f12950a9"
+    },
+    {
+      "id": "3b507aba-cae7-8170-af8c-eec05f91a7ed",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 172875,
+      "merchant": "카이로 에어비앤비(3박)",
+      "category": "stay",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8170-af8c-eec05f91a7ed"
+    },
+    {
+      "id": "3b507aba-cae7-815d-8298-cb2a1b368bf7",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 9443,
+      "merchant": "이스탄불 교통카드 충전(성호 300리라)",
+      "category": "transport",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-815d-8298-cb2a1b368bf7"
+    },
+    {
+      "id": "3b507aba-cae7-81f4-8fdf-d9da44f02023",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 2151,
+      "merchant": "CARREFOURSA 콜라",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81f4-8fdf-d9da44f02023"
+    },
+    {
+      "id": "3b507aba-cae7-817b-9563-d8b3d8c93c9b",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 8505,
+      "merchant": "BALIK DURUM 고등어케밥 1개",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-817b-9563-d8b3d8c93c9b"
+    },
+    {
+      "id": "3b507aba-cae7-81ca-a1c2-e58709a8e872",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 11248,
+      "merchant": "OZSUT HACI HASAN FEH 카이막, 차이티 2잔",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81ca-a1c2-e58709a8e872"
+    },
+    {
+      "id": "3b507aba-cae7-81e4-8d45-e0e2d854b377",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 51838,
+      "merchant": "GIAVRI KOINSEP 미트플레이트, 맥주 2잔",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81e4-8d45-e0e2d854b377"
+    },
+    {
+      "id": "3b507aba-cae7-818f-897a-ea39f9b0fadd",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 73594,
+      "merchant": "숙소-아테네 공항 우버",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-818f-897a-ea39f9b0fadd"
+    },
+    {
+      "id": "3b507aba-cae7-816f-9422-d2d0fb7692f4",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 2011,
+      "merchant": "아테네 교통 1회권",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-816f-9422-d2d0fb7692f4"
+    },
+    {
+      "id": "3b507aba-cae7-8112-96f7-d8e4a7158ccd",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 18608,
+      "merchant": "NEVIZADE KOKOREC 홍합밥, 코코레치 샌드위치",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8112-96f7-d8e4a7158ccd"
+    },
+    {
+      "id": "3b507aba-cae7-81a8-92f3-ed6c44559e48",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 19520,
+      "merchant": "DILEMMA BAKLAVA 아이스크림 바클라바, 콜드 바클라바, 커피",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a8-92f3-ed6c44559e48"
+    },
+    {
+      "id": "3b507aba-cae7-81a5-aa5e-cd40285a20c6",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 2098,
+      "merchant": "MIGROS 음료수 2개",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a5-aa5e-cd40285a20c6"
+    },
+    {
+      "id": "3b507aba-cae7-81d5-bf2e-d6e8ec792922",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 5845,
+      "merchant": "이스탄불 교통카드 1개 구매(성호)",
+      "category": "transport",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81d5-bf2e-d6e8ec792922"
+    },
+    {
+      "id": "3b507aba-cae7-811a-86c6-ffc24235bd78",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 2517,
+      "merchant": "이스탄불 교통카드 충전(성호 80리라)",
+      "category": "transport",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-811a-86c6-ffc24235bd78"
+    },
+    {
+      "id": "3b507aba-cae7-8118-8871-efb048456478",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 2012,
+      "merchant": "아테네 교통 1회권",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8118-8871-efb048456478"
+    },
+    {
+      "id": "3b507aba-cae7-8142-a628-f69d46304e60",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 33448,
+      "merchant": "아크로폴리스 뮤지엄 입장료 1인",
+      "category": "ticket",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8142-a628-f69d46304e60"
+    },
+    {
+      "id": "3b507aba-cae7-8135-9b20-ccb569bedd0a",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 9035,
+      "merchant": "맥도날드 토스트, 아이스크림",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8135-9b20-ccb569bedd0a"
+    },
+    {
+      "id": "3b507aba-cae7-8172-b356-f1f91e87101f",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 65217,
+      "merchant": "아크로폴리스 입장권 및 오디오가이드 1인",
+      "category": "ticket",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8172-b356-f1f91e87101f"
+    },
+    {
+      "id": "3b507aba-cae7-8139-90c0-de903f877dab",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 14306,
+      "merchant": "물, 초코바",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8139-90c0-de903f877dab"
+    },
+    {
+      "id": "3b507aba-cae7-80be-8cd0-debb983f1e37",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 1700,
+      "merchant": "물 2병",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 현금",
+      "source": "notion:3b507aba-cae7-80be-8cd0-debb983f1e37"
+    },
+    {
+      "id": "3b507aba-cae7-8127-a498-f937453f2550",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 26314,
+      "merchant": "아테네 장보기(시리얼, 요거트, 물, 음료수 등)",
+      "category": "groceries",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8127-a498-f937453f2550"
+    },
+    {
+      "id": "3b507aba-cae7-813f-a688-cf199f3ab8eb",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 2002,
+      "merchant": "아테네 교통 1회권",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-813f-a688-cf199f3ab8eb"
+    },
+    {
+      "id": "3b507aba-cae7-8183-a181-ed64157b446c",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 2333,
+      "merchant": "아테네 교통 1회권",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8183-a181-ed64157b446c"
+    },
+    {
+      "id": "3b007aba-cae7-808e-86d9-f6ac6dd821bd",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 18000,
+      "merchant": "tommy’s 기로스 콤보",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 현금",
+      "source": "notion:3b007aba-cae7-808e-86d9-f6ac6dd821bd"
+    },
+    {
+      "id": "3b507aba-cae7-81e6-985d-da378009ce27",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 8137,
+      "merchant": "기로스 1개",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81e6-985d-da378009ce27"
+    },
+    {
+      "id": "3b507aba-cae7-81a1-a428-c4b19230e8cd",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 53579,
+      "merchant": "카이로- 다합 고버스 2인",
+      "category": "transport",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a1-a428-c4b19230e8cd"
+    },
+    {
+      "id": "3b507aba-cae7-816e-902e-c56749eec063",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 34941,
+      "merchant": "밀로스 렌트카 주유비",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-816e-902e-c56749eec063"
+    },
+    {
+      "id": "3b507aba-cae7-817b-b08e-fb5ef8b34cfa",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 8310,
+      "merchant": "ARTEMIS BAKERY 수박파이, 바나나 크로아상",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-817b-b08e-fb5ef8b34cfa"
+    },
+    {
+      "id": "3b507aba-cae7-8105-8f35-e6a6523852e7",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 64871,
+      "merchant": "FLOISVOS MILOS 케밥, 새우 리조또, 콜라",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8105-8f35-e6a6523852e7"
+    },
+    {
+      "id": "3b507aba-cae7-8180-a6d7-fefa02cba8cb",
+      "date": "2026-07-31",
+      "time": "",
+      "amount": 88618,
+      "merchant": "MEZZE 해산물 플레이트, 페타치즈 튀김, 콜라",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8180-a6d7-fefa02cba8cb"
+    },
+    {
+      "id": "3b507aba-cae7-81fa-a61f-f9d6abaa0561",
+      "date": "2026-07-31",
+      "time": "",
+      "amount": 36782,
+      "merchant": "선스프레이, 비누",
+      "category": "groceries",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81fa-a61f-f9d6abaa0561"
+    },
+    {
+      "id": "3b507aba-cae7-81b1-877e-f4ea68ca25e4",
+      "date": "2026-07-31",
+      "time": "",
+      "amount": 14208,
+      "merchant": "ARTOPOIIMATA KAI A 빵 2개, 맥주 2개",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81b1-877e-f4ea68ca25e4"
+    },
+    {
+      "id": "3b507aba-cae7-8144-b8f2-e667f0314fd1",
+      "date": "2026-07-31",
+      "time": "",
+      "amount": 75442,
+      "merchant": "MEDOYSA 엔초비 마리네이드, 문어, 가지요리, 콜라",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8144-b8f2-e667f0314fd1"
+    },
+    {
+      "id": "3b507aba-cae7-8157-89ff-d80b666e92f7",
+      "date": "2026-07-30",
+      "time": "",
+      "amount": 5971,
+      "merchant": "팔도비빔면 1봉, 김치신라면 1봉",
+      "category": "groceries",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8157-89ff-d80b666e92f7"
+    },
+    {
+      "id": "3b507aba-cae7-810b-8fc5-ec0757d08adb",
+      "date": "2026-07-30",
+      "time": "",
+      "amount": 7912,
+      "merchant": "장보기(계란, 음료수 등)",
+      "category": "groceries",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-810b-8fc5-ec0757d08adb"
+    },
+    {
+      "id": "3b507aba-cae7-8188-a91f-d210595ae470",
+      "date": "2026-07-30",
+      "time": "",
+      "amount": 6514,
+      "merchant": "페리 매점 소시지빵",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8188-a91f-d210595ae470"
+    },
+    {
+      "id": "3b507aba-cae7-819c-b490-e9bd71dc9fc9",
+      "date": "2026-07-29",
+      "time": "",
+      "amount": 240499,
+      "merchant": "이스탄불 에어비앤비(4박)",
+      "category": "stay",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-819c-b490-e9bd71dc9fc9"
+    },
+    {
+      "id": "3b507aba-cae7-81a4-94a5-e211ad005880",
+      "date": "2026-07-29",
+      "time": "",
+      "amount": 2162,
+      "merchant": "아테네 공항 편의점 빵, 크래커",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a4-94a5-e211ad005880"
+    },
+    {
+      "id": "3b507aba-cae7-81ca-be0e-ee43cce2d6b6",
+      "date": "2026-07-29",
+      "time": "",
+      "amount": 18458,
+      "merchant": "아테네 공항-피레우스 항구 공항버스 2인",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81ca-be0e-ee43cce2d6b6"
+    },
+    {
+      "id": "3b507aba-cae7-81b2-ac3d-c70d0cd3d308",
+      "date": "2026-07-29",
+      "time": "",
+      "amount": 22312,
+      "merchant": "팔라펠 랩, 미트 랩, 탄산음료 2개",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81b2-ac3d-c70d0cd3d308"
+    },
+    {
+      "id": "3b507aba-cae7-80be-aa65-ebadbf060a36",
+      "date": "2026-07-28",
+      "time": "",
+      "amount": 8466,
+      "merchant": "세겟브란지차-스플리트 교통권 2인",
+      "category": "transport",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 현진카드",
+      "source": "notion:3b507aba-cae7-80be-aa65-ebadbf060a36"
+    },
+    {
+      "id": "3b507aba-cae7-8131-a755-e70ca80d76be",
+      "date": "2026-07-28",
+      "time": "",
+      "amount": 392600,
+      "merchant": "이스탄불-카이로 항공권 2인",
+      "category": "flight",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8131-a755-e70ca80d76be"
+    },
+    {
+      "id": "3b507aba-cae7-8180-acae-d717b34e58a5",
+      "date": "2026-07-28",
+      "time": "",
+      "amount": 116868,
+      "merchant": "Poon Piat 미트 플레이트, 깔라마리, 새우뇨끼, 콜라 2잔",
+      "category": "food",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8180-acae-d717b34e58a5"
+    },
+    {
+      "id": "3b507aba-cae7-81ec-85c0-d5cbf30b8836",
+      "date": "2026-07-28",
+      "time": "",
+      "amount": 19072,
+      "merchant": "장보기(과일, 빵, 요거트, 물 등)",
+      "category": "groceries",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81ec-85c0-d5cbf30b8836"
+    },
+    {
+      "id": "3b507aba-cae7-80f1-9b8b-e1ec11244311",
+      "date": "2026-07-26",
+      "time": "",
+      "amount": 60045,
+      "merchant": "세겟 브란지차 장보기(먹을거리)",
+      "category": "groceries",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-80f1-9b8b-e1ec11244311"
+    },
+    {
+      "id": "3b507aba-cae7-803a-98b7-c50ea8b3eb3b",
+      "date": "2026-07-26",
+      "time": "",
+      "amount": 14672,
+      "merchant": "트로기르 마트 장보기(먹을거리)",
+      "category": "groceries",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-803a-98b7-c50ea8b3eb3b"
+    },
+    {
+      "id": "3aa07aba-cae7-81da-b604-d8bd76330c8e",
+      "date": "2026-07-26",
+      "time": "",
+      "amount": 273341,
+      "merchant": "아테네 에어비앤비(3박)",
+      "category": "stay",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81da-b604-d8bd76330c8e"
     },
     {
       "id": "3aa07aba-cae7-8188-8370-f3e77a2bfa71",
-      "date": "2026-07-27",
+      "date": "2026-07-26",
       "time": "",
       "amount": 9071,
-      "merchant": "TOMMY266",
-      "category": "other",
-      "location": "Put umca, 21220 Seget Vranjica",
+      "merchant": "시리얼, 아이스크림",
+      "category": "groceries",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8188-8370-f3e77a2bfa71"
     },
     {
       "id": "3aa07aba-cae7-8151-8571-ef14439a0c06",
-      "date": "2026-07-26",
+      "date": "2026-07-25",
       "time": "",
       "amount": 94261,
-      "merchant": "LOLA KONOBA",
-      "category": "other",
-      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "merchant": "먹물 리조또, 생선구이, 감자샐러드, 탄산수",
+      "category": "food",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 05:36 · dashboard:_65238e2388s44b9n612jcb9k8gpjcba26d1k6b9p6opjcd1j6gojehhk68 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8151-8571-ef14439a0c06"
     },
     {
       "id": "3aa07aba-cae7-81c2-87cf-c14237499a75",
-      "date": "2026-07-26",
+      "date": "2026-07-25",
       "time": "",
       "amount": 15283,
-      "merchant": "MOJ.PROMET APP",
-      "category": "other",
-      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "merchant": "스플리트-세겟 브란지차 교통권 2인",
+      "category": "transport",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 06:20 · dashboard:_6krj2cpi75134b9i611jcb9k8l142ba16d330b9n6kr30h2470q3ie1g84 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81c2-87cf-c14237499a75"
     },
     {
-      "id": "3aa07aba-cae7-8117-a4b8-ccece7c3da9b",
-      "date": "2026-07-25",
+      "id": "3b507aba-cae7-8090-85c5-d481e0fa2e31",
+      "date": "2026-07-24",
       "time": "",
-      "amount": 83492,
-      "merchant": "NAC. PARK PLITVICKA JE",
-      "category": "other",
-      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "amount": 94361,
+      "merchant": "플리트비체-스플리트 플릭스 버스 2인",
+      "category": "transport",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 03:18 · dashboard:_68pj6c1m74qj0b9g8opk2b9k8gpj4ba174q44ba16krk6c9p8923edpo8c · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8090-85c5-d481e0fa2e31"
+    },
+    {
+      "id": "3aa07aba-cae7-8117-a4b8-ccece7c3da9b",
+      "date": "2026-07-24",
+      "time": "",
+      "amount": 83492,
+      "merchant": "파스타 2개, 맥주 2잔",
+      "category": "food",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8117-a4b8-ccece7c3da9b"
     },
     {
       "id": "3aa07aba-cae7-8175-91b5-cc091ffa8f75",
-      "date": "2026-07-25",
+      "date": "2026-07-24",
       "time": "",
       "amount": 8684,
-      "merchant": "NAC. PARK PLITVICKA JE",
-      "category": "other",
-      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "merchant": "감자칩, 프로틴푸딩",
+      "category": "groceries",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 03:53 · dashboard:_6ko4cc1j70o46b9k8l134b9k6d2jeb9p6os32b9p8gokad22851kad1n6o · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8175-91b5-cc091ffa8f75"
-    },
-    {
-      "id": "3aa07aba-cae7-818a-93a8-e47d31588c61",
-      "date": "2026-07-24",
-      "time": "",
-      "amount": 25821,
-      "merchant": "TOMMY142",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:58 · dashboard:_60pjcci164okcb9j6534cb9k8gpkaba2610kcb9o8grk4d1i84sjchi18o · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-818a-93a8-e47d31588c61"
-    },
-    {
-      "id": "3aa07aba-cae7-81a9-bba5-e15ce944dda0",
-      "date": "2026-07-24",
-      "time": "",
-      "amount": 13275,
-      "merchant": "Caffe bar Atrium",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 04:08 · dashboard:_8cs46da575334b9h60rj0b9k70q3eb9p64qk8b9p7524ch1n8l132ga388 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81a9-bba5-e15ce944dda0"
-    },
-    {
-      "id": "3aa07aba-cae7-8176-9fc6-c910cbe7cea2",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 362244,
-      "merchant": "MINOAN LINES",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 01:51 · dashboard:_60ojgh1g70qj0b9m6gpjgb9k6t1jiba164qjgb9p8h144ghk65238ca58c · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8176-9fc6-c910cbe7cea2"
-    },
-    {
-      "id": "3aa07aba-cae7-8102-8931-e4da8ac15d17",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 87735,
-      "merchant": "AIRBNB * HMY9B2995K",
-      "category": "stay",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:08 · dashboard:_8op4cgpi61242b9p6cqkcb9k652j0b9o84pk4b9m6go3cc9l6h1k6c268o · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8102-8931-e4da8ac15d17"
-    },
-    {
-      "id": "3aa07aba-cae7-81c8-a269-d185b37f3e37",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 399467,
-      "merchant": "AIRBNB * HM8K9ERW82",
-      "category": "stay",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:10 · dashboard:_88qj2chj84pjgb9j6srkcb9k8h2j6b9o6d1kab9o8op44ca36d0kae9i68 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81c8-a269-d185b37f3e37"
-    },
-    {
-      "id": "3aa07aba-cae7-8191-a7c2-d49abd307656",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 110488,
-      "merchant": "Discovercars",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:18 · dashboard:_60s34c9o6l23gba560q36b9k68rjgb9p6123gb9i8l2j8e258orj8d1m6g · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8191-a7c2-d49abd307656"
-    },
-    {
-      "id": "3aa07aba-cae7-8136-a552-ff74a5be0338",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 32529,
-      "merchant": "Mor's",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:54 · dashboard:_6grj8chn710j0b9k6t13gb9k6so44b9o8p23eb9j6kp48cpi8csjegpj68 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8136-a552-ff74a5be0338"
-    },
-    {
-      "id": "3aa07aba-cae7-81ff-9bd0-f31a89d9226b",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 231455,
-      "merchant": "CARJET.COM",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 03:37 · dashboard:_8cq3ed1g64s3eba38go42b9k651kab9p70pk8b9i8ookac236srjid9i84 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81ff-9bd0-f31a89d9226b"
-    },
-    {
-      "id": "3aa07aba-cae7-810c-a1ba-e5222ce5d5eb",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 10688,
-      "merchant": "Harmas Bufe",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 05:14 · dashboard:_8h0j4cpj6kqkaba664rj6b9k6so46ba26gq38ba26t336d1i84q38h1m70 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-810c-a1ba-e5222ce5d5eb"
-    },
-    {
-      "id": "3aa07aba-cae7-81af-a39b-f89c677e51f1",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 56985,
-      "merchant": "JA PALATINUS STRAND",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 05:32 · dashboard:_6t130c9k68sjcba668q3cb9k6gojgba28oo30b9k70pjcg9p74sj0h1o6o · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81af-a39b-f89c677e51f1"
     },
     {
       "id": "3aa07aba-cae7-8132-a7a5-f73fabcba7ce",
       "date": "2026-07-23",
       "time": "",
       "amount": 24127,
-      "merchant": "Ami Bistro",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
+      "merchant": "Ami Bistro 똠양꿍, 팟타이",
+      "category": "food",
+      "location": "헝가리",
       "travel": true,
       "country": null,
-      "note": "시간 10:25 · dashboard:_6kr3ic1l84ojcb9k8p23eb9k64pj4ba288p36b9h852j6ci36ssk6ghi68 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8132-a7a5-f73fabcba7ce"
     },
     {
@@ -875,12 +1701,12 @@
       "date": "2026-07-23",
       "time": "",
       "amount": 17565,
-      "merchant": "Kurtissimo",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
+      "merchant": "Kurtissimo 아이스크림 굴뚝빵 1개",
+      "category": "snack",
+      "location": "헝가리",
       "travel": true,
       "country": null,
-      "note": "시간 11:00 · dashboard:_68qkagi5711k4b9h691jgb9k6t248b9o6h1jgba2610k4g9n75344d256s · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81a7-b824-eb193b70dc21"
     },
     {
@@ -888,12 +1714,12 @@
       "date": "2026-07-23",
       "time": "",
       "amount": 4708,
-      "merchant": "BKK AUTOMATA - H07",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
+      "merchant": "부다페스트 교통 2회권",
+      "category": "transport",
+      "location": "헝가리",
       "travel": true,
       "country": null,
-      "note": "시간 21:53 · dashboard:_6ssj0dhm68p48b9j6cpj0b9k6cqjab9p8d0kaba6691kcdhp6gok6d1m88 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81e6-817b-fe57b628cbc9"
     },
     {
@@ -901,117 +1727,221 @@
       "date": "2026-07-23",
       "time": "",
       "amount": 7897,
-      "merchant": "SZENDVICS BAR",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
+      "merchant": "핫도그, 콜라",
+      "category": "snack",
+      "location": "헝가리",
       "travel": true,
       "country": null,
-      "note": "시간 22:17 · dashboard:_60sk4e258opjcba56ss3eb9k6t23ab9p84qj6b9m6d13acpj8gq46h1o6s · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81c0-8ace-e12cc9ae1eea"
     },
     {
-      "id": "3aa07aba-cae7-81eb-a740-d61f9f39ea01",
-      "date": "2026-07-22",
+      "id": "3aa07aba-cae7-818a-93a8-e47d31588c61",
+      "date": "2026-07-23",
       "time": "",
-      "amount": 76711,
-      "merchant": "HELOPAY*PULI ES JUHASZ",
-      "category": "other",
-      "location": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "amount": 25821,
+      "merchant": "TOMMY 장보기(플리트비체 먹을거리)",
+      "category": "groceries",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 03:26 · dashboard:_890k6h9l6sqjaba38h1kab9k6krkcb9o6ksk4ba58l2j0g9g68o38dq188 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-818a-93a8-e47d31588c61"
+    },
+    {
+      "id": "3aa07aba-cae7-81a9-bba5-e15ce944dda0",
+      "date": "2026-07-23",
+      "time": "",
+      "amount": 13275,
+      "merchant": "Caffe bar Atrium 말차, 오렌지 주스",
+      "category": "snack",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-81a9-bba5-e15ce944dda0"
+    },
+    {
+      "id": "3aa07aba-cae7-8176-9fc6-c910cbe7cea2",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 362244,
+      "merchant": "아테네-밀로스 페리(MINOAN LINES)",
+      "category": "transport",
+      "location": "Greece",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-8176-9fc6-c910cbe7cea2"
+    },
+    {
+      "id": "3aa07aba-cae7-8102-8931-e4da8ac15d17",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 87735,
+      "merchant": "피레우스 에어비앤비(1박)",
+      "category": "stay",
+      "location": "Greece",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-8102-8931-e4da8ac15d17"
+    },
+    {
+      "id": "3aa07aba-cae7-81c8-a269-d185b37f3e37",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 399467,
+      "merchant": "밀로스 에어비앤비(2박)",
+      "category": "stay",
+      "location": "Greece",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-81c8-a269-d185b37f3e37"
+    },
+    {
+      "id": "3aa07aba-cae7-8136-a552-ff74a5be0338",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 32529,
+      "merchant": "Mor's 굴라쉬, 슈니첼, 소시지 등",
+      "category": "food",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-8136-a552-ff74a5be0338"
+    },
+    {
+      "id": "3aa07aba-cae7-81ff-9bd0-f31a89d9226b",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 231455,
+      "merchant": "밀로스 렌트카",
+      "category": "transport",
+      "location": "Greece",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-81ff-9bd0-f31a89d9226b"
+    },
+    {
+      "id": "3aa07aba-cae7-810c-a1ba-e5222ce5d5eb",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 10688,
+      "merchant": "레모네이드 1잔",
+      "category": "snack",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-810c-a1ba-e5222ce5d5eb"
+    },
+    {
+      "id": "3aa07aba-cae7-81af-a39b-f89c677e51f1",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 56985,
+      "merchant": "PALATINUS STRAND 수영장 입장료 2인",
+      "category": "ticket",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-81af-a39b-f89c677e51f1"
+    },
+    {
+      "id": "3b507aba-cae7-80a8-ad51-d724daf5fc70",
+      "date": "2026-07-21",
+      "time": "",
+      "amount": 4287,
+      "merchant": "치약",
+      "category": "groceries",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-80a8-ad51-d724daf5fc70"
+    },
+    {
+      "id": "3aa07aba-cae7-81eb-a740-d61f9f39ea01",
+      "date": "2026-07-21",
+      "time": "",
+      "amount": 76711,
+      "merchant": "PULI ES JUHASZ 굴라쉬, 오리 파스타, 맥주",
+      "category": "food",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81eb-a740-d61f9f39ea01"
     },
     {
       "id": "3aa07aba-cae7-81a5-a4e6-f088c1d07ef9",
-      "date": "2026-07-22",
+      "date": "2026-07-21",
       "time": "",
       "amount": 275645,
-      "merchant": "Aegean Web",
-      "category": "other",
-      "location": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "merchant": "아테네-이스탄불 항공",
+      "category": "flight",
+      "location": "튀르키예",
       "travel": true,
       "country": null,
-      "note": "시간 05:34 · dashboard:_64p30gi38kq48ba18p242b9k88q4aba160skab9n8h14ae9m64s3ah2184 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81a5-a4e6-f088c1d07ef9"
     },
     {
-      "id": "3aa07aba-cae7-8154-a05a-f33aa340eec9",
-      "date": "2026-07-21",
+      "id": "3b507aba-cae7-801f-a095-ceb2e9200455",
+      "date": "2026-07-20",
       "time": "",
-      "amount": 71820,
-      "merchant": "FiglmuellerBaeckerstr.",
-      "category": "other",
-      "location": "1115 부다페스트, Vasút utca 1.",
+      "amount": 5551,
+      "merchant": "물, 음료수",
+      "category": "snack",
+      "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "시간 02:20 · dashboard:_6h242e2188rj8b9j88pjib9k8grk8b9p6sp32ba184r3ch1l6gr48e9h84 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-801f-a095-ceb2e9200455"
+    },
+    {
+      "id": "3aa07aba-cae7-8154-a05a-f33aa340eec9",
+      "date": "2026-07-20",
+      "time": "",
+      "amount": 71820,
+      "merchant": "피그뮐러 슈니첼, 감자샐러드, 맥주",
+      "category": "food",
+      "location": "Austria",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8154-a05a-f33aa340eec9"
     },
     {
       "id": "3aa07aba-cae7-81c5-ac93-f6ca00a5b8c2",
-      "date": "2026-07-21",
+      "date": "2026-07-20",
       "time": "",
       "amount": 137848,
-      "merchant": "NP PLITVICE ULAZNICE",
-      "category": "transport",
-      "location": "1115 부다페스트, Vasút utca 1.",
+      "merchant": "플리트비체 입장료 2인",
+      "category": "ticket",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 03:56 · dashboard:_8gqjaghi6l0jeb9h8kqj0b9k8oskaba18kok8b9m8h13cc9h8co34e9i70 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81c5-ac93-f6ca00a5b8c2"
     },
     {
       "id": "3aa07aba-cae7-8106-b93e-e9e77709e80f",
-      "date": "2026-07-21",
+      "date": "2026-07-20",
       "time": "",
       "amount": 21482,
-      "merchant": "BKK AUTOMATA G74",
-      "category": "other",
-      "location": "1115 부다페스트, Vasút utca 1.",
+      "merchant": "부다페스트 교통 10회권",
+      "category": "transport",
+      "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "시간 06:36 · dashboard:_6csj4ca56h1j8b9g6923gb9k8ork8b9o6gr3cba26p242g9p8grjehhn64 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8106-b93e-e9e77709e80f"
-    },
-    {
-      "id": "3aa07aba-cae7-81bf-aa49-d120e15fac97",
-      "date": "2026-07-20",
-      "time": "",
-      "amount": 65316,
-      "merchant": "LEOPOLD MUSEUM TICKET 2",
-      "category": "other",
-      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
-      "travel": true,
-      "country": null,
-      "note": "시간 01:40 · dashboard:_8gqj2ci48l348b9g6p23ib9k6p2jeba188qk8b9p6opjid9k68sk6c2464 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81bf-aa49-d120e15fac97"
-    },
-    {
-      "id": "3aa07aba-cae7-8143-a0a8-cd2c79a3b033",
-      "date": "2026-07-20",
-      "time": "",
-      "amount": 4291,
-      "merchant": "LEOPOLD MUSEUM SHOP 2",
-      "category": "other",
-      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
-      "travel": true,
-      "country": null,
-      "note": "시간 03:57 · dashboard:_8oo36dpk8h0jeba1650k8b9k8kskcb9p8cq3gb9o85242gi26l0j2h2270 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8143-a0a8-cd2c79a3b033"
-    },
-    {
-      "id": "3aa07aba-cae7-81c9-9692-f44d0f3d3c37",
-      "date": "2026-07-20",
-      "time": "",
-      "amount": 10833,
-      "merchant": "WURSTELSTAND SUDTIRO",
-      "category": "other",
-      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
-      "travel": true,
-      "country": null,
-      "note": "시간 04:22 · dashboard:_8ko46cph8csjab9k8oo4cb9k8kpjib9p8grkcb9g6gp38c1n692j2c1n70 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81c9-9692-f44d0f3d3c37"
     },
     {
       "id": "3a207aba-cae7-8085-a12d-fe5b8a8f53f8",
@@ -1023,7 +1953,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a207aba-cae7-8085-a12d-fe5b8a8f53f8"
     },
     {
@@ -1036,7 +1966,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a207aba-cae7-806f-8d81-dd90f04db844"
     },
     {
@@ -1049,7 +1979,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a207aba-cae7-80bb-8630-f63aac9ddaa2"
     },
     {
@@ -1062,7 +1992,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 현금 · 통화 KRW",
+      "note": "결제수단 현금",
       "source": "notion:3a207aba-cae7-80c6-8530-ebb77cf48e65"
     },
     {
@@ -1075,47 +2005,8 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a207aba-cae7-80eb-b6e4-e62a6d1f8593"
-    },
-    {
-      "id": "3a207aba-cae7-81e1-8801-c7249c08a722",
-      "date": "2026-07-19",
-      "time": "",
-      "amount": 70103,
-      "merchant": "BILLA DANKT 0001228",
-      "category": "other",
-      "location": "Ruckergasse 71, 1120 비엔나",
-      "travel": true,
-      "country": null,
-      "note": "결제수단 미확인 · 통화 KRW",
-      "source": "notion:3a207aba-cae7-81e1-8801-c7249c08a722"
-    },
-    {
-      "id": "3aa07aba-cae7-8142-9e45-fc43f699ebee",
-      "date": "2026-07-18",
-      "time": "",
-      "amount": 42764,
-      "merchant": "Kozlovna Apropos",
-      "category": "other",
-      "location": "Vrch Žižkov, Prague 3",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:18 · dashboard:_64p3ed1i6ko46b9h8gpkab9k6t1j6ba2650k2b9i8opj4e1n60q30e9m8g · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8142-9e45-fc43f699ebee"
-    },
-    {
-      "id": "3aa07aba-cae7-814e-b9d2-fc8bc2e437a0",
-      "date": "2026-07-18",
-      "time": "",
-      "amount": 1980,
-      "merchant": "ALBERT VAM DEKUJE",
-      "category": "other",
-      "location": "Vrch Žižkov, Prague 3",
-      "travel": true,
-      "country": null,
-      "note": "시간 04:31 · dashboard:_850k6h2674sk4ba36cpk2b9k8gq36ba26d1j8b9o64sj2d9l84q44hi56s · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-814e-b9d2-fc8bc2e437a0"
     },
     {
       "id": "3a107aba-cae7-8155-a81e-e3aab83ae097",
@@ -1127,7 +2018,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8155-a81e-e3aab83ae097"
     },
     {
@@ -1140,7 +2031,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81cc-bfeb-c94b041e830c"
     },
     {
@@ -1149,11 +2040,11 @@
       "time": "",
       "amount": 2775,
       "merchant": "프라하 교통 일회권",
-      "category": "other",
+      "category": "transport",
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8181-aac5-db2b28430b44"
     },
     {
@@ -1166,7 +2057,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8186-b6b5-cf2e717ed432"
     },
     {
@@ -1179,7 +2070,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-806c-80b5-d5d946da25be"
     },
     {
@@ -1192,7 +2083,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-814f-a28e-fe731e5882cf"
     },
     {
@@ -1205,7 +2096,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81d0-9adc-e169b8c5f9f0"
     },
     {
@@ -1218,7 +2109,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8165-8cce-dd486191cbd0"
     },
     {
@@ -1231,7 +2122,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8198-b795-ef40cd50e934"
     },
     {
@@ -1244,7 +2135,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c8-b3b7-df0076e1519c"
     },
     {
@@ -1257,7 +2148,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-803e-92b2-f2aba656fb6a"
     },
     {
@@ -1270,7 +2161,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-801d-b4a8-def01fef9a64"
     },
     {
@@ -1283,7 +2174,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8110-b5be-fbfbc92ba379"
     },
     {
@@ -1296,7 +2187,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8177-9665-ed83ccc0f094"
     },
     {
@@ -1309,7 +2200,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c4-99c9-ca658d14fb0a"
     },
     {
@@ -1322,7 +2213,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-80f1-b570-c20a872c70f9"
     },
     {
@@ -1335,7 +2226,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8058-bc1e-c26994cb0512"
     },
     {
@@ -1348,7 +2239,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8092-8523-df6e9d14de42"
     },
     {
@@ -1361,7 +2252,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8198-a3a2-ddf8d3655d47"
     },
     {
@@ -1374,7 +2265,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8137-80e9-fc80696ebdea"
     },
     {
@@ -1423,7 +2314,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "30유로 현금 결제 · 결제수단 현금 · 통화 KRW",
+      "note": "결제수단 현금",
       "source": "notion:3a107aba-cae7-8034-9f25-ffa06edbf635"
     },
     {
@@ -1436,7 +2327,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-814d-bfb0-d66ca5b270d4"
     },
     {
@@ -1449,7 +2340,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8197-ae84-c9e4fbc14d98"
     },
     {
@@ -1462,7 +2353,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ce-a2a7-e1e7437ed0b2"
     },
     {
@@ -1475,7 +2366,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c0-9342-ce9ee7177435"
     },
     {
@@ -1488,7 +2379,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fe-8b3e-e496d89c542b"
     },
     {
@@ -1497,11 +2388,11 @@
       "time": "",
       "amount": 6913,
       "merchant": "LIME*PASS ZKWT",
-      "category": "other",
+      "category": "transport",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8109-bac1-faec833009f9"
     },
     {
@@ -1510,11 +2401,11 @@
       "time": "",
       "amount": 6913,
       "merchant": "LIME*PASS DWYJ",
-      "category": "other",
+      "category": "transport",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-817a-a48b-ccdae9ebf73c"
     },
     {
@@ -1527,7 +2418,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-818d-b059-da05d4840e6c"
     },
     {
@@ -1536,11 +2427,11 @@
       "time": "",
       "amount": 7019,
       "merchant": "LIME*2  ZKWT",
-      "category": "other",
+      "category": "transport",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-816a-ba7d-c8e6a36ff083"
     },
     {
@@ -1549,11 +2440,11 @@
       "time": "",
       "amount": 6081,
       "merchant": "LIME*2  DWYJ",
-      "category": "other",
+      "category": "transport",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fb-a2fc-dc980977a4b9"
     },
     {
@@ -1566,7 +2457,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8109-8fec-d9934eff9806"
     },
     {
@@ -1579,7 +2470,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8156-8b8f-ccb3d0f51a56"
     },
     {
@@ -1592,7 +2483,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fb-9602-ef9fcb02fc95"
     },
     {
@@ -1605,7 +2496,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8189-8ce6-c5a22fc96a37"
     },
     {
@@ -1618,7 +2509,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8171-ba95-f7925a1ce045"
     },
     {
@@ -1631,7 +2522,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ae-b9da-c61c26493337"
     },
     {
@@ -1644,7 +2535,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81be-bd36-ea3f368d8879"
     },
     {
@@ -1657,7 +2548,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f8-8363-d00a3130e4b3"
     },
     {
@@ -1670,7 +2561,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81a3-91f6-c2fa6eda9392"
     },
     {
@@ -1695,7 +2586,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-8034-b569-f06557e8796b"
     },
     {
@@ -1708,7 +2599,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8103-af16-fa848baafe01"
     },
     {
@@ -1721,7 +2612,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-813f-8875-d04bc6af7656"
     },
     {
@@ -1734,7 +2625,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81b9-9960-f8a1045df074"
     },
     {
@@ -1747,7 +2638,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8107-afb7-d5d03a965b5f"
     },
     {
@@ -1760,7 +2651,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-817a-84c3-d5da635ade43"
     },
     {
@@ -1809,7 +2700,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81be-8833-fec6e70d5105"
     },
     {
@@ -1822,7 +2713,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c2-a28e-eabd076b8211"
     },
     {
@@ -1830,12 +2721,12 @@
       "date": "2026-07-11",
       "time": "",
       "amount": 33459,
-      "merchant": "쾰른 교통 그룹 일일권 오구매(멍청비용)",
+      "merchant": "쾰른 교통 그룹 일일권 오구매",
       "category": "mistake",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8171-9a7b-e207d7b75edc"
     },
     {
@@ -1860,7 +2751,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c9-b833-e36cc02ef2df"
     },
     {
@@ -1921,7 +2812,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8148-bb1d-e450b04a8516"
     },
     {
@@ -1934,7 +2825,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8166-84bb-ea21706151f8"
     },
     {
@@ -1947,7 +2838,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "3유로 현금 결제 · 결제수단 현금 · 통화 KRW",
+      "note": "결제수단 현금",
       "source": "notion:3a107aba-cae7-8145-a238-fc94f60a22fc"
     },
     {
@@ -1960,7 +2851,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-811b-bda9-c55c73b71639"
     },
     {
@@ -1973,7 +2864,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8157-824a-ef7ed629691e"
     },
     {
@@ -1986,7 +2877,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ad-a520-dbe5359977da"
     },
     {
@@ -1999,7 +2890,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8104-bc3a-e5845fef8359"
     },
     {
@@ -2012,7 +2903,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ba-9d47-e236c176d364"
     },
     {
@@ -2025,7 +2916,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ff-b72f-cb6a66f17a3c"
     },
     {
@@ -2038,7 +2929,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-819b-ad76-fb6dda9ddf7d"
     },
     {
@@ -2059,11 +2950,11 @@
       "time": "",
       "amount": 40250,
       "merchant": "유럽 한달용 이심 구매",
-      "category": "gear",
+      "category": "통신",
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8161-a866-e72bc710c66b"
     },
     {
@@ -2076,7 +2967,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8045-b797-d487068ee4d3"
     },
     {
@@ -2089,7 +2980,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-80a3-a0c8-e68e6f45e99b"
     },
     {
@@ -2102,7 +2993,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-8092-b75a-f24f616e0774"
     },
     {
@@ -2115,7 +3006,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-8001-a535-e25c1677d1dd"
     },
     {
@@ -2128,7 +3019,7 @@
       "location": "Greece",
       "travel": true,
       "country": null,
-      "note": "볼로테아 항공 · 결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-80d4-aeb0-fa4a188f1f0c"
     },
     {
@@ -2141,7 +3032,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8114-ad56-f812b44e87ec"
     },
     {
@@ -2154,7 +3045,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c3-88be-db51e532bac0"
     },
     {
@@ -2167,7 +3058,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8145-bc97-c1c3d0ee0b5f"
     },
     {
@@ -2191,7 +3082,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81d6-8110-ecd3df88cdc2"
     },
     {
@@ -2204,7 +3095,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f1-8ea6-e7140d0babae"
     },
     {
@@ -2217,7 +3108,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f1-a177-e2849c1a3d5c"
     },
     {
@@ -2230,7 +3121,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-812b-b275-f60376fc8182"
     },
     {
@@ -2243,7 +3134,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8116-ba29-c4227bf0b2ff"
     },
     {
@@ -2256,7 +3147,7 @@
       "location": "hungary",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8113-b11c-df7f37ed8ae5"
     },
     {
@@ -2269,7 +3160,7 @@
       "location": "hungary",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8151-8351-d3478c356a5d"
     },
     {
@@ -2282,7 +3173,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8147-9bf3-fc535b3d6636"
     },
     {
@@ -2306,7 +3197,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c8-b658-f7b31dca32f1"
     },
     {
@@ -2319,7 +3210,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fc-a026-c5eed8a6bb33"
     },
     {
@@ -2332,7 +3223,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8177-8a16-c98be4d78796"
     },
     {
@@ -2378,7 +3269,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ea-89bc-e65620874efd"
     },
     {
@@ -2391,7 +3282,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fd-be74-f4b791c236f8"
     },
     {
@@ -2426,7 +3317,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "전액 교보문고 포인트 사용 · 결제수단 포인트 · 통화 KRW",
+      "note": "결제수단 포인트",
       "source": "notion:3a107aba-cae7-8137-84c6-c2fea9028e29"
     },
     {
@@ -2439,7 +3330,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8147-9a36-c2a58fc2a9f3"
     },
     {
@@ -2463,7 +3354,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81a6-889a-cc4092bdcca3"
     },
     {
@@ -2476,7 +3367,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-810e-8d29-c15c1d32cbbe"
     },
     {
@@ -2489,7 +3380,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f9-a151-c79a2d6cea37"
     },
     {
@@ -2502,7 +3393,7 @@
       "location": "Hungary",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fb-975e-e2b11168bd71"
     },
     {
@@ -2515,7 +3406,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-810f-9a45-e276db4bd108"
     },
     {
@@ -2528,7 +3419,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ae-bdb5-e95ed8186e40"
     },
     {
@@ -2541,7 +3432,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8187-8e80-ce0bf3ed272c"
     },
     {
@@ -2554,7 +3445,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8128-9ae0-eeaf90d06b27"
     },
     {
@@ -2567,7 +3458,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-818a-a0c1-fc490fa88cf5"
     },
     {
@@ -2591,7 +3482,7 @@
       "location": "South Korea",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8121-b2d8-e44f4a75479d"
     },
     {
@@ -2604,7 +3495,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "하나투어 포인트 사용 · 결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81d2-a97f-c32d6195d108"
     },
     {
@@ -2617,7 +3508,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f9-bb68-cfc1d3266537"
     },
     {
@@ -2630,7 +3521,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-815f-bb59-dac644a867e2"
     },
     {
@@ -2654,7 +3545,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8128-be24-d86b5f2fa9ff"
     },
     {
@@ -2667,7 +3558,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8114-b468-e0babc1bab27"
     },
     {
@@ -2680,228 +3571,982 @@
       "location": "여행 준비",
       "travel": true,
       "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "3ab07aba-cae7-8009-a621-e4ebbad4fe8a",
+      "date": "2026-02-22",
+      "time": "",
+      "amount": 596800,
+      "merchant": "인천-프랑크푸르트 항공",
+      "category": "flight",
+      "location": "germany",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3ab07aba-cae7-8009-a621-e4ebbad4fe8a"
     }
   ],
   "expenses": [
     {
-      "id": "3aa07aba-cae7-81da-b604-d8bd76330c8e",
-      "date": "2026-07-27",
+      "id": "3b507aba-cae7-8159-ad11-d873bfcbd024",
+      "date": "2026-08-07",
       "time": "",
-      "amount": 273341,
-      "merchant": "AIRBNB * HMTRKWRTEF",
-      "category": "stay",
-      "location": "Put umca, 21220 Seget Vranjica",
+      "amount": 15152,
+      "merchant": "GAZIANTEP KOZDE KUNE 베이란, 치킨수프, 차이티 1잔",
+      "category": "food",
+      "location": "튀르키예",
       "travel": true,
       "country": null,
-      "note": "결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8159-ad11-d873bfcbd024"
+    },
+    {
+      "id": "3b507aba-cae7-81f2-9ef4-cdccb5ddf2db",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 36651,
+      "merchant": "HAFIZ MUSTAFA 1864 퀴네페, 수틀라치, 라떼",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81f2-9ef4-cdccb5ddf2db"
+    },
+    {
+      "id": "3b507aba-cae7-81eb-8dd8-cf805c79f4ee",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 4245,
+      "merchant": "Mado 돈두르마 1개",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81eb-8dd8-cf805c79f4ee"
+    },
+    {
+      "id": "3b507aba-cae7-818d-812d-c9011747649d",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 54523,
+      "merchant": "DENIZLER KASAP 양고기, 치킨, 차이티 1잔",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-818d-812d-c9011747649d"
+    },
+    {
+      "id": "3b507aba-cae7-8177-b48d-c735bf6e3c69",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 15138,
+      "merchant": "WATSONS 클렌징밤",
+      "category": "groceries",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8177-b48d-c735bf6e3c69"
+    },
+    {
+      "id": "3b507aba-cae7-8116-acef-c946f7e85432",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 21052,
+      "merchant": "아쿠아 선크림",
+      "category": "groceries",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8116-acef-c946f7e85432"
+    },
+    {
+      "id": "3b507aba-cae7-8131-9c22-dcc4fd3240cd",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 3036,
+      "merchant": "옥수수 구이",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8131-9c22-dcc4fd3240cd"
+    },
+    {
+      "id": "3b507aba-cae7-8125-8da2-f9227278874f",
+      "date": "2026-08-07",
+      "time": "",
+      "amount": 4000,
+      "merchant": "장보기(물, 콜라, 아이스크림)",
+      "category": "groceries",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8125-8da2-f9227278874f"
+    },
+    {
+      "id": "3b507aba-cae7-8105-9f8d-f991e49128e0",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 53500,
+      "merchant": "SEHZADE CAG KEBAP 자흐케밥 2인분, 콜라, 아이란",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8105-9f8d-f991e49128e0"
+    },
+    {
+      "id": "3b507aba-cae7-8124-888c-c89f1206b974",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 3046,
+      "merchant": "슬러시 1잔",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8124-888c-c89f1206b974"
+    },
+    {
+      "id": "3b507aba-cae7-81e3-b2d4-e774f03d4d0c",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 4534,
+      "merchant": "GRATIS 머리끈",
+      "category": "groceries",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81e3-b2d4-e774f03d4d0c"
+    },
+    {
+      "id": "3b507aba-cae7-81cf-8bad-f24da2e33019",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 393923,
+      "merchant": "샤름엘셰이크-팔레르모 항공권 2인",
+      "category": "flight",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81cf-8bad-f24da2e33019"
+    },
+    {
+      "id": "3b507aba-cae7-810e-9d46-e5997e7a9d50",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 18137,
+      "merchant": "SAFIS KUMPIR 쿰피르 1개, 콜라 1병",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-810e-9d46-e5997e7a9d50"
+    },
+    {
+      "id": "3b507aba-cae7-8171-9c2d-e440367431de",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 4380,
+      "merchant": "알레르기약",
+      "category": "medical",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8171-9c2d-e440367431de"
+    },
+    {
+      "id": "3b507aba-cae7-81a2-862d-e9530ab50fe6",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 9650,
+      "merchant": "GULLUOGLU 바클라바 3개, 차이티 1잔",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a2-862d-e9530ab50fe6"
+    },
+    {
+      "id": "3b507aba-cae7-81fd-a246-d4d8eda5748c",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 9392,
+      "merchant": "이스탄불 교통카드 충전(성호 300리라)",
+      "category": "transport",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81fd-a246-d4d8eda5748c"
+    },
+    {
+      "id": "3b507aba-cae7-81d3-a4e0-f5cc3c895481",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 68932,
+      "merchant": "다합 에어비앤비(2박)",
+      "category": "stay",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81d3-a4e0-f5cc3c895481"
+    },
+    {
+      "id": "3b507aba-cae7-81f9-8f9a-d11f1fe93ffb",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 14820,
+      "merchant": "KADIKOY 스타벅스 음료 2잔",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81f9-8f9a-d11f1fe93ffb"
+    },
+    {
+      "id": "3b507aba-cae7-8176-b35e-f6e175878455",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 15122,
+      "merchant": "CHEEF MOSES 쿰피르 1개, 차이티 2잔",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8176-b35e-f6e175878455"
+    },
+    {
+      "id": "3b507aba-cae7-8153-bd94-fca0543551d5",
+      "date": "2026-08-06",
+      "time": "",
+      "amount": 11488,
+      "merchant": "MESHUR BALIKCI EYYUP USTA 고등어케밥 1개, 콜라 1캔",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8153-bd94-fca0543551d5"
+    },
+    {
+      "id": "3b507aba-cae7-81dc-82af-fdf6f12950a9",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 60991,
+      "merchant": "TEBEK KOREAN RESTAUR 김치찌개, 제육덮밥",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81dc-82af-fdf6f12950a9"
+    },
+    {
+      "id": "3b507aba-cae7-8170-af8c-eec05f91a7ed",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 172875,
+      "merchant": "카이로 에어비앤비(3박)",
+      "category": "stay",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8170-af8c-eec05f91a7ed"
+    },
+    {
+      "id": "3b507aba-cae7-815d-8298-cb2a1b368bf7",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 9443,
+      "merchant": "이스탄불 교통카드 충전(성호 300리라)",
+      "category": "transport",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-815d-8298-cb2a1b368bf7"
+    },
+    {
+      "id": "3b507aba-cae7-81f4-8fdf-d9da44f02023",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 2151,
+      "merchant": "CARREFOURSA 콜라",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81f4-8fdf-d9da44f02023"
+    },
+    {
+      "id": "3b507aba-cae7-817b-9563-d8b3d8c93c9b",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 8505,
+      "merchant": "BALIK DURUM 고등어케밥 1개",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-817b-9563-d8b3d8c93c9b"
+    },
+    {
+      "id": "3b507aba-cae7-81ca-a1c2-e58709a8e872",
+      "date": "2026-08-05",
+      "time": "",
+      "amount": 11248,
+      "merchant": "OZSUT HACI HASAN FEH 카이막, 차이티 2잔",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81ca-a1c2-e58709a8e872"
+    },
+    {
+      "id": "3b507aba-cae7-81e4-8d45-e0e2d854b377",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 51838,
+      "merchant": "GIAVRI KOINSEP 미트플레이트, 맥주 2잔",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81e4-8d45-e0e2d854b377"
+    },
+    {
+      "id": "3b507aba-cae7-818f-897a-ea39f9b0fadd",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 73594,
+      "merchant": "숙소-아테네 공항 우버",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-818f-897a-ea39f9b0fadd"
+    },
+    {
+      "id": "3b507aba-cae7-816f-9422-d2d0fb7692f4",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 2011,
+      "merchant": "아테네 교통 1회권",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-816f-9422-d2d0fb7692f4"
+    },
+    {
+      "id": "3b507aba-cae7-8112-96f7-d8e4a7158ccd",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 18608,
+      "merchant": "NEVIZADE KOKOREC 홍합밥, 코코레치 샌드위치",
+      "category": "food",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8112-96f7-d8e4a7158ccd"
+    },
+    {
+      "id": "3b507aba-cae7-81a8-92f3-ed6c44559e48",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 19520,
+      "merchant": "DILEMMA BAKLAVA 아이스크림 바클라바, 콜드 바클라바, 커피",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a8-92f3-ed6c44559e48"
+    },
+    {
+      "id": "3b507aba-cae7-81a5-aa5e-cd40285a20c6",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 2098,
+      "merchant": "MIGROS 음료수 2개",
+      "category": "snack",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a5-aa5e-cd40285a20c6"
+    },
+    {
+      "id": "3b507aba-cae7-81d5-bf2e-d6e8ec792922",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 5845,
+      "merchant": "이스탄불 교통카드 1개 구매(성호)",
+      "category": "transport",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81d5-bf2e-d6e8ec792922"
+    },
+    {
+      "id": "3b507aba-cae7-811a-86c6-ffc24235bd78",
+      "date": "2026-08-04",
+      "time": "",
+      "amount": 2517,
+      "merchant": "이스탄불 교통카드 충전(성호 80리라)",
+      "category": "transport",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-811a-86c6-ffc24235bd78"
+    },
+    {
+      "id": "3b507aba-cae7-8118-8871-efb048456478",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 2012,
+      "merchant": "아테네 교통 1회권",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8118-8871-efb048456478"
+    },
+    {
+      "id": "3b507aba-cae7-8142-a628-f69d46304e60",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 33448,
+      "merchant": "아크로폴리스 뮤지엄 입장료 1인",
+      "category": "ticket",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8142-a628-f69d46304e60"
+    },
+    {
+      "id": "3b507aba-cae7-8135-9b20-ccb569bedd0a",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 9035,
+      "merchant": "맥도날드 토스트, 아이스크림",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8135-9b20-ccb569bedd0a"
+    },
+    {
+      "id": "3b507aba-cae7-8172-b356-f1f91e87101f",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 65217,
+      "merchant": "아크로폴리스 입장권 및 오디오가이드 1인",
+      "category": "ticket",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8172-b356-f1f91e87101f"
+    },
+    {
+      "id": "3b507aba-cae7-8139-90c0-de903f877dab",
+      "date": "2026-08-03",
+      "time": "",
+      "amount": 14306,
+      "merchant": "물, 초코바",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8139-90c0-de903f877dab"
+    },
+    {
+      "id": "3b507aba-cae7-80be-8cd0-debb983f1e37",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 1700,
+      "merchant": "물 2병",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 현금",
+      "source": "notion:3b507aba-cae7-80be-8cd0-debb983f1e37"
+    },
+    {
+      "id": "3b507aba-cae7-8127-a498-f937453f2550",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 26314,
+      "merchant": "아테네 장보기(시리얼, 요거트, 물, 음료수 등)",
+      "category": "groceries",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8127-a498-f937453f2550"
+    },
+    {
+      "id": "3b507aba-cae7-813f-a688-cf199f3ab8eb",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 2002,
+      "merchant": "아테네 교통 1회권",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-813f-a688-cf199f3ab8eb"
+    },
+    {
+      "id": "3b507aba-cae7-8183-a181-ed64157b446c",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 2333,
+      "merchant": "아테네 교통 1회권",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8183-a181-ed64157b446c"
+    },
+    {
+      "id": "3b007aba-cae7-808e-86d9-f6ac6dd821bd",
+      "date": "2026-08-02",
+      "time": "",
+      "amount": 18000,
+      "merchant": "tommy’s 기로스 콤보",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 현금",
+      "source": "notion:3b007aba-cae7-808e-86d9-f6ac6dd821bd"
+    },
+    {
+      "id": "3b507aba-cae7-81e6-985d-da378009ce27",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 8137,
+      "merchant": "기로스 1개",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81e6-985d-da378009ce27"
+    },
+    {
+      "id": "3b507aba-cae7-81a1-a428-c4b19230e8cd",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 53579,
+      "merchant": "카이로- 다합 고버스 2인",
+      "category": "transport",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a1-a428-c4b19230e8cd"
+    },
+    {
+      "id": "3b507aba-cae7-816e-902e-c56749eec063",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 34941,
+      "merchant": "밀로스 렌트카 주유비",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-816e-902e-c56749eec063"
+    },
+    {
+      "id": "3b507aba-cae7-817b-b08e-fb5ef8b34cfa",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 8310,
+      "merchant": "ARTEMIS BAKERY 수박파이, 바나나 크로아상",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-817b-b08e-fb5ef8b34cfa"
+    },
+    {
+      "id": "3b507aba-cae7-8105-8f35-e6a6523852e7",
+      "date": "2026-08-01",
+      "time": "",
+      "amount": 64871,
+      "merchant": "FLOISVOS MILOS 케밥, 새우 리조또, 콜라",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8105-8f35-e6a6523852e7"
+    },
+    {
+      "id": "3b507aba-cae7-8180-a6d7-fefa02cba8cb",
+      "date": "2026-07-31",
+      "time": "",
+      "amount": 88618,
+      "merchant": "MEZZE 해산물 플레이트, 페타치즈 튀김, 콜라",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8180-a6d7-fefa02cba8cb"
+    },
+    {
+      "id": "3b507aba-cae7-81fa-a61f-f9d6abaa0561",
+      "date": "2026-07-31",
+      "time": "",
+      "amount": 36782,
+      "merchant": "선스프레이, 비누",
+      "category": "groceries",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81fa-a61f-f9d6abaa0561"
+    },
+    {
+      "id": "3b507aba-cae7-81b1-877e-f4ea68ca25e4",
+      "date": "2026-07-31",
+      "time": "",
+      "amount": 14208,
+      "merchant": "ARTOPOIIMATA KAI A 빵 2개, 맥주 2개",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81b1-877e-f4ea68ca25e4"
+    },
+    {
+      "id": "3b507aba-cae7-8144-b8f2-e667f0314fd1",
+      "date": "2026-07-31",
+      "time": "",
+      "amount": 75442,
+      "merchant": "MEDOYSA 엔초비 마리네이드, 문어, 가지요리, 콜라",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8144-b8f2-e667f0314fd1"
+    },
+    {
+      "id": "3b507aba-cae7-8157-89ff-d80b666e92f7",
+      "date": "2026-07-30",
+      "time": "",
+      "amount": 5971,
+      "merchant": "팔도비빔면 1봉, 김치신라면 1봉",
+      "category": "groceries",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8157-89ff-d80b666e92f7"
+    },
+    {
+      "id": "3b507aba-cae7-810b-8fc5-ec0757d08adb",
+      "date": "2026-07-30",
+      "time": "",
+      "amount": 7912,
+      "merchant": "장보기(계란, 음료수 등)",
+      "category": "groceries",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-810b-8fc5-ec0757d08adb"
+    },
+    {
+      "id": "3b507aba-cae7-8188-a91f-d210595ae470",
+      "date": "2026-07-30",
+      "time": "",
+      "amount": 6514,
+      "merchant": "페리 매점 소시지빵",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8188-a91f-d210595ae470"
+    },
+    {
+      "id": "3b507aba-cae7-819c-b490-e9bd71dc9fc9",
+      "date": "2026-07-29",
+      "time": "",
+      "amount": 240499,
+      "merchant": "이스탄불 에어비앤비(4박)",
+      "category": "stay",
+      "location": "튀르키예",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-819c-b490-e9bd71dc9fc9"
+    },
+    {
+      "id": "3b507aba-cae7-81a4-94a5-e211ad005880",
+      "date": "2026-07-29",
+      "time": "",
+      "amount": 2162,
+      "merchant": "아테네 공항 편의점 빵, 크래커",
+      "category": "snack",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81a4-94a5-e211ad005880"
+    },
+    {
+      "id": "3b507aba-cae7-81ca-be0e-ee43cce2d6b6",
+      "date": "2026-07-29",
+      "time": "",
+      "amount": 18458,
+      "merchant": "아테네 공항-피레우스 항구 공항버스 2인",
+      "category": "transport",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81ca-be0e-ee43cce2d6b6"
+    },
+    {
+      "id": "3b507aba-cae7-81b2-ac3d-c70d0cd3d308",
+      "date": "2026-07-29",
+      "time": "",
+      "amount": 22312,
+      "merchant": "팔라펠 랩, 미트 랩, 탄산음료 2개",
+      "category": "food",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81b2-ac3d-c70d0cd3d308"
+    },
+    {
+      "id": "3b507aba-cae7-80be-aa65-ebadbf060a36",
+      "date": "2026-07-28",
+      "time": "",
+      "amount": 8466,
+      "merchant": "세겟브란지차-스플리트 교통권 2인",
+      "category": "transport",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 현진카드",
+      "source": "notion:3b507aba-cae7-80be-aa65-ebadbf060a36"
+    },
+    {
+      "id": "3b507aba-cae7-8131-a755-e70ca80d76be",
+      "date": "2026-07-28",
+      "time": "",
+      "amount": 392600,
+      "merchant": "이스탄불-카이로 항공권 2인",
+      "category": "flight",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8131-a755-e70ca80d76be"
+    },
+    {
+      "id": "3b507aba-cae7-8180-acae-d717b34e58a5",
+      "date": "2026-07-28",
+      "time": "",
+      "amount": 116868,
+      "merchant": "Poon Piat 미트 플레이트, 깔라마리, 새우뇨끼, 콜라 2잔",
+      "category": "food",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8180-acae-d717b34e58a5"
+    },
+    {
+      "id": "3b507aba-cae7-81ec-85c0-d5cbf30b8836",
+      "date": "2026-07-28",
+      "time": "",
+      "amount": 19072,
+      "merchant": "장보기(과일, 빵, 요거트, 물 등)",
+      "category": "groceries",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-81ec-85c0-d5cbf30b8836"
+    },
+    {
+      "id": "3b507aba-cae7-80f1-9b8b-e1ec11244311",
+      "date": "2026-07-26",
+      "time": "",
+      "amount": 60045,
+      "merchant": "세겟 브란지차 장보기(먹을거리)",
+      "category": "groceries",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-80f1-9b8b-e1ec11244311"
+    },
+    {
+      "id": "3b507aba-cae7-803a-98b7-c50ea8b3eb3b",
+      "date": "2026-07-26",
+      "time": "",
+      "amount": 14672,
+      "merchant": "트로기르 마트 장보기(먹을거리)",
+      "category": "groceries",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-803a-98b7-c50ea8b3eb3b"
+    },
+    {
+      "id": "3aa07aba-cae7-81da-b604-d8bd76330c8e",
+      "date": "2026-07-26",
+      "time": "",
+      "amount": 273341,
+      "merchant": "아테네 에어비앤비(3박)",
+      "category": "stay",
+      "location": "그리스",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81da-b604-d8bd76330c8e"
     },
     {
       "id": "3aa07aba-cae7-8188-8370-f3e77a2bfa71",
-      "date": "2026-07-27",
+      "date": "2026-07-26",
       "time": "",
       "amount": 9071,
-      "merchant": "TOMMY266",
-      "category": "other",
-      "location": "Put umca, 21220 Seget Vranjica",
+      "merchant": "시리얼, 아이스크림",
+      "category": "groceries",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8188-8370-f3e77a2bfa71"
     },
     {
       "id": "3aa07aba-cae7-8151-8571-ef14439a0c06",
-      "date": "2026-07-26",
+      "date": "2026-07-25",
       "time": "",
       "amount": 94261,
-      "merchant": "LOLA KONOBA",
-      "category": "other",
-      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "merchant": "먹물 리조또, 생선구이, 감자샐러드, 탄산수",
+      "category": "food",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 05:36 · dashboard:_65238e2388s44b9n612jcb9k8gpjcba26d1k6b9p6opjcd1j6gojehhk68 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8151-8571-ef14439a0c06"
     },
     {
       "id": "3aa07aba-cae7-81c2-87cf-c14237499a75",
-      "date": "2026-07-26",
+      "date": "2026-07-25",
       "time": "",
       "amount": 15283,
-      "merchant": "MOJ.PROMET APP",
-      "category": "other",
-      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "merchant": "스플리트-세겟 브란지차 교통권 2인",
+      "category": "transport",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 06:20 · dashboard:_6krj2cpi75134b9i611jcb9k8l142ba16d330b9n6kr30h2470q3ie1g84 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81c2-87cf-c14237499a75"
     },
     {
-      "id": "3aa07aba-cae7-8117-a4b8-ccece7c3da9b",
-      "date": "2026-07-25",
+      "id": "3b507aba-cae7-8090-85c5-d481e0fa2e31",
+      "date": "2026-07-24",
       "time": "",
-      "amount": 83492,
-      "merchant": "NAC. PARK PLITVICKA JE",
-      "category": "other",
-      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "amount": 94361,
+      "merchant": "플리트비체-스플리트 플릭스 버스 2인",
+      "category": "transport",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 03:18 · dashboard:_68pj6c1m74qj0b9g8opk2b9k8gpj4ba174q44ba16krk6c9p8923edpo8c · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-8090-85c5-d481e0fa2e31"
+    },
+    {
+      "id": "3aa07aba-cae7-8117-a4b8-ccece7c3da9b",
+      "date": "2026-07-24",
+      "time": "",
+      "amount": 83492,
+      "merchant": "파스타 2개, 맥주 2잔",
+      "category": "food",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8117-a4b8-ccece7c3da9b"
     },
     {
       "id": "3aa07aba-cae7-8175-91b5-cc091ffa8f75",
-      "date": "2026-07-25",
+      "date": "2026-07-24",
       "time": "",
       "amount": 8684,
-      "merchant": "NAC. PARK PLITVICKA JE",
-      "category": "other",
-      "location": "Sukojišanska ulica 2/2, 21000 스플리트",
+      "merchant": "감자칩, 프로틴푸딩",
+      "category": "groceries",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 03:53 · dashboard:_6ko4cc1j70o46b9k8l134b9k6d2jeb9p6os32b9p8gokad22851kad1n6o · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8175-91b5-cc091ffa8f75"
-    },
-    {
-      "id": "3aa07aba-cae7-818a-93a8-e47d31588c61",
-      "date": "2026-07-24",
-      "time": "",
-      "amount": 25821,
-      "merchant": "TOMMY142",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:58 · dashboard:_60pjcci164okcb9j6534cb9k8gpkaba2610kcb9o8grk4d1i84sjchi18o · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-818a-93a8-e47d31588c61"
-    },
-    {
-      "id": "3aa07aba-cae7-81a9-bba5-e15ce944dda0",
-      "date": "2026-07-24",
-      "time": "",
-      "amount": 13275,
-      "merchant": "Caffe bar Atrium",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 04:08 · dashboard:_8cs46da575334b9h60rj0b9k70q3eb9p64qk8b9p7524ch1n8l132ga388 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81a9-bba5-e15ce944dda0"
-    },
-    {
-      "id": "3aa07aba-cae7-8176-9fc6-c910cbe7cea2",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 362244,
-      "merchant": "MINOAN LINES",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 01:51 · dashboard:_60ojgh1g70qj0b9m6gpjgb9k6t1jiba164qjgb9p8h144ghk65238ca58c · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8176-9fc6-c910cbe7cea2"
-    },
-    {
-      "id": "3aa07aba-cae7-8102-8931-e4da8ac15d17",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 87735,
-      "merchant": "AIRBNB * HMY9B2995K",
-      "category": "stay",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:08 · dashboard:_8op4cgpi61242b9p6cqkcb9k652j0b9o84pk4b9m6go3cc9l6h1k6c268o · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8102-8931-e4da8ac15d17"
-    },
-    {
-      "id": "3aa07aba-cae7-81c8-a269-d185b37f3e37",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 399467,
-      "merchant": "AIRBNB * HM8K9ERW82",
-      "category": "stay",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:10 · dashboard:_88qj2chj84pjgb9j6srkcb9k8h2j6b9o6d1kab9o8op44ca36d0kae9i68 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81c8-a269-d185b37f3e37"
-    },
-    {
-      "id": "3aa07aba-cae7-8191-a7c2-d49abd307656",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 110488,
-      "merchant": "Discovercars",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:18 · dashboard:_60s34c9o6l23gba560q36b9k68rjgb9p6123gb9i8l2j8e258orj8d1m6g · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8191-a7c2-d49abd307656"
-    },
-    {
-      "id": "3aa07aba-cae7-8136-a552-ff74a5be0338",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 32529,
-      "merchant": "Mor's",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:54 · dashboard:_6grj8chn710j0b9k6t13gb9k6so44b9o8p23eb9j6kp48cpi8csjegpj68 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8136-a552-ff74a5be0338"
-    },
-    {
-      "id": "3aa07aba-cae7-81ff-9bd0-f31a89d9226b",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 231455,
-      "merchant": "CARJET.COM",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 03:37 · dashboard:_8cq3ed1g64s3eba38go42b9k651kab9p70pk8b9i8ookac236srjid9i84 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81ff-9bd0-f31a89d9226b"
-    },
-    {
-      "id": "3aa07aba-cae7-810c-a1ba-e5222ce5d5eb",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 10688,
-      "merchant": "Harmas Bufe",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 05:14 · dashboard:_8h0j4cpj6kqkaba664rj6b9k6so46ba26gq38ba26t336d1i84q38h1m70 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-810c-a1ba-e5222ce5d5eb"
-    },
-    {
-      "id": "3aa07aba-cae7-81af-a39b-f89c677e51f1",
-      "date": "2026-07-23",
-      "time": "",
-      "amount": 56985,
-      "merchant": "JA PALATINUS STRAND",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
-      "travel": true,
-      "country": null,
-      "note": "시간 05:32 · dashboard:_6t130c9k68sjcba668q3cb9k6gojgba28oo30b9k70pjcg9p74sj0h1o6o · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81af-a39b-f89c677e51f1"
     },
     {
       "id": "3aa07aba-cae7-8132-a7a5-f73fabcba7ce",
       "date": "2026-07-23",
       "time": "",
       "amount": 24127,
-      "merchant": "Ami Bistro",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
+      "merchant": "Ami Bistro 똠양꿍, 팟타이",
+      "category": "food",
+      "location": "헝가리",
       "travel": true,
       "country": null,
-      "note": "시간 10:25 · dashboard:_6kr3ic1l84ojcb9k8p23eb9k64pj4ba288p36b9h852j6ci36ssk6ghi68 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8132-a7a5-f73fabcba7ce"
     },
     {
@@ -2909,12 +4554,12 @@
       "date": "2026-07-23",
       "time": "",
       "amount": 17565,
-      "merchant": "Kurtissimo",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
+      "merchant": "Kurtissimo 아이스크림 굴뚝빵 1개",
+      "category": "snack",
+      "location": "헝가리",
       "travel": true,
       "country": null,
-      "note": "시간 11:00 · dashboard:_68qkagi5711k4b9h691jgb9k6t248b9o6h1jgba2610k4g9n75344d256s · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81a7-b824-eb193b70dc21"
     },
     {
@@ -2922,12 +4567,12 @@
       "date": "2026-07-23",
       "time": "",
       "amount": 4708,
-      "merchant": "BKK AUTOMATA - H07",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
+      "merchant": "부다페스트 교통 2회권",
+      "category": "transport",
+      "location": "헝가리",
       "travel": true,
       "country": null,
-      "note": "시간 21:53 · dashboard:_6ssj0dhm68p48b9j6cpj0b9k6cqjab9p8d0kaba6691kcdhp6gok6d1m88 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81e6-817b-fe57b628cbc9"
     },
     {
@@ -2935,117 +4580,221 @@
       "date": "2026-07-23",
       "time": "",
       "amount": 7897,
-      "merchant": "SZENDVICS BAR",
-      "category": "other",
-      "location": "Krnjak 64A, 47242 크르냐크",
+      "merchant": "핫도그, 콜라",
+      "category": "snack",
+      "location": "헝가리",
       "travel": true,
       "country": null,
-      "note": "시간 22:17 · dashboard:_60sk4e258opjcba56ss3eb9k6t23ab9p84qj6b9m6d13acpj8gq46h1o6s · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81c0-8ace-e12cc9ae1eea"
     },
     {
-      "id": "3aa07aba-cae7-81eb-a740-d61f9f39ea01",
-      "date": "2026-07-22",
+      "id": "3aa07aba-cae7-818a-93a8-e47d31588c61",
+      "date": "2026-07-23",
       "time": "",
-      "amount": 76711,
-      "merchant": "HELOPAY*PULI ES JUHASZ",
-      "category": "other",
-      "location": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "amount": 25821,
+      "merchant": "TOMMY 장보기(플리트비체 먹을거리)",
+      "category": "groceries",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 03:26 · dashboard:_890k6h9l6sqjaba38h1kab9k6krkcb9o6ksk4ba58l2j0g9g68o38dq188 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-818a-93a8-e47d31588c61"
+    },
+    {
+      "id": "3aa07aba-cae7-81a9-bba5-e15ce944dda0",
+      "date": "2026-07-23",
+      "time": "",
+      "amount": 13275,
+      "merchant": "Caffe bar Atrium 말차, 오렌지 주스",
+      "category": "snack",
+      "location": "크로아티아",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-81a9-bba5-e15ce944dda0"
+    },
+    {
+      "id": "3aa07aba-cae7-8176-9fc6-c910cbe7cea2",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 362244,
+      "merchant": "아테네-밀로스 페리(MINOAN LINES)",
+      "category": "transport",
+      "location": "Greece",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-8176-9fc6-c910cbe7cea2"
+    },
+    {
+      "id": "3aa07aba-cae7-8102-8931-e4da8ac15d17",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 87735,
+      "merchant": "피레우스 에어비앤비(1박)",
+      "category": "stay",
+      "location": "Greece",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-8102-8931-e4da8ac15d17"
+    },
+    {
+      "id": "3aa07aba-cae7-81c8-a269-d185b37f3e37",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 399467,
+      "merchant": "밀로스 에어비앤비(2박)",
+      "category": "stay",
+      "location": "Greece",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-81c8-a269-d185b37f3e37"
+    },
+    {
+      "id": "3aa07aba-cae7-8136-a552-ff74a5be0338",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 32529,
+      "merchant": "Mor's 굴라쉬, 슈니첼, 소시지 등",
+      "category": "food",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-8136-a552-ff74a5be0338"
+    },
+    {
+      "id": "3aa07aba-cae7-81ff-9bd0-f31a89d9226b",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 231455,
+      "merchant": "밀로스 렌트카",
+      "category": "transport",
+      "location": "Greece",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-81ff-9bd0-f31a89d9226b"
+    },
+    {
+      "id": "3aa07aba-cae7-810c-a1ba-e5222ce5d5eb",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 10688,
+      "merchant": "레모네이드 1잔",
+      "category": "snack",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-810c-a1ba-e5222ce5d5eb"
+    },
+    {
+      "id": "3aa07aba-cae7-81af-a39b-f89c677e51f1",
+      "date": "2026-07-22",
+      "time": "",
+      "amount": 56985,
+      "merchant": "PALATINUS STRAND 수영장 입장료 2인",
+      "category": "ticket",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3aa07aba-cae7-81af-a39b-f89c677e51f1"
+    },
+    {
+      "id": "3b507aba-cae7-80a8-ad51-d724daf5fc70",
+      "date": "2026-07-21",
+      "time": "",
+      "amount": 4287,
+      "merchant": "치약",
+      "category": "groceries",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-80a8-ad51-d724daf5fc70"
+    },
+    {
+      "id": "3aa07aba-cae7-81eb-a740-d61f9f39ea01",
+      "date": "2026-07-21",
+      "time": "",
+      "amount": 76711,
+      "merchant": "PULI ES JUHASZ 굴라쉬, 오리 파스타, 맥주",
+      "category": "food",
+      "location": "헝가리",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81eb-a740-d61f9f39ea01"
     },
     {
       "id": "3aa07aba-cae7-81a5-a4e6-f088c1d07ef9",
-      "date": "2026-07-22",
+      "date": "2026-07-21",
       "time": "",
       "amount": 275645,
-      "merchant": "Aegean Web",
-      "category": "other",
-      "location": "1075 부다페스트, Rumbach Sebestyén utca 7.",
+      "merchant": "아테네-이스탄불 항공",
+      "category": "flight",
+      "location": "튀르키예",
       "travel": true,
       "country": null,
-      "note": "시간 05:34 · dashboard:_64p30gi38kq48ba18p242b9k88q4aba160skab9n8h14ae9m64s3ah2184 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81a5-a4e6-f088c1d07ef9"
     },
     {
-      "id": "3aa07aba-cae7-8154-a05a-f33aa340eec9",
-      "date": "2026-07-21",
+      "id": "3b507aba-cae7-801f-a095-ceb2e9200455",
+      "date": "2026-07-20",
       "time": "",
-      "amount": 71820,
-      "merchant": "FiglmuellerBaeckerstr.",
-      "category": "other",
-      "location": "1115 부다페스트, Vasút utca 1.",
+      "amount": 5551,
+      "merchant": "물, 음료수",
+      "category": "snack",
+      "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "시간 02:20 · dashboard:_6h242e2188rj8b9j88pjib9k8grk8b9p6sp32ba184r3ch1l6gr48e9h84 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
+      "source": "notion:3b507aba-cae7-801f-a095-ceb2e9200455"
+    },
+    {
+      "id": "3aa07aba-cae7-8154-a05a-f33aa340eec9",
+      "date": "2026-07-20",
+      "time": "",
+      "amount": 71820,
+      "merchant": "피그뮐러 슈니첼, 감자샐러드, 맥주",
+      "category": "food",
+      "location": "Austria",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8154-a05a-f33aa340eec9"
     },
     {
       "id": "3aa07aba-cae7-81c5-ac93-f6ca00a5b8c2",
-      "date": "2026-07-21",
+      "date": "2026-07-20",
       "time": "",
       "amount": 137848,
-      "merchant": "NP PLITVICE ULAZNICE",
-      "category": "transport",
-      "location": "1115 부다페스트, Vasút utca 1.",
+      "merchant": "플리트비체 입장료 2인",
+      "category": "ticket",
+      "location": "크로아티아",
       "travel": true,
       "country": null,
-      "note": "시간 03:56 · dashboard:_8gqjaghi6l0jeb9h8kqj0b9k8oskaba18kok8b9m8h13cc9h8co34e9i70 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-81c5-ac93-f6ca00a5b8c2"
     },
     {
       "id": "3aa07aba-cae7-8106-b93e-e9e77709e80f",
-      "date": "2026-07-21",
+      "date": "2026-07-20",
       "time": "",
       "amount": 21482,
-      "merchant": "BKK AUTOMATA G74",
-      "category": "other",
-      "location": "1115 부다페스트, Vasút utca 1.",
+      "merchant": "부다페스트 교통 10회권",
+      "category": "transport",
+      "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "시간 06:36 · dashboard:_6csj4ca56h1j8b9g6923gb9k8ork8b9o6gr3cba26p242g9p8grjehhn64 · 결제수단 미확인 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3aa07aba-cae7-8106-b93e-e9e77709e80f"
-    },
-    {
-      "id": "3aa07aba-cae7-81bf-aa49-d120e15fac97",
-      "date": "2026-07-20",
-      "time": "",
-      "amount": 65316,
-      "merchant": "LEOPOLD MUSEUM TICKET 2",
-      "category": "other",
-      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
-      "travel": true,
-      "country": null,
-      "note": "시간 01:40 · dashboard:_8gqj2ci48l348b9g6p23ib9k6p2jeba188qk8b9p6opjid9k68sk6c2464 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81bf-aa49-d120e15fac97"
-    },
-    {
-      "id": "3aa07aba-cae7-8143-a0a8-cd2c79a3b033",
-      "date": "2026-07-20",
-      "time": "",
-      "amount": 4291,
-      "merchant": "LEOPOLD MUSEUM SHOP 2",
-      "category": "other",
-      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
-      "travel": true,
-      "country": null,
-      "note": "시간 03:57 · dashboard:_8oo36dpk8h0jeba1650k8b9k8kskcb9p8cq3gb9o85242gi26l0j2h2270 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8143-a0a8-cd2c79a3b033"
-    },
-    {
-      "id": "3aa07aba-cae7-81c9-9692-f44d0f3d3c37",
-      "date": "2026-07-20",
-      "time": "",
-      "amount": 10833,
-      "merchant": "WURSTELSTAND SUDTIRO",
-      "category": "other",
-      "location": "Österreichische Galerie, Prinz-Eugen-Straße 27",
-      "travel": true,
-      "country": null,
-      "note": "시간 04:22 · dashboard:_8ko46cph8csjab9k8oo4cb9k8kpjib9p8grkcb9g6gp38c1n692j2c1n70 · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-81c9-9692-f44d0f3d3c37"
     },
     {
       "id": "3a207aba-cae7-8085-a12d-fe5b8a8f53f8",
@@ -3057,7 +4806,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a207aba-cae7-8085-a12d-fe5b8a8f53f8"
     },
     {
@@ -3070,7 +4819,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a207aba-cae7-806f-8d81-dd90f04db844"
     },
     {
@@ -3083,7 +4832,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a207aba-cae7-80bb-8630-f63aac9ddaa2"
     },
     {
@@ -3096,7 +4845,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 현금 · 통화 KRW",
+      "note": "결제수단 현금",
       "source": "notion:3a207aba-cae7-80c6-8530-ebb77cf48e65"
     },
     {
@@ -3109,47 +4858,8 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a207aba-cae7-80eb-b6e4-e62a6d1f8593"
-    },
-    {
-      "id": "3a207aba-cae7-81e1-8801-c7249c08a722",
-      "date": "2026-07-19",
-      "time": "",
-      "amount": 70103,
-      "merchant": "BILLA DANKT 0001228",
-      "category": "other",
-      "location": "Ruckergasse 71, 1120 비엔나",
-      "travel": true,
-      "country": null,
-      "note": "결제수단 미확인 · 통화 KRW",
-      "source": "notion:3a207aba-cae7-81e1-8801-c7249c08a722"
-    },
-    {
-      "id": "3aa07aba-cae7-8142-9e45-fc43f699ebee",
-      "date": "2026-07-18",
-      "time": "",
-      "amount": 42764,
-      "merchant": "Kozlovna Apropos",
-      "category": "other",
-      "location": "Vrch Žižkov, Prague 3",
-      "travel": true,
-      "country": null,
-      "note": "시간 02:18 · dashboard:_64p3ed1i6ko46b9h8gpkab9k6t1j6ba2650k2b9i8opj4e1n60q30e9m8g · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-8142-9e45-fc43f699ebee"
-    },
-    {
-      "id": "3aa07aba-cae7-814e-b9d2-fc8bc2e437a0",
-      "date": "2026-07-18",
-      "time": "",
-      "amount": 1980,
-      "merchant": "ALBERT VAM DEKUJE",
-      "category": "other",
-      "location": "Vrch Žižkov, Prague 3",
-      "travel": true,
-      "country": null,
-      "note": "시간 04:31 · dashboard:_850k6h2674sk4ba36cpk2b9k8gq36ba26d1j8b9o64sj2d9l84q44hi56s · 결제수단 미확인 · 통화 KRW",
-      "source": "notion:3aa07aba-cae7-814e-b9d2-fc8bc2e437a0"
     },
     {
       "id": "3a107aba-cae7-8155-a81e-e3aab83ae097",
@@ -3161,7 +4871,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8155-a81e-e3aab83ae097"
     },
     {
@@ -3174,7 +4884,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81cc-bfeb-c94b041e830c"
     },
     {
@@ -3183,11 +4893,11 @@
       "time": "",
       "amount": 2775,
       "merchant": "프라하 교통 일회권",
-      "category": "other",
+      "category": "transport",
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8181-aac5-db2b28430b44"
     },
     {
@@ -3200,7 +4910,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8186-b6b5-cf2e717ed432"
     },
     {
@@ -3213,7 +4923,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-806c-80b5-d5d946da25be"
     },
     {
@@ -3226,7 +4936,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-814f-a28e-fe731e5882cf"
     },
     {
@@ -3239,7 +4949,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81d0-9adc-e169b8c5f9f0"
     },
     {
@@ -3252,7 +4962,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8165-8cce-dd486191cbd0"
     },
     {
@@ -3265,7 +4975,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8198-b795-ef40cd50e934"
     },
     {
@@ -3278,7 +4988,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c8-b3b7-df0076e1519c"
     },
     {
@@ -3291,7 +5001,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-803e-92b2-f2aba656fb6a"
     },
     {
@@ -3304,7 +5014,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-801d-b4a8-def01fef9a64"
     },
     {
@@ -3317,7 +5027,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8110-b5be-fbfbc92ba379"
     },
     {
@@ -3330,7 +5040,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8177-9665-ed83ccc0f094"
     },
     {
@@ -3343,7 +5053,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c4-99c9-ca658d14fb0a"
     },
     {
@@ -3356,7 +5066,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-80f1-b570-c20a872c70f9"
     },
     {
@@ -3369,7 +5079,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8058-bc1e-c26994cb0512"
     },
     {
@@ -3382,7 +5092,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8092-8523-df6e9d14de42"
     },
     {
@@ -3395,7 +5105,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8198-a3a2-ddf8d3655d47"
     },
     {
@@ -3408,7 +5118,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8137-80e9-fc80696ebdea"
     },
     {
@@ -3457,7 +5167,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "30유로 현금 결제 · 결제수단 현금 · 통화 KRW",
+      "note": "결제수단 현금",
       "source": "notion:3a107aba-cae7-8034-9f25-ffa06edbf635"
     },
     {
@@ -3470,7 +5180,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-814d-bfb0-d66ca5b270d4"
     },
     {
@@ -3483,7 +5193,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8197-ae84-c9e4fbc14d98"
     },
     {
@@ -3496,7 +5206,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ce-a2a7-e1e7437ed0b2"
     },
     {
@@ -3509,7 +5219,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c0-9342-ce9ee7177435"
     },
     {
@@ -3522,7 +5232,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fe-8b3e-e496d89c542b"
     },
     {
@@ -3531,11 +5241,11 @@
       "time": "",
       "amount": 6913,
       "merchant": "LIME*PASS ZKWT",
-      "category": "other",
+      "category": "transport",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8109-bac1-faec833009f9"
     },
     {
@@ -3544,11 +5254,11 @@
       "time": "",
       "amount": 6913,
       "merchant": "LIME*PASS DWYJ",
-      "category": "other",
+      "category": "transport",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-817a-a48b-ccdae9ebf73c"
     },
     {
@@ -3561,7 +5271,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-818d-b059-da05d4840e6c"
     },
     {
@@ -3570,11 +5280,11 @@
       "time": "",
       "amount": 7019,
       "merchant": "LIME*2  ZKWT",
-      "category": "other",
+      "category": "transport",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-816a-ba7d-c8e6a36ff083"
     },
     {
@@ -3583,11 +5293,11 @@
       "time": "",
       "amount": 6081,
       "merchant": "LIME*2  DWYJ",
-      "category": "other",
+      "category": "transport",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fb-a2fc-dc980977a4b9"
     },
     {
@@ -3600,7 +5310,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8109-8fec-d9934eff9806"
     },
     {
@@ -3613,7 +5323,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8156-8b8f-ccb3d0f51a56"
     },
     {
@@ -3626,7 +5336,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fb-9602-ef9fcb02fc95"
     },
     {
@@ -3639,7 +5349,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8189-8ce6-c5a22fc96a37"
     },
     {
@@ -3652,7 +5362,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8171-ba95-f7925a1ce045"
     },
     {
@@ -3665,7 +5375,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ae-b9da-c61c26493337"
     },
     {
@@ -3678,7 +5388,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81be-bd36-ea3f368d8879"
     },
     {
@@ -3691,7 +5401,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f8-8363-d00a3130e4b3"
     },
     {
@@ -3704,7 +5414,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81a3-91f6-c2fa6eda9392"
     },
     {
@@ -3729,7 +5439,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-8034-b569-f06557e8796b"
     },
     {
@@ -3742,7 +5452,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8103-af16-fa848baafe01"
     },
     {
@@ -3755,7 +5465,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-813f-8875-d04bc6af7656"
     },
     {
@@ -3768,7 +5478,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81b9-9960-f8a1045df074"
     },
     {
@@ -3781,7 +5491,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8107-afb7-d5d03a965b5f"
     },
     {
@@ -3794,7 +5504,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-817a-84c3-d5da635ade43"
     },
     {
@@ -3843,7 +5553,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81be-8833-fec6e70d5105"
     },
     {
@@ -3856,7 +5566,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c2-a28e-eabd076b8211"
     },
     {
@@ -3864,12 +5574,12 @@
       "date": "2026-07-11",
       "time": "",
       "amount": 33459,
-      "merchant": "쾰른 교통 그룹 일일권 오구매(멍청비용)",
+      "merchant": "쾰른 교통 그룹 일일권 오구매",
       "category": "mistake",
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8171-9a7b-e207d7b75edc"
     },
     {
@@ -3894,7 +5604,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c9-b833-e36cc02ef2df"
     },
     {
@@ -3955,7 +5665,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8148-bb1d-e450b04a8516"
     },
     {
@@ -3968,7 +5678,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8166-84bb-ea21706151f8"
     },
     {
@@ -3981,7 +5691,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "3유로 현금 결제 · 결제수단 현금 · 통화 KRW",
+      "note": "결제수단 현금",
       "source": "notion:3a107aba-cae7-8145-a238-fc94f60a22fc"
     },
     {
@@ -3994,7 +5704,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-811b-bda9-c55c73b71639"
     },
     {
@@ -4007,7 +5717,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8157-824a-ef7ed629691e"
     },
     {
@@ -4020,7 +5730,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ad-a520-dbe5359977da"
     },
     {
@@ -4033,7 +5743,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8104-bc3a-e5845fef8359"
     },
     {
@@ -4046,7 +5756,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ba-9d47-e236c176d364"
     },
     {
@@ -4059,7 +5769,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ff-b72f-cb6a66f17a3c"
     },
     {
@@ -4072,7 +5782,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-819b-ad76-fb6dda9ddf7d"
     },
     {
@@ -4093,11 +5803,11 @@
       "time": "",
       "amount": 40250,
       "merchant": "유럽 한달용 이심 구매",
-      "category": "gear",
+      "category": "통신",
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8161-a866-e72bc710c66b"
     },
     {
@@ -4110,7 +5820,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8045-b797-d487068ee4d3"
     },
     {
@@ -4123,7 +5833,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-80a3-a0c8-e68e6f45e99b"
     },
     {
@@ -4136,7 +5846,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-8092-b75a-f24f616e0774"
     },
     {
@@ -4149,7 +5859,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 현진카드 · 통화 KRW",
+      "note": "결제수단 현진카드",
       "source": "notion:3a107aba-cae7-8001-a535-e25c1677d1dd"
     },
     {
@@ -4162,7 +5872,7 @@
       "location": "Greece",
       "travel": true,
       "country": null,
-      "note": "볼로테아 항공 · 결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-80d4-aeb0-fa4a188f1f0c"
     },
     {
@@ -4175,7 +5885,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8114-ad56-f812b44e87ec"
     },
     {
@@ -4188,7 +5898,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c3-88be-db51e532bac0"
     },
     {
@@ -4201,7 +5911,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8145-bc97-c1c3d0ee0b5f"
     },
     {
@@ -4225,7 +5935,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81d6-8110-ecd3df88cdc2"
     },
     {
@@ -4238,7 +5948,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f1-8ea6-e7140d0babae"
     },
     {
@@ -4251,7 +5961,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f1-a177-e2849c1a3d5c"
     },
     {
@@ -4264,7 +5974,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-812b-b275-f60376fc8182"
     },
     {
@@ -4277,7 +5987,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8116-ba29-c4227bf0b2ff"
     },
     {
@@ -4290,7 +6000,7 @@
       "location": "hungary",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8113-b11c-df7f37ed8ae5"
     },
     {
@@ -4303,7 +6013,7 @@
       "location": "hungary",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8151-8351-d3478c356a5d"
     },
     {
@@ -4316,7 +6026,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8147-9bf3-fc535b3d6636"
     },
     {
@@ -4340,7 +6050,7 @@
       "location": "Croatia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81c8-b658-f7b31dca32f1"
     },
     {
@@ -4353,7 +6063,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fc-a026-c5eed8a6bb33"
     },
     {
@@ -4366,7 +6076,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8177-8a16-c98be4d78796"
     },
     {
@@ -4412,7 +6122,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ea-89bc-e65620874efd"
     },
     {
@@ -4425,7 +6135,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fd-be74-f4b791c236f8"
     },
     {
@@ -4460,7 +6170,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "전액 교보문고 포인트 사용 · 결제수단 포인트 · 통화 KRW",
+      "note": "결제수단 포인트",
       "source": "notion:3a107aba-cae7-8137-84c6-c2fea9028e29"
     },
     {
@@ -4473,7 +6183,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8147-9a36-c2a58fc2a9f3"
     },
     {
@@ -4497,7 +6207,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81a6-889a-cc4092bdcca3"
     },
     {
@@ -4510,7 +6220,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-810e-8d29-c15c1d32cbbe"
     },
     {
@@ -4523,7 +6233,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f9-a151-c79a2d6cea37"
     },
     {
@@ -4536,7 +6246,7 @@
       "location": "Hungary",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81fb-975e-e2b11168bd71"
     },
     {
@@ -4549,7 +6259,7 @@
       "location": "Austria",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-810f-9a45-e276db4bd108"
     },
     {
@@ -4562,7 +6272,7 @@
       "location": "Czechia",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81ae-bdb5-e95ed8186e40"
     },
     {
@@ -4575,7 +6285,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8187-8e80-ce0bf3ed272c"
     },
     {
@@ -4588,7 +6298,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8128-9ae0-eeaf90d06b27"
     },
     {
@@ -4601,7 +6311,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-818a-a0c1-fc490fa88cf5"
     },
     {
@@ -4625,7 +6335,7 @@
       "location": "South Korea",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8121-b2d8-e44f4a75479d"
     },
     {
@@ -4638,7 +6348,7 @@
       "location": "Germany",
       "travel": true,
       "country": null,
-      "note": "하나투어 포인트 사용 · 결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81d2-a97f-c32d6195d108"
     },
     {
@@ -4651,7 +6361,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-81f9-bb68-cfc1d3266537"
     },
     {
@@ -4664,7 +6374,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-815f-bb59-dac644a867e2"
     },
     {
@@ -4688,7 +6398,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8128-be24-d86b5f2fa9ff"
     },
     {
@@ -4701,7 +6411,7 @@
       "location": "여행 준비",
       "travel": true,
       "country": null,
-      "note": "결제수단 카드 · 통화 KRW",
+      "note": "결제수단 카드",
       "source": "notion:3a107aba-cae7-8114-b468-e0babc1bab27"
     },
     {
@@ -4714,6 +6424,19 @@
       "location": "여행 준비",
       "travel": true,
       "source": "telegram:433493318/message/10729"
+    },
+    {
+      "id": "3ab07aba-cae7-8009-a621-e4ebbad4fe8a",
+      "date": "2026-02-22",
+      "time": "",
+      "amount": 596800,
+      "merchant": "인천-프랑크푸르트 항공",
+      "category": "flight",
+      "location": "germany",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 카드",
+      "source": "notion:3ab07aba-cae7-8009-a621-e4ebbad4fe8a"
     }
   ],
   "locations": [
@@ -4734,6 +6457,14 @@
       "count": 14
     },
     {
+      "name": "Muvakkithane Cd. 2, 34710 이스탄불",
+      "count": 10
+    },
+    {
+      "name": "Abdulhak Hamit Cd. 42, 34437 이스탄불",
+      "count": 8
+    },
+    {
       "name": "Linzer Straße 33, 50939 쾰른",
       "count": 7,
       "lat": 50.9165529,
@@ -4748,6 +6479,30 @@
       "count": 7,
       "lat": 52.3744779,
       "lng": 9.7385532
+    },
+    {
+      "name": "Milos, 848 00 Zefyria",
+      "count": 7,
+      "lat": 36.6969976,
+      "lng": 24.4760331
+    },
+    {
+      "name": "Sultan Ahmet Camisi, Sultan Ahmet Cami",
+      "count": 7
+    },
+    {
+      "name": "Khan al Khalili, Sekat Khan Al Khalili 10A",
+      "count": 7
+    },
+    {
+      "name": "Saronic Gulf, 그리스",
+      "count": 6,
+      "lat": 37.7416576,
+      "lng": 23.7199727
+    },
+    {
+      "name": "Taksim Cesmesi Sk. 8, 34437 이스탄불",
+      "count": 6
     },
     {
       "name": "과천시",
@@ -4766,6 +6521,10 @@
       "lng": 14.4606777
     },
     {
+      "name": "Acropolis, 105 58 아텐스",
+      "count": 5
+    },
+    {
       "name": "Wallenstein Palace, 118 00 Prague 1",
       "count": 4,
       "lat": 50.0900122,
@@ -4778,32 +6537,6 @@
     {
       "name": "Sukojišanska ulica 2/2, 21000 스플리트",
       "count": 4
-    },
-    {
-      "name": "Frankfurt (Main) Hbf, Mannheimer Straße 6",
-      "count": 3
-    },
-    {
-      "name": "Opletalova 958/27, 110 00 Prague 1",
-      "count": 3,
-      "lat": 50.0834272,
-      "lng": 14.4322565
-    },
-    {
-      "name": "Österreichische Galerie, Prinz-Eugen-Straße 27",
-      "count": 3
-    },
-    {
-      "name": "1115 부다페스트, Vasút utca 1.",
-      "count": 3
-    },
-    {
-      "name": "1075 부다페스트, Rumbach Sebestyén utca 7.",
-      "count": 2
-    },
-    {
-      "name": "Put umca, 21220 Seget Vranjica",
-      "count": 2
     }
   ],
   "map": {
@@ -4833,6 +6566,18 @@
         "lng": 9.7385532
       },
       {
+        "name": "Milos, 848 00 Zefyria",
+        "count": 7,
+        "lat": 36.6969976,
+        "lng": 24.4760331
+      },
+      {
+        "name": "Saronic Gulf, 그리스",
+        "count": 6,
+        "lat": 37.7416576,
+        "lng": 23.7199727
+      },
+      {
         "name": "과천시",
         "count": 5,
         "lat": 37.4292,
@@ -4849,12 +6594,6 @@
         "count": 4,
         "lat": 50.0900122,
         "lng": 14.4055084
-      },
-      {
-        "name": "Opletalova 958/27, 110 00 Prague 1",
-        "count": 3,
-        "lat": 50.0834272,
-        "lng": 14.4322565
       }
     ],
     "routePoints": [
@@ -5135,6 +6874,42 @@
       "checkIn": null,
       "checkOut": null,
       "amount": 273341,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMCYW4RJHJ",
+      "city": "Navarchou Notara 34, 185 31 피레오스",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 240499,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * TAHSCJM5",
+      "city": "Acropolis, 105 58 아텐스",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 65217,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMW24MHFXR",
+      "city": "Sultan Ahmet Camisi, Sultan Ahmet Cami",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 172875,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMKDTAEFTN",
+      "city": "Muvakkithane Cd. 2, 34710 이스탄불",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 68932,
       "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
@@ -5980,10 +7755,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-07-27",
+    "asOf": "2026-08-10",
     "limitDays": 90,
-    "usedDays": 20,
-    "remainingDays": 70,
+    "usedDays": 34,
+    "remainingDays": 56,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -6106,72 +7881,6 @@
   },
   "sleep": [
     {
-      "date": "2026-07-07",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "6.14"
-    },
-    {
-      "date": "2026-07-08",
-      "sleepHours": 1.57,
-      "recharge": 20.0,
-      "balance": "4.14"
-    },
-    {
-      "date": "2026-07-09",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.77"
-    },
-    {
-      "date": "2026-07-11",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.62"
-    },
-    {
-      "date": "2026-07-11",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.62"
-    },
-    {
-      "date": "2026-07-11",
-      "sleepHours": 0.5,
-      "recharge": 6.0,
-      "balance": "2.59"
-    },
-    {
-      "date": "2026-07-13",
-      "sleepHours": 0.5,
-      "recharge": 6.0,
-      "balance": "2.59"
-    },
-    {
-      "date": "2026-07-13",
-      "sleepHours": 7.96,
-      "recharge": 99.0,
-      "balance": "7.04"
-    },
-    {
-      "date": "2026-07-14",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "6.32"
-    },
-    {
-      "date": "2026-07-15",
-      "sleepHours": 7.2,
-      "recharge": 90.0,
-      "balance": "7.38"
-    },
-    {
-      "date": "2026-07-16",
-      "sleepHours": 3.86,
-      "recharge": 48.0,
-      "balance": "6.48"
-    },
-    {
       "date": "2026-07-17",
       "sleepHours": 8.23,
       "recharge": 103.0,
@@ -6188,19 +7897,75 @@
       "sleepHours": 9.36,
       "recharge": 117.0,
       "balance": "7.67"
+    },
+    {
+      "date": "2026-07-28",
+      "sleepHours": 7.62,
+      "recharge": 95.0,
+      "balance": "7.04"
+    },
+    {
+      "date": "2026-07-29",
+      "sleepHours": 1.0,
+      "recharge": 12.0,
+      "balance": "5.60"
+    },
+    {
+      "date": "2026-07-30",
+      "sleepHours": 6.84,
+      "recharge": 86.0,
+      "balance": "5.91"
+    },
+    {
+      "date": "2026-07-31",
+      "sleepHours": 6.84,
+      "recharge": 86.0,
+      "balance": "5.91"
+    },
+    {
+      "date": "2026-08-01",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "5.68"
+    },
+    {
+      "date": "2026-08-02",
+      "sleepHours": 7.95,
+      "recharge": 99.0,
+      "balance": "6.50"
+    },
+    {
+      "date": "2026-08-03",
+      "sleepHours": 7.91,
+      "recharge": 99.0,
+      "balance": "7.06"
+    },
+    {
+      "date": "2026-08-04",
+      "sleepHours": 3.61,
+      "recharge": 45.0,
+      "balance": "6.07"
+    },
+    {
+      "date": "2026-08-05",
+      "sleepHours": 9.45,
+      "recharge": 118.0,
+      "balance": "7.22"
+    },
+    {
+      "date": "2026-08-06",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "7.50"
+    },
+    {
+      "date": "2026-08-07",
+      "sleepHours": 10.15,
+      "recharge": 127.0,
+      "balance": "8.34"
     }
   ],
   "reflections": [
-    {
-      "id": "kr6n83p6u2rvj3nenefk2q8e84",
-      "date": "2026-07-12",
-      "title": "실제 흐름 / 힙키치 템플릿 리서치 보드",
-      "intent": "여행 기록을 큰 글감으로 밀어붙이기보다, 실제 동선에서 다시 볼 수 있는 장면 하나만 고른다.",
-      "did": "쾰른 장면 한 문장보다 인스타그램 카드뉴스용 힙/키치 템플릿 리서치 보드와 영상 자동화 업로드/완료 화면 선택 흐름 간소화가 중심이 됐다.",
-      "why": "오늘은 이동 기록보다 앞으로 반복 산출물로 쓸 카드뉴스 형식과 선택 부담을 줄이는 일이 더 직접적인 손잡이였다.",
-      "carry": "쾰른 장면은 결제/장소 신호를 바탕으로 작게 남기고, 템플릿은 실제 제작 후보 1개로 좁힌다.",
-      "drop": "레퍼런스 이미지만 쌓고 실제 적용 조건을 남기지 않는 방식."
-    },
     {
       "id": "dprifttitggdm6ghdhijbg6jgo",
       "date": "2026-07-13",
@@ -6309,6 +8074,16 @@
       "did": null,
       "why": null,
       "carry": "올릴 사진 후보가 있으면 야경 / 음식 / 이동 중 하나만 고른다.",
+      "drop": null
+    },
+    {
+      "id": "0lj78lpmrnqej9a9igvkf1k9sg",
+      "date": "2026-07-30",
+      "title": "내일 의도 / Threads로 1국가 1앱 수요 묻기",
+      "intent": "1국가 1앱 제작을 유튜브 시리즈로 만들면 재미와 수요가 있을지 Threads로 먼저 묻는다.\\n첫 손잡이: 선택지 3개가 있는 수요검증 글 1개를 올린다.\\n변경 허용 조건: 이동/컨디션 때문에 게시가 어려우면 초안만 확정하고 게시 시간을 다음날 오전으로 미룬다.",
+      "did": null,
+      "why": null,
+      "carry": null,
       "drop": null
     }
   ]

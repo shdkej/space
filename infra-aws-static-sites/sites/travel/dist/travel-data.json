@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T03:00:13.241655+00:00",
+  "generatedAt": "2026-08-10T14:40:07.018603+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 47.7,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 84165,
+    "reserveBurnKrw": 83673,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-10",
+    "date": "2026-08-11",
     "location": "Cappadocia / Pamukkale / Antalya",
     "mapQuery": "Cappadocia / Pamukkale / Antalya, Turkey"
   },
@@ -330,7 +330,11 @@
     },
     {
       "date": "2026-08-10",
-      "amount": 87836
+      "amount": 154640
+    },
+    {
+      "date": "2026-08-11",
+      "amount": 18568
     }
   ],
   "bookedCosts": [
@@ -6465,6 +6469,10 @@
       "count": 8
     },
     {
+      "name": "Al Ghelal Street, 알카이라주",
+      "count": 8
+    },
+    {
       "name": "Linzer Straße 33, 50939 쾰른",
       "count": 7,
       "lat": 50.9165529,
@@ -6532,10 +6540,6 @@
     },
     {
       "name": "Ruckergasse 71, 1120 비엔나",
-      "count": 4
-    },
-    {
-      "name": "Sukojišanska ulica 2/2, 21000 스플리트",
       "count": 4
     }
   ],
@@ -7755,10 +7759,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-10",
+    "asOf": "2026-08-11",
     "limitDays": 90,
-    "usedDays": 34,
-    "remainingDays": 56,
+    "usedDays": 35,
+    "remainingDays": 55,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -7881,12 +7885,6 @@
   },
   "sleep": [
     {
-      "date": "2026-07-17",
-      "sleepHours": 8.23,
-      "recharge": 103.0,
-      "balance": "6.94"
-    },
-    {
       "date": "2026-07-18",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -7963,6 +7961,12 @@
       "sleepHours": 10.15,
       "recharge": 127.0,
       "balance": "8.34"
+    },
+    {
+      "date": "2026-08-10",
+      "sleepHours": 3.65,
+      "recharge": 46.0,
+      "balance": "6.82"
     }
   ],
   "reflections": [

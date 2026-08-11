@@ -54,22 +54,25 @@ canvas.saem-canvas     기존 Saem 씬의 롤백용 DOM. 공개 화면에서는 
 
 히어로·philosophy cards·상세 타일·리스트 행·하단 내비·아이콘 버튼이 모두 이 토큰만 쓴다. 새 표면을 추가할 때 개별 rgba를 만들지 말 것.
 
-### First-screen cards
+### First-screen reading rows
 
-첫 화면 카드는 3개만 둔다.
+첫 화면의 조작 행은 3개만 둔다. 형태는 카드가 아니라 텍스트를 기준으로 한 reading row다.
 
-- `Now`: 지금 볼 것 하나. overall score와 가장 약한 신호를 System 상세로 연결한다.
-- `Balance`: 현재 기울어진 관계. Agents와 Output의 관계를 한 줄로 보여주고 Agents 상세로 연결한다.
-- `Loop`: 다음 확인점. 완료 상태도 다음 수집·재확인으로 이어지게 하고 Output 상세로 연결한다.
+- `Now`: 지금 먼저 볼 문제. 가장 약한 신호를 System 상세로 연결한다.
+- `Balance`: 현재 기울어진 관계. Services / Agents / Outputs fresh를 한 줄로 보여주고 Agents 상세로 연결한다.
+- `Loop`: 다음 확인점. snapshot freshness와 agent feed freshness를 함께 보여주고 Output 상세로 연결한다.
 
 Surfaces는 첫 화면 카드에서 빠지지만 하단 상세 내비에는 유지한다. 첫 화면은 운영 목록이 아니라 `미니멀 · 균형 · 순환`의 판단 손잡이다.
 
 ### Spatial Type surface (2026-08-09)
 
 - 첫 화면의 주인공은 패널이 아니라 상태 문장이다. hero는 좌측 기준선과 큰 타입으로 현재 상태와 다음 읽을 방향을 먼저 전달한다.
-- Now/Balance/Loop는 독립적인 유리 카드가 아니라 상단 규칙선 아래의 세 개 읽기 행으로 표현한다. 각 행은 번호성 라벨, 핵심 수치, 다음 행동을 가진다.
+- Now/Balance/Loop는 독립적인 유리 카드가 아니라 상단 규칙선 아래의 세 개 읽기 행으로 표현한다. 각 행은 번호성 라벨, 운영 문장, 보조 수치, 다음 행동을 가진다.
 - 모바일에서는 세 행을 세로 목록으로 접어 가로 스크롤과 텍스트 겹침을 금지한다. 데스크톱에서는 세 열을 유지하되 각 열 사이에 얇은 구분선만 둔다.
 - 객체는 필요할 때 호출한다. 상세 탭·리스트·근거 모달의 데이터 계약과 접근성 이름은 유지한다.
+- 점수는 대표 상태가 아니다. `Score 98`과 `Layers 2/4`가 동시에 존재하면 `주의 필요`가 우선이고, score는 Evidence 그룹의 보조 근거로 내려간다.
+- `status.json`과 `agents-live.json`은 신선도를 따로 표시한다. 0-30분은 fresh, 30분-2시간은 aging, 2시간 초과는 stale로 본다.
+- 상세 탭은 `Needs attention / Healthy / Evidence` 순서로 렌더해 경고 항목이 일반 목록 사이에 묻히지 않게 한다.
 
 ### 전환 문법
 

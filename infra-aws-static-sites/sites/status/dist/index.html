@@ -28,6 +28,9 @@
         --glass-border: rgba(170, 226, 211, 0.58);
         --glass-blur: none;
         --shadow-soft: 0 12px 34px rgba(48, 97, 92, 0.13);
+        --focus: #2f8f7b;
+        --attention: #b9822b;
+        --critical: #a95448;
         --photo-veil: rgba(238, 248, 245, 0.28);
         --radius: 14px;
         --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -451,13 +454,23 @@
           box-shadow 0.28s var(--ease);
       }
 
-      .control-card:hover,
+      @media (hover: hover) and (pointer: fine) {
+        .control-card:hover {
+          transform: translateY(-3px);
+          border-color: rgba(215, 181, 107, 0.78);
+          background: rgba(250, 252, 247, 0.48);
+          box-shadow: 0 18px 40px rgba(48, 97, 92, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.58);
+        }
+      }
+
+      :where(button, a):focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 3px;
+      }
+
       .control-card:focus-visible {
-        outline: none;
-        transform: translateY(-3px);
-        border-color: rgba(215, 181, 107, 0.78);
-        background: rgba(250, 252, 247, 0.48);
-        box-shadow: 0 18px 40px rgba(48, 97, 92, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.58);
+        border-color: color-mix(in srgb, var(--focus), white 18%);
+        background: rgba(250, 252, 247, 0.5);
       }
 
       .control-card.is-active {
@@ -590,8 +603,8 @@
       }
 
       .icon-button {
-        width: 38px;
-        height: 38px;
+        width: 44px;
+        height: 44px;
         display: grid;
         place-items: center;
         border: 1px solid var(--glass-border);
@@ -682,6 +695,37 @@
         margin-bottom: 10px;
       }
 
+      .attention-block {
+        margin-bottom: 14px;
+      }
+
+      .group-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 16px 0 8px;
+        color: rgba(28, 50, 46, 0.96);
+        font-size: 10px;
+        font-weight: 850;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .group-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(38, 51, 47, 0.18);
+      }
+
+      .group-title.is-attention {
+        color: var(--attention);
+      }
+
+      .list-stack + .group-title {
+        margin-top: 18px;
+      }
+
       .summary-tile,
       .list-row {
         border: 1px solid var(--glass-border);
@@ -759,7 +803,7 @@
       }
 
       .row-meta {
-        max-width: 96px;
+        max-width: 128px;
         overflow: hidden;
         padding: 6px 9px;
         border: 1px solid var(--glass-border);
@@ -782,9 +826,16 @@
         transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
       }
 
-      .list-row.is-clickable:hover {
-        border-color: rgba(190, 241, 226, 0.9);
-        background: var(--glass-strong);
+      @media (hover: hover) and (pointer: fine) {
+        .list-row.is-clickable:hover {
+          border-color: rgba(190, 241, 226, 0.9);
+          background: var(--glass-strong);
+        }
+      }
+
+      .list-row:focus-visible {
+        border-color: color-mix(in srgb, var(--focus), white 12%);
+        background: rgba(247, 255, 252, 0.56);
       }
 
       .list-row.is-clickable .row-meta::after {
@@ -1156,11 +1207,27 @@
 
       body::before {
         background:
-          linear-gradient(90deg, rgba(255,255,255,.82), transparent 58%),
-          linear-gradient(164deg, transparent 0 58%, rgba(79,157,138,.10) 58.2% 58.35%, transparent 58.5%),
-          radial-gradient(circle at 82% 24%, rgba(255,255,255,.7), transparent 3%);
-        opacity: .72;
+          linear-gradient(90deg, rgba(255,255,255,.84), transparent 58%),
+          linear-gradient(164deg, transparent 0 58%, rgba(79,157,138,.06) 58.2% 58.35%, transparent 58.5%),
+          radial-gradient(circle at 82% 24%, rgba(255,255,255,.42), transparent 3%);
+        opacity: .56;
         mix-blend-mode: normal;
+      }
+
+      body[data-overall="warn"]::before {
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.88), rgba(255,252,244,.58) 48%, transparent 70%),
+          linear-gradient(164deg, transparent 0 58%, rgba(185,130,43,.10) 58.2% 58.35%, transparent 58.5%);
+      }
+
+      body[data-overall="bad"]::before {
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.9), rgba(249,244,240,.66) 48%, rgba(64,70,68,.16) 100%),
+          linear-gradient(164deg, transparent 0 58%, rgba(169,84,72,.12) 58.2% 58.35%, transparent 58.5%);
+      }
+
+      body::after {
+        opacity: .34;
       }
 
       .overview {
@@ -1173,13 +1240,21 @@
 
       .hero-copy {
         align-self: center;
-        width: min(650px, 72vw);
+        width: min(700px, 74vw);
         padding: 0 0 0 22px;
         border: 0;
         border-left: 2px solid var(--ok);
         border-radius: 0;
         background: transparent;
         box-shadow: none;
+      }
+
+      body[data-overall="warn"] .hero-copy {
+        border-left-color: var(--attention);
+      }
+
+      body[data-overall="bad"] .hero-copy {
+        border-left-color: var(--critical);
       }
 
       .hero-kicker {
@@ -1196,7 +1271,7 @@
       }
 
       .hero-title .hero-emphasis { color: var(--ink); text-shadow: none; }
-      .hero-lead { max-width: 38ch; font-size: 14px; line-height: 1.55; }
+      .hero-lead { max-width: 42ch; font-size: 14px; line-height: 1.55; }
       .hero-meta { grid-template-columns: repeat(3, max-content); gap: 8px 22px; font-size: 11px; }
 
       .overview-grid {
@@ -1234,6 +1309,17 @@
       .card-title { color: var(--muted); font-size: 13px; white-space: normal; }
       .card-bottom { color: var(--faint); font-size: 11px; }
 
+      @media (min-width: 740px) and (max-width: 1119px) {
+        .hero-copy {
+          max-width: min(680px, 82vw);
+        }
+
+        .hero-meta {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+      }
+
       @media (max-width: 639px) {
         .overview { width: calc(100vw - 24px); gap: 12px; padding-top: max(15px, env(safe-area-inset-top)); padding-bottom: max(15px, env(safe-area-inset-bottom)); }
         .hero-copy { width: min(100%, 560px); padding-left: 15px; }
@@ -1241,11 +1327,12 @@
         .hero-lead { font-size: 12px; }
         .hero-meta { grid-template-columns: 1fr; gap: 2px; }
         .overview-grid { grid-template-columns: 1fr; }
-        .control-card, .control-card:last-child { min-height: 0; height: auto; grid-template-columns: 88px 1fr auto; grid-template-rows: auto; align-items: center; gap: 10px; padding: 11px 0; margin: 0; border-right: 0; border-bottom: 1px solid rgba(38, 51, 47, .18); }
+        .control-card, .control-card:last-child { min-height: 0; height: auto; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto; align-items: center; gap: 10px; padding: 11px 0; margin: 0; border-right: 0; border-bottom: 1px solid rgba(38, 51, 47, .18); }
         .control-card:last-child { border-bottom: 0; }
-        .card-top { grid-column: 1; }
+        .card-top { grid-column: 1; min-width: 0; }
         .card-mid { grid-column: 2; }
-        .card-bottom { grid-column: 3; justify-content: end; }
+        .card-bottom { grid-column: 2; justify-content: start; }
+        .card-label { letter-spacing: .02em; text-overflow: clip; }
         .card-bottom .card-status { display: none; }
         .card-value { font-size: 20px; }
         .card-title { font-size: 11px; }
@@ -1309,7 +1396,7 @@
       <nav class="floating-nav" id="floatingNav" aria-label="Detail navigation"></nav>
       <div class="transition-flash" id="transitionFlash" aria-hidden="true"></div>
 
-      <div class="reason-modal" id="reasonModal" role="dialog" aria-modal="true" aria-labelledby="reasonTitle">
+      <div class="reason-modal" id="reasonModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="reasonTitle">
         <div class="reason-card">
           <header class="reason-head">
             <span class="dot" id="reasonDot"></span>
@@ -1362,11 +1449,17 @@
 
       const stateClass = (state) =>
         state === "ok" ? "ok" : state === "warn" ? "warn" : state === "none" ? "" : "bad";
-      const stateLabel = (state) => (state === "ok" ? "Operational" : state === "warn" ? "Attention" : "Down");
+      const stateLabel = (state) => (state === "ok" ? "Operational" : state === "warn" ? "Attention" : state === "none" ? "No data" : "Down");
 
-      const rel = (isoStr) => {
-        if (!isoStr) return "never";
-        const minutes = Math.round((Date.now() - new Date(isoStr).getTime()) / 60000);
+      const ageMinutes = (isoStr) => {
+        if (!isoStr) return null;
+        const time = new Date(isoStr).getTime();
+        if (!Number.isFinite(time)) return null;
+        return Math.max(0, Math.round((Date.now() - time) / 60000));
+      };
+
+      const relFromMinutes = (minutes) => {
+        if (minutes == null) return "never";
         if (minutes < 1) return "just now";
         if (minutes < 60) return `${minutes}m ago`;
         const hours = Math.round(minutes / 60);
@@ -1374,11 +1467,26 @@
         return `${Math.round(hours / 24)}d ago`;
       };
 
+      const rel = (isoStr) => relFromMinutes(ageMinutes(isoStr));
+
       const relHours = (hours) => {
         if (hours == null) return "never";
         if (hours < 1) return "under 1h";
         if (hours < 48) return `${Math.round(hours)}h ago`;
         return `${Math.round(hours / 24)}d ago`;
+      };
+
+      const freshness = (minutes, freshAt = 30, agingAt = 120) => {
+        if (minutes == null) return { state: "warn", label: "unknown", text: "unknown" };
+        if (minutes <= freshAt) return { state: "ok", label: "fresh", text: `fresh · ${relFromMinutes(minutes)}` };
+        if (minutes <= agingAt) return { state: "warn", label: "aging", text: `aging · ${relFromMinutes(minutes)}` };
+        return { state: "bad", label: "stale", text: `stale · ${relFromMinutes(minutes)}` };
+      };
+
+      const outputAction = (item) => {
+        if (item.state === "bad") return "다음 조치: 재실행 필요";
+        if (item.state === "warn") return "다음 조치: 주기 확인";
+        return "정상 주기 안에 있습니다";
       };
 
       const LIVE_FRESH_MINUTES = 30;
@@ -1395,16 +1503,17 @@
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
           if (!Array.isArray(data.agents) || data.agents.length === 0) throw new Error("empty");
-          const ageMinutes = Math.round((Date.now() - new Date(data.generatedAt).getTime()) / 60000);
+          const age = ageMinutes(data.generatedAt);
           return {
-            live: ageMinutes >= 0 && ageMinutes <= LIVE_FRESH_MINUTES,
-            ageMinutes,
+            live: age != null && age <= LIVE_FRESH_MINUTES,
+            ageMinutes: age,
+            generatedAt: data.generatedAt,
             agents: data.agents,
             outputs: Array.isArray(data.outputs) ? data.outputs : [],
             system: data.system || null,
           };
         } catch (_error) {
-          return { live: false, ageMinutes: null, agents: null, outputs: [], system: null };
+          return { live: false, ageMinutes: null, generatedAt: null, agents: null, outputs: [], system: null };
         }
       }
 
@@ -1468,17 +1577,27 @@
         `;
       }
 
-      function openReason(dataset) {
+      let lastReasonTrigger = null;
+
+      function openReason(dataset, trigger) {
+        lastReasonTrigger = trigger || document.activeElement;
         $("reasonDot").className = `dot ${stateClass(dataset.state)}`;
         $("reasonTitle").textContent = dataset.name;
         $("reasonState").textContent = dataset.state === "none" ? "No data" : stateLabel(dataset.state);
         $("reasonState").className = `reason-state ${stateClass(dataset.state)}`;
         $("reasonBody").textContent = dataset.reason;
         $("reasonModal").classList.add("is-open");
+        $("reasonModal").setAttribute("aria-hidden", "false");
+        $("reasonClose").focus();
       }
 
       function closeReason() {
         $("reasonModal").classList.remove("is-open");
+        $("reasonModal").setAttribute("aria-hidden", "true");
+        if (lastReasonTrigger && typeof lastReasonTrigger.focus === "function") {
+          lastReasonTrigger.focus();
+        }
+        lastReasonTrigger = null;
       }
 
       function card(item) {
@@ -1502,227 +1621,286 @@
       function buildModel(data, liveFeed) {
         const overall = data.overall || {};
         const checks = data.checks || [];
+        const hasFeed = Boolean(Array.isArray(liveFeed?.agents) && liveFeed.agents.length > 0);
         const isLive = Boolean(liveFeed?.live);
-        const agents = isLive
+        const outputs = (hasFeed ? liveFeed.outputs : []) || [];
+        const sys = hasFeed && liveFeed.system && Array.isArray(liveFeed.system.layers) ? liveFeed.system : null;
+        const snapshotAge = ageMinutes(data.generatedAt);
+        const snapshotFresh = freshness(snapshotAge);
+        const agentFresh = freshness(liveFeed?.ageMinutes, LIVE_FRESH_MINUTES, 60);
+        const okChecks = checks.filter((item) => item.state === "ok").length;
+        const nonOkChecks = checks.filter((item) => item.state !== "ok");
+        const freshOutputs = outputs.filter((item) => item.state === "ok").length;
+        const nonOkOutputs = outputs.filter((item) => item.state !== "ok");
+        const layers = sys?.layers || [];
+        const okLayers = layers.filter((item) => item.state === "ok");
+        const nonOkLayers = layers.filter((item) => item.state !== "ok");
+        const outputRatio = outputs.length ? `${freshOutputs}/${outputs.length}` : "--";
+        const avgLatency = checks.length
+          ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length)
+          : 0;
+        const score = Number.isFinite(Number(overall.score)) ? Number(overall.score) : 0;
+        const agents = hasFeed
           ? liveFeed.agents.map((a) => ({
               name: `${a.emoji ? a.emoji + " " : ""}${a.name}`,
               state: a.state,
               detail: a.crons > 0
                 ? `${a.crons} cron loops · last activity ${rel(a.lastActivityAt)}`
-                : "on-demand agent · no cron loops",
-              meta: a.crons > 0 ? `${a.crons} loops` : "idle",
+                : "수동 호출형 · 예약 루프 없음",
+              meta: a.crons > 0 ? `${a.crons} loops` : "on demand",
+              group: a.crons > 0 ? "Scheduled" : "On demand",
             }))
-          : (data.agents || []).map((a) => ({ ...a, meta: stateLabel(a.state) }));
-        const outputs = (isLive ? liveFeed.outputs : []) || [];
-        const freshOutputs = outputs.filter((item) => item.state === "ok").length;
-        const sys = isLive && liveFeed.system && Array.isArray(liveFeed.system.layers) ? liveFeed.system : null;
-        const okChecks = checks.filter((item) => item.state === "ok").length;
+          : (data.agents || []).map((a) => ({ ...a, meta: stateLabel(a.state), group: "Static registry" }));
         const okAgents = agents.filter((item) => item.state === "ok").length;
         const totalAgents = agents.length;
-        const agentRows = agents.slice();
-        if (!isLive) {
-          const age = liveFeed?.ageMinutes;
-          agentRows.unshift({
-            name: "Live feed silent",
+        const attentionRows = [];
+
+        if (!hasFeed || !isLive) {
+          attentionRows.push({
+            name: "Agent feed",
             state: "warn",
-            detail: age == null
-              ? "agents-live.json이 없거나 읽지 못했습니다 — 아래는 정적 registry 목록입니다."
-              : `수집기 마지막 신호 ${age}분 전 — 아래는 정적 registry 목록입니다.`,
-            meta: "stale",
+            detail: !hasFeed
+              ? "agents-live.json이 없거나 읽히지 않습니다."
+              : `마지막 수집 ${relFromMinutes(liveFeed.ageMinutes)} — 30분 신선도 기준을 넘었습니다.`,
+            meta: hasFeed ? agentFresh.label : "missing",
+            reason: "라이브 에이전트 피드가 신선하지 않으면 레이어와 산출물 판정은 마지막 수집 시점의 근거로만 봐야 합니다.",
           });
         }
-        const avgLatency = checks.length
-          ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length)
-          : 0;
-        const score = Number.isFinite(Number(overall.score)) ? Number(overall.score) : 0;
-        const weakSurface = checks.find((item) => item.state !== "ok");
-        const weakLayer = sys?.layers?.find((item) => item.state !== "ok");
-        const weakOutput = outputs.find((item) => item.state !== "ok");
-        const weakSignal = weakSurface || weakLayer || weakOutput || null;
-        const systemReady = (overall.state || "ok") === "ok" && okChecks === checks.length && !weakLayer && !weakOutput;
-        const balanceState = !isLive
-          ? "warn"
-          : okAgents === totalAgents && freshOutputs === outputs.length
-            ? "ok"
-            : "warn";
-        const nowLine = systemReady
-          ? "조용히 유지"
-          : weakSignal?.name || ((overall.state || "warn") === "warn" ? "확인 필요" : "복구 먼저");
-        const balanceLine = !isLive
-          ? "라이브 신호 대기"
-          : totalAgents === 0
-            ? "운영 신호 없음"
-            : `${okAgents}/${totalAgents} agents`;
-        const balanceTitle = !isLive
-          ? `${okChecks}/${checks.length} surfaces`
-          : `${freshOutputs}/${outputs.length} outputs`;
-        const loopLine = !isLive
-          ? "수집기 확인"
-          : freshOutputs === outputs.length
-            ? "다음 주기 대기"
-            : "산출물 재확인";
-        const nextLoop = !isLive
-          ? "agents-live.json"
-          : freshOutputs === outputs.length
-            ? `${liveFeed.ageMinutes}m ago`
-            : "Output 탭";
+        if (snapshotFresh.state !== "ok") {
+          attentionRows.push({
+            name: "Status snapshot",
+            state: snapshotFresh.state,
+            detail: `status.json · ${stamp(data.generatedAt)} · ${snapshotFresh.text}`,
+            meta: snapshotFresh.label,
+            reason: "정적 status snapshot이 오래되면 점수와 서비스 목록은 보조 근거로만 봐야 합니다.",
+          });
+        }
+        nonOkLayers.forEach((layer, index) => {
+          attentionRows.push({
+            name: `L${layers.indexOf(layer) + 1 || index + 1} ${layer.name}`,
+            state: layer.state,
+            detail: layer.reason || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.",
+            meta: layer.state,
+            reason: layer.reason || "수집기가 판정 근거를 아직 보내지 않았습니다 — 다음 수집 주기 후 다시 확인하세요.",
+          });
+        });
+        nonOkOutputs.forEach((item) => {
+          attentionRows.push({
+            name: item.name,
+            state: item.state,
+            detail: `${relHours(item.ageHours)} · ${outputAction(item)}`,
+            meta: relHours(item.ageHours),
+          });
+        });
+        nonOkChecks.forEach((item) => {
+          attentionRows.push({
+            name: item.name,
+            state: item.state,
+            detail: item.detail || host(item.url),
+            meta: item.latencyMs ? `${item.latencyMs}ms` : stateLabel(item.state),
+            href: item.url,
+          });
+        });
 
-        const displayState = systemReady ? (overall.state || "ok") : "warn";
+        const healthySystemRows = [
+          ...okLayers.map((layer, index) => ({
+            name: `L${layers.indexOf(layer) + 1 || index + 1} ${layer.name}`,
+            state: "ok",
+            detail: LAYER_DETAIL[layer.key] || "정상 판정입니다.",
+            meta: "ok",
+          })),
+          ...(sys ? [
+            {
+              name: "PDCA loop",
+              state: "ok",
+              detail: `Check 미해결 ${sys.pdca.checkUnresolved ?? "-"}건 · 게이트 실패(7d) ${sys.pdca.checkFailures7d ?? "-"}건 · Act 규칙 ${sys.pdca.actRules ?? "-"}개`,
+              meta: "loop",
+            },
+            ...sys.backlogs.map((b) => ({
+              name: `Backlog · ${b.name}`,
+              state: b.state,
+              detail: `${b.count}건 / 경고선 ${b.warnAt}건`,
+              meta: `${b.count}`,
+              reason: b.state === "bad"
+                ? `${b.count}건 — 경고선 ${b.warnAt}건의 2배를 넘었습니다`
+                : b.state === "warn"
+                  ? `${b.count}건 — 경고선 ${b.warnAt}건을 넘었습니다`
+                  : null,
+            })),
+            {
+              name: "Infinity intents",
+              state: "ok",
+              detail: `Inbox ${sys.intents.inbox ?? "-"} · Active ${sys.intents.active ?? "-"} · Waiting ${sys.intents.waiting ?? "-"}`,
+              meta: "queue",
+            },
+          ] : []),
+        ];
+
+        const evidenceRows = [
+          { name: "Score basis", state: attentionRows.length ? "warn" : "ok", detail: `Score ${score}/100 · Services ${okChecks}/${checks.length} · Agents ${okAgents}/${totalAgents} · Outputs ${outputRatio} · Layers ${layers.length ? `${okLayers.length}/${layers.length}` : "--"}`, meta: "basis" },
+          { name: "Status snapshot", state: snapshotFresh.state, detail: `status.json · ${stamp(data.generatedAt)} · ${snapshotFresh.text}`, meta: snapshotFresh.label },
+          { name: "Agent feed", state: isLive ? "ok" : "warn", detail: hasFeed ? `agents-live.json · ${agentFresh.text}` : "agents-live.json · unavailable", meta: hasFeed ? agentFresh.label : "missing" },
+          { name: "Coverage", state: "ok", detail: `${checks.length} surfaces, ${totalAgents} agents, ${outputs.length} outputs`, meta: "mapped" },
+        ];
+
+        const hasBad = attentionRows.some((item) => item.state === "bad");
+        const displayState = attentionRows.length ? (hasBad ? "bad" : "warn") : "ok";
+        const layerCount = nonOkLayers.length;
+        const outputCount = nonOkOutputs.length;
+        const heroLabel = attentionRows.length
+          ? (sys
+              ? `${layerCount}개 운영 레이어와 ${outputCount}개 산출물에서 확인이 필요합니다.`
+              : "라이브 운영 피드를 먼저 확인해야 합니다.")
+          : `${checks.length}개 서비스 접점과 ${totalAgents}개 에이전트가 정상적으로 신호를 보내고 있습니다.`;
+        const heroLines = attentionRows.length ? ["주의 필요", "먼저 볼 신호"] : ["조용히 정상", "다음 주기 대기"];
+        const nowTitle = attentionRows[0]
+          ? `${attentionRows[0].name} 확인`
+          : `${okChecks}/${checks.length} services`;
+        const nextCollector = hasFeed ? `Agent feed ${agentFresh.text}` : "Agent feed missing";
+
+        const grouped = (items, name) => ({ name, rows: items });
+        const needsGroup = grouped(attentionRows.length ? attentionRows : [{
+          name: "No attention items",
+          state: "ok",
+          detail: "현재 먼저 볼 문제는 없습니다.",
+          meta: "clear",
+        }], "Needs attention");
 
         return {
           generatedAt: data.generatedAt,
           overallState: displayState,
-          overallLabel: overall.label || "Status feed loaded.",
+          overallLabel: heroLabel,
+          heroLines,
           score,
           okChecks,
           totalChecks: checks.length,
+          meta: {
+            score: `보조 점수 ${score}/100`,
+            stats: `Services ${okChecks}/${checks.length} · Agents ${okAgents}/${totalAgents} · Outputs ${outputRatio}`,
+            updated: `Snapshot ${snapshotFresh.label} · ${relFromMinutes(snapshotAge)} / Agent ${hasFeed ? `${agentFresh.label} · ${relFromMinutes(liveFeed.ageMinutes)}` : "missing"}`,
+          },
           cards: [
             {
               id: "system",
               label: "Now",
-              value: nowLine,
-              title: `${score}/100`,
-              status: systemReady ? "지금 할 일은 유지입니다" : "가장 약한 신호부터 봅니다",
-              state: systemReady ? "ok" : "warn",
+              value: attentionRows.length ? "주의 필요" : "조용히 유지",
+              title: attentionRows.length ? nowTitle : "현재 할 일 없음",
+              status: attentionRows.length ? `${attentionRows.length}개 신호 먼저 확인` : "다음 주기만 기다립니다",
+              state: displayState,
             },
             {
               id: "agents",
               label: "Balance",
-              value: balanceLine,
-              title: balanceTitle,
-              status: !isLive ? "라이브 피드가 조용합니다" : "운영과 산출물의 기울기",
-              state: balanceState,
+              value: `${okAgents}/${totalAgents} agents`,
+              title: `${outputRatio} outputs fresh`,
+              status: `Services ${okChecks}/${checks.length} 정상`,
+              state: okAgents === totalAgents && okChecks === checks.length ? "ok" : "warn",
             },
             {
               id: "output",
               label: "Loop",
-              value: loopLine,
-              title: nextLoop,
-              status: "완료가 아니라 다음 확인점",
-              state: !isLive ? "warn" : freshOutputs === outputs.length ? "ok" : "warn",
+              value: outputCount ? "재확인 필요" : "다음 주기 대기",
+              title: nextCollector,
+              status: `Snapshot ${snapshotFresh.label}`,
+              state: outputCount || snapshotFresh.state !== "ok" ? "warn" : "ok",
             },
           ],
           panels: {
             system: {
               title: "System Health",
-              score,
-              sub: overall.label || "Status feed loaded.",
+              score: attentionRows.length ? "주의" : "정상",
+              sub: heroLabel,
               summary: [
-                ["Score", `${score}/100`],
-                ["Layers", sys ? `${sys.layers.filter((l) => l.state === "ok").length}/${sys.layers.length} ok` : "--"],
-                ["Latency", `${avgLatency}ms`],
+                ["State", attentionRows.length ? "attention" : "quiet"],
+                ["Layers", layers.length ? `${okLayers.length}/${layers.length} ok` : "--"],
+                ["Snapshot", snapshotFresh.label],
               ],
-              rows: [
-                {
-                  name: "Overall",
-                  state: overall.state || "ok",
-                  detail: overall.label || "Feed loaded.",
-                  meta: stateLabel(overall.state),
-                  reason: (overall.state || "ok") !== "ok"
-                    ? (checks.some((c) => c.state !== "ok")
-                        ? "이상 감지 접점: " + checks.filter((c) => c.state !== "ok")
-                            .map((c) => `${c.name} — ${stateLabel(c.state)}`).join(" · ")
-                        : overall.label || "")
-                    : null,
-                },
-                ...(sys
-                  ? [
-                      ...sys.layers.map((layer, index) => ({
-                        name: `L${index + 1} ${layer.name}`,
-                        state: layer.state,
-                        detail: LAYER_DETAIL[layer.key] || "",
-                        meta: layer.state === "none" ? "no data" : layer.state,
-                        reason: layer.reason
-                          || (layer.state !== "ok"
-                              ? "수집기가 판정 근거를 아직 보내지 않았습니다 — 다음 수집 주기(10분) 후 다시 확인하세요."
-                              : null),
-                      })),
-                      {
-                        name: "PDCA loop",
-                        state: "ok",
-                        detail: `Check 미해결 ${sys.pdca.checkUnresolved ?? "-"}건 · 게이트 실패(7d) ${sys.pdca.checkFailures7d ?? "-"}건 · Act 규칙 ${sys.pdca.actRules ?? "-"}개`,
-                        meta: "loop",
-                      },
-                      ...sys.backlogs.map((b) => ({
-                        name: `Backlog · ${b.name}`,
-                        state: b.state,
-                        detail: `${b.count}건 / 경고선 ${b.warnAt}건`,
-                        meta: `${b.count}`,
-                        reason: b.state === "bad"
-                          ? `${b.count}건 — 경고선 ${b.warnAt}건의 2배를 넘었습니다`
-                          : b.state === "warn"
-                            ? `${b.count}건 — 경고선 ${b.warnAt}건을 넘었습니다`
-                            : null,
-                      })),
-                      {
-                        name: "Infinity intents",
-                        state: "ok",
-                        detail: `Inbox ${sys.intents.inbox ?? "-"} · Active ${sys.intents.active ?? "-"} · Waiting ${sys.intents.waiting ?? "-"}`,
-                        meta: "queue",
-                      },
-                    ]
-                  : [{
-                      name: "Live feed silent",
-                      state: "warn",
-                      detail: "4레이어·PDCA·백로그는 수집기 피드가 살아있을 때만 표시됩니다.",
-                      meta: "stale",
-                    }]),
-                { name: "Generated", state: "ok", detail: `status.json · ${stamp(data.generatedAt)}`, meta: "fresh" },
-                { name: "Coverage", state: "ok", detail: `${checks.length} surfaces, ${totalAgents} agents, ${outputs.length} outputs`, meta: "mapped" },
+              groups: [
+                needsGroup,
+                grouped(healthySystemRows, "Healthy"),
+                grouped(evidenceRows, "Evidence"),
               ],
             },
             surfaces: {
               title: "Live Surfaces",
               score: `${okChecks}/${checks.length}`,
-              sub: "처음 보는 사람이 실제 접점 상태를 바로 이해하는 목록입니다.",
+              sub: "서비스 접점은 상태 판정의 보조 근거입니다.",
               summary: [
                 ["OK", okChecks],
                 ["Total", checks.length],
                 ["Avg", `${avgLatency}ms`],
               ],
-              rows: checks.map((item) => ({
-                ...item,
-                meta: item.latencyMs ? `${item.latencyMs}ms` : stateLabel(item.state),
-                href: item.url,
-              })),
+              groups: [
+                grouped(nonOkChecks.length ? nonOkChecks.map((item) => ({
+                  ...item,
+                  meta: item.latencyMs ? `${item.latencyMs}ms` : stateLabel(item.state),
+                  href: item.url,
+                })) : [{
+                  name: "All surfaces",
+                  state: "ok",
+                  detail: `${checks.length}개 서비스 접점이 모두 정상 응답 중입니다.`,
+                  meta: "clear",
+                }], "Needs attention"),
+                grouped(checks.filter((item) => item.state === "ok").map((item) => ({
+                  ...item,
+                  meta: item.latencyMs ? `${item.latencyMs}ms` : stateLabel(item.state),
+                  href: item.url,
+                })), "Healthy"),
+              ],
             },
             agents: {
               title: "Agents",
               score: `${okAgents}/${totalAgents}`,
-              sub: isLive
-                ? "실제 OpenClaw 에이전트 로스터입니다 — 크론 상세는 CMS에서 봅니다."
+              sub: hasFeed
+                ? "예약 루프형과 수동 호출형을 구분해 봅니다."
                 : "라이브 피드가 조용합니다 — 정적 registry 목록으로 대신 보여줍니다.",
               summary: [
                 ["OK", okAgents],
                 ["Agents", totalAgents],
-                ["Feed", isLive ? `${liveFeed.ageMinutes}m ago` : "silent"],
+                ["Feed", hasFeed ? agentFresh.text : "silent"],
               ],
-              rows: agentRows,
+              groups: [
+                grouped(agents.filter((item) => item.group === "Scheduled"), "Scheduled"),
+                grouped(agents.filter((item) => item.group !== "Scheduled"), "On demand"),
+              ],
             },
             output: {
               title: "Output",
-              score: !isLive ? "--" : `${freshOutputs}/${outputs.length}`,
-              sub: isLive
-                ? "에이전트가 쌓는 산출물의 신선도입니다 — 마지막 갱신 경과로 봅니다."
+              score: !hasFeed ? "--" : `${freshOutputs}/${outputs.length}`,
+              sub: hasFeed
+                ? `${nonOkOutputs.length}개 산출물에서 재확인이 필요합니다.`
                 : "라이브 피드가 조용합니다 — 산출물 신선도를 알 수 없습니다.",
               summary: [
-                ["Fresh", isLive ? freshOutputs : "--"],
-                ["Outputs", isLive ? outputs.length : "--"],
-                ["Feed", isLive ? `${liveFeed.ageMinutes}m ago` : "silent"],
+                ["Fresh", hasFeed ? freshOutputs : "--"],
+                ["Outputs", hasFeed ? outputs.length : "--"],
+                ["Feed", hasFeed ? agentFresh.text : "silent"],
               ],
-              rows: isLive
-                ? outputs.map((item) => ({
-                    name: item.name,
-                    state: item.state,
-                    detail: `last updated ${relHours(item.ageHours)}`,
-                    meta: relHours(item.ageHours),
-                  }))
-                : [{
+              groups: hasFeed
+                ? [
+                    grouped(nonOkOutputs.length ? nonOkOutputs.map((item) => ({
+                      name: item.name,
+                      state: item.state,
+                      detail: `${relHours(item.ageHours)} · ${outputAction(item)}`,
+                      meta: relHours(item.ageHours),
+                    })) : [{
+                      name: "All outputs",
+                      state: "ok",
+                      detail: "모든 산출물이 기대 주기 안에 있습니다.",
+                      meta: "clear",
+                    }], "Needs attention"),
+                    grouped(outputs.filter((item) => item.state === "ok").map((item) => ({
+                      name: item.name,
+                      state: item.state,
+                      detail: `${relHours(item.ageHours)} · ${outputAction(item)}`,
+                      meta: relHours(item.ageHours),
+                    })), "Fresh"),
+                  ]
+                : [grouped([{
                     name: "Live feed silent",
                     state: "warn",
                     detail: "agents-live.json이 없거나 오래됐습니다 — 수집기 신호를 확인하세요.",
                     meta: "stale",
-                  }],
+                  }], "Needs attention")],
             },
           },
         };
@@ -1730,13 +1908,18 @@
 
       function renderPanels() {
         Object.entries(model.panels).forEach(([id, panel]) => {
+          const groups = (panel.groups || [{ name: "Details", rows: panel.rows || [] }])
+            .filter((group) => (group.rows || []).length > 0);
           $(`panel-${id}`).innerHTML = `
             <div class="summary-strip">
               ${panel.summary.map(([key, value]) => summaryTile(key, value)).join("")}
             </div>
-            <div class="list-stack">
-              ${panel.rows.map((item) => row(item, item.meta, item.href)).join("")}
-            </div>
+            ${groups.map((group) => `
+              <div class="group-title${group.name === "Needs attention" ? " is-attention" : ""}">${safe(group.name)}</div>
+              <div class="list-stack">
+                ${(group.rows || []).map((item) => row(item, item.meta, item.href)).join("")}
+              </div>
+            `).join("")}
           `;
         });
       }
@@ -1778,14 +1961,15 @@
 
       function render(data, liveFeed) {
         model = buildModel(data, liveFeed);
-        const [lineOne, lineTwo] = heroLines(model.overallState, model.okChecks, model.totalChecks);
+        const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);
+        document.body.dataset.overall = model.overallState;
         $("heroKicker").textContent = "Space status";
         $("heroLineOne").textContent = lineOne;
         $("heroLineTwo").textContent = lineTwo;
         $("heroLead").textContent = model.overallLabel;
-        $("heroMetaScore").innerHTML = `<strong>Score</strong> / ${safe(String(model.score))} · 100`;
-        $("heroMetaStats").innerHTML = `<strong>Surfaces</strong> / ${safe(`${model.okChecks}/${model.totalChecks}`)} OK`;
-        $("updatedAt").innerHTML = `<strong>Updated</strong> / ${safe(stamp(model.generatedAt))}`;
+        $("heroMetaScore").innerHTML = `<strong>State</strong> / ${safe(model.meta.score)}`;
+        $("heroMetaStats").innerHTML = `<strong>Signals</strong> / ${safe(model.meta.stats)}`;
+        $("updatedAt").innerHTML = `<strong>Freshness</strong> / ${safe(model.meta.updated)}`;
         $("overviewGrid").innerHTML = model.cards.map(card).join("");
         $("floatingNav").innerHTML = [
           `
@@ -1830,10 +2014,23 @@
       });
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") closeReason();
+        if (event.key !== "Tab" || !$("reasonModal").classList.contains("is-open")) return;
+        const focusables = [...$("reasonModal").querySelectorAll("button, [href], [tabindex]:not([tabindex='-1'])")]
+          .filter((el) => !el.disabled);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       });
       document.addEventListener("click", (event) => {
         const el = event.target.closest(".list-row.is-clickable");
-        if (el) openReason(el.dataset);
+        if (el) openReason(el.dataset, el);
       });
 
       document.addEventListener("pointerdown", (event) => {
@@ -1864,6 +2061,7 @@
       ])
         .then(([data, liveFeed]) => render(data, liveFeed))
         .catch(() => {
+          document.body.dataset.overall = "warn";
           $("heroLineTwo").textContent = "feed unavailable";
           $("heroMetaScore").innerHTML = "<strong>Score</strong> / --";
           $("heroMetaStats").innerHTML = "<strong>Surfaces</strong> / waiting";

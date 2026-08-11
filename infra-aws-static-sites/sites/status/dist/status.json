@@ -1,76 +1,92 @@
 {
-  "generatedAt": "2026-07-26T20:05:17Z",
+  "generatedAt": "2026-08-11T13:43:05Z",
   "overall": {
     "state": "ok",
-    "label": "Status, Travel Ops, Schengen Calculator, Card News Library, Infinity, Virtue, Control Center CMS, and Reel Room are the active surfaces",
+    "label": "Instagram Maker, Status, Travel Ops, Schengen Calculator, Card News Library, Infinity, Virtue, Control Center CMS, and Reel Room are the active surfaces",
     "score": 98
   },
   "checks": [
     {
+      "name": "Instagram Maker",
+      "url": "https://instagram-maker.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 577,
+      "detail": "Local-first 9:16 scene editor for Instagram story and reel-cover exports"
+    },
+    {
       "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 685,
+      "latencyMs": 561,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 611,
+      "latencyMs": 519,
       "detail": "World travel planning board deployed as a separate static app"
     },
     {
       "name": "Schengen Calculator",
       "url": "https://schengen.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 574,
+      "latencyMs": 282,
       "detail": "90/180 day Schengen travel calculator for long-term route planning"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 595,
+      "latencyMs": 528,
       "detail": "Growing public archive for photo insight card-news sets"
     },
     {
       "name": "Infinity",
       "url": "https://infinity.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 587,
+      "latencyMs": 512,
       "detail": "Intent dashboard for Infinity work queue and archive state"
     },
     {
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 597,
+      "latencyMs": 522,
       "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring"
     },
     {
       "name": "Control Center CMS",
       "url": "https://cms.oracle.shdkej.com",
       "state": "ok",
-      "latencyMs": 54,
+      "latencyMs": 31,
       "detail": "shadcn/ui operations CMS for Status composition and surface registry management"
     },
     {
       "name": "Reel Room",
       "url": "https://reel.oracle.shdkej.com",
       "state": "ok",
-      "latencyMs": 30,
+      "latencyMs": 28,
       "detail": "Video automation web UI for reel production (basic auth)"
     }
   ],
   "deployments": [
+    {
+      "name": "instagram maker",
+      "url": "https://instagram-maker.aws.shdkej.com",
+      "bucket": "static-instagram-maker-aws-shdkej-com",
+      "distribution": "E24YJWUBW703ES",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-08-11T13:42:59Z",
+      "state": "ok"
+    },
     {
       "name": "status board",
       "url": "https://status.aws.shdkej.com",
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-26T20:05:06Z",
+      "updatedAt": "2026-08-11T13:42:59Z",
       "state": "ok"
     },
     {
@@ -79,7 +95,7 @@
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-26T20:05:07Z",
+      "updatedAt": "2026-08-11T13:43:00Z",
       "state": "ok"
     },
     {
@@ -88,7 +104,7 @@
       "bucket": "static-schengen-aws-shdkej-com",
       "distribution": "E3PPXUUNA9KRGS",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-26T20:05:07Z",
+      "updatedAt": "2026-08-11T13:43:00Z",
       "state": "ok"
     },
     {
@@ -97,7 +113,7 @@
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-26T20:05:08Z",
+      "updatedAt": "2026-08-11T13:43:01Z",
       "state": "ok"
     },
     {
@@ -106,7 +122,7 @@
       "bucket": "static-infinity-aws-shdkej-com",
       "distribution": "E3JYGTLQKF0AXX",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-26T20:05:08Z",
+      "updatedAt": "2026-08-11T13:43:01Z",
       "state": "ok"
     },
     {
@@ -115,7 +131,7 @@
       "bucket": "static-virtue-aws-shdkej-com",
       "distribution": "EVCIL59LC6WJ6",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-07-26T20:05:09Z",
+      "updatedAt": "2026-08-11T13:43:02Z",
       "state": "ok"
     },
     {
@@ -124,7 +140,7 @@
       "bucket": "",
       "distribution": "",
       "hosting": "kubernetes ingress",
-      "updatedAt": "2026-07-26T20:05:13Z",
+      "updatedAt": "2026-08-11T13:43:03Z",
       "state": "ok"
     },
     {
@@ -133,7 +149,7 @@
       "bucket": "",
       "distribution": "",
       "hosting": "kubernetes ingress",
-      "updatedAt": "2026-07-26T20:05:17Z",
+      "updatedAt": "2026-08-11T13:43:05Z",
       "state": "ok"
     }
   ],
@@ -170,6 +186,11 @@
     }
   ],
   "apps": [
+    {
+      "name": "Instagram Maker",
+      "url": "https://instagram-maker.aws.shdkej.com",
+      "kind": "tool"
+    },
     {
       "name": "Status",
       "url": "https://status.aws.shdkej.com",

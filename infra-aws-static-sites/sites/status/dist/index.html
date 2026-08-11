@@ -381,6 +381,7 @@
       .hero-meta {
         display: grid;
         gap: 3px;
+        min-width: 0;
         color: var(--faint);
         font-size: 10px;
         line-height: 1.35;
@@ -1315,8 +1316,16 @@
         }
 
         .hero-meta {
+          width: min(100%, 620px);
           grid-template-columns: 1fr;
           gap: 4px;
+        }
+
+        .hero-meta-line {
+          min-width: 0;
+          overflow: visible;
+          overflow-wrap: anywhere;
+          white-space: normal;
         }
       }
 

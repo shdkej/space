@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-12T14:40:05.875985+00:00",
+  "generatedAt": "2026-08-13T14:40:04.922870+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,15 +15,15 @@
     "reservedPctMin": 47.7,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 83673,
+    "reserveBurnKrw": 82706,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-11",
-    "location": "Cappadocia / Pamukkale / Antalya",
-    "mapQuery": "Cappadocia / Pamukkale / Antalya, Turkey"
+    "date": "2026-08-13",
+    "location": "Cairo / Giza",
+    "mapQuery": "Cairo / Giza, Egypt"
   },
   "categoryTotals": {
     "stay": 3300481,
@@ -7759,10 +7759,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-11",
+    "asOf": "2026-08-13",
     "limitDays": 90,
-    "usedDays": 35,
-    "remainingDays": 55,
+    "usedDays": 37,
+    "remainingDays": 53,
     "window": "180 days",
     "status": "active",
     "projection": {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-14T14:40:05.129160+00:00",
+  "generatedAt": "2026-08-15T14:40:04.402531+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,15 +15,15 @@
     "reservedPctMin": 47.7,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 82230,
+    "reserveBurnKrw": 81296,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-14",
-    "location": "Cairo / Giza",
-    "mapQuery": "Cairo / Giza, Egypt"
+    "date": "2026-08-16",
+    "location": "Dahab",
+    "mapQuery": "Dahab, Egypt"
   },
   "categoryTotals": {
     "stay": 3300481,
@@ -339,6 +339,10 @@
     {
       "date": "2026-08-14",
       "amount": 23495
+    },
+    {
+      "date": "2026-08-16",
+      "amount": 19333
     }
   ],
   "bookedCosts": [
@@ -7763,10 +7767,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-14",
+    "asOf": "2026-08-16",
     "limitDays": 90,
-    "usedDays": 38,
-    "remainingDays": 52,
+    "usedDays": 40,
+    "remainingDays": 50,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -7889,12 +7893,6 @@
   },
   "sleep": [
     {
-      "date": "2026-07-20",
-      "sleepHours": 9.36,
-      "recharge": 117.0,
-      "balance": "7.67"
-    },
-    {
       "date": "2026-07-28",
       "sleepHours": 7.62,
       "recharge": 95.0,
@@ -7971,6 +7969,12 @@
       "sleepHours": 1.55,
       "recharge": 19.0,
       "balance": "5.15"
+    },
+    {
+      "date": "2026-08-16",
+      "sleepHours": 3.38,
+      "recharge": 42.0,
+      "balance": "2.96"
     }
   ],
   "reflections": [

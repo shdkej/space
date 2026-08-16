@@ -198,6 +198,72 @@
     .archive-filter {
       padding: 0 6px 8px;
     }
+    .archive-memory {
+      margin: 0 6px 10px;
+      padding: 11px 12px 12px;
+      border: 1px solid #475569;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #192439 0%, #121b2e 100%);
+    }
+    .archive-memory[hidden] { display: none; }
+    .archive-memory-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+    .archive-memory-title {
+      color: #e2e8f0;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .archive-memory-count {
+      color: #94a3b8;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .memory-row {
+      display: grid;
+      gap: 3px;
+      padding: 8px 0;
+      border-top: 1px solid rgba(148,163,184,.22);
+    }
+    .memory-row:first-of-type { border-top: 0; padding-top: 0; }
+    .memory-label {
+      color: #93c5fd;
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .memory-value {
+      color: #dbeafe;
+      font-size: 12px;
+      line-height: 1.45;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    .archive-lesson {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(148,163,184,.18);
+      color: #bfdbfe;
+      font-size: 10.5px;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .archive-lesson .lesson-label {
+      color: #93c5fd;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      letter-spacing: .04em;
+      margin-right: 4px;
+      text-transform: uppercase;
+    }
     .archive-filter-input {
       background: #0f1a2e;
       color: var(--text);
@@ -453,6 +519,24 @@
         <div class="column-title"><span class="dot done"></span>Archive</div>
         <div class="count" data-count></div>
       </div>
+      <div class="archive-memory" id="archive-memory" hidden>
+        <div class="archive-memory-head">
+          <div class="archive-memory-title">Archive Memory</div>
+          <div class="archive-memory-count" id="archive-memory-count"></div>
+        </div>
+        <div class="memory-row">
+          <div class="memory-label">최근 닫은 일</div>
+          <div class="memory-value" id="archive-memory-latest"></div>
+        </div>
+        <div class="memory-row">
+          <div class="memory-label">다음에 재사용할 규칙</div>
+          <div class="memory-value" id="archive-memory-rule"></div>
+        </div>
+        <div class="memory-row">
+          <div class="memory-label">이어질 만한 실행</div>
+          <div class="memory-value" id="archive-memory-next"></div>
+        </div>
+      </div>
       <div class="archive-filter">
         <input class="archive-filter-input" id="archive-filter-input" type="search" placeholder="필터 (id / 내용 / 태그)" aria-label="Archive 필터" />
         <div class="tag-filter-row" id="archive-tag-filter" aria-label="Archive 태그 필터"></div>
@@ -481,6 +565,8 @@
     const SOURCES = {
       intents: "https://api.github.com/repos/shdkej/infinity/contents/INTENTS.md?ref=main",
       gates:   "https://api.github.com/repos/shdkej/infinity/contents/GATES.md?ref=main",
+      rawIntents: "https://raw.githubusercontent.com/shdkej/infinity/main/INTENTS.md",
+      rawGates: "https://raw.githubusercontent.com/shdkej/infinity/main/GATES.md",
       rawBase: "https://raw.githubusercontent.com/shdkej/infinity/main/",
       apiBase: "https://api.github.com/repos/shdkej/infinity/contents/",
     };
@@ -519,6 +605,19 @@
       if (!path) return null;
       try { return await fetchText(SOURCES.rawBase + path.replace(/^\/+/, "")); }
       catch (e) { return null; }
+    }
+
+    async function fetchTextWithFallback(primaryUrl, fallbackUrl) {
+      try {
+        return await fetchText(primaryUrl);
+      } catch (primaryError) {
+        if (!fallbackUrl) throw primaryError;
+        try {
+          return await fetchText(fallbackUrl);
+        } catch (fallbackError) {
+          throw new Error(primaryError.message + "; raw fallback failed: " + fallbackError.message);
+        }
+      }
     }
 
     function normalizePath(path) {
@@ -969,6 +1068,8 @@
       if (lower.includes("agent-wiki") || lower.includes("agent wiki")) projects.push("agent-wiki");
       if (lower.includes("knowledge lab") || lower.includes("knowledge-lab")) projects.push("knowledge-lab");
       if (lower.includes("openclaw")) projects.push("openclaw");
+      if (lower.includes("/home/ubuntu/workspace/space") || lower.includes("infra-aws-static-sites") || lower.includes("travel.aws.shdkej.com") || lower.includes("static site")) projects.push("space");
+      if (lower.includes("monitoring_personal") || lower.includes("/home/ubuntu/workspace/monitoring_personal") || lower.includes("posthog exporter") || lower.includes("prometheus") || lower.includes("loki") || lower.includes("promtail") || lower.includes("yace")) projects.push("monitoring_personal");
       if (lower.includes("github actions") || lower.includes("kubernetes") || lower.includes("배포")) projects.push("infrastructure");
 
       if (prefix === "research") task_type = "research";
@@ -1004,6 +1105,88 @@
         meta.task_type || "",
         ...(Array.isArray(meta.topics) ? meta.topics : splitTagList(meta.topics)),
       ].filter(Boolean);
+    }
+
+    function primaryProject(item) {
+      const projects = Array.isArray(item.meta.projects) ? item.meta.projects : splitTagList(item.meta.projects);
+      return projects[0] || "";
+    }
+
+    function shortText(text, max) {
+      const s = String(text || "").replace(/\s+/g, " ").trim();
+      if (!s) return "";
+      return s.length > max ? s.slice(0, max - 1) + "…" : s;
+    }
+
+    function archiveOutcome(item) {
+      return (item.meta && item.meta.outcome) || item.title || snippetFromBody(item.bodyLines) || "";
+    }
+
+    function inferArchiveRule(item) {
+      const text = archiveOutcome(item);
+      const lower = text.toLowerCase();
+      const tags = allTags(item).map(x => String(x).toLowerCase());
+      if (/공식|사례|근거|source|evidence/.test(text)) {
+        return "공식 근거와 공개 사례를 한 쌍으로 남겨 다음 판단의 출처를 바로 재사용한다.";
+      }
+      if (/red|검증|pass|gate|게이트/.test(lower + " " + text)) {
+        return "완료 처리 전 Red·게이트·원격 확인을 한 묶음으로 닫는다.";
+      }
+      if (tags.includes("dashboard") || /대시보드|화면|ui|배포/.test(text)) {
+        return "화면 변경은 구조 의도, 반응형 확인, 라이브 반영을 같은 완료 조건으로 본다.";
+      }
+      if (/마케팅|콘텐츠|threads|instagram|hook|카드뉴스/.test(lower + " " + text)) {
+        return "콘텐츠 산출물은 첫 줄, 근거, 실행 루틴, 측정 신호를 함께 남긴다.";
+      }
+      if (/cron|automation|자동화|dispatcher|heartbeat/.test(lower + " " + text)) {
+        return "반복 운영은 문서보다 스크립트와 검증 명령으로 재현 가능하게 고정한다.";
+      }
+      return "완료 요약에 닫은 문제와 다음 첫 액션을 같이 남긴다.";
+    }
+
+    function inferArchiveNext(item) {
+      const text = archiveOutcome(item);
+      const lower = text.toLowerCase();
+      const project = primaryProject(item);
+      if (/sharelink|threads|affiliate|쉐어링크/.test(lower + " " + text)) {
+        return "여행 짐 줄이기 생활템 7일 파일럿으로 이어갈 수 있다.";
+      }
+      if (/dashboard|대시보드/.test(lower + " " + text)) {
+        return "다음 화면 변경은 Archive Memory에서 재사용 규칙이 읽히는지 확인한다.";
+      }
+      if (/card-news|카드뉴스|instagram|threads/.test(lower + " " + text)) {
+        return "다음 콘텐츠는 저장·답글·클릭 중 어떤 신호를 볼지 먼저 정한다.";
+      }
+      if (/cron|dispatcher|heartbeat|자동화/.test(lower + " " + text)) {
+        return "다음 사이클에서 같은 실패가 조용히 반복되는지 확인한다.";
+      }
+      if (project) return project + "의 다음 실행 후보를 Inbox로 승격할지 확인한다.";
+      return "후속 작업이 있으면 Inbox 후보로 올리고, 없으면 규칙만 남긴다.";
+    }
+
+    function renderArchiveMemory(items) {
+      const host = document.getElementById("archive-memory");
+      if (!host) return;
+      const sorted = sortDoneByCompletionDesc(items);
+      const latest = sorted[0];
+      if (!latest) {
+        host.hidden = true;
+        return;
+      }
+      const nowMs = Date.now();
+      const weekDone = sorted.filter(it => {
+        const t = parseDateMs(pickCompleted(it));
+        return !isNaN(t) && t <= nowMs && t >= nowMs - 7 * 86400000;
+      }).length;
+      const set = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+      set("archive-memory-count", weekDone + " this week · " + sorted.length + " total");
+      set("archive-memory-latest", shortText((latest.id ? latest.id + " — " : "") + archiveOutcome(latest), 130));
+      set("archive-memory-rule", inferArchiveRule(latest));
+      set("archive-memory-next", inferArchiveNext(latest));
+      host.hidden = false;
     }
 
     // Archive 컬럼 정렬용: completed_at / resolved 를 updated 보다 우선
@@ -1189,6 +1372,16 @@
           s.textContent = summary;
           card.appendChild(s);
         }
+        if ((opts && opts.lane) === "done") {
+          const lesson = document.createElement("div");
+          lesson.className = "archive-lesson";
+          const label = document.createElement("span");
+          label.className = "lesson-label";
+          label.textContent = "reuse";
+          lesson.appendChild(label);
+          lesson.appendChild(document.createTextNode(inferArchiveRule(it)));
+          card.appendChild(lesson);
+        }
       } else {
         // 핵심 필드가 구조화돼 있으면 "무엇을 하고 뭐가 바뀌는지"를 라벨로 보여준다.
         const fieldsEl = buildKeyFields(it);
@@ -1361,6 +1554,7 @@
 
       if (key === "done") {
         const sortedItems = sortDoneByCompletionDesc(items);
+        renderArchiveMemory(sortedItems);
         renderArchiveTagFilter(sortedItems);
         const filtered = sortDoneByCompletionDesc(applyArchiveFilter(sortedItems));
         count.textContent = filtered.length === items.length
@@ -1432,9 +1626,9 @@
       clearErrors();
       statusEl.textContent = "로딩 중...";
       let intentsText = "", gatesText = "";
-      try { intentsText = await fetchText(SOURCES.intents); }
+      try { intentsText = await fetchTextWithFallback(SOURCES.intents, SOURCES.rawIntents); }
       catch (e) { showError("INTENTS.md 로드 실패: " + e.message); }
-      try { gatesText = await fetchText(SOURCES.gates); }
+      try { gatesText = await fetchTextWithFallback(SOURCES.gates, SOURCES.rawGates); }
       catch (e) { showError("GATES.md 로드 실패: " + e.message); }
 
       const intentSections = splitSections(intentsText);
@@ -1478,7 +1672,7 @@
       const nowMs = Date.now();
       const weekDone = doneItems.filter(it => {
         const t = parseDateMs(pickCompleted(it));
-        return !isNaN(t) && t >= nowMs - 7 * 86400000;
+        return !isNaN(t) && t <= nowMs && t >= nowMs - 7 * 86400000;
       }).length;
       let stale = null;
       for (const it of [...inboxItems, ...activeItems, ...waitingItems]) {

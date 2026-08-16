@@ -1658,9 +1658,6 @@
         const sortedItems = sortDoneByCompletionDesc(items);
         renderArchiveMemory(sortedItems);
         renderArchiveTagFilter(sortedItems);
-        hydrateArchiveTemplates(sortedItems).then(changed => {
-          if (changed) renderColumn("done", items, sourceLabel);
-        });
         const filtered = sortDoneByCompletionDesc(applyArchiveFilter(sortedItems));
         count.textContent = filtered.length === items.length
           ? items.length + "개"
@@ -1768,6 +1765,7 @@
           .map(x => ({ ...x, source: "GATES.md" })),
         ...archiveCommentItems,
       ]);
+      await hydrateArchiveTemplates(doneItems);
 
       renderColumn("inbox",   inboxItems,   "INTENTS.md");
       renderColumn("active",  activeItems,  "INTENTS.md");
@@ -1806,8 +1804,7 @@
 
     async function hydrateArchiveTemplates(items) {
       const targets = items
-        .filter(it => it && it.meta && it.meta.detail && !hasArchiveTemplate(it.meta))
-        .slice(0, 24);
+        .filter(it => it && it.meta && it.meta.detail && !hasArchiveTemplate(it.meta));
       let changed = false;
       for (const item of targets) {
         const path = normalizePath(item.meta.detail);

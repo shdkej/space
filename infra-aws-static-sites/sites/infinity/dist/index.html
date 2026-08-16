@@ -1804,10 +1804,10 @@
 
     async function hydrateArchiveTemplates(items) {
       const targets = items
-        .filter(it => it && it.meta && it.meta.detail && !hasArchiveTemplate(it.meta));
+        .filter(it => it && it.meta && (it.meta.detail || it.id) && !hasArchiveTemplate(it.meta));
       let changed = false;
       for (const item of targets) {
-        const path = normalizePath(item.meta.detail);
+        const path = normalizePath(item.meta.detail || ("intents/archive/" + item.id + ".md"));
         if (!path || !path.startsWith("intents/archive/")) continue;
         if (archiveTemplateCache.has(path)) {
           const cached = archiveTemplateCache.get(path);

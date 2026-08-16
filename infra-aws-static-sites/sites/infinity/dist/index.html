@@ -1152,11 +1152,20 @@
     }
 
     function labeledArchiveField(text, label) {
-      const source = String(text || "");
-      const re = new RegExp("^\\[" + label.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&") + "\\]\\s*([^\\n]*)\\n?([\\s\\S]*?)(?=^\\[[^\\]]+\\]|(?![\\s\\S]))", "m");
-      const m = source.match(re);
-      if (!m) return "";
-      return normalizeArchiveValue(m[1] || m[2] || "");
+      const lines = String(text || "").split(/\r?\n/);
+      for (let i = 0; i < lines.length; i++) {
+        const m = lines[i].match(/^\[([^\]]+)\]\s*(.*)$/);
+        if (!m || m[1].trim() !== label) continue;
+        if (m[2].trim()) return normalizeArchiveValue(m[2]);
+        const values = [];
+        for (let j = i + 1; j < lines.length; j++) {
+          if (/^\[[^\]]+\]/.test(lines[j])) break;
+          if (/^##\s+/.test(lines[j])) break;
+          if (lines[j].trim()) values.push(lines[j].trim());
+        }
+        return normalizeArchiveValue(values.join(" "));
+      }
+      return "";
     }
 
     function bulletArchiveField(text, key) {

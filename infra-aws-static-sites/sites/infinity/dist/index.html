@@ -264,6 +264,33 @@
       margin-right: 4px;
       text-transform: uppercase;
     }
+    .archive-template {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(148,163,184,.18);
+    }
+    .archive-template-row {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+    .archive-template-label {
+      color: #93c5fd;
+      font-size: 10px;
+      letter-spacing: .08em;
+    }
+    .archive-template-value {
+      color: #e2e8f0;
+      font-size: 12px;
+      line-height: 1.42;
+      overflow-wrap: anywhere;
+      word-break: keep-all;
+    }
+    .archive-template-row.next .archive-template-value {
+      color: #fef3c7;
+    }
     .archive-filter-input {
       background: #0f1a2e;
       color: var(--text);
@@ -926,6 +953,7 @@
           .trim();
         const title = outcome || cleaned || text;
         const tagMeta = { ...inferTagMeta(text, idm ? idm[1] : ""), ...extractTagMeta(text) };
+        const templateMeta = extractArchiveTemplate(text);
         out.push({
           id: idm ? idm[1] : "",
           title,
@@ -936,6 +964,7 @@
             detail: pathm ? pathm[1] : "",
             outcome,
             ...tagMeta,
+            ...templateMeta,
           },
           source: "INTENTS.md archive",
         });
@@ -1118,6 +1147,53 @@
       return s.length > max ? s.slice(0, max - 1) + "…" : s;
     }
 
+    function normalizeArchiveValue(text) {
+      return String(text || "").replace(/\s+/g, " ").trim();
+    }
+
+    function labeledArchiveField(text, label) {
+      const source = String(text || "");
+      const re = new RegExp("^\\[" + label.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&") + "\\]\\s*([^\\n]*)\\n?([\\s\\S]*?)(?=^\\[[^\\]]+\\]|(?![\\s\\S]))", "m");
+      const m = source.match(re);
+      if (!m) return "";
+      return normalizeArchiveValue(m[1] || m[2] || "");
+    }
+
+    function bulletArchiveField(text, key) {
+      const source = String(text || "");
+      const re = new RegExp("^\\s*-\\s*" + key.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&") + "\\s*:\\s*(.+?)\\s*$", "mi");
+      const m = source.match(re);
+      return m ? normalizeArchiveValue(m[1]) : "";
+    }
+
+    function extractArchiveTemplate(text) {
+      const source = String(text || "");
+      return {
+        archive_project: labeledArchiveField(source, "프로젝트") || bulletArchiveField(source, "archive_project"),
+        archive_state: labeledArchiveField(source, "상태") || bulletArchiveField(source, "archive_state"),
+        result_criteria: labeledArchiveField(source, "결과 기준") || bulletArchiveField(source, "result_criteria"),
+        next_action: labeledArchiveField(source, "다음 행동") || bulletArchiveField(source, "next_action"),
+      };
+    }
+
+    function hasArchiveTemplate(meta) {
+      return !!(meta && (meta.archive_project || meta.archive_state || meta.result_criteria || meta.next_action));
+    }
+
+    function archiveTemplateFields(item) {
+      const meta = item.meta || {};
+      const project = meta.archive_project || meta.display || primaryProject(item) || "";
+      const state = meta.archive_state || meta.archive_status || "";
+      const result = meta.result_criteria || meta.success_criteria || "";
+      const next = meta.next_action || meta.next || "";
+      return [
+        ["프로젝트", project, ""],
+        ["상태", state, ""],
+        ["결과 기준", result, ""],
+        ["다음 행동", next, "next"],
+      ].filter(row => row[1]);
+    }
+
     function archiveOutcome(item) {
       return (item.meta && item.meta.outcome) || item.title || snippetFromBody(item.bodyLines) || "";
     }
@@ -1183,9 +1259,17 @@
         if (el) el.textContent = value;
       };
       set("archive-memory-count", weekDone + " this week · " + sorted.length + " total");
-      set("archive-memory-latest", shortText((latest.id ? latest.id + " — " : "") + archiveOutcome(latest), 130));
+      const latestFields = archiveTemplateFields(latest);
+      const latestProject = latestFields.find(row => row[0] === "프로젝트");
+      const latestState = latestFields.find(row => row[0] === "상태");
+      set("archive-memory-latest", shortText([
+        latest.id || "",
+        latestProject ? latestProject[1] : archiveOutcome(latest),
+        latestState ? latestState[1] : "",
+      ].filter(Boolean).join(" — "), 130));
       set("archive-memory-rule", inferArchiveRule(latest));
-      set("archive-memory-next", inferArchiveNext(latest));
+      const nextField = latestFields.find(row => row[0] === "다음 행동");
+      set("archive-memory-next", nextField ? nextField[1] : inferArchiveNext(latest));
       host.hidden = false;
     }
 
@@ -1366,7 +1450,25 @@
       } else if (compact) {
         // Archive: 결과(outcome)가 있으면 그것만 1~2줄로, 없으면 본문에서 추출
         const summary = (it.meta && it.meta.outcome) || snippetFromBody(it.bodyLines);
-        if (summary && summary !== it.title) {
+        const archiveRows = (opts && opts.lane) === "done" ? archiveTemplateFields(it) : [];
+        if (archiveRows.length) {
+          const tmpl = document.createElement("div");
+          tmpl.className = "archive-template";
+          for (const [labelText, valueText, className] of archiveRows) {
+            const row = document.createElement("div");
+            row.className = "archive-template-row" + (className ? " " + className : "");
+            const label = document.createElement("div");
+            label.className = "archive-template-label";
+            label.textContent = labelText;
+            const value = document.createElement("div");
+            value.className = "archive-template-value";
+            value.textContent = valueText;
+            row.appendChild(label);
+            row.appendChild(value);
+            tmpl.appendChild(row);
+          }
+          card.appendChild(tmpl);
+        } else if (summary && summary !== it.title) {
           const s = document.createElement("div");
           s.className = "snippet";
           s.textContent = summary;
@@ -1556,6 +1658,9 @@
         const sortedItems = sortDoneByCompletionDesc(items);
         renderArchiveMemory(sortedItems);
         renderArchiveTagFilter(sortedItems);
+        hydrateArchiveTemplates(sortedItems).then(changed => {
+          if (changed) renderColumn("done", items, sourceLabel);
+        });
         const filtered = sortDoneByCompletionDesc(applyArchiveFilter(sortedItems));
         count.textContent = filtered.length === items.length
           ? items.length + "개"
@@ -1697,6 +1802,38 @@
     let lastDoneItems = [];
     let lastDoneSource = "GATES.md";
     let activeArchiveTag = "";
+    const archiveTemplateCache = new Map();
+
+    async function hydrateArchiveTemplates(items) {
+      const targets = items
+        .filter(it => it && it.meta && it.meta.detail && !hasArchiveTemplate(it.meta))
+        .slice(0, 24);
+      let changed = false;
+      for (const item of targets) {
+        const path = normalizePath(item.meta.detail);
+        if (!path || !path.startsWith("intents/archive/")) continue;
+        if (archiveTemplateCache.has(path)) {
+          const cached = archiveTemplateCache.get(path);
+          if (hasArchiveTemplate(cached)) {
+            Object.assign(item.meta, cached);
+            changed = true;
+          }
+          continue;
+        }
+        try {
+          const text = await fetchText(SOURCES.rawBase + path);
+          const template = extractArchiveTemplate(text);
+          archiveTemplateCache.set(path, template);
+          if (hasArchiveTemplate(template)) {
+            Object.assign(item.meta, template);
+            changed = true;
+          }
+        } catch (e) {
+          archiveTemplateCache.set(path, {});
+        }
+      }
+      return changed;
+    }
 
     function rescheduleAuto() {
       if (timer) { clearInterval(timer); timer = null; }

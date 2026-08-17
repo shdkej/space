@@ -145,6 +145,15 @@
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
       overflow: hidden;
     }
+    .field-rows.waiting-fields {
+      padding-top: 6px;
+      border-top: 1px solid rgba(245, 158, 11, .18);
+    }
+    .field-rows.waiting-fields .field-row.key .field-label {
+      border-color: #92400e;
+      color: #fde68a;
+      background: #3b2507;
+    }
     details.month-group { margin: 6px 0 0; }
     details.month-group > summary {
       cursor: pointer; list-style: none;
@@ -453,6 +462,8 @@
     .modal-body { row-gap: 18px; }
     .detail-block.kind-summary { border-color: #475569; }
     .detail-block.kind-summary h3 { background: #1f2937; border-left-color: #94a3b8; }
+    .detail-block.kind-waiting { border-color: #f59e0b; }
+    .detail-block.kind-waiting h3 { background: #3b2507; border-left-color: #fbbf24; }
     .detail-block.kind-archive { border-color: #6366f1; }
     .detail-block.kind-archive h3 { background: #1e1b4b; border-left-color: #818cf8; }
     .detail-block.kind-detail { border-color: #14b8a6; }
@@ -467,6 +478,40 @@
       margin: 0; padding: 12px; white-space: pre-wrap;
       word-break: break-word; color: #dbeafe; font-size: 12px;
       line-height: 1.55;
+    }
+    .detail-fields {
+      display: grid;
+      gap: 0;
+      padding: 2px 12px 10px;
+    }
+    .detail-field {
+      display: grid;
+      grid-template-columns: 128px minmax(0, 1fr);
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid rgba(148, 163, 184, .16);
+    }
+    .detail-field:first-child { border-top: 0; }
+    .detail-field-label {
+      color: #94a3b8;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    .detail-field-value {
+      color: #e2e8f0;
+      font-size: 13px;
+      line-height: 1.55;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+    .detail-field.key .detail-field-label { color: #fde68a; }
+    .detail-field.key .detail-field-value { color: #fef3c7; }
+    @media (max-width: 640px) {
+      .detail-field {
+        grid-template-columns: 1fr;
+        gap: 3px;
+      }
     }
     .detail-block img.preview {
       display: block; max-width: 100%; height: auto;
@@ -774,6 +819,30 @@
       block.appendChild(pre);
     }
 
+    function addStructuredBlock(title, rows, kindClass) {
+      if (!rows || !rows.length) return;
+      const block = makeBlock(title, kindClass || "kind-summary", { expanded: true });
+      const host = document.createElement("div");
+      host.className = "detail-fields";
+      for (const rowData of rows) {
+        const labelText = rowData.label || "";
+        const valueText = rowData.value || "";
+        if (!labelText || !valueText) continue;
+        const row = document.createElement("div");
+        row.className = "detail-field" + (rowData.key ? " key" : "");
+        const label = document.createElement("div");
+        label.className = "detail-field-label";
+        label.textContent = labelText;
+        const value = document.createElement("div");
+        value.className = "detail-field-value";
+        value.textContent = valueText;
+        row.appendChild(label);
+        row.appendChild(value);
+        host.appendChild(row);
+      }
+      block.appendChild(host);
+    }
+
     function addImageBlock(title, url, kindClass) {
       const block = makeBlock(title, kindClass);
       const img = document.createElement("img");
@@ -809,57 +878,113 @@
 
     const detailCache = new Map();
     const DETAIL_CACHE_TTL = 5 * 60 * 1000;
+    let detailRenderRun = 0;
+
+    function metaValue(item, keys) {
+      for (const key of keys) {
+        if (item.meta && item.meta[key]) return item.meta[key];
+      }
+      return "";
+    }
+
+    function pathFieldEntries(item, keys, kindClass) {
+      const seen = new Set();
+      const entries = [];
+      for (const key of keys) {
+        const path = normalizePath(item.meta && item.meta[key]);
+        if (!path || seen.has(path) || !detectKind(path)) continue;
+        seen.add(path);
+        entries.push({ key, path, kindClass });
+      }
+      return entries;
+    }
+
+    async function fetchPathEntry(path) {
+      const normalized = normalizePath(path);
+      const kind = detectKind(normalized);
+      if (!normalized || !kind) return null;
+      const url = SOURCES.rawBase + normalized;
+      const name = normalized.split("/").pop();
+      if (kind === "image") return { name, kind, url, path: normalized };
+      const text = await fetchMaybeText(normalized);
+      return text ? { name, kind, text, url, path: normalized } : null;
+    }
+
+    async function fetchKnownEntries(entries) {
+      const tasks = entries.map(async (entry) => {
+        try {
+          const fetched = await fetchPathEntry(entry.path);
+          return fetched ? Object.assign(fetched, entry) : null;
+        } catch (e) {
+          return null;
+        }
+      });
+      return (await Promise.all(tasks)).filter(Boolean);
+    }
 
     async function loadDetailBundle(item) {
       const key = (item.id || "") + "|" + (item.source || "") + "|" + (item.title || "");
       const cached = detailCache.get(key);
       if (cached && Date.now() - cached.t < DETAIL_CACHE_TTL) return cached.data;
       const detailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
-      const [archive, detailText, artifacts, report] = await Promise.all([
+      const knownArtifactRefs = pathFieldEntries(item, ["artifact", "evidence", "approval_request"], "kind-artifact");
+      const knownReportRefs = pathFieldEntries(item, ["report", "red_report", "previous_red_report"], "kind-report");
+      const [archive, detailText, knownArtifacts, knownReports] = await Promise.all([
         fetchArchiveIntent(item.id),
         detailPath ? fetchMaybeText(detailPath) : Promise.resolve(null),
-        fetchArtifactsList(item.id),
-        fetchLatestReport(item.id),
+        fetchKnownEntries(knownArtifactRefs),
+        fetchKnownEntries(knownReportRefs),
       ]);
-      const data = { archive, detailPath, detailText, artifacts, report };
+      let artifacts = knownArtifacts;
+      let reports = knownReports;
+      if (!artifacts.length) artifacts = await fetchArtifactsList(item.id);
+      if (!reports.length) {
+        const latestReport = await fetchLatestReport(item.id);
+        reports = latestReport ? [latestReport] : [];
+      }
+      const data = { archive, detailPath, detailText, artifacts, reports };
       detailCache.set(key, { t: Date.now(), data });
       return data;
     }
 
-    async function openDetailModal(item, sourceLabel) {
-      detailTitle.textContent = item.id ? "[" + item.id + "] " + item.title : item.title;
-      detailBody.replaceChildren();
-      detailModal.classList.add("open");
-      detailModal.setAttribute("aria-hidden", "false");
-      document.body.classList.add("modal-open");
+    function buildSummaryRows(item, sourceLabel) {
+      return [
+        { label: "상태", value: metaValue(item, ["status", "decision"]), key: true },
+        { label: "출처", value: item.source || sourceLabel || "" },
+        { label: "목표", value: metaValue(item, ["goal"]) },
+        { label: "완료 기준", value: metaValue(item, ["success_criteria", "expected_artifact"]) },
+        { label: "진행", value: metaValue(item, ["progress"]) },
+        { label: "최근 갱신", value: pickUpdated(item) },
+      ].filter(row => row.value);
+    }
 
-      const loadingEl = document.createElement("div");
-      loadingEl.className = "detail-loading";
-      loadingEl.textContent = "불러오는 중…";
-      detailBody.appendChild(loadingEl);
+    function buildWaitingRows(item) {
+      return [
+        { label: "기대하는 결과", value: metaValue(item, ["success_criteria", "expected_artifact", "goal"]), key: true },
+        { label: "다음 행동", value: metaValue(item, ["next_action", "next"]), key: true },
+        { label: "지금 막힌 이유", value: metaValue(item, ["blocker"]) },
+        { label: "다시 시도 조건", value: metaValue(item, ["next_retry_condition", "first_verification_gate", "gate"]) },
+        { label: "승인 경계", value: metaValue(item, ["boundary", "permission"]) },
+        { label: "참고 파일", value: pathFieldEntries(item, ["approval_request", "artifact", "evidence", "red_report"], "").map(x => x.path).join("\n") },
+      ].filter(row => row.value);
+    }
 
-      const { archive, detailPath, detailText, artifacts, report } = await loadDetailBundle(item);
-      detailBody.replaceChildren();
+    function renderImmediateDetail(item, sourceLabel) {
+      addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
+      const st = String(item.meta.status || "").toLowerCase();
+      if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") {
+        addStructuredBlock("Waiting 기대값", buildWaitingRows(item), "kind-waiting");
+      }
+    }
 
-      // 1) 결론 먼저 — 최신 HTML 리포트(결론 2축)를 맨 위에 펼친 채로 노출한다.
-      if (report) {
-        renderArtifactEntry("결론: reports/" + item.id + "/" + report.name, report, "kind-report", { expanded: true });
+    function appendLoadedDetail(item, bundle) {
+      const { archive, detailPath, detailText, artifacts, reports } = bundle;
+
+      for (const report of reports) {
+        const title = report.path || ("reports/" + item.id + "/" + report.name);
+        renderArtifactEntry("Report: " + title, report, "kind-report");
       }
 
-      // 2) 카드 요약은 메타만. 긴 본문 덤프는 제거(원장/리포트에 이미 있음).
-      const summary = [
-        "source: " + (item.source || sourceLabel || ""),
-        item.meta.status ? "status: " + item.meta.status : "",
-        item.meta.decision ? "decision: " + item.meta.decision : "",
-        item.meta.options ? "options: " + splitDecisionOptions(item.meta.options).join(" / ") : "",
-        item.meta.default ? "default: " + item.meta.default : "",
-        item.meta.reason ? "reason: " + item.meta.reason : "",
-        item.meta.next ? "next: " + item.meta.next : "",
-        pickUpdated(item) ? "updated: " + pickUpdated(item) : "",
-      ].filter(Boolean).join("\n");
-      addDetailBlock("카드 요약", summary, "kind-summary");
-
-      // 3) 나머지(원장/상세/산출물)는 접어둔다.
       const archivePath = archive ? normalizePath(archive.path) : "";
       const normalizedDetailPath = normalizePath(detailPath);
       if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
@@ -867,13 +992,40 @@
         addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
       }
       for (const a of artifacts) {
-        renderArtifactEntry("Artifact: artifacts/" + item.id + "/" + a.name, a, "kind-artifact");
+        const title = a.path || ("artifacts/" + item.id + "/" + a.name);
+        renderArtifactEntry("Artifact: " + title, a, "kind-artifact");
       }
 
       if (rateLimited) {
         addDetailBlock("GitHub API 제한", "미인증 API 호출(60/시간) 한도에 도달했습니다. 잠시 후 다시 시도해주세요. (artifacts/reports 디렉토리 listing이 누락될 수 있습니다.)", "kind-empty");
-      } else if (!archive && !detailText && !artifacts.length && !report) {
+      } else if (!archive && !detailText && !artifacts.length && !reports.length) {
         addDetailBlock("추가 상세", "연결된 archive intent / artifacts / reports가 아직 없습니다.", "kind-empty");
+      }
+    }
+
+    async function openDetailModal(item, sourceLabel) {
+      const runId = ++detailRenderRun;
+      detailTitle.textContent = item.id ? "[" + item.id + "] " + item.title : item.title;
+      detailBody.replaceChildren();
+      detailModal.classList.add("open");
+      detailModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+
+      renderImmediateDetail(item, sourceLabel);
+      const loadingEl = document.createElement("div");
+      loadingEl.className = "detail-loading";
+      loadingEl.textContent = "원문과 리포트를 불러오는 중…";
+      detailBody.appendChild(loadingEl);
+
+      try {
+        const bundle = await loadDetailBundle(item);
+        if (runId !== detailRenderRun) return;
+        loadingEl.remove();
+        appendLoadedDetail(item, bundle);
+      } catch (e) {
+        if (runId !== detailRenderRun) return;
+        loadingEl.remove();
+        addDetailBlock("상세 로딩 실패", e.message || String(e), "kind-empty");
       }
     }
 
@@ -1493,7 +1645,7 @@
         }
       } else {
         // 핵심 필드가 구조화돼 있으면 "무엇을 하고 뭐가 바뀌는지"를 라벨로 보여준다.
-        const fieldsEl = buildKeyFields(it);
+        const fieldsEl = buildKeyFields(it, (opts && opts.lane) === "waiting" ? WAITING_FIELD_ROWS : KEY_FIELD_ROWS);
         if (fieldsEl) {
           card.appendChild(fieldsEl);
         } else {
@@ -1521,11 +1673,18 @@
       ["source_note", "근거 노트", false],
       ["gate", "게이트", false],
     ];
-    function buildKeyFields(it) {
-      const rows = KEY_FIELD_ROWS.filter(([key]) => it.meta && it.meta[key]);
+    const WAITING_FIELD_ROWS = [
+      ["success_criteria", "기대", true],
+      ["next_action", "다음", true],
+      ["blocker", "막힘", false],
+      ["next_retry_condition", "조건", false],
+    ];
+    function buildKeyFields(it, rowDefs) {
+      const defs = rowDefs || KEY_FIELD_ROWS;
+      const rows = defs.filter(([key]) => it.meta && it.meta[key]);
       if (!rows.length) return null;
       const host = document.createElement("div");
-      host.className = "field-rows";
+      host.className = "field-rows" + (defs === WAITING_FIELD_ROWS ? " waiting-fields" : "");
       for (const [key, label, emphasized] of rows) {
         const row = document.createElement("div");
         row.className = "field-row" + (emphasized ? " key" : "");
@@ -1734,6 +1893,7 @@
     async function loadAndRender() {
       archiveHydrationRun += 1;
       archiveTemplateCache.clear();
+      detailCache.clear();
       clearErrors();
       statusEl.textContent = "로딩 중...";
       let intentsText = "", gatesText = "";

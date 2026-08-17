@@ -618,12 +618,10 @@
     function clearErrors() { errorHost.innerHTML = ""; }
 
     async function fetchText(url) {
-      // cache-bust to bypass intermediate caches
-      const u = url + (url.includes("?") ? "&" : "?") + "_=" + Date.now();
       const headers = url.includes("api.github.com/repos/shdkej/infinity/contents/")
         ? { "Accept": "application/vnd.github.raw" }
         : {};
-      const r = await fetch(u, { cache: "no-store", headers });
+      const r = await fetch(url, { cache: "no-cache", headers });
       if (!r.ok) throw new Error(url + " → HTTP " + r.status);
       return await r.text();
     }
@@ -668,8 +666,8 @@
 
     let rateLimited = false;
     async function ghDir(path) {
-      const dirUrl = SOURCES.apiBase + path + "?_=" + Date.now();
-      const r = await fetch(dirUrl, { cache: "no-store" });
+      const dirUrl = SOURCES.apiBase + path;
+      const r = await fetch(dirUrl, { cache: "no-cache" });
       if (r.status === 403 || r.status === 429) { rateLimited = true; return null; }
       if (!r.ok) return null;
       return await r.json();
@@ -1734,6 +1732,8 @@
     }
 
     async function loadAndRender() {
+      archiveHydrationRun += 1;
+      archiveTemplateCache.clear();
       clearErrors();
       statusEl.textContent = "로딩 중...";
       let intentsText = "", gatesText = "";
@@ -1867,6 +1867,7 @@
         }
         try {
           const text = await fetchText(SOURCES.rawBase + path);
+          if (run !== archiveHydrationRun) return changed;
           const template = extractArchiveTemplate(text);
           archiveTemplateCache.set(path, template);
           if (hasArchiveTemplate(template)) {

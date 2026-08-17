@@ -1774,7 +1774,6 @@
           .map(x => ({ ...x, source: "GATES.md" })),
         ...archiveCommentItems,
       ]);
-      await hydrateArchiveTemplates(doneItems);
 
       renderColumn("inbox",   inboxItems,   "INTENTS.md");
       renderColumn("active",  activeItems,  "INTENTS.md");
@@ -1802,6 +1801,7 @@
       // Archive 필터 재적용을 위해 최신 doneItems 보관
       lastDoneItems = doneItems;
       lastDoneSource = "GATES.md";
+      scheduleArchiveHydration(doneItems);
 
       statusEl.textContent = "업데이트: " + new Date().toLocaleString("ko-KR");
     }
@@ -1810,12 +1810,50 @@
     let lastDoneSource = "GATES.md";
     let activeArchiveTag = "";
     const archiveTemplateCache = new Map();
+    let archiveHydrationRun = 0;
+    let archiveRerenderTimer = null;
 
-    async function hydrateArchiveTemplates(items) {
+    function rerenderArchiveLane() {
+      renderColumn("done", lastDoneItems, lastDoneSource);
+    }
+
+    function scheduleArchiveRerender() {
+      if (archiveRerenderTimer) return;
+      archiveRerenderTimer = setTimeout(() => {
+        archiveRerenderTimer = null;
+        rerenderArchiveLane();
+      }, 120);
+    }
+
+    function scheduleArchiveHydration(items) {
+      const run = ++archiveHydrationRun;
+      const start = () => {
+        if (run !== archiveHydrationRun) return;
+        const latestFirst = items.slice(0, 24);
+        setTimeout(async () => {
+          const changed = await hydrateArchiveTemplates(latestFirst, run, scheduleArchiveRerender);
+          if (changed && run === archiveHydrationRun) scheduleArchiveRerender();
+        }, 350);
+        if (items.length > latestFirst.length) {
+          setTimeout(async () => {
+            const changed = await hydrateArchiveTemplates(items.slice(24), run, null);
+            if (changed && run === archiveHydrationRun) scheduleArchiveRerender();
+          }, 2500);
+        }
+      };
+      if (document.readyState === "complete") {
+        start();
+      } else {
+        window.addEventListener("load", start, { once: true });
+      }
+    }
+
+    async function hydrateArchiveTemplates(items, run, onProgress) {
       const targets = items
         .filter(it => it && it.meta && (it.meta.detail || it.id) && !hasArchiveTemplate(it.meta));
       let changed = false;
       for (const item of targets) {
+        if (run !== archiveHydrationRun) return changed;
         const path = normalizePath(item.meta.detail || ("intents/archive/" + item.id + ".md"));
         if (!path || !path.startsWith("intents/archive/")) continue;
         if (archiveTemplateCache.has(path)) {
@@ -1823,6 +1861,7 @@
           if (hasArchiveTemplate(cached)) {
             Object.assign(item.meta, cached);
             changed = true;
+            if (onProgress) onProgress();
           }
           continue;
         }
@@ -1833,6 +1872,7 @@
           if (hasArchiveTemplate(template)) {
             Object.assign(item.meta, template);
             changed = true;
+            if (onProgress) onProgress();
           }
         } catch (e) {
           archiveTemplateCache.set(path, {});

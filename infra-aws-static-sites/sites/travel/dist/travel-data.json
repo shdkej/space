@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T14:40:04.517317+00:00",
+  "generatedAt": "2026-08-17T14:40:05.119984+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 47.7,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 81296,
+    "reserveBurnKrw": 80837,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-16",
+    "date": "2026-08-17",
     "location": "Dahab",
     "mapQuery": "Dahab, Egypt"
   },
@@ -343,6 +343,10 @@
     {
       "date": "2026-08-16",
       "amount": 19333
+    },
+    {
+      "date": "2026-08-17",
+      "amount": 61217
     }
   ],
   "bookedCosts": [
@@ -7767,10 +7771,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-16",
+    "asOf": "2026-08-17",
     "limitDays": 90,
-    "usedDays": 40,
-    "remainingDays": 50,
+    "usedDays": 41,
+    "remainingDays": 49,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -7893,18 +7897,6 @@
   },
   "sleep": [
     {
-      "date": "2026-07-28",
-      "sleepHours": 7.62,
-      "recharge": 95.0,
-      "balance": "7.04"
-    },
-    {
-      "date": "2026-07-29",
-      "sleepHours": 1.0,
-      "recharge": 12.0,
-      "balance": "5.60"
-    },
-    {
       "date": "2026-07-30",
       "sleepHours": 6.84,
       "recharge": 86.0,
@@ -7975,6 +7967,18 @@
       "sleepHours": 3.38,
       "recharge": 42.0,
       "balance": "2.96"
+    },
+    {
+      "date": "2026-08-17",
+      "sleepHours": 8.45,
+      "recharge": 106.0,
+      "balance": "5.97"
+    },
+    {
+      "date": "2026-08-17",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "3.00"
     }
   ],
   "reflections": [

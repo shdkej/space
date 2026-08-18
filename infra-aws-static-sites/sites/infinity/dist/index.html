@@ -464,6 +464,8 @@
     .detail-block.kind-summary h3 { background: #1f2937; border-left-color: #94a3b8; }
     .detail-block.kind-waiting { border-color: #f59e0b; }
     .detail-block.kind-waiting h3 { background: #3b2507; border-left-color: #fbbf24; }
+    .detail-block.kind-action { border-color: #22c55e; }
+    .detail-block.kind-action h3 { background: #052e16; border-left-color: #4ade80; }
     .detail-block.kind-archive { border-color: #6366f1; }
     .detail-block.kind-archive h3 { background: #1e1b4b; border-left-color: #818cf8; }
     .detail-block.kind-detail { border-color: #14b8a6; }
@@ -507,6 +509,54 @@
     }
     .detail-field.key .detail-field-label { color: #fde68a; }
     .detail-field.key .detail-field-value { color: #fef3c7; }
+    .action-panel {
+      display: grid;
+      gap: 10px;
+      padding: 4px 12px 12px;
+    }
+    .action-note {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .action-button-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+    .action-button {
+      min-height: 34px;
+      border-radius: 8px;
+      border: 1px solid #22c55e;
+      background: #064e3b;
+      color: #dcfce7;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 7px 12px;
+    }
+    .action-button:hover { background: #065f46; border-color: #4ade80; }
+    .action-button:disabled {
+      cursor: wait;
+      opacity: 0.68;
+    }
+    .action-status {
+      min-width: 0;
+      color: #86efac;
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .action-status.error { color: #fecaca; }
     @media (max-width: 640px) {
       .detail-field {
         grid-template-columns: 1fr;
@@ -641,6 +691,7 @@
       rawGates: "https://raw.githubusercontent.com/shdkej/infinity/main/GATES.md",
       rawBase: "https://raw.githubusercontent.com/shdkej/infinity/main/",
       apiBase: "https://api.github.com/repos/shdkej/infinity/contents/",
+      actionEndpoint: "https://k23v4cvkqtxkuj5ceech43m5mq0aedhq.lambda-url.ap-northeast-2.on.aws/",
     };
 
     const statusEl = document.getElementById("status");
@@ -761,6 +812,7 @@
     const KIND_LABELS = {
       "kind-summary": "Summary",
       "kind-archive": "Intent",
+      "kind-action": "Action",
       "kind-detail": "Detail",
       "kind-artifact": "Artifact",
       "kind-report": "Report",
@@ -841,6 +893,112 @@
         host.appendChild(row);
       }
       block.appendChild(host);
+    }
+
+    function actionSummary(item, sourceLabel, action) {
+      return {
+        intent_id: item.id || "",
+        action: action || "resolve_waiting",
+        source: "dashboard",
+        title: item.title || "",
+        lane: sourceLabel || item.source || "",
+        page: window.location.href,
+        requested_from: "infinity-dashboard",
+      };
+    }
+
+    function getActionKey() {
+      const storageKey = "infinity_action_key";
+      const existing = window.localStorage ? (window.localStorage.getItem(storageKey) || "") : "";
+      if (existing) return existing;
+      const entered = window.prompt("Infinity action key");
+      const key = entered ? entered.trim() : "";
+      if (key && window.localStorage) window.localStorage.setItem(storageKey, key);
+      return key;
+    }
+
+    async function submitDashboardAction(button, statusEl, item, sourceLabel, action) {
+      const payload = actionSummary(item, sourceLabel, action);
+      const actionKey = getActionKey();
+      if (!actionKey) {
+        statusEl.classList.add("error");
+        statusEl.textContent = "액션 키 필요";
+        return;
+      }
+      button.disabled = true;
+      statusEl.classList.remove("error");
+      statusEl.textContent = "요청 접수 중...";
+      try {
+        const response = await fetch(SOURCES.actionEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Infinity-Action-Key": actionKey,
+          },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) {
+          throw new Error(data.error || ("HTTP " + response.status));
+        }
+        if (data.status === "already_queued") {
+          statusEl.textContent = "이미 접수됨";
+          return;
+        }
+        const shortId = String(data.request_id || "").slice(0, 8);
+        statusEl.textContent = shortId
+          ? "요청 접수됨 · " + shortId
+          : "요청 접수됨";
+      } catch (error) {
+        button.disabled = false;
+        statusEl.classList.add("error");
+        statusEl.textContent = "접수 실패 · " + (error && error.message ? error.message : "다시 시도 필요");
+      }
+    }
+
+    function addActionButton(row, item, sourceLabel, action, label, initialStatus) {
+      const group = document.createElement("div");
+      group.className = "action-button-group";
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "action-button";
+      button.textContent = label;
+      const status = document.createElement("span");
+      status.className = "action-status";
+      status.textContent = initialStatus || "대기 중";
+      button.addEventListener("click", () => submitDashboardAction(button, status, item, sourceLabel, action));
+      group.appendChild(button);
+      group.appendChild(status);
+      row.appendChild(group);
+    }
+
+    function addActionBlock(item, sourceLabel) {
+      if (!item || !item.id) return;
+      const source = String(sourceLabel || item.source || "").toLowerCase();
+      const st = String(item.meta && item.meta.status || "").toLowerCase();
+      const canResolveWaiting = source === "waiting" || st === "waiting";
+      const canRequestArchive = source === "active" || source === "waiting" || st === "active" || st === "waiting";
+      if (!canResolveWaiting && !canRequestArchive) return;
+
+      const block = makeBlock("대시보드 액션", "kind-action", { expanded: true });
+      const panel = document.createElement("div");
+      panel.className = "action-panel";
+
+      const note = document.createElement("div");
+      note.className = "action-note";
+      note.textContent = "SAM이 확인 가능한 범위에서 대기 사유 해소를 시작합니다. 공개 게시, 결제, 권한 변경, 계정 생성 완료 전에는 멈춥니다.";
+
+      const row = document.createElement("div");
+      row.className = "action-row";
+      if (canResolveWaiting) {
+        addActionButton(row, item, sourceLabel, "resolve_waiting", "SAM이 확인 시작", "대기 중");
+      }
+      if (canRequestArchive) {
+        addActionButton(row, item, sourceLabel, "archive_request", "Archive 요청", "확인 후 처리");
+      }
+      panel.appendChild(note);
+      panel.appendChild(row);
+      block.appendChild(panel);
     }
 
     function addImageBlock(title, url, kindClass) {
@@ -971,6 +1129,7 @@
 
     function renderImmediateDetail(item, sourceLabel) {
       addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
+      addActionBlock(item, sourceLabel);
       const st = String(item.meta.status || "").toLowerCase();
       if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") {
         addStructuredBlock("Waiting 기대값", buildWaitingRows(item), "kind-waiting");

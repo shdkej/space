@@ -15,3 +15,10 @@ output "app_feedback" {
     function_url = aws_lambda_function_url.app_feedback.function_url
   }
 }
+
+output "infinity_action" {
+  value = {
+    bucket_name  = aws_s3_bucket.infinity_action_queue.bucket
+    function_url = aws_lambda_function_url.infinity_action.function_url
+  }
+}

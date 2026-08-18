@@ -37,3 +37,18 @@ variable "app_feedback_allowed_origins" {
     "http://localhost:3000",
   ]
 }
+
+variable "infinity_action_allowed_origins" {
+  description = "Allowed browser origins for the Infinity dashboard action Lambda Function URL."
+  type        = list(string)
+  default = [
+    "https://infinity.aws.shdkej.com",
+    "http://localhost:8000",
+  ]
+}
+
+variable "infinity_action_token_sha256" {
+  description = "SHA-256 hash of the shared key required for Infinity dashboard actions."
+  type        = string
+  sensitive   = true
+}

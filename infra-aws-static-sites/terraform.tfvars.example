@@ -3,3 +3,5 @@ route53_zone_name  = "aws.shdkej.com"
 
 app_feedback_sender_email    = "verified-sender@example.com"
 app_feedback_recipient_email = "feedback-recipient@example.com"
+
+infinity_action_token_sha256 = "replace-with-sha256-of-dashboard-action-key"

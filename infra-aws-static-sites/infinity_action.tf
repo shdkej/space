@@ -127,7 +127,7 @@ resource "aws_lambda_function_url" "infinity_action" {
 
   cors {
     allow_credentials = false
-    allow_headers     = ["content-type"]
+    allow_headers     = ["content-type", "x-infinity-action-key"]
     allow_methods     = ["POST"]
     allow_origins     = var.infinity_action_allowed_origins
     max_age           = 3600

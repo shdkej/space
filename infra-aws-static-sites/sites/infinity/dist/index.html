@@ -907,13 +907,13 @@
       };
     }
 
+    let actionKeyCache = "";
+
     function getActionKey() {
-      const storageKey = "infinity_action_key";
-      const existing = window.localStorage ? (window.localStorage.getItem(storageKey) || "") : "";
-      if (existing) return existing;
+      if (actionKeyCache) return actionKeyCache;
       const entered = window.prompt("Infinity action key");
       const key = entered ? entered.trim() : "";
-      if (key && window.localStorage) window.localStorage.setItem(storageKey, key);
+      if (key) actionKeyCache = key;
       return key;
     }
 

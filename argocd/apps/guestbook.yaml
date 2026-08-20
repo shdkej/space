@@ -11,6 +11,7 @@ spec:
     path: helm_chart_base
     helm:
       values: |
+        replicaCount: 0
         fullname: guestbook
         image:
           repository: ghcr.io/shdkej/synonym-dictionary

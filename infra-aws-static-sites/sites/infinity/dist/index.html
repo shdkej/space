@@ -470,6 +470,8 @@
     .detail-block.kind-archive h3 { background: #1e1b4b; border-left-color: #818cf8; }
     .detail-block.kind-detail { border-color: #14b8a6; }
     .detail-block.kind-detail h3 { background: #042f2e; border-left-color: #2dd4bf; }
+    .detail-block.kind-threads { border-color: #2dd4bf; }
+    .detail-block.kind-threads h3 { background: #042f2e; border-left-color: #5eead4; }
     .detail-block.kind-artifact { border-color: #f59e0b; }
     .detail-block.kind-artifact h3 { background: #3b2a08; border-left-color: #fbbf24; }
     .detail-block.kind-report { border-color: #38bdf8; }
@@ -557,6 +559,45 @@
       overflow-wrap: anywhere;
     }
     .action-status.error { color: #fecaca; }
+    .thread-drafts {
+      display: grid;
+      gap: 10px;
+      padding: 4px 12px 12px;
+    }
+    .thread-draft {
+      border-top: 1px solid rgba(45, 212, 191, .18);
+      padding-top: 10px;
+    }
+    .thread-draft:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+    .thread-draft-title {
+      color: #ccfbf1;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .thread-draft-meta {
+      margin-top: 3px;
+      color: #94a3b8;
+      font-size: 11px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .thread-draft-copy {
+      margin: 8px 0 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, .82);
+      color: #e0f2fe;
+      font-size: 12px;
+      line-height: 1.58;
+      white-space: pre-wrap;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
     @media (max-width: 640px) {
       .detail-field {
         grid-template-columns: 1fr;
@@ -814,6 +855,7 @@
       "kind-archive": "Intent",
       "kind-action": "Action",
       "kind-detail": "Detail",
+      "kind-threads": "Threads",
       "kind-artifact": "Artifact",
       "kind-report": "Report",
       "kind-empty": "Empty",
@@ -1028,6 +1070,84 @@
       else addDetailBlock(title, entry.text, kindClass);
     }
 
+    function extractLine(sectionText, label) {
+      const match = String(sectionText || "").match(new RegExp("^[-*] " + label + ":\\s*(.+)$", "m"));
+      return match ? match[1].trim() : "";
+    }
+
+    function extractThreadDrafts(text) {
+      const source = String(text || "");
+      const drafts = [];
+      const sectionRe = /^##\s+(C\d+)\s+[—-]\s+(.+?)\n([\s\S]*?)(?=^##\s+C\d+\s+[—-]\s+|\n##\s+7일|\Z)/gm;
+      let match;
+      while ((match = sectionRe.exec(source))) {
+        const id = match[1].trim();
+        const title = match[2].trim();
+        const body = match[3] || "";
+        const code = body.match(/```text\s*([\s\S]*?)```/);
+        if (!code || !code[1].trim()) continue;
+        drafts.push({
+          id,
+          title,
+          purchase: extractLine(body, "실제 구매 기록"),
+          checks: extractLine(body, "게시 전 확인"),
+          copy: code[1].trim(),
+        });
+      }
+      return drafts;
+    }
+
+    function collectThreadDrafts(bundle) {
+      const sources = [];
+      if (bundle && bundle.detailText) sources.push(bundle.detailText);
+      for (const entry of (bundle && bundle.artifacts || [])) {
+        const path = String(entry.path || entry.name || "");
+        if (entry.text && /candidate-posts\.md$/.test(path)) sources.push(entry.text);
+      }
+      const seen = new Set();
+      const drafts = [];
+      for (const text of sources) {
+        for (const draft of extractThreadDrafts(text)) {
+          const key = draft.id + "|" + draft.title;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          drafts.push(draft);
+        }
+      }
+      return drafts;
+    }
+
+    function addThreadDraftsBlock(drafts) {
+      if (!drafts || !drafts.length) return;
+      const block = makeBlock("작성 대기중인 Threads", "kind-threads", { expanded: true });
+      const host = document.createElement("div");
+      host.className = "thread-drafts";
+      for (const draft of drafts) {
+        const card = document.createElement("article");
+        card.className = "thread-draft";
+        const title = document.createElement("div");
+        title.className = "thread-draft-title";
+        title.textContent = draft.id + " · " + draft.title;
+        card.appendChild(title);
+        const metaText = [
+          draft.purchase ? "구매 근거: " + draft.purchase : "",
+          draft.checks ? "게시 전 확인: " + draft.checks : "",
+        ].filter(Boolean).join("\n");
+        if (metaText) {
+          const meta = document.createElement("div");
+          meta.className = "thread-draft-meta";
+          meta.textContent = metaText;
+          card.appendChild(meta);
+        }
+        const copy = document.createElement("pre");
+        copy.className = "thread-draft-copy";
+        copy.textContent = draft.copy;
+        card.appendChild(copy);
+        host.appendChild(card);
+      }
+      block.appendChild(host);
+    }
+
     function closeDetailModal() {
       detailModal.classList.remove("open");
       detailModal.setAttribute("aria-hidden", "true");
@@ -1119,6 +1239,7 @@
     function buildWaitingRows(item) {
       return [
         { label: "기대하는 결과", value: metaValue(item, ["success_criteria", "expected_artifact", "goal"]), key: true },
+        { label: "작성 대기중인 Threads", value: metaValue(item, ["pending_threads", "threads_drafts"]), key: true },
         { label: "다음 행동", value: metaValue(item, ["next_action", "next"]), key: true },
         { label: "지금 막힌 이유", value: metaValue(item, ["blocker"]) },
         { label: "다시 시도 조건", value: metaValue(item, ["next_retry_condition", "first_verification_gate", "gate"]) },
@@ -1150,6 +1271,7 @@
       if (detailText && normalizedDetailPath !== archivePath) {
         addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
       }
+      addThreadDraftsBlock(collectThreadDrafts(bundle));
       for (const a of artifacts) {
         const title = a.path || ("artifacts/" + item.id + "/" + a.name);
         renderArtifactEntry("Artifact: " + title, a, "kind-artifact");
@@ -1834,6 +1956,7 @@
     ];
     const WAITING_FIELD_ROWS = [
       ["success_criteria", "기대", true],
+      ["pending_threads", "작성 대기", true],
       ["next_action", "다음", true],
       ["blocker", "막힘", false],
       ["next_retry_condition", "조건", false],

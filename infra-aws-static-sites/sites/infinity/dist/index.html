@@ -2203,8 +2203,11 @@
         ).map(x => ({ ...x, source: x.source || "INTENTS.md" })),
         parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" }))
       );
+      const archiveItems = mergeById(
+        parseItems(intentSections["Archive"] || ""),
+        parseArchiveComments(intentSections["Archive"] || "")
+      );
       const archiveCommentItems = mergeById(
-        parseArchiveComments(intentSections["Archive"] || ""),
         [
           ...parseArchiveComments(intentSections["Inbox"] || ""),
           ...parseArchiveComments(intentSections["Active"] || ""),
@@ -2214,6 +2217,7 @@
       const doneItems = sortDoneByCompletionDesc([
         ...parseItems(gateSections["처리 완료"] || gateSections["Resolved"] || "")
           .map(x => ({ ...x, source: "GATES.md" })),
+        ...archiveItems,
         ...archiveCommentItems,
       ]);
 

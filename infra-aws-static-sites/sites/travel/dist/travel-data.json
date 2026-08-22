@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T14:40:06.934368+00:00",
+  "generatedAt": "2026-08-22T11:17:00.646471+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -6710,16 +6710,6 @@
         "lng": 12.4964
       },
       {
-        "name": "Switzerland, Switzerland",
-        "lat": 46.8182,
-        "lng": 8.2275
-      },
-      {
-        "name": "Morocco, Morocco",
-        "lat": 31.6295,
-        "lng": -7.9811
-      },
-      {
         "name": "Portugal, Portugal",
         "lat": 38.7223,
         "lng": -9.1393
@@ -7597,53 +7587,25 @@
       "city": "Italy",
       "country": "Italy",
       "status": "planned",
-      "startDate": "2026-09-02",
-      "endDate": "2026-09-18",
-      "source": "master route sketch / wishlist",
-      "note": "Sicily -> Naples -> Rome -> Florence -> Milan; swimming-focused Italy block.",
+      "startDate": "2026-09-03",
+      "endDate": "2026-10-01",
+      "source": "confirmed flight + 2026-08-22 route update",
+      "note": "Sicily -> Naples -> Amalfi/Salerno -> Rome -> Florence -> Milan; Morocco removed and Italy extended through 10/1.",
       "transportIn": "이집트 샤름엘셰이크 -> 이탈리아 남부",
-      "transportOut": "열차/항공: 이탈리아 -> 스위스",
+      "transportOut": "항공/열차 후보: 이탈리아 -> 포르투갈",
       "schengen": true,
       "lat": 41.9028,
       "lng": 12.4964
     },
     {
-      "city": "Switzerland",
-      "country": "Switzerland",
-      "status": "planned",
-      "startDate": "2026-09-18",
-      "endDate": "2026-09-21",
-      "source": "master route sketch",
-      "note": "Interlaken and Zermatt; short alpine recovery block.",
-      "transportIn": "이탈리아 -> 스위스",
-      "transportOut": "항공 후보: 스위스 -> 모로코",
-      "schengen": true,
-      "lat": 46.8182,
-      "lng": 8.2275
-    },
-    {
-      "city": "Morocco",
-      "country": "Morocco",
-      "status": "planned",
-      "startDate": "2026-09-21",
-      "endDate": "2026-09-25",
-      "source": "Schengen buffer plan",
-      "note": "Marrakech and desert leg; non-Schengen buffer before Iberia.",
-      "transportIn": "항공 후보: 스위스 -> 모로코",
-      "transportOut": "항공 후보: 모로코 -> 포르투갈",
-      "schengen": false,
-      "lat": 31.6295,
-      "lng": -7.9811
-    },
-    {
       "city": "Portugal",
       "country": "Portugal",
       "status": "planned",
-      "startDate": "2026-09-25",
-      "endDate": "2026-10-01",
-      "source": "master route sketch",
-      "note": "Porto / Lisbon reset; calmer west-Europe stretch.",
-      "transportIn": "모로코 -> 포르투갈",
+      "startDate": "2026-10-01",
+      "endDate": "2026-10-07",
+      "source": "2026-08-22 route update",
+      "note": "Porto / Lisbon reset after extended Italy block; calmer west-Europe stretch.",
+      "transportIn": "이탈리아 -> 포르투갈",
       "transportOut": "육로/항공: 포르투갈 -> 스페인",
       "schengen": true,
       "lat": 38.7223,
@@ -7653,9 +7615,9 @@
       "city": "Spain",
       "country": "Spain",
       "status": "planned",
-      "startDate": "2026-10-01",
-      "endDate": "2026-10-07",
-      "source": "master route sketch / wishlist",
+      "startDate": "2026-10-07",
+      "endDate": "2026-10-13",
+      "source": "2026-08-22 route update",
       "note": "Madrid / Barcelona leg; book key museums early.",
       "transportIn": "포르투갈 -> 스페인",
       "transportOut": "육로/항공: 스페인 -> 남프랑스",
@@ -7667,9 +7629,9 @@
       "city": "Southern France / Paris",
       "country": "France",
       "status": "planned",
-      "startDate": "2026-10-07",
-      "endDate": "2026-10-14",
-      "source": "master route sketch / wishlist",
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-20",
+      "source": "2026-08-22 route update",
       "note": "Avignon / Arles plus Paris block before UK.",
       "transportIn": "스페인 -> 프랑스",
       "transportOut": "열차/항공: 프랑스 -> 런던",
@@ -7681,9 +7643,9 @@
       "city": "London & Seven Sisters",
       "country": "United Kingdom",
       "status": "planned",
-      "startDate": "2026-10-14",
-      "endDate": "2026-10-18",
-      "source": "master route sketch / wishlist",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-24",
+      "source": "2026-08-22 route update",
       "note": "Eurostar entry and Seven Sisters day trip.",
       "transportIn": "프랑스 -> 런던",
       "transportOut": "항공 후보: 런던 -> 코펜하겐",
@@ -7695,9 +7657,9 @@
       "city": "Copenhagen",
       "country": "Denmark",
       "status": "planned",
-      "startDate": "2026-10-18",
-      "endDate": "2026-10-20",
-      "source": "wishlist",
+      "startDate": "2026-10-24",
+      "endDate": "2026-10-26",
+      "source": "2026-08-22 route update",
       "note": "Short hygge stop before Iceland.",
       "transportIn": "런던 -> 코펜하겐",
       "transportOut": "항공 후보: 코펜하겐 -> 레이캬비크",
@@ -7709,9 +7671,9 @@
       "city": "Reykjavik",
       "country": "Iceland",
       "status": "planned",
-      "startDate": "2026-10-20",
-      "endDate": "2026-10-23",
-      "source": "master route sketch",
+      "startDate": "2026-10-26",
+      "endDate": "2026-10-29",
+      "source": "2026-08-22 route update",
       "note": "Iceland finale before Americas; aurora hunting is optional.",
       "transportIn": "코펜하겐 -> 레이캬비크",
       "transportOut": "장거리 항공: 아이슬란드 -> 미국",
@@ -7723,9 +7685,9 @@
       "city": "New York",
       "country": "United States",
       "status": "planned",
-      "startDate": "2026-10-23",
-      "endDate": "2026-10-30",
-      "source": "master route sketch / wishlist",
+      "startDate": "2026-10-29",
+      "endDate": "2026-11-05",
+      "source": "2026-08-22 route update",
       "note": "MoMA, Guggenheim, Central Park; possible Peabody Library side trip.",
       "transportIn": "아이슬란드 -> 뉴욕",
       "transportOut": "미국 국내 이동: 뉴욕 -> 라스베이거스/로스앤젤레스",
@@ -7802,9 +7764,9 @@
       "rule": "90 days in any rolling 180-day period; entry and exit days are counted.",
       "source": "https://home-affairs.ec.europa.eu/policies/schengen/border-crossing/short-stay-calculator_en",
       "limitDays": 90,
-      "projectedUsedDays": 73,
-      "projectedRemainingDays": 17,
-      "riskBand": "comfortable",
+      "projectedUsedDays": 82,
+      "projectedRemainingDays": 8,
+      "riskBand": "tight",
       "segments": [
         {
           "label": "1차 쉥겐",
@@ -7849,47 +7811,34 @@
         },
         {
           "label": "2차 쉥겐",
-          "startDate": "2026-09-02",
-          "endDate": "2026-09-21",
+          "startDate": "2026-09-03",
+          "endDate": "2026-10-01",
           "schengen": true,
           "countries": [
-            "Italy",
-            "Switzerland"
+            "Italy"
           ],
-          "note": "이탈리아 16박 + 스위스 3박.",
-          "calendarDays": 20,
-          "schengenDays": 20
-        },
-        {
-          "label": "모로코 브레이크",
-          "startDate": "2026-09-21",
-          "endDate": "2026-09-25",
-          "schengen": false,
-          "countries": [
-            "Morocco"
-          ],
-          "note": "사막 구간은 비쉥겐으로 분리.",
-          "calendarDays": 4,
-          "schengenDays": 0
+          "note": "모로코·스위스 제외, 이탈리아 체류를 10/1까지 연장.",
+          "calendarDays": 29,
+          "schengenDays": 29
         },
         {
           "label": "3차 쉥겐",
-          "startDate": "2026-09-25",
-          "endDate": "2026-10-14",
+          "startDate": "2026-10-01",
+          "endDate": "2026-10-20",
           "schengen": true,
           "countries": [
             "Portugal",
             "Spain",
             "France"
           ],
-          "note": "포르투갈/스페인/프랑스 본구간.",
+          "note": "이탈리아 연장에 맞춰 포르투갈·스페인·프랑스 일정을 순연.",
           "calendarDays": 20,
           "schengenDays": 20
         },
         {
           "label": "런던 브레이크",
-          "startDate": "2026-10-14",
-          "endDate": "2026-10-18",
+          "startDate": "2026-10-20",
+          "endDate": "2026-10-24",
           "schengen": false,
           "countries": [
             "United Kingdom"
@@ -7900,8 +7849,8 @@
         },
         {
           "label": "4차 쉥겐",
-          "startDate": "2026-10-18",
-          "endDate": "2026-10-23",
+          "startDate": "2026-10-24",
+          "endDate": "2026-10-29",
           "schengen": true,
           "countries": [
             "Denmark",
@@ -8115,11 +8064,11 @@
     {
       "id": "2g25v9b5re68mfsbtv4jr0mabs",
       "date": "2026-08-22",
-      "title": "내일 의도 / 숙소와 렌더는 먼저 줄여서 본다",
-      "intent": "선택을 늘리지 않고, 숙소와 시각 산출물은 먼저 줄여서 본다.",
+      "title": "내일 의도 / 측정 가능한 작은 루프 하나만 만든다",
+      "intent": "Autoresearch와 Infinity를 큰 플랫폼이 아니라 측정 가능한 한 루프로 연결한다.",
       "did": null,
       "why": null,
-      "carry": "숙소 후보 2개만 남기고, 오늘 만든 시각 산출물의 렌더를 직접 열어 쓸 수 있는지 확인한다.",
+      "carry": "치안 지도 아이디어를 가설 / 지표 / 증거 / 다음 행동 4칸으로 적는다.",
       "drop": null
     }
   ]

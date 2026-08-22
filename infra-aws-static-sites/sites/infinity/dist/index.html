@@ -400,12 +400,12 @@
       position: fixed; inset: 0; z-index: 50;
       background: rgba(2, 6, 23, 0.78);
       display: none; align-items: flex-start; justify-content: center;
-      padding: 16px; overflow-y: auto; overscroll-behavior: contain;
+      padding: 24px; overflow-y: auto; overscroll-behavior: contain;
     }
     .modal-backdrop.open { display: flex; }
     body.modal-open { overflow: hidden; }
     .modal {
-      width: min(980px, 100%); max-height: calc(100vh - 32px);
+      width: min(1440px, calc(100vw - 48px)); max-height: calc(100vh - 48px);
       background: #0f172a; border: 1px solid var(--border);
       border-radius: 14px; box-shadow: 0 24px 80px rgba(0,0,0,.45);
       overflow: hidden;
@@ -421,9 +421,9 @@
     }
     .modal-close { flex: 0 0 auto; }
     .modal-body {
-      padding: 14px 16px; overflow-y: auto; overflow-x: hidden;
+      padding: 20px clamp(18px, 3vw, 40px) 32px; overflow-y: auto; overflow-x: hidden;
       display: grid; gap: 14px;
-      max-height: calc(100vh - 110px);
+      max-height: calc(100vh - 126px);
       -webkit-overflow-scrolling: touch;
     }
     .detail-block {
@@ -448,7 +448,7 @@
     }
     .detail-block h3 .title-text {
       flex: 1 1 auto; min-width: 0;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      overflow-wrap: anywhere;
       font-weight: 600;
     }
     .detail-block h3 .collapse-icon {
@@ -483,6 +483,64 @@
       word-break: break-word; color: #dbeafe; font-size: 12px;
       line-height: 1.55;
     }
+    .markdown-body {
+      width: 100%;
+      padding: clamp(20px, 3vw, 34px);
+      color: #dbe4f0;
+      font-size: 14px;
+      line-height: 1.78;
+      overflow-wrap: anywhere;
+    }
+    .markdown-body > :first-child { margin-top: 0; }
+    .markdown-body > :last-child { margin-bottom: 0; }
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+      color: #f8fafc;
+      line-height: 1.3;
+      letter-spacing: -.015em;
+      margin: 1.7em 0 .55em;
+    }
+    .markdown-body h1 { font-size: clamp(24px, 3vw, 34px); }
+    .markdown-body h2 { font-size: clamp(20px, 2.3vw, 28px); padding-bottom: 8px; border-bottom: 1px solid rgba(148,163,184,.22); }
+    .markdown-body h3 { font-size: 19px; color: #bae6fd; }
+    .markdown-body h4 { font-size: 16px; color: #cbd5e1; }
+    .markdown-body p { margin: 0 0 1em; }
+    .markdown-body a { color: #7dd3fc; text-decoration: underline; text-underline-offset: 3px; }
+    .markdown-body img { display: block; max-width: 100%; height: auto; margin: 1em 0; border-radius: 8px; }
+    .markdown-body strong { color: #fef3c7; font-weight: 750; }
+    .markdown-body em { color: #c4b5fd; }
+    .markdown-body ul,
+    .markdown-body ol { margin: .35em 0 1.1em; padding-left: 1.65em; }
+    .markdown-body li { padding-left: .25em; margin: .28em 0; }
+    .markdown-body li > ul,
+    .markdown-body li > ol { margin: .25em 0 .35em; }
+    .markdown-body blockquote {
+      margin: 1.2em 0; padding: 10px 16px;
+      border-left: 3px solid #38bdf8;
+      background: rgba(14,116,144,.12);
+      color: #cbd5e1;
+    }
+    .markdown-body code {
+      padding: .15em .38em; border-radius: 5px;
+      background: #0b1220; color: #bae6fd;
+      font: 0.92em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .markdown-body pre {
+      margin: 1.15em 0; padding: 16px 18px;
+      overflow-x: auto; white-space: pre;
+      border: 1px solid rgba(56,189,248,.22); border-radius: 9px;
+      background: #0a1120; color: #dbeafe;
+      font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .markdown-body pre code { padding: 0; background: transparent; color: inherit; }
+    .markdown-body hr { border: 0; border-top: 1px solid rgba(148,163,184,.24); margin: 1.8em 0; }
+    .markdown-body table { width: 100%; margin: 1.25em 0; border-collapse: collapse; font-size: 13px; }
+    .markdown-body th,
+    .markdown-body td { padding: 9px 11px; border: 1px solid rgba(148,163,184,.25); text-align: left; vertical-align: top; }
+    .markdown-body th { color: #fef3c7; background: rgba(120,53,15,.3); font-weight: 700; }
+    .markdown-body tr:nth-child(even) td { background: rgba(15,23,42,.45); }
     .detail-fields {
       display: grid;
       gap: 0;
@@ -599,6 +657,10 @@
       overflow-wrap: anywhere;
     }
     @media (max-width: 640px) {
+      .modal-backdrop { padding: 0; }
+      .modal { width: 100%; min-height: 100%; max-height: none; border-radius: 0; border-left: 0; border-right: 0; }
+      .modal-body { max-height: calc(100vh - 112px); padding: 16px 14px 26px; }
+      .markdown-body { padding: 18px 16px; font-size: 13px; line-height: 1.72; }
       .detail-field {
         grid-template-columns: 1fr;
         gap: 3px;
@@ -906,11 +968,158 @@
       return block;
     }
 
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function safeMarkdownUrl(value) {
+      const url = String(value || "").trim().replace(/&amp;/g, "&");
+      if (/^(https?:|mailto:|#)/i.test(url)) return escapeHtml(url);
+      return "#";
+    }
+
+    function inlineMarkdown(value) {
+      let html = escapeHtml(value);
+      const codeTokens = [];
+      const elementTokens = [];
+      html = html.replace(/`([^`]+)`/g, (_, code) => {
+        const token = "@@INLINE_CODE_" + codeTokens.length + "@@";
+        codeTokens.push("<code>" + code + "</code>");
+        return token;
+      });
+      html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+[\"']([^\"']*)[\"'])?\)/g, (_, alt, url, caption) => {
+        const safeUrl = safeMarkdownUrl(url);
+        const token = "@@INLINE_ELEMENT_" + elementTokens.length + "@@";
+        elementTokens.push("<img src=\"" + safeUrl + "\" alt=\"" + escapeHtml(alt) + "\"" + (caption ? " title=\"" + escapeHtml(caption) + "\"" : "") + " loading=\"lazy\">");
+        return token;
+      });
+      html = html.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+[\"']([^\"']*)[\"'])?\)/g, (_, label, url, title) => {
+        const extra = title ? " title=\"" + escapeHtml(title) + "\"" : "";
+        const token = "@@INLINE_ELEMENT_" + elementTokens.length + "@@";
+        elementTokens.push("<a href=\"" + safeMarkdownUrl(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\"" + extra + ">" + label + "</a>");
+        return token;
+      });
+      html = html.replace(/(^|\s)(https?:\/\/[^\s<]+)/g, (_, prefix, url) => prefix + "<a href=\"" + safeMarkdownUrl(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + url + "</a>");
+      html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/__([^_]+)__/g, "<strong>$1</strong>");
+      html = html.replace(/~~([^~]+)~~/g, "<del>$1</del>");
+      html = html.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, "$1<em>$2</em>");
+      html = html.replace(/(^|[^_])_([^_]+)_(?!_)/g, "$1<em>$2</em>");
+      codeTokens.forEach((token, index) => {
+        html = html.replace("@@INLINE_CODE_" + index + "@@", token);
+      });
+      elementTokens.forEach((token, index) => {
+        html = html.replace("@@INLINE_ELEMENT_" + index + "@@", token);
+      });
+      return html;
+    }
+
+    function renderMarkdownHtml(markdown) {
+      const lines = String(markdown || "").replace(/\r/g, "").split("\n");
+      const out = [];
+      let paragraph = [];
+      let list = null;
+      let quote = [];
+      let code = null;
+
+      const flushParagraph = () => {
+        if (!paragraph.length) return;
+        out.push("<p>" + paragraph.map(inlineMarkdown).join("<br>") + "</p>");
+        paragraph = [];
+      };
+      const flushList = () => {
+        if (!list) return;
+        out.push("<" + list.type + ">" + list.items.map(item => "<li>" + inlineMarkdown(item) + "</li>").join("") + "</" + list.type + ">");
+        list = null;
+      };
+      const flushQuote = () => {
+        if (!quote.length) return;
+        out.push("<blockquote>" + quote.map(inlineMarkdown).join("<br>") + "</blockquote>");
+        quote = [];
+      };
+
+      for (let i = 0; i < lines.length; i += 1) {
+        const line = lines[i];
+        if (code) {
+          if (/^\s*```/.test(line)) {
+            out.push("<pre><code>" + escapeHtml(code.join("\n")) + "</code></pre>");
+            code = null;
+          } else {
+            code.push(line);
+          }
+          continue;
+        }
+        const fence = line.match(/^\s*```(?:[\w-]+)?\s*$/);
+        if (fence) {
+          flushParagraph(); flushList(); flushQuote(); code = [];
+          continue;
+        }
+        if (!line.trim()) {
+          flushParagraph(); flushList(); flushQuote();
+          continue;
+        }
+        const heading = line.match(/^(#{1,4})\s+(.+?)\s*#*$/);
+        if (heading) {
+          flushParagraph(); flushList(); flushQuote();
+          const level = heading[1].length;
+          out.push("<h" + level + ">" + inlineMarkdown(heading[2]) + "</h" + level + ">");
+          continue;
+        }
+        if (/^\s*(?:---+|\*\s*\*\s*\*|___+)\s*$/.test(line)) {
+          flushParagraph(); flushList(); flushQuote(); out.push("<hr>");
+          continue;
+        }
+        const quoteLine = line.match(/^\s*>\s?(.*)$/);
+        if (quoteLine) {
+          flushParagraph(); flushList(); quote.push(quoteLine[1]);
+          continue;
+        }
+        const listLine = line.match(/^\s*(?:[-*+]\s+|\d+[.)]\s+)(.+)$/);
+        if (listLine) {
+          flushParagraph(); flushQuote();
+          const type = /^\s*\d/.test(line) ? "ol" : "ul";
+          if (!list || list.type !== type) { flushList(); list = { type, items: [] }; }
+          list.items.push(listLine[1]);
+          continue;
+        }
+        if (line.includes("|") && /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[i + 1] || "")) {
+          flushParagraph(); flushList(); flushQuote();
+          const cells = line.trim().replace(/^\||\|$/g, "").split("|").map(cell => cell.trim());
+          i += 1;
+          const rows = [];
+          while (i + 1 < lines.length && lines[i + 1].includes("|") && lines[i + 1].trim()) {
+            i += 1;
+            rows.push(lines[i].trim().replace(/^\||\|$/g, "").split("|").map(cell => cell.trim()));
+          }
+          out.push("<table><thead><tr>" + cells.map(cell => "<th>" + inlineMarkdown(cell) + "</th>").join("") + "</tr></thead><tbody>" + rows.map(row => "<tr>" + cells.map((_, index) => "<td>" + inlineMarkdown(row[index] || "") + "</td>").join("") + "</tr>").join("") + "</tbody></table>");
+          continue;
+        }
+        paragraph.push(line);
+      }
+      if (code) out.push("<pre><code>" + escapeHtml(code.join("\n")) + "</code></pre>");
+      flushParagraph(); flushList(); flushQuote();
+      return out.join("\n") || "<p>내용 없음</p>";
+    }
+
     function addDetailBlock(title, text, kindClass) {
       const block = makeBlock(title, kindClass);
-      const pre = document.createElement("pre");
-      pre.textContent = text && text.trim() ? text.trim() : "내용 없음";
-      block.appendChild(pre);
+      const source = String(text || "").trim();
+      const isCodeLike = /\.(json|ya?ml|csv|log|txt)(?:$|\s)/i.test(title);
+      if (!isCodeLike && /\.md(?:$|\s)/i.test(title)) {
+        const article = document.createElement("article");
+        article.className = "markdown-body";
+        article.innerHTML = renderMarkdownHtml(source);
+        block.appendChild(article);
+      } else {
+        const pre = document.createElement("pre");
+        pre.textContent = source || "내용 없음";
+        block.appendChild(pre);
+      }
     }
 
     function addStructuredBlock(title, rows, kindClass) {
@@ -1231,6 +1440,11 @@
         { label: "출처", value: item.source || sourceLabel || "" },
         { label: "목표", value: metaValue(item, ["goal"]) },
         { label: "완료 기준", value: metaValue(item, ["success_criteria", "expected_artifact"]) },
+        { label: "지표 질문", value: metaValue(item, ["metric_question"]), key: true },
+        { label: "지표 신호", value: metaValue(item, ["metric_signal"]) },
+        { label: "판정 규칙", value: metaValue(item, ["metric_decision_rule"]) },
+        { label: "지표 결과", value: metaValue(item, ["metric_result"]) },
+        { label: "다음 결정", value: metaValue(item, ["metric_next_decision"]) },
         { label: "진행", value: metaValue(item, ["progress"]) },
         { label: "최근 갱신", value: pickUpdated(item) },
       ].filter(row => row.value);
@@ -1239,6 +1453,11 @@
     function buildWaitingRows(item) {
       return [
         { label: "기대하는 결과", value: metaValue(item, ["success_criteria", "expected_artifact", "goal"]), key: true },
+        { label: "지표 질문", value: metaValue(item, ["metric_question"]), key: true },
+        { label: "지표 신호", value: metaValue(item, ["metric_signal"]) },
+        { label: "판정 규칙", value: metaValue(item, ["metric_decision_rule"]) },
+        { label: "지표 결과", value: metaValue(item, ["metric_result"]) },
+        { label: "다음 결정", value: metaValue(item, ["metric_next_decision"]) },
         { label: "작성 대기중인 Threads", value: metaValue(item, ["pending_threads", "threads_drafts"]), key: true },
         { label: "다음 행동", value: metaValue(item, ["next_action", "next"]), key: true },
         { label: "지금 막힌 이유", value: metaValue(item, ["blocker"]) },
@@ -1948,6 +2167,7 @@
       ["expected_artifact", "바뀌는 것", true],
       ["expected_impact", "기대 효과", true],
       ["success_criteria", "완료 기준", true],
+      ["metric_question", "지표 질문", false],
       ["first_verification_gate", "검증 게이트", false],
       ["rationale", "왜", false],
       ["source_signal", "근거 신호", false],
@@ -2179,9 +2399,11 @@
       clearErrors();
       statusEl.textContent = "로딩 중...";
       let intentsText = "", gatesText = "";
-      try { intentsText = await fetchTextWithFallback(SOURCES.intents, SOURCES.rawIntents); }
+      // 공개 raw 파일을 우선 사용해 GitHub API 지연·rate limit 때문에
+      // 정본 대시보드 전체가 "로딩 중"에 멈추지 않도록 한다.
+      try { intentsText = await fetchTextWithFallback(SOURCES.rawIntents, SOURCES.intents); }
       catch (e) { showError("INTENTS.md 로드 실패: " + e.message); }
-      try { gatesText = await fetchTextWithFallback(SOURCES.gates, SOURCES.rawGates); }
+      try { gatesText = await fetchTextWithFallback(SOURCES.rawGates, SOURCES.gates); }
       catch (e) { showError("GATES.md 로드 실패: " + e.message); }
 
       const intentSections = splitSections(intentsText);
@@ -2203,11 +2425,8 @@
         ).map(x => ({ ...x, source: x.source || "INTENTS.md" })),
         parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" }))
       );
-      const archiveItems = mergeById(
-        parseItems(intentSections["Archive"] || ""),
-        parseArchiveComments(intentSections["Archive"] || "")
-      );
       const archiveCommentItems = mergeById(
+        parseArchiveComments(intentSections["Archive"] || ""),
         [
           ...parseArchiveComments(intentSections["Inbox"] || ""),
           ...parseArchiveComments(intentSections["Active"] || ""),
@@ -2217,7 +2436,6 @@
       const doneItems = sortDoneByCompletionDesc([
         ...parseItems(gateSections["처리 완료"] || gateSections["Resolved"] || "")
           .map(x => ({ ...x, source: "GATES.md" })),
-        ...archiveItems,
         ...archiveCommentItems,
       ]);
 

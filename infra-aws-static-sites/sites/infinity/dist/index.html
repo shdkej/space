@@ -988,20 +988,22 @@
       const codeTokens = [];
       const elementTokens = [];
       html = html.replace(/`([^`]+)`/g, (_, code) => {
-        const token = "@@INLINE_CODE_" + codeTokens.length + "@@";
+        // Keep placeholders free of Markdown punctuation so emphasis parsing
+        // cannot mutate them before the protected HTML is restored.
+        const token = "@@INLINECODE" + codeTokens.length + "@@";
         codeTokens.push("<code>" + code + "</code>");
         return token;
       });
       html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+[\"']([^\"']*)[\"'])?\)/g, (_, alt, url, caption) => {
         const safeUrl = safeMarkdownUrl(url);
-        const token = "@@INLINE_ELEMENT_" + elementTokens.length + "@@";
+        const token = "@@INLINEELEMENT" + elementTokens.length + "@@";
         elementTokens.push("<img src=\"" + safeUrl + "\" alt=\"" + escapeHtml(alt) + "\"" + (caption ? " title=\"" + escapeHtml(caption) + "\"" : "") + " loading=\"lazy\">");
         return token;
       });
       html = html.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+[\"']([^\"']*)[\"'])?\)/g, (_, label, url, title) => {
         const extra = title ? " title=\"" + escapeHtml(title) + "\"" : "";
-        const token = "@@INLINE_ELEMENT_" + elementTokens.length + "@@";
-        elementTokens.push("<a href=\"" + safeMarkdownUrl(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\"" + extra + ">" + label + "</a>");
+        const token = "@@INLINEELEMENT" + elementTokens.length + "@@";
+        elementTokens.push("<a href=\"" + safeMarkdownUrl(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\"" + extra + ">" + escapeHtml(label) + "</a>");
         return token;
       });
       html = html.replace(/(^|\s)(https?:\/\/[^\s<]+)/g, (_, prefix, url) => prefix + "<a href=\"" + safeMarkdownUrl(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + url + "</a>");
@@ -1011,10 +1013,10 @@
       html = html.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, "$1<em>$2</em>");
       html = html.replace(/(^|[^_])_([^_]+)_(?!_)/g, "$1<em>$2</em>");
       codeTokens.forEach((token, index) => {
-        html = html.replace("@@INLINE_CODE_" + index + "@@", token);
+        html = html.replace("@@INLINECODE" + index + "@@", token);
       });
       elementTokens.forEach((token, index) => {
-        html = html.replace("@@INLINE_ELEMENT_" + index + "@@", token);
+        html = html.replace("@@INLINEELEMENT" + index + "@@", token);
       });
       return html;
     }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-22T14:40:04.333065+00:00",
+  "generatedAt": "2026-08-23T14:40:05.193274+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8064,11 +8064,11 @@
     {
       "id": "c6rngrg9j4g2uvnbreojbkfnf0",
       "date": "2026-08-23",
-      "title": "내일 의도 / 위치 정보 먼저 덜어내기",
-      "intent": "공개 안전성이 애매한 요청을 먼저 지우고 다시 돌릴 수 있는지 보기",
+      "title": "내일 의도 / 노트 20개 상태 나누기",
+      "intent": "쌓인 노트를 더 쌓기 전에 재고를 보이게 만든다",
       "did": null,
       "why": null,
-      "carry": "도시명, 이동, 진행도, 숙소, 예약을 먼저 빼고 시작하기",
+      "carry": "노트 20개를 발행됨 / 미발행 / 시나리오화 후보로 나눈다",
       "drop": null
     }
   ]

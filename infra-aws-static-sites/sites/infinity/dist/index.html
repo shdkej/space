@@ -1937,6 +1937,7 @@
     // Archive 컬럼 정렬용: completed_at / resolved 를 updated 보다 우선
     function pickCompleted(item) {
       return item.meta.completed_at
+          || item.meta.archived_at
           || item.meta.resolved
           || item.meta.updated
           || item.meta.created

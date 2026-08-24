@@ -7,6 +7,8 @@ import urllib.request
 from datetime import datetime, timezone
 import os
 
+import boto3
+
 HANDLE_RE = re.compile(r"^[A-Za-z0-9_]{1,30}$")
 REST_ID_RE = re.compile(r'rest_id:"(\d{5,30})"')
 TEXT_RE = re.compile(r'full_text:("(?:\\.|[^"\\])*")')
@@ -20,9 +22,43 @@ STAGE_RULES = [
     ("iteration", "업데이트·개선", ("update", "updated", "feedback", "fix", "improve", "version", "feedback", "업데이트", "피드백", "개선", "수정")),
 ]
 
+CACHE_BUCKET = os.environ.get("TIMELINE_CACHE_BUCKET", "").strip()
+CACHE_TTL_SECONDS = int(os.environ.get("TIMELINE_CACHE_TTL_SECONDS", "86400"))
+S3 = boto3.client("s3") if CACHE_BUCKET else None
+
 
 def response(status, body):
     return {"statusCode": status, "headers": {"content-type": "application/json; charset=utf-8", "cache-control": "no-store", "access-control-allow-origin": "*"}, "body": json.dumps(body, ensure_ascii=False)}
+
+
+def cache_key(handle):
+    return f"profiles/{handle.lower()}.json"
+
+
+def read_cache(handle):
+    if not S3:
+        return None
+    try:
+        item = S3.get_object(Bucket=CACHE_BUCKET, Key=cache_key(handle))
+        age = datetime.now(timezone.utc).timestamp() - item["LastModified"].timestamp()
+        if age > CACHE_TTL_SECONDS:
+            return None
+        body = json.loads(item["Body"].read().decode("utf-8"))
+        body.setdefault("collection", {})["cacheHit"] = True
+        body["cacheAgeSeconds"] = max(0, int(age))
+        body["message"] = "저장된 X API 수집 결과를 재사용했습니다."
+        return body
+    except Exception:
+        return None
+
+
+def write_cache(handle, body):
+    if not S3:
+        return
+    try:
+        S3.put_object(Bucket=CACHE_BUCKET, Key=cache_key(handle), Body=json.dumps(body, ensure_ascii=False).encode("utf-8"), ContentType="application/json", ServerSideEncryption="AES256")
+    except Exception:
+        pass
 
 
 def fetch(url):
@@ -196,13 +232,21 @@ def handler(event, context):
     profile_url = f"https://{'x.com' if platform == 'x' else 'instagram.com'}/{urllib.parse.quote(handle)}"
     if platform == "instagram":
         return response(200, {"status": "unavailable", "platform": platform, "handle": handle, "profileUrl": profile_url, "posts": [], "message": "Instagram 공개 전체 피드는 서버에서 안정적으로 읽을 수 있는 공식 공개 엔드포인트가 없어 원문 수집을 보류했습니다."})
+    force_refresh = (params.get("refresh") or "").lower() in {"1", "true", "yes"}
+    if not force_refresh:
+        cached = read_cache(handle)
+        if cached:
+            return response(200, cached)
     bearer_token = os.environ.get("X_BEARER_TOKEN", "").strip()
     api_error = None
     if bearer_token:
         try:
             posts, api_meta = parse_x_api(handle, bearer_token)
             analysis = analyze_posts(posts)
-            return response(200, {"status": "ok" if posts else "empty", "platform": platform, "handle": handle, "profileUrl": profile_url, "fetchedAt": datetime.now(timezone.utc).isoformat(), "posts": posts, "collection": api_meta, **analysis, "message": "X API v2에서 next_token 페이지네이션으로 수집 가능한 게시물을 최초부터 최근까지 정렬했습니다." if posts else "X API v2에서 게시물을 찾지 못했습니다."})
+            result = {"status": "ok" if posts else "empty", "platform": platform, "handle": handle, "profileUrl": profile_url, "fetchedAt": datetime.now(timezone.utc).isoformat(), "posts": posts, "collection": api_meta, **analysis, "message": "X API v2에서 next_token 페이지네이션으로 수집 가능한 게시물을 최초부터 최근까지 정렬했습니다." if posts else "X API v2에서 게시물을 찾지 못했습니다."}
+            write_cache(handle, result)
+            result["collection"]["cacheHit"] = False
+            return response(200, result)
         except (urllib.error.URLError, TimeoutError, ValueError, RuntimeError) as error:
             api_error = str(error)
     try:

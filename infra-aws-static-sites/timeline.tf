@@ -17,6 +17,40 @@ resource "aws_iam_role_policy_attachment" "timeline_lambda_basic" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_s3_bucket" "timeline_cache" {
+  bucket = "launch-timeline-cache-${data.aws_caller_identity.current.account_id}-${var.aws_region}"
+}
+
+resource "aws_s3_bucket_public_access_block" "timeline_cache" {
+  bucket                  = aws_s3_bucket.timeline_cache.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "timeline_cache" {
+  bucket = aws_s3_bucket.timeline_cache.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "timeline_cache" {
+  name = "launch-timeline-cache"
+  role = aws_iam_role.timeline_lambda.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["s3:GetObject", "s3:PutObject"]
+      Resource = "${aws_s3_bucket.timeline_cache.arn}/profiles/*"
+    }]
+  })
+}
+
 resource "aws_lambda_function" "timeline" {
   function_name    = "launch-timeline"
   role             = aws_iam_role.timeline_lambda.arn
@@ -29,7 +63,9 @@ resource "aws_lambda_function" "timeline" {
 
   environment {
     variables = {
-      X_BEARER_TOKEN = var.launch_timeline_x_bearer_token
+      X_BEARER_TOKEN             = var.launch_timeline_x_bearer_token
+      TIMELINE_CACHE_BUCKET      = aws_s3_bucket.timeline_cache.bucket
+      TIMELINE_CACHE_TTL_SECONDS = "86400"
     }
   }
 }

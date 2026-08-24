@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-23T14:40:05.193274+00:00",
+  "generatedAt": "2026-08-24T14:40:05.298864+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,20 +8,20 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 14308078,
-    "travelLoggedKrw": 14308078,
-    "remainingMinKrw": 15691922,
-    "remainingMaxKrw": 25691922,
-    "reservedPctMin": 47.7,
+    "loggedKrw": 14325147,
+    "travelLoggedKrw": 14325147,
+    "remainingMinKrw": 15674853,
+    "remainingMaxKrw": 25674853,
+    "reservedPctMin": 47.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 78186,
+    "reserveBurnKrw": 77433,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-23",
+    "date": "2026-08-25",
     "location": "Dahab",
     "mapQuery": "Dahab, Egypt"
   },
@@ -31,7 +31,7 @@
     "transport": 1937791,
     "flight": 1857962,
     "medical": 1800790,
-    "외식/배달": 1523261,
+    "외식/배달": 1540330,
     "ticket": 465991,
     "groceries": 416761,
     "snack": 354336,
@@ -48,7 +48,7 @@
     "transport": 1937791,
     "flight": 1857962,
     "medical": 1800790,
-    "외식/배달": 1523261,
+    "외식/배달": 1540330,
     "ticket": 465991,
     "groceries": 416761,
     "snack": 354336,
@@ -167,6 +167,13 @@
       "total": 94000,
       "categories": {
         "stay": 94000
+      }
+    },
+    {
+      "country": "Egypt",
+      "total": 17069,
+      "categories": {
+        "외식/배달": 17069
       }
     }
   ],
@@ -761,6 +768,19 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "3c507aba-cae7-8063-875c-c8816b098afc",
+      "date": "2026-08-23",
+      "time": "",
+      "amount": 17069,
+      "merchant": "에비뉴 샐러드, 샌드위치, 스무디",
+      "category": "외식/배달",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 현금",
+      "source": "notion:3c507aba-cae7-8063-875c-c8816b098afc"
+    },
     {
       "id": "3b507aba-cae7-8159-ad11-d873bfcbd024",
       "date": "2026-08-07",
@@ -3614,6 +3634,19 @@
     }
   ],
   "expenses": [
+    {
+      "id": "3c507aba-cae7-8063-875c-c8816b098afc",
+      "date": "2026-08-23",
+      "time": "",
+      "amount": 17069,
+      "merchant": "에비뉴 샐러드, 샌드위치, 스무디",
+      "category": "외식/배달",
+      "location": "이집트",
+      "travel": true,
+      "country": null,
+      "note": "결제수단 현금",
+      "source": "notion:3c507aba-cae7-8063-875c-c8816b098afc"
+    },
     {
       "id": "3b507aba-cae7-8159-ad11-d873bfcbd024",
       "date": "2026-08-07",
@@ -7753,10 +7786,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-23",
+    "asOf": "2026-08-25",
     "limitDays": 90,
-    "usedDays": 47,
-    "remainingDays": 43,
+    "usedDays": 49,
+    "remainingDays": 41,
     "window": "180 days",
     "status": "active",
     "projection": {

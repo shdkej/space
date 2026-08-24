@@ -7,7 +7,7 @@ locals {
       api_origins  = try(site.api_origins, [])
       spa_fallback = try(site.spa_fallback, true)
       tags         = try(site.tags, {})
-    }
+    } if try(site.hosting, "aws-static-site") == "aws-static-site"
   }
 }
 
@@ -23,8 +23,13 @@ module "app_static_sites" {
   domain_name       = each.value.domain_name
   route53_zone_name = var.route53_zone_name
   bucket_name       = try(each.value.bucket_name, null)
-  api_origins       = try(each.value.api_origins, [])
-  spa_fallback      = try(each.value.spa_fallback, true)
+  api_origins = each.key == "launch-timeline" ? concat(try(each.value.api_origins, []), [{
+    origin_id    = "launch-timeline-api"
+    domain_name  = replace(aws_lambda_function_url.timeline.function_url, "https://", "")
+    path_pattern = "/api/*"
+    origin_path  = ""
+  }]) : try(each.value.api_origins, [])
+  spa_fallback = try(each.value.spa_fallback, true)
   tags = merge(
     var.tags,
     {

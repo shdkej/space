@@ -64,6 +64,16 @@
       "spa_fallback": true
     },
     {
+      "app": "launch-timeline",
+      "name": "Launch Timeline",
+      "domain_name": "launch-timeline.aws.shdkej.com",
+      "kind": "tool",
+      "detail": "실제 공개 SNS 원문을 수집해 앱 출시 홍보 흐름을 날짜순으로 보여주는 벤치마킹 도구",
+      "deployment_name": "launch timeline",
+      "spa_fallback": true,
+      "api_origins": []
+    },
+    {
       "app": "control-center-cms",
       "name": "Control Center CMS",
       "domain_name": "cms.oracle.shdkej.com",

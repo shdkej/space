@@ -50,10 +50,11 @@ def parse_x(handle, source_html):
 
 def handler(event, context):
     params = event.get("queryStringParameters") or {}
-    handle = (params.get("handle") or "").strip().lstrip("@").split("/")[0]
+    handle = (params.get("handle") or "").strip().lstrip("@")
     platform = (params.get("platform") or "x").lower()
     if not HANDLE_RE.match(handle):
-        return response(400, {"status": "error", "error": "invalid_handle"})
+        profile_base = "instagram.com" if platform == "instagram" else "x.com"
+        return response(400, {"status": "error", "error": "invalid_handle", "platform": platform, "handle": handle[:30], "profileUrl": f"https://{profile_base}/", "posts": [], "message": "계정 아이디 형식이 올바르지 않습니다."})
     if platform not in {"x", "instagram"}:
         return response(400, {"status": "error", "error": "unsupported_platform"})
     profile_url = f"https://{'x.com' if platform == 'x' else 'instagram.com'}/{urllib.parse.quote(handle)}"

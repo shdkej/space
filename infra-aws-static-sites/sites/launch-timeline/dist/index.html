@@ -31,7 +31,7 @@
   }
   async function load(){
     $('status').className='status'; $('status').textContent='공개 프로필 원문을 불러오는 중입니다.'; $('timeline').innerHTML='';
-    const data=await fetch(`/api/timeline?platform=${encodeURIComponent(platform)}&handle=${encodeURIComponent(handle)}`).then(r=>r.json()).catch(()=>({status:'unavailable',platform,handle,profileUrl:`https://${platform==='x'?'x.com':'instagram.com'}/${handle}`,posts:[],message:'수집 서버에 연결하지 못했습니다.'})); render(data);
+    const data=await fetch(`/api/timeline?platform=${encodeURIComponent(platform)}&handle=${encodeURIComponent(handle)}`).then(async r=>{const value=await r.json();return r.ok?value:{...value,platform,handle,profileUrl:`https://${platform==='x'?'x.com':'instagram.com'}/${encodeURIComponent(handle)}`}}).catch(()=>({status:'unavailable',platform,handle,profileUrl:`https://${platform==='x'?'x.com':'instagram.com'}/${encodeURIComponent(handle)}`,posts:[],message:'수집 서버에 연결하지 못했습니다.'})); render(data);
   }
   $('profile-form').addEventListener('submit',event=>{event.preventDefault();platform=$('platform').value;handle=$('handle').value.replace(/^@/,'').trim()||'Christianisrac';history.replaceState({},'',`?platform=${platform}&handle=${encodeURIComponent(handle)}`);load()}); load();
 </script></body></html>

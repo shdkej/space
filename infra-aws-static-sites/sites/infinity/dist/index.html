@@ -1541,7 +1541,8 @@
         const m = line.match(/^##\s+(.+?)\s*$/);
         if (m) {
           current = m[1].trim();
-          sections[current] = [];
+          if (!sections[current]) sections[current] = [];
+          else sections[current].push("<!-- duplicate section merged by dashboard -->");
         } else {
           sections[current].push(line);
         }

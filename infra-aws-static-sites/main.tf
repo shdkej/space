@@ -25,7 +25,7 @@ module "app_static_sites" {
   bucket_name       = try(each.value.bucket_name, null)
   api_origins = each.key == "launch-timeline" ? concat(try(each.value.api_origins, []), [{
     origin_id    = "launch-timeline-api"
-    domain_name  = replace(aws_lambda_function_url.timeline.function_url, "https://", "")
+    domain_name  = trimsuffix(replace(aws_lambda_function_url.timeline.function_url, "https://", ""), "/")
     path_pattern = "/api/*"
     origin_path  = ""
   }]) : try(each.value.api_origins, [])

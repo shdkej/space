@@ -34,7 +34,7 @@ resource "aws_lambda_function_url" "timeline" {
   cors {
     allow_credentials = false
     allow_headers     = ["content-type"]
-    allow_methods     = ["GET", "OPTIONS"]
+    allow_methods     = ["GET"]
     allow_origins     = ["*"]
     max_age           = 300
   }

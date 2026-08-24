@@ -33,8 +33,10 @@
   function render(data){
     $('profile-title').textContent='@'+data.handle; $('handle').value=data.handle; $('platform').value=data.platform; $('timeline-label').textContent=`source timeline · @${data.handle}`; showLinks(data);
     const status=$('status'); status.className='status '+(data.status==='ok'?'ok':'warn'); $('live-note').textContent=data.status==='ok'?'source fetched':'source unavailable'; status.textContent=data.message||'';
+    const collection=data.collection||{}; const posts=data.posts||[]; const source=collection.source||'unknown';
+    $('scope').textContent=source==='x_api_v2'?`X API v2 · next_token 페이지네이션 · ${posts.length}개 원문 · ${posts.length?formatDate(posts[0].publishedAt):'—'}부터 ${posts.length?formatDate(posts[posts.length-1].publishedAt):'—'}까지`:`${source} · 현재 공개 범위에서 확인된 원문 ${posts.length}개`;
     renderAnalysis(data);
-    $('timeline').innerHTML=data.posts?.length?data.posts.map(post=>`<article class="event"><span class="stage">${esc(post.stageLabel||'원문')}</span><time>${esc(formatDate(post.publishedAt))}</time><h3>${esc(post.text.split(/\n/)[0].slice(0,100))}</h3><p>${esc(post.text)}</p>${post.signals?.length?`<p class="mono">관찰 신호: ${esc(post.signals.join(', '))}</p>`:''}<a class="source" href="${esc(post.url)}" target="_blank" rel="noopener">원문 열기 ↗</a></article>`).join(''):`<div class="empty">이 계정의 원문을 타임라인으로 만들 수 없습니다. 위 상태 메시지와 프로필 링크를 확인해보세요.</div>`;
+    $('timeline').innerHTML=posts.length?posts.map(post=>{const m=post.publicMetrics||{}; const metrics=Object.keys(m).length?`<p class="mono">공개 지표: 좋아요 ${esc(m.like_count??0)} · 답글 ${esc(m.reply_count??0)} · 재게시 ${esc(m.retweet_count??0)} · 노출 ${esc(m.impression_count??0)}</p>`:''; return `<article class="event"><span class="stage">${esc(post.stageLabel||'원문')}</span><time>${esc(formatDate(post.publishedAt))}</time><h3>${esc(post.text.split(/\n/)[0].slice(0,100))}</h3><p>${esc(post.text)}</p>${post.signals?.length?`<p class="mono">관찰 신호: ${esc(post.signals.join(', '))}</p>`:''}${metrics}<a class="source" href="${esc(post.url)}" target="_blank" rel="noopener">원문 열기 ↗</a></article>`}).join(''):`<div class="empty">이 계정의 원문을 타임라인으로 만들 수 없습니다. 위 상태 메시지와 프로필 링크를 확인해보세요.</div>`;
   }
   async function load(){
     $('status').className='status'; $('status').textContent='공개 프로필 원문을 불러오는 중입니다.'; $('timeline').innerHTML='';

@@ -5,6 +5,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
+import os
 
 HANDLE_RE = re.compile(r"^[A-Za-z0-9_]{1,30}$")
 REST_ID_RE = re.compile(r'rest_id:"(\d{5,30})"')
@@ -28,6 +29,20 @@ def fetch(url):
     request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; LaunchTimeline/1.0)", "Accept-Language": "en-US,en;q=0.9"})
     with urllib.request.urlopen(request, timeout=12) as result:
         return result.read().decode("utf-8", "ignore")
+
+
+def fetch_json(url, headers):
+    request = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(request, timeout=12) as result:
+            return result.status, json.loads(result.read().decode("utf-8", "ignore"))
+    except urllib.error.HTTPError as error:
+        raw = error.read().decode("utf-8", "ignore")
+        try:
+            body = json.loads(raw)
+        except json.JSONDecodeError:
+            body = {"title": raw[:200]}
+        return error.code, body
 
 
 def iso_date(milliseconds):
@@ -94,6 +109,55 @@ def analyze_posts(posts):
     }
 
 
+def parse_x_api(handle, bearer_token):
+    """Fetch the user's complete available timeline through X API v2 pagination."""
+    auth = {"Authorization": f"Bearer {bearer_token}", "User-Agent": "LaunchTimeline/2.0"}
+    user_url = "https://api.x.com/2/users/by/username/" + urllib.parse.quote(handle)
+    user_status, user_body = fetch_json(user_url + "?user.fields=created_at,description,public_metrics", auth)
+    if user_status != 200 or not user_body.get("data", {}).get("id"):
+        detail = user_body.get("detail") or user_body.get("title") or "X API 사용자 조회 실패"
+        raise RuntimeError(f"X_API_{user_status}: {detail}")
+
+    user = user_body["data"]
+    user_id = user["id"]
+    posts, next_token, pages = [], None, 0
+    while pages < 30:
+        params = {
+            "max_results": "100",
+            "exclude": "retweets",
+            "tweet.fields": "created_at,public_metrics,conversation_id,referenced_tweets,attachments",
+            "expansions": "attachments.media_keys",
+            "media.fields": "url,preview_image_url,type",
+        }
+        if next_token:
+            params["pagination_token"] = next_token
+        url = f"https://api.x.com/2/users/{user_id}/tweets?{urllib.parse.urlencode(params)}"
+        status, body = fetch_json(url, auth)
+        if status != 200:
+            detail = body.get("detail") or body.get("title") or "X API 게시물 조회 실패"
+            raise RuntimeError(f"X_API_{status}: {detail}")
+        for item in body.get("data", []):
+            text = html.unescape(item.get("text", "")).strip()
+            if not text or not item.get("created_at"):
+                continue
+            posts.append({
+                "id": item["id"],
+                "publishedAt": item["created_at"],
+                "text": text,
+                "url": f"https://x.com/{handle}/status/{item['id']}",
+                "platform": "x",
+                "publicMetrics": item.get("public_metrics", {}),
+                "source": "x_api_v2",
+            })
+        pages += 1
+        next_token = body.get("meta", {}).get("next_token")
+        if not next_token:
+            break
+
+    posts.sort(key=lambda item: item["publishedAt"])
+    return posts[:3000], {"user": user, "pages": pages, "source": "x_api_v2"}
+
+
 def parse_x(handle, source_html):
     posts, seen, seen_content = [], set(), set()
     for match in REST_ID_RE.finditer(source_html):
@@ -132,9 +196,24 @@ def handler(event, context):
     profile_url = f"https://{'x.com' if platform == 'x' else 'instagram.com'}/{urllib.parse.quote(handle)}"
     if platform == "instagram":
         return response(200, {"status": "unavailable", "platform": platform, "handle": handle, "profileUrl": profile_url, "posts": [], "message": "Instagram 공개 전체 피드는 서버에서 안정적으로 읽을 수 있는 공식 공개 엔드포인트가 없어 원문 수집을 보류했습니다."})
+    bearer_token = os.environ.get("X_BEARER_TOKEN", "").strip()
+    api_error = None
+    if bearer_token:
+        try:
+            posts, api_meta = parse_x_api(handle, bearer_token)
+            analysis = analyze_posts(posts)
+            return response(200, {"status": "ok" if posts else "empty", "platform": platform, "handle": handle, "profileUrl": profile_url, "fetchedAt": datetime.now(timezone.utc).isoformat(), "posts": posts, "collection": api_meta, **analysis, "message": "X API v2에서 next_token 페이지네이션으로 수집 가능한 게시물을 최초부터 최근까지 정렬했습니다." if posts else "X API v2에서 게시물을 찾지 못했습니다."})
+        except (urllib.error.URLError, TimeoutError, ValueError, RuntimeError) as error:
+            api_error = str(error)
     try:
         posts = parse_x(handle, fetch(profile_url))
     except (urllib.error.URLError, TimeoutError, ValueError) as error:
-        return response(200, {"status": "unavailable", "platform": platform, "handle": handle, "profileUrl": profile_url, "posts": [], "message": f"X 공개 프로필을 읽지 못했습니다: {type(error).__name__}"})
+        detail = f"X API와 공개 프로필을 모두 읽지 못했습니다: {type(error).__name__}"
+        if api_error:
+            detail += f" (API: {api_error})"
+        return response(200, {"status": "unavailable", "platform": platform, "handle": handle, "profileUrl": profile_url, "posts": [], "message": detail})
     analysis = analyze_posts(posts)
-    return response(200, {"status": "ok" if posts else "empty", "platform": platform, "handle": handle, "profileUrl": profile_url, "fetchedAt": datetime.now(timezone.utc).isoformat(), "posts": posts, **analysis, "message": "공개 프로필 HTML에서 원문을 수집해 최초부터 최근까지 시간순으로 분석했습니다." if posts else "공개 프로필에서 게시물 원문을 찾지 못했습니다."})
+    message = "X 공개 프로필 HTML 폴백에서 확인 가능한 원문만 수집했습니다. X API v2는 설정되지 않았습니다."
+    if api_error:
+        message = f"X API v2를 먼저 시도했지만 실패해 공개 프로필 HTML로 폴백했습니다: {api_error}"
+    return response(200, {"status": "ok" if posts else "empty", "platform": platform, "handle": handle, "profileUrl": profile_url, "fetchedAt": datetime.now(timezone.utc).isoformat(), "posts": posts, "collection": {"source": "profile_html_fallback", "apiError": api_error}, **analysis, "message": message if posts else message + " 게시물을 찾지 못했습니다."})

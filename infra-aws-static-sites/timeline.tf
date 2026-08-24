@@ -26,6 +26,12 @@ resource "aws_lambda_function" "timeline" {
   source_code_hash = data.archive_file.timeline_lambda.output_base64sha256
   timeout          = 15
   memory_size      = 256
+
+  environment {
+    variables = {
+      X_BEARER_TOKEN = var.launch_timeline_x_bearer_token
+    }
+  }
 }
 
 resource "aws_lambda_function_url" "timeline" {

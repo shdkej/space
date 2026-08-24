@@ -52,3 +52,10 @@ variable "infinity_action_token_sha256" {
   type        = string
   sensitive   = true
 }
+
+variable "launch_timeline_x_bearer_token" {
+  description = "Optional X API v2 Bearer Token. When set, Launch Timeline uses paginated user timeline API calls before HTML fallback."
+  type        = string
+  sensitive   = true
+  default     = ""
+}

@@ -64,15 +64,6 @@
       "spa_fallback": true
     },
     {
-      "app": "launch-timeline",
-      "name": "Launch Timeline",
-      "domain_name": "launch-timeline.aws.shdkej.com",
-      "kind": "tool",
-      "detail": "Founder social timeline for benchmarking an app launch and its promotion arc",
-      "deployment_name": "launch timeline",
-      "spa_fallback": true
-    },
-    {
       "app": "control-center-cms",
       "name": "Control Center CMS",
       "domain_name": "cms.oracle.shdkej.com",

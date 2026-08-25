@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T14:40:05.298864+00:00",
+  "generatedAt": "2026-08-25T14:40:05.728528+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 47.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 77433,
+    "reserveBurnKrw": 77017,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-25",
+    "date": "2026-08-26",
     "location": "Dahab",
     "mapQuery": "Dahab, Egypt"
   },
@@ -365,6 +365,14 @@
     {
       "date": "2026-08-22",
       "amount": 110160
+    },
+    {
+      "date": "2026-08-25",
+      "amount": 367876
+    },
+    {
+      "date": "2026-08-26",
+      "amount": 2067470
     }
   ],
   "bookedCosts": [
@@ -6521,6 +6529,10 @@
       "count": 10
     },
     {
+      "name": "46617, 자누브시나주'",
+      "count": 10
+    },
+    {
       "name": "Abdulhak Hamit Cd. 42, 34437 이스탄불",
       "count": 8
     },
@@ -6586,10 +6598,6 @@
     },
     {
       "name": "Acropolis, 105 58 아텐스",
-      "count": 5
-    },
-    {
-      "name": "46617, 자누브시나주'",
       "count": 5
     },
     {
@@ -6969,6 +6977,42 @@
       "checkIn": null,
       "checkOut": null,
       "amount": 629955,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AGODA.COM HOTEL POLI",
+      "city": "46617, 자누브시나주'",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 360893,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMQA3ZRNQ4",
+      "city": "46617, 자누브시나주'",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 387156,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HM9K9JZYKK",
+      "city": "46617, 자누브시나주'",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 556334,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMNFKSCCQA",
+      "city": "46617, 자누브시나주'",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 1123980,
       "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
@@ -7786,10 +7830,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-25",
+    "asOf": "2026-08-26",
     "limitDays": 90,
-    "usedDays": 49,
-    "remainingDays": 41,
+    "usedDays": 50,
+    "remainingDays": 40,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -7899,12 +7943,6 @@
   },
   "sleep": [
     {
-      "date": "2026-08-01",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "5.68"
-    },
-    {
       "date": "2026-08-02",
       "sleepHours": 7.95,
       "recharge": 99.0,
@@ -7981,6 +8019,12 @@
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "7.71"
+    },
+    {
+      "date": "2026-08-25",
+      "sleepHours": 6.17,
+      "recharge": 77.0,
+      "balance": "6.88"
     }
   ],
   "reflections": [

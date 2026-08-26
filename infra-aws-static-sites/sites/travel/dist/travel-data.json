@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-25T14:40:05.728528+00:00",
+  "generatedAt": "2026-08-26T14:40:06.414118+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 47.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 77017,
+    "reserveBurnKrw": 76605,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-26",
+    "date": "2026-08-27",
     "location": "Dahab",
     "mapQuery": "Dahab, Egypt"
   },
@@ -7830,10 +7830,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-26",
+    "asOf": "2026-08-27",
     "limitDays": 90,
-    "usedDays": 50,
-    "remainingDays": 40,
+    "usedDays": 51,
+    "remainingDays": 39,
     "window": "180 days",
     "status": "active",
     "projection": {

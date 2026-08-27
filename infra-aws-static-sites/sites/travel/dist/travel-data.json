@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T14:40:06.414118+00:00",
+  "generatedAt": "2026-08-27T14:40:05.302058+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -373,6 +373,10 @@
     {
       "date": "2026-08-26",
       "amount": 2067470
+    },
+    {
+      "date": "2026-08-27",
+      "amount": 705713
     }
   ],
   "bookedCosts": [
@@ -6525,11 +6529,11 @@
       "count": 14
     },
     {
-      "name": "Muvakkithane Cd. 2, 34710 이스탄불",
-      "count": 10
+      "name": "46617, 자누브시나주'",
+      "count": 11
     },
     {
-      "name": "46617, 자누브시나주'",
+      "name": "Muvakkithane Cd. 2, 34710 이스탄불",
       "count": 10
     },
     {
@@ -7013,6 +7017,15 @@
       "checkIn": null,
       "checkOut": null,
       "amount": 1123980,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMDRRFC2AK",
+      "city": "46617, 자누브시나주'",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 705713,
       "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
@@ -7943,12 +7956,6 @@
   },
   "sleep": [
     {
-      "date": "2026-08-02",
-      "sleepHours": 7.95,
-      "recharge": 99.0,
-      "balance": "6.50"
-    },
-    {
       "date": "2026-08-03",
       "sleepHours": 7.91,
       "recharge": 99.0,
@@ -8025,6 +8032,12 @@
       "sleepHours": 6.17,
       "recharge": 77.0,
       "balance": "6.88"
+    },
+    {
+      "date": "2026-08-27",
+      "sleepHours": 8.77,
+      "recharge": 110.0,
+      "balance": "7.92"
     }
   ],
   "reflections": [

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-28T14:40:05.900024+00:00",
+  "generatedAt": "2026-08-29T14:40:05.161667+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 47.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 76605,
+    "reserveBurnKrw": 75396,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-27",
+    "date": "2026-08-30",
     "location": "Dahab",
     "mapQuery": "Dahab, Egypt"
   },
@@ -377,6 +377,14 @@
     {
       "date": "2026-08-27",
       "amount": 705713
+    },
+    {
+      "date": "2026-08-29",
+      "amount": 142457
+    },
+    {
+      "date": "2026-08-30",
+      "amount": 37207
     }
   ],
   "bookedCosts": [
@@ -6530,7 +6538,7 @@
     },
     {
       "name": "46617, 자누브시나주'",
-      "count": 11
+      "count": 14
     },
     {
       "name": "Muvakkithane Cd. 2, 34710 이스탄불",
@@ -7843,10 +7851,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-27",
+    "asOf": "2026-08-30",
     "limitDays": 90,
-    "usedDays": 51,
-    "remainingDays": 39,
+    "usedDays": 54,
+    "remainingDays": 36,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -7956,12 +7964,6 @@
   },
   "sleep": [
     {
-      "date": "2026-08-03",
-      "sleepHours": 7.91,
-      "recharge": 99.0,
-      "balance": "7.06"
-    },
-    {
       "date": "2026-08-04",
       "sleepHours": 3.61,
       "recharge": 45.0,
@@ -8035,6 +8037,12 @@
     },
     {
       "date": "2026-08-27",
+      "sleepHours": 8.77,
+      "recharge": 110.0,
+      "balance": "7.92"
+    },
+    {
+      "date": "2026-08-29",
       "sleepHours": 8.77,
       "recharge": 110.0,
       "balance": "7.92"

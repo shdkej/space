@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-30T14:40:05.249470+00:00",
+  "generatedAt": "2026-08-31T14:40:06.060785+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 47.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 75396,
+    "reserveBurnKrw": 74610,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-08-30",
+    "date": "2026-09-01",
     "location": "Dahab",
     "mapQuery": "Dahab, Egypt"
   },
@@ -385,6 +385,14 @@
     {
       "date": "2026-08-30",
       "amount": 37207
+    },
+    {
+      "date": "2026-08-31",
+      "amount": 2339385
+    },
+    {
+      "date": "2026-09-01",
+      "amount": 296732
     }
   ],
   "bookedCosts": [
@@ -6533,11 +6541,11 @@
       "lng": 13.4290744
     },
     {
-      "name": "Krnjak 64A, 47242 크르냐크",
-      "count": 14
+      "name": "46617, 자누브시나주'",
+      "count": 20
     },
     {
-      "name": "46617, 자누브시나주'",
+      "name": "Krnjak 64A, 47242 크르냐크",
       "count": 14
     },
     {
@@ -7851,10 +7859,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-08-30",
+    "asOf": "2026-09-01",
     "limitDays": 90,
-    "usedDays": 54,
-    "remainingDays": 36,
+    "usedDays": 56,
+    "remainingDays": 34,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -7964,12 +7972,6 @@
   },
   "sleep": [
     {
-      "date": "2026-08-04",
-      "sleepHours": 3.61,
-      "recharge": 45.0,
-      "balance": "6.07"
-    },
-    {
       "date": "2026-08-05",
       "sleepHours": 9.45,
       "recharge": 118.0,
@@ -8046,19 +8048,15 @@
       "sleepHours": 8.77,
       "recharge": 110.0,
       "balance": "7.92"
+    },
+    {
+      "date": "2026-08-31",
+      "sleepHours": 8.77,
+      "recharge": 110.0,
+      "balance": "7.92"
     }
   ],
   "reflections": [
-    {
-      "id": "88mdtbo78bc4rnheaq0sh83d9o",
-      "date": "2026-07-17",
-      "title": "실제 흐름 / 첫 사용자 재방문 신호 정리",
-      "intent": "카드뉴스 기준이 문서가 아니라 실제 결과물에 적용됐는지 먼저 본다.",
-      "did": "카드뉴스 검증보다 Virtue 첫 10명 관찰에서 저장 여부와 같은 job 재방문 근거를 분리하는 정리가 진행됐다.",
-      "why": "당일 새 사용자 발화가 없었고 자동 루틴이 첫 사용자 학습 기준 정리로 흘렀다.",
-      "carry": "다음 카드뉴스 확인은 Card 1 original, Cards 2-5 제목 스타일, local_config 경계 3가지만 좁게 본다.",
-      "drop": "산출물 확인 의도가 있었는데 운영 정리만으로 완료된 것처럼 보는 흐름."
-    },
     {
       "id": "48o06bkqrv8u2ja37ndc57o9u8",
       "date": "2026-07-18",
@@ -8167,6 +8165,16 @@
       "did": null,
       "why": null,
       "carry": null,
+      "drop": null
+    },
+    {
+      "id": "0trcrvsic6vp0nov4j0c3ru5ng",
+      "date": "2026-08-31",
+      "title": "내일 의도 / 아카이브 정리와 이미지 인사이트 하나",
+      "intent": "오늘 못 한 아카이브 정리를 다시 잡고 이미지 인사이트 하나를 뽑는다.",
+      "did": null,
+      "why": null,
+      "carry": "피그마에 아카이브 이미지를 올리고 이미지 인사이트 1개를 고른다. 수면 실험: 취침 전 유튜브를 보던 시간에 알람을 맞추고 스마트폰은 거실에 둔다. 기대: 남은 라이언에어 예약 3개를 마무리하고 비행기 편 세팅을 완료한다.",
       "drop": null
     }
   ]

@@ -204,6 +204,23 @@
     .summary-item.lane-active { border-color: #15803d; }
     .summary-item.lane-waiting { border-color: #7c3aed; }
     .summary-item.lane-done { border-color: #475569; }
+    .knowledge-loop { margin: 18px 14px 4px; padding: 16px; border: 1px solid #334155; border-radius: 14px; background: radial-gradient(circle at 90% 0, rgba(56,189,248,.15), transparent 36%), #111c30; }
+    .knowledge-loop-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .knowledge-loop-title { margin: 0; font-size: 16px; letter-spacing: -.02em; }
+    .knowledge-loop-note { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .knowledge-loop-grid { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .knowledge-lane { min-width: 0; padding: 10px; border: 1px solid #334155; border-radius: 10px; background: rgba(15,23,42,.65); }
+    .knowledge-lane h3 { margin: 0 0 8px; color: #cbd5e1; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; }
+    .knowledge-card { padding: 9px 0; border-top: 1px solid rgba(148,163,184,.17); }
+    .knowledge-card:first-of-type { border-top: 0; padding-top: 0; }
+    .knowledge-card-title { color: #e2e8f0; font-size: 12px; font-weight: 650; line-height: 1.45; }
+    .knowledge-card-meta { margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .knowledge-card-next { margin-top: 5px; color: #bae6fd; font-size: 11px; line-height: 1.45; }
+    .knowledge-action { margin-top: 8px; padding: 4px 8px; border-color: #0e7490; background: #083344; color: #cffafe; font-size: 11px; }
+    .knowledge-action:hover { background: #0c4a6e; }
+    .knowledge-empty { color: var(--muted); font-size: 12px; padding: 8px 0; }
+    @media (max-width: 1100px) { .knowledge-loop-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 640px) { .knowledge-loop { margin: 14px 10px 2px; } .knowledge-loop-grid { grid-template-columns: 1fr; } }
     .archive-filter {
       padding: 0 6px 8px;
     }
@@ -717,6 +734,16 @@
       <span class="summary-value" id="sum-stale">–</span>
     </div>
   </div>
+  <section class="knowledge-loop" aria-labelledby="knowledge-loop-title">
+    <div class="knowledge-loop-head">
+      <div>
+        <h2 class="knowledge-loop-title" id="knowledge-loop-title">지식 피드백 루프</h2>
+        <p class="knowledge-loop-note" id="knowledge-loop-note">Agent Wiki의 ingest · query · lint 로그를 읽는 중입니다.</p>
+      </div>
+      <span class="meta" id="knowledge-loop-updated"></span>
+    </div>
+    <div class="knowledge-loop-grid" id="knowledge-loop-grid" aria-live="polite"></div>
+  </section>
   <main>
     <section class="column" data-key="inbox">
       <div class="column-head">
@@ -792,6 +819,8 @@
       gates:   "https://api.github.com/repos/shdkej/infinity/contents/GATES.md?ref=main",
       rawIntents: "https://raw.githubusercontent.com/shdkej/infinity/main/INTENTS.md",
       rawGates: "https://raw.githubusercontent.com/shdkej/infinity/main/GATES.md",
+      wikiRawBase: "https://raw.githubusercontent.com/shdkej/agent-wiki/main/content/docs/",
+      wikiLogsApi: "https://api.github.com/repos/shdkej/agent-wiki/contents/content/docs/logs?ref=main",
       rawBase: "https://raw.githubusercontent.com/shdkej/infinity/main/",
       apiBase: "https://api.github.com/repos/shdkej/infinity/contents/",
       actionEndpoint: "https://k23v4cvkqtxkuj5ceech43m5mq0aedhq.lambda-url.ap-northeast-2.on.aws/",
@@ -2396,6 +2425,94 @@
       }
     }
 
+    function parseWikiLogEntries(text, source) {
+      const chunks = String(text || "").split(/(?=^##\s+\d{4}-\d{2}-\d{2})/m);
+      return chunks.map(chunk => {
+        const lines = chunk.trim().split("\n");
+        const head = lines.shift() || "";
+        const match = head.match(/^##\s+(\d{4}-\d{2}-\d{2}[^|]*)\|\s*(.+)$/);
+        if (!match) return null;
+        const detail = lines.filter(line => /^-\s+/.test(line)).map(line => line.replace(/^-\s+/, "").trim());
+        const blob = detail.join(" ");
+        const typeMatch = blob.match(/(?:^|\s)(ingest|query|lint)\s*:/i);
+        const type = typeMatch ? typeMatch[1].toLowerCase() : "ingest";
+        return { date: match[1].trim(), title: match[2].trim(), detail, blob, type, source };
+      }).filter(Boolean);
+    }
+
+    function knowledgeAction(entry) {
+      if (entry.type === "lint") return "lint 근거 재확인";
+      if (entry.type === "query") return "재검색 intent 요청";
+      return "승격 근거 열기";
+    }
+
+    function knowledgeBucket(entry) {
+      const text = (entry.title + " " + entry.blob).toLowerCase();
+      if (entry.type === "lint" || /공백|누락|모순|드리프트/.test(text)) return "research";
+      if (entry.type === "query" && /없|보류|대기|후속|필요|검토|미해결/.test(text)) return "open";
+      if (entry.type === "ingest" || /승격|컴파일|갱신/.test(text)) return "promoted";
+      return "recent";
+    }
+
+    function submitKnowledgeAction(button, status, entry) {
+      const item = { id: "knowledge-loop-1", title: entry.title };
+      const source = "agent-wiki-log";
+      const payload = actionSummary(item, source, "knowledge_research");
+      payload.note = [entry.date, entry.type, entry.title, entry.detail.join(" · ")].filter(Boolean).join(" | ").slice(0, 1000);
+      const actionKey = getActionKey();
+      if (!actionKey) { status.classList.add("error"); status.textContent = "액션 키 필요"; return; }
+      button.disabled = true; status.classList.remove("error"); status.textContent = "요청 접수 중...";
+      fetch(SOURCES.actionEndpoint, { method: "POST", headers: { "Content-Type": "application/json", "X-Infinity-Action-Key": actionKey }, body: JSON.stringify(payload) })
+        .then(r => r.json().then(data => ({ r, data })))
+        .then(({ r, data }) => { if (!r.ok || !data.ok) throw new Error(data.error || ("HTTP " + r.status)); status.textContent = data.status === "already_queued" ? "이미 접수됨" : "재검색 요청 접수됨"; })
+        .catch(error => { button.disabled = false; status.classList.add("error"); status.textContent = "접수 실패 · " + (error.message || "다시 시도 필요"); });
+    }
+
+    function renderKnowledgeLoop(entries) {
+      const host = document.getElementById("knowledge-loop-grid");
+      const note = document.getElementById("knowledge-loop-note");
+      const updated = document.getElementById("knowledge-loop-updated");
+      const lanes = [{ key: "research", label: "재검색 대기" }, { key: "open", label: "열린 루프" }, { key: "promoted", label: "최근 승격" }, { key: "recent", label: "최근 로그" }];
+      const buckets = Object.fromEntries(lanes.map(lane => [lane.key, []]));
+      entries.sort((a, b) => String(b.date).localeCompare(String(a.date))).forEach(entry => buckets[knowledgeBucket(entry)].push(entry));
+      host.replaceChildren();
+      lanes.forEach(lane => {
+        const column = document.createElement("section"); column.className = "knowledge-lane";
+        const heading = document.createElement("h3"); heading.textContent = lane.label + " · " + buckets[lane.key].length; column.appendChild(heading);
+        const shown = buckets[lane.key].slice(0, 3);
+        if (!shown.length) { const empty = document.createElement("div"); empty.className = "knowledge-empty"; empty.textContent = "현재 항목 없음"; column.appendChild(empty); }
+        shown.forEach(entry => {
+          const card = document.createElement("article"); card.className = "knowledge-card";
+          const title = document.createElement("div"); title.className = "knowledge-card-title"; title.textContent = entry.title;
+          const meta = document.createElement("div"); meta.className = "knowledge-card-meta"; meta.textContent = entry.date + " · " + entry.type + " · " + entry.source;
+          const next = document.createElement("div"); next.className = "knowledge-card-next"; next.textContent = entry.detail[entry.detail.length - 1] || "다음 판단 근거를 확인합니다.";
+          card.append(title, meta, next);
+          if (lane.key === "research" || lane.key === "open") { const button = document.createElement("button"); button.type = "button"; button.className = "knowledge-action"; button.textContent = knowledgeAction(entry); const status = document.createElement("span"); status.className = "action-status"; button.addEventListener("click", () => submitKnowledgeAction(button, status, entry)); card.append(button, status); }
+          column.appendChild(card);
+        });
+        host.appendChild(column);
+      });
+      note.textContent = entries.length ? "컴파일 로그 " + entries.length + "건을 집계했습니다. 재검색 요청은 Infinity action queue로 기록되어 실행자가 검증합니다." : "로그를 읽지 못했습니다.";
+      updated.textContent = entries.length ? "최신 " + entries.map(x => x.date).sort().pop() : "";
+    }
+
+    async function loadKnowledgeLoop() {
+      const docs = ["log.mdx"];
+      try { const listing = await ghDir("../agent-wiki"); void listing; } catch (_) {}
+      try {
+        const response = await fetch(SOURCES.wikiLogsApi, { cache: "no-cache" });
+        if (response.ok) {
+          const files = await response.json();
+          files.filter(file => file.type === "file" && /\.mdx?$/.test(file.name)).sort((a, b) => b.name.localeCompare(a.name)).slice(0, 6).forEach(file => docs.push("logs/" + file.name));
+        }
+      } catch (_) {}
+      const texts = await Promise.all(docs.map(path => fetchMaybeWikiText(path)));
+      const entries = texts.flatMap((text, index) => parseWikiLogEntries(text, docs[index]));
+      renderKnowledgeLoop(entries);
+    }
+
+    async function fetchMaybeWikiText(path) { try { return await fetchText(SOURCES.wikiRawBase + path); } catch (_) { return ""; } }
+
     async function loadAndRender() {
       archiveHydrationRun += 1;
       archiveTemplateCache.clear();
@@ -2473,6 +2590,7 @@
       lastDoneItems = doneItems;
       lastDoneSource = "GATES.md";
       scheduleArchiveHydration(doneItems);
+      loadKnowledgeLoop().catch(error => showError("Agent Wiki 로그 로드 실패: " + error.message));
 
       statusEl.textContent = "업데이트: " + new Date().toLocaleString("ko-KR");
     }

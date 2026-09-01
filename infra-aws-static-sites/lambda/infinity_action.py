@@ -23,6 +23,7 @@ ALLOWED_ACTIONS = {
     "resolve_waiting",
     "archive_request",
     "refresh_dashboard",
+    "knowledge_research",
 }
 ACTION_TOKEN_SHA256 = os.environ.get("ACTION_TOKEN_SHA256", "").strip().lower()
 INTENT_ID_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-\d+$")
@@ -116,10 +117,14 @@ def handler(event, context):
     note = _clean_text(payload.get("note"), 1000)
     user_agent = _clean_text((event.get("headers") or {}).get("user-agent"), 600)
 
+    # Wiki-originated loop requests happen before a new Infinity intent exists.
+    # A stable synthetic id keeps dedupe and audit behaviour identical to intent actions.
     if not INTENT_ID_RE.match(intent_id):
         return _response(400, {"error": "invalid_intent_id"}, origin)
     if not ACTION_RE.match(action) or action not in ALLOWED_ACTIONS:
         return _response(400, {"error": "unsupported_action"}, origin)
+    if action == "knowledge_research" and intent_id != "knowledge-loop-1":
+        return _response(400, {"error": "invalid_knowledge_loop"}, origin)
 
     now = datetime.now(timezone.utc)
     created_at = now.isoformat()

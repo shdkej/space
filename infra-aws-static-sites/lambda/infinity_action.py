@@ -117,13 +117,12 @@ def handler(event, context):
     note = _clean_text(payload.get("note"), 1000)
     user_agent = _clean_text((event.get("headers") or {}).get("user-agent"), 600)
 
-    # Wiki-originated loop requests happen before a new Infinity intent exists.
-    # A stable synthetic id keeps dedupe and audit behaviour identical to intent actions.
+    # Wiki loop events are stable IDs; each event has its own dedupe boundary.
     if not INTENT_ID_RE.match(intent_id):
         return _response(400, {"error": "invalid_intent_id"}, origin)
     if not ACTION_RE.match(action) or action not in ALLOWED_ACTIONS:
         return _response(400, {"error": "unsupported_action"}, origin)
-    if action == "knowledge_research" and intent_id != "knowledge-loop-1":
+    if action == "knowledge_research" and not intent_id.startswith("kl-loop-"):
         return _response(400, {"error": "invalid_knowledge_loop"}, origin)
 
     now = datetime.now(timezone.utc)

@@ -233,13 +233,14 @@
     .promotion-targets a { color: #a5f3fc; text-decoration: none; border-bottom: 1px solid #0e7490; }
     .promotion-empty { padding: 16px; color: var(--muted); }
     @media (max-width: 800px) { .promotion-page { margin: 14px 10px; } .promotion-row { grid-template-columns: 1fr; gap: 5px; } .promotion-row-head { display: none; } }
-    .task-trace-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-    .task-trace { border: 1px solid #475569; border-radius: 10px; background: #111827; overflow: hidden; min-width: 0; }
+    .task-trace-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: stretch; }
+    .task-trace { position: relative; border: 1px solid #475569; border-radius: 10px; background: #111827; overflow: visible; min-width: 0; }
+    .task-trace:not(:last-child)::after { content: "→"; position: absolute; right: -22px; top: 50%; transform: translateY(-50%); color: #38bdf8; font-size: 18px; font-weight: 700; z-index: 1; }
     .task-trace summary { cursor: pointer; list-style: none; padding: 11px 12px; color: #e2e8f0; font-size: 13px; font-weight: 700; background: #1f2937; }
     .task-trace summary::-webkit-details-marker { display: none; }
     .task-trace summary::after { content: "열기"; float: right; color: #94a3b8; font-size: 11px; font-weight: 500; }
     .task-trace[open] summary::after { content: "접기"; }
-    .task-trace-preview { padding: 9px 12px; color: #bae6fd; font-size: 12px; line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .task-trace-preview { padding: 9px 12px; color: #bae6fd; font-size: 12px; line-height: 1.45; min-height: 52px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .task-trace-details { padding: 0 12px 12px; border-top: 1px solid rgba(148,163,184,.16); }
     .task-trace-row { padding: 9px 0; border-top: 1px solid rgba(148,163,184,.14); }
     .task-trace-row:first-child { border-top: 0; }
@@ -247,7 +248,7 @@
     .task-trace-value { color: #dbeafe; font-size: 12px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
     .knowledge-fab { position: fixed; left: 18px; bottom: 18px; z-index: 20; border-color: #0e7490; background: #083344; color: #cffafe; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
     .knowledge-fab:hover { background: #0c4a6e; }
-    @media (max-width: 640px) { .task-trace-strip { grid-template-columns: 1fr; } .knowledge-fab { left: 12px; bottom: 12px; } }
+    @media (max-width: 640px) { .task-trace-strip { grid-template-columns: 1fr; gap: 10px; } .task-trace:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -19px; transform: translateX(50%); } .knowledge-fab { left: 12px; bottom: 12px; } }
     @media (max-width: 1100px) { .knowledge-loop-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
     @media (max-width: 640px) { .knowledge-loop { margin: 14px 10px 2px; } .knowledge-loop-grid { grid-template-columns: 1fr; } }
     .archive-filter {
@@ -1261,7 +1262,12 @@
       detailBody.appendChild(taskTraceHost);
     }
 
-    function setTaskTrace(key, title, rows) {
+    function concise(value, limit = 76) {
+      const text = String(value || "").replace(/\s+/g, " ").trim();
+      return text.length > limit ? text.slice(0, limit - 1) + "…" : text;
+    }
+
+    function setTaskTrace(key, title, rows, summary) {
       if (!taskTraceHost) beginTaskTrace();
       let detail = taskTraceSlots.get(key);
       if (!detail) {
@@ -1277,7 +1283,7 @@
       }
       detail.querySelector("summary").textContent = title;
       const valid = (rows || []).filter((row) => row.label && row.value);
-      detail.querySelector(".task-trace-preview").textContent = valid.map((row) => row.value).join(" · ") || "기록 없음";
+      detail.querySelector(".task-trace-preview").textContent = summary || concise(valid.map((row) => row.value).join(" · ")) || "기록 없음";
       const body = detail.querySelector(".task-trace-details"); body.replaceChildren();
       valid.forEach((row) => {
         const line = document.createElement("div"); line.className = "task-trace-row";
@@ -1652,6 +1658,21 @@
       ]);
     }
 
+    function taskLogSummary(item) {
+      const loopId = metaValue(item, ["origin_loop_id", "knowledge_loop_id"]);
+      const matching = knowledgeLoopEvents.filter((entry) => entry.id === loopId || entry.infinity_intent_id === item.id);
+      if (!matching.length) return "구조화 로그 없음";
+      const latest = matching[matching.length - 1];
+      return "구조화 로그 " + matching.length + "건 · " + (latest.type || "기록");
+    }
+
+    function contextMapSummary(pack, item) {
+      if (!pack) return metaValue(item, ["source_context_pack", "context_pack"]) ? "Context Pack 확인 중" : "Context Pack 기록 없음";
+      const docs = Array.isArray(pack.required_documents) ? pack.required_documents.length : 0;
+      const scopes = Array.isArray(pack.search_scopes) ? pack.search_scopes.length : 0;
+      return (pack.route || "기본") + " · 필수 문서 " + docs + "개 · 검색 범위 " + scopes + "개";
+    }
+
     function buildContextPackRows(path, pack) {
       if (!path) return [{ label: "Context Pack", value: "기록 없음 · 기존 태스크이거나 Intent에 source_context_pack이 없습니다." }];
       if (!pack) return [
@@ -1680,9 +1701,10 @@
     function renderImmediateDetail(item, sourceLabel) {
       addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
       beginTaskTrace();
-      setTaskTrace("query", "요청 쿼리", buildTaskQueryRows(item));
-      setTaskTrace("context", "조회한 경로 · Context Map", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }]);
-      setTaskTrace("logs", "남긴 로그", buildTaskLogRows(item));
+      const queryRows = buildTaskQueryRows(item);
+      setTaskTrace("query", "요청 쿼리", queryRows, concise(queryRows[0].value));
+      setTaskTrace("context", "조회한 경로 · Context Map", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }], contextMapSummary(null, item));
+      setTaskTrace("logs", "남긴 로그", buildTaskLogRows(item), taskLogSummary(item));
       addActionBlock(item, sourceLabel);
       const st = String(item.meta.status || "").toLowerCase();
       if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") {
@@ -1693,8 +1715,8 @@
     function appendLoadedDetail(item, bundle) {
       const { archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack } = bundle;
 
-      setTaskTrace("context", "조회한 경로 · Context Map", buildContextMapRows(item, contextPackPath, contextPack));
-      setTaskTrace("logs", "남긴 로그", buildTaskLogRows(item));
+      setTaskTrace("context", "조회한 경로 · Context Map", buildContextMapRows(item, contextPackPath, contextPack), contextMapSummary(contextPack, item));
+      setTaskTrace("logs", "남긴 로그", buildTaskLogRows(item), taskLogSummary(item));
 
       for (const report of reports) {
         const title = report.path || ("reports/" + item.id + "/" + report.name);

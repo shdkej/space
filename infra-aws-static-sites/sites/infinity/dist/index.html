@@ -1189,6 +1189,9 @@
     }
 
     let actionKeyCache = "";
+    // Loaded from Agent Wiki's explicit event model. Intent details use this to
+    // show whether their own knowledge follow-up has actually been closed.
+    let knowledgeLoopEvents = [];
 
     function getActionKey() {
       if (actionKeyCache) return actionKeyCache;
@@ -1497,8 +1500,36 @@
       ].filter(row => row.value);
     }
 
+    function knowledgeStateLabel(state) {
+      return ({ open: "열림 · 재검색 또는 검토 대기", queued: "접수됨 · 실행 대기", active: "재검색 진행 중", resolved: "닫힘 · 결과 반영됨", dismissed: "닫힘 · 기각 또는 보류" })[String(state || "").toLowerCase()] || "상태 정보 없음";
+    }
+
+    function buildKnowledgeClosureRows(item) {
+      const loopId = metaValue(item, ["origin_loop_id", "knowledge_loop_id"]);
+      const knowledgeStatus = metaValue(item, ["knowledge_status", "knowledge_decision"]);
+      if (!loopId) {
+        return [{ label: "루프 연결", value: knowledgeStatus
+          ? "별도 재검색 루프 없음 · 작업 지식 상태: " + knowledgeStatus
+          : "연결된 지식 루프 없음 · 이 작업에서 재검색·승격을 시작하면 origin_loop_id를 기록합니다." }];
+      }
+      const loop = knowledgeLoopEvents.find(entry => entry.id === loopId);
+      if (!loop) return [
+        { label: "루프 ID", value: loopId, key: true },
+        { label: "닫힘 상태", value: "Agent Wiki 공개 모델에서 아직 확인되지 않음" },
+      ];
+      const closureEvidence = loop.result_url || loop.decision_reason || loop.next_action || "결과 근거가 아직 연결되지 않았습니다.";
+      return [
+        { label: "루프 ID", value: loop.id, key: true },
+        { label: "닫힘 상태", value: knowledgeStateLabel(loop.loop_state), key: true },
+        { label: "연결된 재검색 Intent", value: loop.infinity_intent_id || "아직 없음" },
+        { label: "결과·다음 근거", value: closureEvidence },
+        { label: "Wiki 원문", value: loop.source_url || loop.source_log || "없음" },
+      ];
+    }
+
     function renderImmediateDetail(item, sourceLabel) {
       addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
+      addStructuredBlock("지식 루프 닫힘", buildKnowledgeClosureRows(item), "kind-summary");
       addActionBlock(item, sourceLabel);
       const st = String(item.meta.status || "").toLowerCase();
       if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") {
@@ -2504,6 +2535,7 @@
         return response.json();
       });
       const entries = Array.isArray(model.events) ? model.events : [];
+      knowledgeLoopEvents = entries;
       renderKnowledgeLoop(entries);
     }
 

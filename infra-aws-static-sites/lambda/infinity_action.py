@@ -27,6 +27,9 @@ ALLOWED_ACTIONS = {
 }
 ACTION_TOKEN_SHA256 = os.environ.get("ACTION_TOKEN_SHA256", "").strip().lower()
 INTENT_ID_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-\d+$")
+# Agent Wiki loop IDs identify a log event, not an Infinity task. They have a
+# separate grammar and dedupe boundary.
+KNOWLEDGE_LOOP_ID_RE = re.compile(r"^kl-loop-[a-z0-9]+(?:-[a-z0-9]+)+$")
 ACTION_RE = re.compile(r"^[a-z][a-z0-9_]{1,48}$")
 
 
@@ -118,11 +121,12 @@ def handler(event, context):
     user_agent = _clean_text((event.get("headers") or {}).get("user-agent"), 600)
 
     # Wiki loop events are stable IDs; each event has its own dedupe boundary.
-    if not INTENT_ID_RE.match(intent_id):
+    is_knowledge_research = action == "knowledge_research"
+    if not (KNOWLEDGE_LOOP_ID_RE.match(intent_id) if is_knowledge_research else INTENT_ID_RE.match(intent_id)):
         return _response(400, {"error": "invalid_intent_id"}, origin)
     if not ACTION_RE.match(action) or action not in ALLOWED_ACTIONS:
         return _response(400, {"error": "unsupported_action"}, origin)
-    if action == "knowledge_research" and not intent_id.startswith("kl-loop-"):
+    if is_knowledge_research and not KNOWLEDGE_LOOP_ID_RE.match(intent_id):
         return _response(400, {"error": "invalid_knowledge_loop"}, origin)
 
     now = datetime.now(timezone.utc)

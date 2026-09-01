@@ -219,6 +219,22 @@
     .knowledge-action { margin-top: 8px; padding: 4px 8px; border-color: #0e7490; background: #083344; color: #cffafe; font-size: 11px; }
     .knowledge-action:hover { background: #0c4a6e; }
     .knowledge-empty { color: var(--muted); font-size: 12px; padding: 8px 0; }
+    .view-switch { display: inline-flex; gap: 6px; }
+    .view-switch button[aria-pressed="true"] { background: #083344; border-color: #0e7490; color: #cffafe; }
+    .promotion-page { margin: 18px 14px; max-width: 1180px; }
+    .promotion-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .promotion-title { margin: 0; font-size: 18px; }
+    .promotion-note { color: var(--muted); font-size: 12px; margin: 4px 0 0; }
+    .promotion-list { border: 1px solid #334155; border-radius: 12px; overflow: hidden; background: var(--panel); }
+    .promotion-row { display: grid; grid-template-columns: 104px minmax(220px, 1.4fr) minmax(180px, 1fr) minmax(180px, 1fr); gap: 12px; align-items: start; padding: 12px 14px; border-top: 1px solid #334155; font-size: 12px; }
+    .promotion-row:first-child { border-top: 0; }
+    .promotion-row-head { color: var(--muted); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; background: #111c30; }
+    .promotion-source { color: #cbd5e1; word-break: break-word; }
+    .promotion-state { font-weight: 650; color: #bae6fd; }
+    .promotion-targets { display: flex; flex-wrap: wrap; gap: 5px; }
+    .promotion-targets a { color: #a5f3fc; text-decoration: none; border-bottom: 1px solid #0e7490; }
+    .promotion-empty { padding: 16px; color: var(--muted); }
+    @media (max-width: 800px) { .promotion-page { margin: 14px 10px; } .promotion-row { grid-template-columns: 1fr; gap: 5px; } .promotion-row-head { display: none; } }
     @media (max-width: 1100px) { .knowledge-loop-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
     @media (max-width: 640px) { .knowledge-loop { margin: 14px 10px 2px; } .knowledge-loop-grid { grid-template-columns: 1fr; } }
     .archive-filter {
@@ -708,6 +724,10 @@
     <h1>Infinity Kanban</h1>
     <span class="meta" id="status">로딩 중...</span>
     <span class="spacer"></span>
+    <div class="view-switch" aria-label="화면 선택">
+      <button type="button" id="view-board" aria-pressed="true">작업 보드</button>
+      <button type="button" id="view-knowledge" aria-pressed="false">지식 흐름</button>
+    </div>
     <label class="meta">
       자동 새로고침
       <select id="interval">
@@ -734,7 +754,7 @@
       <span class="summary-value" id="sum-stale">–</span>
     </div>
   </div>
-  <section class="knowledge-loop" aria-labelledby="knowledge-loop-title">
+  <section class="knowledge-loop" id="knowledge-loop-section" aria-labelledby="knowledge-loop-title" hidden>
     <div class="knowledge-loop-head">
       <div>
         <h2 class="knowledge-loop-title" id="knowledge-loop-title">지식 피드백 루프</h2>
@@ -743,6 +763,16 @@
       <span class="meta" id="knowledge-loop-updated"></span>
     </div>
     <div class="knowledge-loop-grid" id="knowledge-loop-grid" aria-live="polite"></div>
+  </section>
+  <section class="promotion-page" id="promotion-page" hidden aria-labelledby="promotion-title">
+    <div class="promotion-head">
+      <div>
+        <h2 class="promotion-title" id="promotion-title">소스 → Ingest → Wiki 승격</h2>
+        <p class="promotion-note" id="promotion-note">Knowledge Lab 원장의 명시 출처와 Wiki 연결만 표시합니다.</p>
+      </div>
+      <span class="meta" id="promotion-updated"></span>
+    </div>
+    <div class="promotion-list" id="promotion-list" aria-live="polite"></div>
   </section>
   <main>
     <section class="column" data-key="inbox">
@@ -820,6 +850,8 @@
       rawIntents: "https://raw.githubusercontent.com/shdkej/infinity/main/INTENTS.md",
       rawGates: "https://raw.githubusercontent.com/shdkej/infinity/main/GATES.md",
       knowledgeLoop: "https://raw.githubusercontent.com/shdkej/agent-wiki/main/content/docs/data/knowledge-loop.json",
+      promotionIndex: "https://raw.githubusercontent.com/shdkej/agent-wiki/main/content/docs/data/promotion-index.json",
+      knowledgeLabBase: "https://github.com/shdkej/knowledge-lab/blob/main/",
       rawBase: "https://raw.githubusercontent.com/shdkej/infinity/main/",
       apiBase: "https://api.github.com/repos/shdkej/infinity/contents/",
       actionEndpoint: "https://k23v4cvkqtxkuj5ceech43m5mq0aedhq.lambda-url.ap-northeast-2.on.aws/",
@@ -833,6 +865,8 @@
     const detailTitle = document.getElementById("detail-title");
     const detailBody = document.getElementById("detail-body");
     const detailClose = document.getElementById("detail-close");
+    const boardViewBtn = document.getElementById("view-board");
+    const knowledgeViewBtn = document.getElementById("view-knowledge");
 
     let timer = null;
 
@@ -1542,6 +1576,22 @@
       ];
     }
 
+    function buildTaskQueryRows(item) {
+      return [
+        { label: "요청 쿼리", value: metaValue(item, ["user_request", "requested_query", "query"]) || metaValue(item, ["goal"]) || "기록 없음", key: true },
+      ];
+    }
+
+    function buildTaskLogRows(item) {
+      const loopId = metaValue(item, ["origin_loop_id", "knowledge_loop_id"]);
+      const matching = knowledgeLoopEvents.filter((entry) => entry.id === loopId || entry.infinity_intent_id === item.id);
+      if (!matching.length) return [{ label: "남긴 로그", value: "연결된 구조화 로그가 없습니다." }];
+      return matching.flatMap((entry) => [
+        { label: "로그", value: [entry.at, entry.type, entry.summary].filter(Boolean).join(" · "), key: true },
+        { label: "원문", value: entry.source_url || entry.source_log || "없음" },
+      ]);
+    }
+
     function buildContextPackRows(path, pack) {
       if (!path) return [{ label: "Context Pack", value: "기록 없음 · 기존 태스크이거나 Intent에 source_context_pack이 없습니다." }];
       if (!pack) return [
@@ -1558,9 +1608,18 @@
       ];
     }
 
+    function buildContextMapRows(item, path, pack) {
+      const rows = buildContextPackRows(path, pack);
+      const checked = metaValue(item, ["context_documents_checked"]);
+      const searches = metaValue(item, ["context_searches"]);
+      if (checked) rows.push({ label: "실제 확인 문서", value: checked, key: true });
+      if (searches) rows.push({ label: "실제 검색", value: searches });
+      return rows;
+    }
+
     function renderImmediateDetail(item, sourceLabel) {
       addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
-      addStructuredBlock("지식 루프 닫힘", buildKnowledgeClosureRows(item), "kind-summary");
+      addStructuredBlock("요청 쿼리", buildTaskQueryRows(item), "kind-summary");
       addActionBlock(item, sourceLabel);
       const st = String(item.meta.status || "").toLowerCase();
       if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") {
@@ -1571,7 +1630,8 @@
     function appendLoadedDetail(item, bundle) {
       const { archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack } = bundle;
 
-      addStructuredBlock("지식 루프 닫힘 · Context Pack", buildContextPackRows(contextPackPath, contextPack), "kind-summary");
+      addStructuredBlock("조회한 경로 · Context Map", buildContextMapRows(item, contextPackPath, contextPack), "kind-summary");
+      addStructuredBlock("남긴 로그", buildTaskLogRows(item), "kind-summary");
 
       for (const report of reports) {
         const title = report.path || ("reports/" + item.id + "/" + report.name);
@@ -2572,6 +2632,57 @@
       renderKnowledgeLoop(entries);
     }
 
+    function promotionState(entry) {
+      if (entry.status === "selected") return "승격 필요 · 검토 완료";
+      if (entry.promotion_targets && entry.promotion_targets.length) return "Wiki 승격 연결됨";
+      return "KL 선별 보관 · Wiki 연결 미기록";
+    }
+
+    function renderPromotionIndex(entries, generatedAt) {
+      const host = document.getElementById("promotion-list");
+      const note = document.getElementById("promotion-note");
+      const updated = document.getElementById("promotion-updated");
+      host.replaceChildren();
+      const head = document.createElement("div"); head.className = "promotion-row promotion-row-head";
+      ["상태", "입력 소스", "Ingest 판정", "Agent Wiki"].forEach((label) => { const cell = document.createElement("div"); cell.textContent = label; head.appendChild(cell); });
+      host.appendChild(head);
+      if (!entries.length) { const empty = document.createElement("div"); empty.className = "promotion-empty"; empty.textContent = "선별 또는 승격된 소스가 없습니다."; host.appendChild(empty); return; }
+      entries.forEach((entry) => {
+        const row = document.createElement("article"); row.className = "promotion-row";
+        const state = document.createElement("div"); state.className = "promotion-state"; state.textContent = promotionState(entry);
+        const source = document.createElement("a"); source.className = "promotion-source"; source.href = SOURCES.knowledgeLabBase + entry.source; source.target = "_blank"; source.rel = "noopener"; source.textContent = entry.source_layer === "infinity" ? "작업 산출물 · " + entry.source : "원본 입력 · " + entry.source;
+        const ingest = document.createElement("div"); ingest.className = "promotion-source"; ingest.textContent = entry.status + (entry.reason ? " · " + entry.reason : "");
+        const targets = document.createElement("div"); targets.className = "promotion-targets";
+        (entry.promotion_targets || []).forEach((target) => { const link = document.createElement("a"); link.href = "https://shdkej.com/agent-wiki" + target; link.target = "_blank"; link.rel = "noopener"; link.textContent = target.replace(/^\/docs\//, ""); targets.appendChild(link); });
+        if (!targets.children.length) { const text = document.createElement("span"); text.className = "promotion-source"; text.textContent = entry.status === "selected" ? "아직 승격 전" : (entry.promotion_target_note || "명시 연결 없음"); targets.appendChild(text); }
+        row.append(state, source, ingest, targets); host.appendChild(row);
+      });
+      note.textContent = "선별·통합된 " + entries.length + "개 소스를 표시합니다. Wiki 연결은 출처 또는 ingest target으로 명시된 경우만 보여줍니다.";
+      updated.textContent = generatedAt ? "갱신 " + generatedAt : "";
+    }
+
+    async function loadPromotionIndex() {
+      const model = await fetch(SOURCES.promotionIndex, { cache: "no-cache" }).then((response) => {
+        if (!response.ok) throw new Error("promotion index HTTP " + response.status);
+        return response.json();
+      });
+      renderPromotionIndex(Array.isArray(model.entries) ? model.entries : [], model.generated_at || "");
+    }
+
+    function setView(view) {
+      const knowledge = view === "knowledge";
+      document.getElementById("summary-band").hidden = knowledge;
+      document.querySelector("main").hidden = knowledge;
+      document.getElementById("knowledge-loop-section").hidden = !knowledge;
+      document.getElementById("promotion-page").hidden = !knowledge;
+      boardViewBtn.setAttribute("aria-pressed", String(!knowledge));
+      knowledgeViewBtn.setAttribute("aria-pressed", String(knowledge));
+      if (location.hash !== (knowledge ? "#knowledge" : "#board")) history.replaceState(null, "", knowledge ? "#knowledge" : "#board");
+    }
+
+    boardViewBtn.addEventListener("click", () => setView("board"));
+    knowledgeViewBtn.addEventListener("click", () => setView("knowledge"));
+
     async function fetchMaybeWikiText(path) { try { return await fetchText(SOURCES.wikiRawBase + path); } catch (_) { return ""; } }
 
     async function loadAndRender() {
@@ -2651,7 +2762,7 @@
       lastDoneItems = doneItems;
       lastDoneSource = "GATES.md";
       scheduleArchiveHydration(doneItems);
-      loadKnowledgeLoop().catch(error => showError("Agent Wiki 로그 로드 실패: " + error.message));
+      Promise.all([loadKnowledgeLoop(), loadPromotionIndex()]).catch(error => showError("지식 흐름 로드 실패: " + error.message));
 
       statusEl.textContent = "업데이트: " + new Date().toLocaleString("ko-KR");
     }
@@ -2754,6 +2865,7 @@
       if (ev.key === "Escape") closeDetailModal();
     });
 
+    setView(location.hash === "#knowledge" ? "knowledge" : "board");
     loadAndRender();
     rescheduleAuto();
   </script>

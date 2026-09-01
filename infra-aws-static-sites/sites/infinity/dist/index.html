@@ -1442,6 +1442,18 @@
       return (await Promise.all(tasks)).filter(Boolean);
     }
 
+    function contextPackPathFor(item, archive) {
+      const declared = normalizePath(metaValue(item, ["source_context_pack", "context_pack"]));
+      if (declared) return declared;
+      const match = String(archive && archive.text || "").match(/^\s*-\s+(?:source_)?context_pack\s*:\s*`?([^`\n]+)`?\s*$/mi);
+      return match ? normalizePath(match[1].trim()) : "";
+    }
+
+    function parseContextPack(text) {
+      if (!text) return null;
+      try { return JSON.parse(text); } catch (_) { return null; }
+    }
+
     async function loadDetailBundle(item) {
       const key = (item.id || "") + "|" + (item.source || "") + "|" + (item.title || "");
       const cached = detailCache.get(key);
@@ -1455,6 +1467,9 @@
         fetchKnownEntries(knownArtifactRefs),
         fetchKnownEntries(knownReportRefs),
       ]);
+      const contextPackPath = contextPackPathFor(item, archive);
+      const contextPackText = contextPackPath ? await fetchMaybeText(contextPackPath) : null;
+      const contextPack = parseContextPack(contextPackText);
       let artifacts = knownArtifacts;
       let reports = knownReports;
       if (!artifacts.length) artifacts = await fetchArtifactsList(item.id);
@@ -1462,7 +1477,7 @@
         const latestReport = await fetchLatestReport(item.id);
         reports = latestReport ? [latestReport] : [];
       }
-      const data = { archive, detailPath, detailText, artifacts, reports };
+      const data = { archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack };
       detailCache.set(key, { t: Date.now(), data });
       return data;
     }
@@ -1527,6 +1542,22 @@
       ];
     }
 
+    function buildContextPackRows(path, pack) {
+      if (!path) return [{ label: "Context Pack", value: "기록 없음 · 기존 태스크이거나 Intent에 source_context_pack이 없습니다." }];
+      if (!pack) return [
+        { label: "Context Pack", value: path, key: true },
+        { label: "상태", value: "파일을 읽거나 JSON으로 해석하지 못했습니다." },
+      ];
+      return [
+        { label: "Context Pack", value: path, key: true },
+        { label: "Route", value: pack.route || "없음", key: true },
+        { label: "상태", value: pack.status || "없음" },
+        { label: "생성 시각", value: pack.built_at || "없음" },
+        { label: "필수 문서", value: Array.isArray(pack.required_documents) ? pack.required_documents.join("\n") : "없음" },
+        { label: "검색 범위", value: Array.isArray(pack.search_scopes) ? pack.search_scopes.join("\n") : "없음" },
+      ];
+    }
+
     function renderImmediateDetail(item, sourceLabel) {
       addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
       addStructuredBlock("지식 루프 닫힘", buildKnowledgeClosureRows(item), "kind-summary");
@@ -1538,7 +1569,9 @@
     }
 
     function appendLoadedDetail(item, bundle) {
-      const { archive, detailPath, detailText, artifacts, reports } = bundle;
+      const { archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack } = bundle;
+
+      addStructuredBlock("지식 루프 닫힘 · Context Pack", buildContextPackRows(contextPackPath, contextPack), "kind-summary");
 
       for (const report of reports) {
         const title = report.path || ("reports/" + item.id + "/" + report.name);

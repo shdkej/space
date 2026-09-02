@@ -11,5 +11,9 @@ case "$MAPBOX_API_KEY" in
 esac
 target="$(dirname "$0")/../sites/safety-map/dist/runtime-map-config.js"
 umask 077
-printf 'window.__SAFETY_MAP_CONFIG__={accessToken:%q,allowedOrigin:%q};\n' \
-  "$MAPBOX_API_KEY" 'https://safety-map.aws.shdkej.com' > "$target"
+TARGET="$target" node <<'NODE'
+const fs = require('node:fs');
+const token = process.env.MAPBOX_API_KEY;
+const destination = process.env.TARGET;
+fs.writeFileSync(destination, `window.__SAFETY_MAP_CONFIG__=${JSON.stringify({accessToken: token, allowedOrigin: 'https://safety-map.aws.shdkej.com'})};\n`, {mode: 0o600});
+NODE

@@ -234,7 +234,7 @@
     .promotion-empty { padding: 16px; color: var(--muted); }
     @media (max-width: 800px) { .promotion-page { margin: 14px 10px; } .promotion-row { grid-template-columns: 1fr; gap: 5px; } .promotion-row-head { display: none; } }
     .task-trace-strip { display: grid; gap: 10px; }
-    .task-trace-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .task-trace-tabs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
     .task-trace-tab { position: relative; min-width: 0; min-height: 74px; padding: 10px 12px; border-radius: 10px; background: #111827; border-color: #475569; color: #e2e8f0; text-align: left; }
     .task-trace-tab:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 50%; transform: translateY(-50%); color: #38bdf8; font-size: 16px; font-weight: 700; z-index: 2; pointer-events: none; }
     .task-trace-tab:hover, .task-trace-tab.active { border-color: #0e7490; background: linear-gradient(145deg, #12334a, #111827); }
@@ -248,7 +248,7 @@
     .knowledge-fab { position: fixed; left: 22px; bottom: 22px; z-index: 20; min-height: 48px; padding: 0 18px; border: 1px solid rgba(125,211,252,.62); border-radius: 999px; background: radial-gradient(circle at 25% 20%, rgba(224,242,254,.32), transparent 28%), linear-gradient(135deg, #075985, #0e7490); color: #ecfeff; box-shadow: 0 14px 34px rgba(2,132,199,.28), 0 4px 12px rgba(0,0,0,.34); font-size: 13px; font-weight: 750; letter-spacing: -.01em; }
     .knowledge-fab::before { content: "✦"; margin-right: 7px; color: #fef3c7; }
     .knowledge-fab:hover { transform: translateY(-2px); background: linear-gradient(135deg, #0284c7, #0891b2); box-shadow: 0 18px 38px rgba(2,132,199,.36), 0 4px 12px rgba(0,0,0,.3); }
-    @media (max-width: 640px) { .task-trace-tabs { grid-template-columns: repeat(3, minmax(150px, 1fr)); overflow-x: auto; padding: 2px; } .task-trace-tab:not(:last-child)::after { right: -14px; } .knowledge-fab { left: 14px; bottom: 14px; } }
+    @media (max-width: 640px) { .task-trace-tabs { grid-template-columns: repeat(6, minmax(150px, 1fr)); overflow-x: auto; padding: 2px; } .task-trace-tab:not(:last-child)::after { right: -14px; } .knowledge-fab { left: 14px; bottom: 14px; } }
     @media (max-width: 1100px) { .knowledge-loop-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
     @media (max-width: 640px) { .knowledge-loop { margin: 14px 10px 2px; } .knowledge-loop-grid { grid-template-columns: 1fr; } }
     .archive-filter {
@@ -1570,30 +1570,75 @@
       try { return JSON.parse(text); } catch (_) { return null; }
     }
 
+    // Archive cards are initially parsed from the compact INTENTS.md comment,
+    // which intentionally does not duplicate the full intake fields.  Hydrate
+    // those fields from the canonical archive detail before rendering the
+    // trace: otherwise a completed card loses its original request/query and
+    // linked evidence even though the archive retained them.
+    function parseArchiveMeta(text) {
+      const meta = {};
+      for (const line of String(text || "").split(/\r?\n/)) {
+        const match = line.match(/^\s*-\s+([A-Za-z][A-Za-z0-9_]*)\s*:\s*(.*?)\s*$/);
+        if (!match) continue;
+        const key = match[1];
+        let value = match[2].replace(/^`(.+)`$/, "$1").replace(/^\"(.+)\"$/, "$1");
+        if (value) meta[key] = value;
+      }
+      return meta;
+    }
+
+    function mergeArchiveDetail(item, archive) {
+      if (!archive || !archive.text) return item;
+      const archiveMeta = parseArchiveMeta(archive.text);
+      if (!Object.keys(archiveMeta).length) return item;
+      return Object.assign({}, item, { meta: Object.assign({}, archiveMeta, item.meta || {}) });
+    }
+
+    // Trace files are deliberately fetched from the same immutable Infinity
+    // revision as the ledger.  Older intents do not have a trace yet, so the
+    // detail view keeps a useful ledger-derived fallback instead of inventing
+    // events client-side.
+    function tracePathFor(item) {
+      return item && item.id ? "traces/" + encodeURIComponent(item.id) + ".json" : "";
+    }
+
+    async function fetchIntentTrace(item) {
+      const path = tracePathFor(item);
+      if (!path) return { path: "", trace: null };
+      const text = await fetchMaybeText(path);
+      return { path, trace: parseContextPack(text) };
+    }
+
     async function loadDetailBundle(item) {
       const key = (item.id || "") + "|" + (item.source || "") + "|" + (item.title || "");
       const cached = detailCache.get(key);
       if (cached && Date.now() - cached.t < DETAIL_CACHE_TTL) return cached.data;
-      const detailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
-      const knownArtifactRefs = pathFieldEntries(item, ["artifact", "evidence", "approval_request"], "kind-artifact");
-      const knownReportRefs = pathFieldEntries(item, ["report", "red_report", "previous_red_report"], "kind-report");
-      const [archive, detailText, knownArtifacts, knownReports] = await Promise.all([
+      const initialDetailPath = normalizePath(item.meta.detail || item.meta.draft || item.path || "");
+      const [archive, initialDetailText, traceBundle] = await Promise.all([
         fetchArchiveIntent(item.id),
-        detailPath ? fetchMaybeText(detailPath) : Promise.resolve(null),
+        initialDetailPath ? fetchMaybeText(initialDetailPath) : Promise.resolve(null),
+        fetchIntentTrace(item),
+      ]);
+      const hydratedItem = mergeArchiveDetail(item, archive);
+      const detailPath = normalizePath(hydratedItem.meta.detail || hydratedItem.meta.draft || initialDetailPath);
+      const detailText = detailPath === initialDetailPath ? initialDetailText : await fetchMaybeText(detailPath);
+      const knownArtifactRefs = pathFieldEntries(hydratedItem, ["artifact", "evidence", "approval_request"], "kind-artifact");
+      const knownReportRefs = pathFieldEntries(hydratedItem, ["report", "red_report", "previous_red_report"], "kind-report");
+      const [knownArtifacts, knownReports] = await Promise.all([
         fetchKnownEntries(knownArtifactRefs),
         fetchKnownEntries(knownReportRefs),
       ]);
-      const contextPackPath = contextPackPathFor(item, archive);
+      const contextPackPath = contextPackPathFor(hydratedItem, archive);
       const contextPackText = contextPackPath ? await fetchMaybeText(contextPackPath) : null;
       const contextPack = parseContextPack(contextPackText);
       let artifacts = knownArtifacts;
       let reports = knownReports;
       if (!artifacts.length) artifacts = await fetchArtifactsList(item.id);
       if (!reports.length) {
-        const latestReport = await fetchLatestReport(item.id);
+        const latestReport = await fetchLatestReport(hydratedItem.id);
         reports = latestReport ? [latestReport] : [];
       }
-      const data = { archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack };
+      const data = { item: hydratedItem, archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack, tracePath: traceBundle.path, trace: traceBundle.trace };
       detailCache.set(key, { t: Date.now(), data });
       return data;
     }
@@ -1714,25 +1759,115 @@
       return rows;
     }
 
+    function traceValue(value) {
+      if (value === undefined || value === null || value === "") return "";
+      if (Array.isArray(value)) return value.map(traceValue).filter(Boolean).join("\n");
+      if (typeof value === "object") return Object.entries(value).map(([key, item]) => key + ": " + traceValue(item)).filter(Boolean).join("\n");
+      return String(value);
+    }
+
+    function traceRows(value, fallbackLabel) {
+      if (!value) return [];
+      if (Array.isArray(value)) {
+        return value.flatMap((entry, index) => traceRows(entry, fallbackLabel + " " + (index + 1)));
+      }
+      if (typeof value !== "object") return [{ label: fallbackLabel, value: traceValue(value) }];
+      const rows = [];
+      const labels = { raw: "원문 요청", normalized_query: "정리된 작업", context_pack: "Context Pack", evidence_paths: "확인한 경로", searches: "검색", report_path: "최종 리포트", red_status: "Red 검증", red_report_path: "Red 근거", remote_verified: "원격 반영 확인", remote_proof_path: "원격 확인 근거", run_id: "Dispatcher 실행", canonical_sha: "기준 revision", agent: "인계 담당", session_key: "세션", next_decision: "다음 결정", status: "상태", reason: "기록 한계" };
+      for (const [key, entry] of Object.entries(value)) {
+        if (["events", "stage", "type", "at", "timestamp"].includes(key)) continue;
+        const rendered = traceValue(entry);
+        if (rendered) rows.push({ label: labels[key] || key.replace(/_/g, " "), value: rendered, key: key === "status" || key === "result" });
+      }
+      const eventSummary = [value.at || value.timestamp, value.type || value.stage, value.summary || value.message].filter(Boolean).join(" · ");
+      if (eventSummary) rows.unshift({ label: fallbackLabel, value: eventSummary, key: true });
+      return rows;
+    }
+
+    function traceStageRows(trace, stage, fallbackRows) {
+      if (!trace || typeof trace !== "object") return fallbackRows;
+      const aliases = {
+        request: ["request", "intake"],
+        evidence: ["evidence", "execution", "context"],
+        outputs: ["outputs", "artifacts", "artifact", "reports", "report"],
+        verification: ["verification", "verifications", "validate", "validation", "red", "result"],
+        custody: ["dispatcher_handoff"],
+        decision: ["next_decision", "metric_next_decision", "decision", "next"],
+      };
+      const rows = [];
+      for (const key of aliases[stage] || []) rows.push(...traceRows(trace[key], key));
+      const eventAliases = new Set(aliases[stage] || []);
+      for (const event of Array.isArray(trace.events) ? trace.events : []) {
+        const eventType = String(event && (event.stage || event.type) || "").toLowerCase();
+        // Archive events contain the terminal Red/remote receipt and belong in
+        // verification, while execution events preserve context/search paths.
+        if (event && (eventAliases.has(eventType)
+          || (stage === "verification" && eventType === "archive")
+          || (stage === "evidence" && eventType === "intake"))) rows.push(...traceRows(event, eventType === "dispatcher_handoff" ? "인계·보관 기록" : "기록"));
+      }
+      return rows.length ? rows : fallbackRows;
+    }
+
+    function traceRequestSummary(trace, item) {
+      const request = trace && trace.request;
+      const raw = request && request.raw && request.raw.value;
+      const normalized = request && request.normalized_query && request.normalized_query.value;
+      return concise(raw || normalized || metaValue(item, ["user_request", "requested_query", "query", "goal"]));
+    }
+
+    function renderTraceContract(item, bundle) {
+      const trace = bundle.trace;
+      const fallbackEvidence = buildContextMapRows(item, bundle.contextPackPath, bundle.contextPack)
+        .concat(buildTaskLogRows(item));
+      const fallbackOutputs = [
+        { label: "Artifact", value: bundle.artifacts.map(entry => entry.path || entry.name).join("\n") || "기록 없음" },
+        { label: "Report", value: bundle.reports.map(entry => entry.path || entry.name).join("\n") || "기록 없음" },
+      ];
+      const fallbackVerification = [
+        { label: "Red", value: metaValue(item, ["red_status"]) || "기록 없음" },
+        { label: "원격 검증", value: metaValue(item, ["remote_verified", "verification"]) || "기록 없음" },
+        { label: "결과", value: metaValue(item, ["result", "metric_result"]) || "기록 없음" },
+      ];
+      const fallbackDecision = [
+        { label: "다음 결정", value: metaValue(item, ["next_action", "metric_next_decision", "decision"]) || "기록 없음", key: true },
+        { label: "지표 다음 결정", value: metaValue(item, ["metric_next_decision"]) || "기록 없음" },
+        { label: "막힘·승인", value: metaValue(item, ["blocker", "permission", "boundary"]) || "없음" },
+      ];
+      setTaskTrace("request", "요청", traceStageRows(trace, "request", buildTaskQueryRows(item)), traceRequestSummary(trace, item));
+      const evidenceRows = traceStageRows(trace, "evidence", fallbackEvidence);
+      const outputRows = traceStageRows(trace, "outputs", fallbackOutputs);
+      const verificationRows = traceStageRows(trace, "verification", fallbackVerification);
+      setTaskTrace("evidence", "근거", evidenceRows, trace ? concise(evidenceRows.map(row => row.value).join(" · ")) : contextMapSummary(bundle.contextPack, item));
+      setTaskTrace("outputs", "산출물", outputRows, concise(outputRows.map(row => row.value).join(" · ")));
+      setTaskTrace("verification", "검증", verificationRows, concise(verificationRows.map(row => row.value).join(" · ")));
+      const custodyRows = traceStageRows(trace, "custody", [{ label: "상태", value: "인계 기록 없음" }]);
+      setTaskTrace("custody", "운영 인계", custodyRows, trace ? concise(custodyRows.map(row => row.value).join(" · ")) : "기록 없음");
+      setTaskTrace("decision", "다음 결정", traceStageRows(trace, "decision", fallbackDecision), trace ? "trace 기록" : concise(fallbackDecision[0].value));
+    }
+
     function renderImmediateDetail(item, sourceLabel) {
       addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
       beginTaskTrace();
       const queryRows = buildTaskQueryRows(item);
-      setTaskTrace("query", "요청 쿼리", queryRows, concise(queryRows[0].value));
-      setTaskTrace("context", "조회한 경로 · Context Map", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }], contextMapSummary(null, item));
-      setTaskTrace("logs", "남긴 로그", buildTaskLogRows(item), taskLogSummary(item));
+      setTaskTrace("request", "요청", queryRows, concise(queryRows[0].value));
+      setTaskTrace("evidence", "근거", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }], contextMapSummary(null, item));
+      setTaskTrace("outputs", "산출물", [{ label: "상태", value: "산출물을 불러오는 중" }], "불러오는 중");
+      setTaskTrace("verification", "검증", [{ label: "상태", value: "검증 기록을 불러오는 중" }], "불러오는 중");
+      setTaskTrace("decision", "다음 결정", [{ label: "다음 행동", value: metaValue(item, ["next_action", "metric_next_decision"]) || "불러오는 중" }], "불러오는 중");
       addActionBlock(item, sourceLabel);
       const st = String(item.meta.status || "").toLowerCase();
       if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") {
+        // A waiting card is actionable only when its blocker/approval is the
+        // first thing visible; the five-stage sequence remains available.
+        showTaskTrace("decision");
         addStructuredBlock("Waiting 기대값", buildWaitingRows(item), "kind-waiting");
       }
     }
 
     function appendLoadedDetail(item, bundle) {
-      const { archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack } = bundle;
+      const { item: hydratedItem, archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack } = bundle;
 
-      setTaskTrace("context", "조회한 경로 · Context Map", buildContextMapRows(item, contextPackPath, contextPack), contextMapSummary(contextPack, item));
-      setTaskTrace("logs", "남긴 로그", buildTaskLogRows(item), taskLogSummary(item));
+      renderTraceContract(hydratedItem || item, bundle);
 
       for (const report of reports) {
         const title = report.path || ("reports/" + item.id + "/" + report.name);

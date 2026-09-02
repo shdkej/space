@@ -944,6 +944,14 @@
       return text ? { path, text } : null;
     }
 
+    // Archive index comments intentionally keep only lifecycle metadata. The
+    // canonical archive record's H1 is the task description users should read
+    // as the card title, so hydrate it before treating comment text as a title.
+    function archiveTaskTitle(text) {
+      const heading = String(text || "").match(/^#\s+(?:[^—\n]+\s+—\s+)?(.+?)\s*$/m);
+      return heading ? heading[1].trim() : "";
+    }
+
     function detectKind(name) {
       if (/\.(png|jpe?g|gif|svg|webp|avif)$/i.test(name)) return "image";
       if (/\.(html?|xhtml)$/i.test(name)) return "html";
@@ -3065,6 +3073,10 @@
         if (!path || !path.startsWith("intents/archive/")) continue;
         if (archiveTemplateCache.has(path)) {
           const cached = archiveTemplateCache.get(path);
+          if (cached.title) {
+            item.title = cached.title;
+            changed = true;
+          }
           if (hasArchiveTemplate(cached)) {
             Object.assign(item.meta, cached);
             changed = true;
@@ -3076,7 +3088,12 @@
           const text = await fetchText(SOURCES.rawBase + path);
           if (run !== archiveHydrationRun) return changed;
           const template = extractArchiveTemplate(text);
-          archiveTemplateCache.set(path, template);
+          const title = archiveTaskTitle(text);
+          archiveTemplateCache.set(path, { ...template, title });
+          if (title) {
+            item.title = title;
+            changed = true;
+          }
           if (hasArchiveTemplate(template)) {
             Object.assign(item.meta, template);
             changed = true;

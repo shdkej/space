@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="여행 전 확인을 위한 보수적 치안 정보 프로토타입" />
+    <title>Night Ledger — travel context, not a safety guarantee</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div><p class="eyebrow">FIELD NOTES / MVP</p><h1>Night<br><em>Ledger</em></h1></div>
+        <div class="masthead-copy"><p>여행 전 판단을 위한 도시 맥락 카드입니다. 실시간 범죄 지도나 안전 보장은 제공하지 않습니다.</p><p class="display-disclosure">주간/야간 전환은 화면 대비만 바꾸며, 시간대별 위험·사건 데이터는 표시하지 않습니다.</p><button id="mode-toggle" class="mode-toggle" type="button" aria-pressed="false">☾ 야간 맥락 보기</button></div>
+      </header>
+
+      <section class="notice" aria-label="사용 주의"><strong>결정 원칙</strong><span>긴급 상황은 현지 긴급번호·공식 기관을 이용하세요. 이 화면은 일정·숙소를 확정하기 전 공식 안내를 여는 출발점입니다.</span></section>
+
+      <section class="briefing" aria-labelledby="briefing-title">
+        <div class="briefing-label"><span>01</span><h2 id="briefing-title">ROME / P0</h2><p>초기 검증 도시</p></div>
+        <div id="rome-card" class="rome-card"></div>
+      </section>
+
+      <section class="map-section" aria-labelledby="map-title">
+        <div class="section-head"><div><p class="eyebrow">MAP SURFACE / P0 FIXTURE</p><h2 id="map-title">지도가 모른다고 말하는 법</h2></div><p>정확한 현재 위치·실시간 신고·거리별 위험 점수는 표시하지 않습니다.</p></div>
+        <div class="map-wrap">
+          <div class="map-toolbar"><span class="pill no-data">GRAY / NO LIVE DATA</span><button id="demo-layer-toggle" type="button" aria-pressed="false">비지리적 fixture 도식 보기</button></div>
+          <div id="fixture-map" class="fixture-map" role="application" aria-label="Synthetic fixture map surface. No live street safety data.">
+            <div class="river" aria-hidden="true"></div><div class="district d1">ZONE A<br>synthetic fixture</div><div class="district d2">ZONE B<br>synthetic fixture</div><div class="district d3">ZONE C<br>synthetic fixture</div>
+            <button class="map-marker m1" data-marker="Zone A">i<span>Zone A: source boundary example</span></button>
+            <button class="map-marker m2" data-marker="Zone B">i<span>Zone B: no street-level status</span></button>
+            <button class="map-marker m3" data-marker="Zone C">i<span>Zone C: fixture-only label</span></button>
+            <svg id="demo-roads" class="demo-roads" viewBox="0 0 800 400" aria-hidden="true"><path d="M40 315 C170 265 220 355 350 242 S570 85 760 125"/><path d="M106 55 C205 145 270 120 365 222 S610 315 745 250"/></svg>
+          </div>
+          <p id="map-output" class="map-output" aria-live="polite">회색 표면은 현재 거리·도로·블록·사건 데이터가 없음을 뜻합니다. 표식과 구역명은 실제 지리나 사건을 나타내지 않는 비지리적 fixture UI이며 안전 등급이 아닙니다.</p>
+        </div>
+      </section>
+
+      <section class="cities" aria-labelledby="cities-title">
+        <div class="section-head"><div><p class="eyebrow">CITY INDEX</p><h2 id="cities-title">10개 도시, 같은 질문</h2></div><p>모든 카드는 확인 시점과 출처를 표시합니다.</p></div>
+        <div id="city-grid" class="city-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="lower-grid">
+        <aside class="ad-slot" aria-label="광고 자리표시자"><p>광고 / 제휴 안내 · INDEPENDENT SLOT</p><strong>광고 또는 제휴 안내</strong><span>현재 광고·제휴 링크는 없습니다. 안전 판단 콘텐츠, 지도, 출처, 정렬 로직과 독립된 자리입니다.</span></aside>
+        <section class="report" aria-labelledby="report-title">
+          <p class="eyebrow">COMMUNITY SIGNAL</p><h2 id="report-title">관찰을 남기기 전</h2>
+          <p>정확한 위치·이름·연락처·사진은 받지 않습니다. 이 양식은 브라우저 안에서만 형식을 확인하며, 전송·저장·대기열 등록·제출을 하지 않습니다.</p>
+          <form id="report-form">
+            <label>도시 <select id="report-city" required></select></label>
+            <label>범주 <select id="report-type" required><option value="transit">이동·환승</option><option value="environment">조명·환경</option><option value="official">공식 안내 변화</option><option value="other">기타 맥락</option></select></label>
+            <label>대략적 관찰 <textarea id="report-note" maxlength="280" required placeholder="예: 늦은 시간 대중교통 이용 전 공식 운행 공지를 확인했어요."></textarea></label>
+            <p class="form-rule">주소·숙소명·URL·@계정·전화번호·좌표(소수점/DMS/Plus Code)·인물 식별 정보·실시간 위치는 입력하지 마세요.</p>
+            <button type="submit">이 브라우저에서 입력 점검하기</button><output id="report-output" aria-live="polite"></output>
+          </form>
+        </section>
+      </section>
+    </main>
+    <footer><span>Night Ledger MVP</span><span>fixture data · no live feed · <a href="README.md">method & sources</a></span></footer>
+    <script src="app.js"></script>
+  </body>
+</html>

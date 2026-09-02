@@ -28,6 +28,19 @@
       "spa_fallback": true
     },
     {
+      "app": "safety-map",
+      "name": "Night Ledger / Safety Map",
+      "domain_name": "safety-map.aws.shdkej.com",
+      "kind": "tool",
+      "detail": "Static, no-live-data travel context map with local-only input handling",
+      "deployment_name": "safety map",
+      "spa_fallback": false,
+      "tags": {
+        "data_boundary": "fixture-only",
+        "privacy_boundary": "no-user-data"
+      }
+    },
+    {
       "app": "schengen",
       "name": "Schengen Calculator",
       "domain_name": "schengen.aws.shdkej.com",

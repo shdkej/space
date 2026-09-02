@@ -6,8 +6,7 @@ Self-contained static prototype for travel planning context. It is intentionally
 
 - Rome is the P0 card. The exact fixture city list is Rome, Palermo, Catania, Naples, Istanbul, Cairo, Barcelona, Paris, London, and New York.
 - All content is fixture data dated `2026-09-02`; it makes no live-data claim.
-- `CONTEXT READY` means a linked official source is available, not that risk is low.
-- `SOURCE CHECK` means the traveller should open the linked source before travel.
+- `SOURCE CONTEXT` means a linked official source is available, not that risk is low; the traveller should open it before travel.
 - `NO LIVE FEED` explicitly means the MVP has no current incident feed.
 - The report form is local-only. It rejects common location/contact patterns and instructs people not to submit personal data, exact locations, photos, or live whereabouts. It is not a reporting channel.
 - Advertising is visually and structurally separate from the decision content.

@@ -194,6 +194,7 @@ jobs:
             "s3://${{ steps.target.outputs.bucket }}" \
             --delete \
             --exclude "agents-live.json" \
+            --exclude "runtime-map-config.js" \
             --cache-control "public,max-age=60"
 
       - name: Upload extensionless HTML routes

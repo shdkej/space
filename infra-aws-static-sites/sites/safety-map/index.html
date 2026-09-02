@@ -6,6 +6,7 @@
     <meta name="description" content="여행 전 확인을 위한 보수적 치안 정보 프로토타입" />
     <title>Night Ledger — travel context, not a safety guarantee</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.css" />
   </head>
   <body>
     <main class="shell">
@@ -22,17 +23,11 @@
       </section>
 
       <section class="map-section" aria-labelledby="map-title">
-        <div class="section-head"><div><p class="eyebrow">MAP SURFACE / P0 FIXTURE</p><h2 id="map-title">지도가 모른다고 말하는 법</h2></div><p>정확한 현재 위치·실시간 신고·거리별 위험 점수는 표시하지 않습니다.</p></div>
+        <div class="section-head"><div><p class="eyebrow">PLACE CONTEXT / ROME</p><h2 id="map-title">로마의 장소와 이동 맥락</h2></div><p>지도는 장소와 도로를 탐색하기 위한 맥락입니다. 안전 등급·경로 추천·실시간 사건 정보는 제공하지 않습니다.</p></div>
         <div class="map-wrap">
-          <div class="map-toolbar"><span class="pill no-data">GRAY / NO LIVE DATA</span><button id="demo-layer-toggle" type="button" aria-pressed="false">비지리적 fixture 도식 보기</button></div>
-          <div id="fixture-map" class="fixture-map" role="application" aria-label="Synthetic fixture map surface. No live street safety data.">
-            <div class="river" aria-hidden="true"></div><div class="district d1">ZONE A<br>synthetic fixture</div><div class="district d2">ZONE B<br>synthetic fixture</div><div class="district d3">ZONE C<br>synthetic fixture</div>
-            <button class="map-marker m1" data-marker="Zone A">i<span>Zone A: source boundary example</span></button>
-            <button class="map-marker m2" data-marker="Zone B">i<span>Zone B: no street-level status</span></button>
-            <button class="map-marker m3" data-marker="Zone C">i<span>Zone C: fixture-only label</span></button>
-            <svg id="demo-roads" class="demo-roads" viewBox="0 0 800 400" aria-hidden="true"><path d="M40 315 C170 265 220 355 350 242 S570 85 760 125"/><path d="M106 55 C205 145 270 120 365 222 S610 315 745 250"/></svg>
-          </div>
-          <p id="map-output" class="map-output" aria-live="polite">회색 표면은 현재 거리·도로·블록·사건 데이터가 없음을 뜻합니다. 표식과 구역명은 실제 지리나 사건을 나타내지 않는 비지리적 fixture UI이며 안전 등급이 아닙니다.</p>
+          <div class="map-toolbar"><span class="pill no-data">안전 신호: 현재 검증된 데이터 없음</span><label class="map-search" for="place-search">장소 또는 도로 찾기 <input id="place-search" type="search" autocomplete="off" placeholder="예: Trevi Fountain" /></label><button id="place-search-submit" type="button">찾기</button></div>
+          <div id="map" class="map-canvas" role="application" aria-label="Rome place and street context map. No live safety data."></div>
+          <p id="map-output" class="map-output" aria-live="polite">현재 도시: Rome. 지도는 장소와 도로의 맥락만 보여줍니다. 거리·도로·블록·사건 기반 안전 신호는 현재 검증된 데이터가 없습니다.</p>
         </div>
       </section>
 
@@ -57,6 +52,8 @@
       </section>
     </main>
     <footer><span>Night Ledger MVP</span><span>fixture data · no live feed · <a href="sources.html">method &amp; sources</a></span></footer>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.js"></script>
+    <script src="runtime-map-config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

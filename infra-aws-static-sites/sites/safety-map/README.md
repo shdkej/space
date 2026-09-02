@@ -10,7 +10,11 @@ Self-contained static prototype for travel planning context. It is intentionally
 - `NO LIVE FEED` explicitly means the MVP has no current incident feed.
 - The report form is local-only. It rejects common location/contact patterns and instructs people not to submit personal data, exact locations, photos, or live whereabouts. It is not a reporting channel.
 - Advertising is visually and structurally separate from the decision content.
-- The P0 map is an interactive **gray/no-data** surface with synthetic labels `Zone A`, `Zone B`, and `Zone C`. Its optional orange dashed lines are a separately toggled fixture layer, off by default; labels and lines do not correspond to actual geography, roads, incidents, or safety ratings.
+- The P0 map shows real Rome place and road geometry for orientation only. It never presents a safety rating, route recommendation, incident feed, or street-level safety status; the safety layer stays neutral **no-data** unless independently verified data exists.
+
+## Protected Mapbox client delivery
+
+The client token value is never committed, logged, put in Terraform, or copied into application source. The protected deployment setting is injected only on the Gateway deployment host, which generates the ignored `dist/runtime-map-config.js` artifact. The static-site workflow preserves that artifact when syncing later source updates. Mapbox GL reads it at browser runtime; as with every browser map, the domain-restricted **public** token is observable by the browser and must be restricted to `https://safety-map.aws.shdkej.com` in Mapbox. No server/private Mapbox token is used.
 
 ## Fixture sources
 
@@ -25,4 +29,4 @@ python3 -m http.server 8080
 node test-smoke.js
 ```
 
-No build, deployment, registry, Terraform, analytics, or user-data collection is included.
+No analytics or user-data collection is included. The separate protected deployment step is required before the real Mapbox place/road surface is available.

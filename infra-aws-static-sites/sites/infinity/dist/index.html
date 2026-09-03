@@ -109,6 +109,15 @@
       color: var(--muted); font-size: 11px;
       display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;
     }
+    .execution-strip {
+      display: flex; flex-wrap: wrap; gap: 5px 8px;
+      margin: 7px 0 2px; padding-top: 7px;
+      border-top: 1px solid #334155;
+      color: #cbd5e1; font-size: 11px; line-height: 1.45;
+    }
+    .execution-strip strong { color: #f8fafc; font-weight: 600; }
+    .execution-strip .plan-delta { color: #fde68a; }
+    .execution-strip .plan-delta::before { content: "— "; }
     .tags {
       display: flex; gap: 4px; flex-wrap: wrap;
       margin: 4px 0 2px;
@@ -2378,6 +2387,58 @@
       });
     }
 
+    function taskPlanSummary(plan) {
+      if (!plan || !Array.isArray(plan.tasks)) return null;
+      const tasks = plan.tasks;
+      const completeStates = new Set(["done", "completed", "skipped"]);
+      const done = tasks.filter(task => completeStates.has(String(task.status || "").toLowerCase())).length;
+      const active = tasks.find(task => String(task.status || "").toLowerCase() === "active");
+      const deviations = Array.isArray(plan.deviations) ? plan.deviations : [];
+      return { total: tasks.length, done, active: active && active.title, deviations: deviations.length };
+    }
+
+    // 실행 회차는 dispatcher handoff 수다. 진전 수와 혼동하지 않도록
+    // PRD 계획의 완료 태스크 수를 별도로 표시한다.
+    function traceCycleCount(trace) {
+      if (!trace || !Array.isArray(trace.events)) return null;
+      return trace.events.filter(event => event && event.type === "dispatcher_handoff").length;
+    }
+
+    async function addExecutionStrip(it, card) {
+      const planPath = normalizePath(it.meta.task_plan);
+      const tracePath = normalizePath(it.meta.trace);
+      if (!planPath && !tracePath) return;
+      const [planText, traceText] = await Promise.all([fetchMaybeText(planPath), fetchMaybeText(tracePath)]);
+      let plan = null, trace = null;
+      try { plan = planText ? JSON.parse(planText) : null; } catch (_) {}
+      try { trace = traceText ? JSON.parse(traceText) : null; } catch (_) {}
+      const summary = taskPlanSummary(plan);
+      const cycleCount = traceCycleCount(trace);
+      if (!summary && cycleCount === null) return;
+
+      const strip = document.createElement("div");
+      strip.className = "execution-strip";
+      const rows = [];
+      if (cycleCount !== null) rows.push(["실행", cycleCount + "회차"]);
+      if (summary) rows.push(["태스크", summary.done + "/" + summary.total]);
+      if (summary && summary.active) rows.push(["현재", summary.active]);
+      for (const [label, value] of rows) {
+        const item = document.createElement("span");
+        const key = document.createElement("strong");
+        key.textContent = label + " ";
+        item.appendChild(key);
+        item.appendChild(document.createTextNode(value));
+        strip.appendChild(item);
+      }
+      if (summary && summary.deviations) {
+        const delta = document.createElement("span");
+        delta.className = "plan-delta";
+        delta.textContent = "계획 변경 " + summary.deviations + "건";
+        strip.appendChild(delta);
+      }
+      card.appendChild(strip);
+    }
+
     function buildCard(it, sourceLabel, opts) {
       const compact = !!(opts && opts.compact);
       const card = document.createElement("div");
@@ -2482,6 +2543,7 @@
         metaEl.appendChild(t);
       }
       card.appendChild(metaEl);
+      void addExecutionStrip(it, card);
 
       // 태그 다이어트: 카드에는 project 1개 + type 1개만. topics는 필터/상세용 데이터로만 유지.
       const projects = Array.isArray(it.meta.projects) ? it.meta.projects : splitTagList(it.meta.projects);

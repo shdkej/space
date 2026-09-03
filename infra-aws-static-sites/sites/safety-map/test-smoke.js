@@ -30,6 +30,7 @@ const benignTravelObservation = '늦은 시간 이동 전 공식 운행 공지�
 if (containsSensitiveInput(benignTravelObservation)) throw new Error('benign travel observation was rejected');
 if (js.includes('임시 검토 대기열에 저장했습니다') || js.includes('localStorage')) throw new Error('report must not persist or queue data');
 if (!js.includes('api.mapbox.com/search/geocode') || js.includes('fetch(') && !js.includes('search/geocode/v6/forward')) throw new Error('only Mapbox place search may use network');
+if (!js.includes('bbox=12.25,41.75,12.75,42.10')) throw new Error('place search must stay within the Rome geographic-context boundary');
 const tracked = childProcess.execFileSync('git', ['-C', path, 'ls-files', 'dist/runtime-map-config.js'], {encoding:'utf8'});
 if (tracked.trim()) throw new Error('generated Mapbox runtime config must not be tracked');
 if (js.includes('pk.') || html.includes('pk.') || fs.readFileSync(`${path}/README.md`, 'utf8').includes('pk.')) throw new Error('Mapbox token-like literal leaked into tracked source');

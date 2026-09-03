@@ -57,7 +57,7 @@ function loadMap() {
 function searchPlace() {
   const query = $('#place-search').value.trim();
   if (!query || !map) return;
-  fetch(`https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(query)}&proximity=12.4964,41.9028&limit=1&access_token=${encodeURIComponent(mapboxgl.accessToken)}`)
+  fetch(`https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(query)}&bbox=12.25,41.75,12.75,42.10&proximity=12.4964,41.9028&limit=1&access_token=${encodeURIComponent(mapboxgl.accessToken)}`)
     .then((response) => response.ok ? response.json() : Promise.reject())
     .then((data) => {
       const feature = data.features && data.features[0];

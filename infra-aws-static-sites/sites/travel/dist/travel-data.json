@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02T14:40:06.014746+00:00",
+  "generatedAt": "2026-09-03T14:40:05.188080+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,15 +15,15 @@
     "reservedPctMin": 73.8,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 115341,
+    "reserveBurnKrw": 114152,
     "firstTravelExpenseDate": "2026-02-22",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-09-01",
-    "location": "Dahab",
-    "mapQuery": "Dahab, Egypt"
+    "date": "2026-09-03",
+    "location": "Italy",
+    "mapQuery": "Italy, Italy"
   },
   "categoryTotals": {
     "stay": 7679119,
@@ -404,6 +404,10 @@
     {
       "date": "2026-09-01",
       "amount": 296732
+    },
+    {
+      "date": "2026-09-03",
+      "amount": 420537
     }
   ],
   "bookedCosts": [
@@ -7749,7 +7753,7 @@
     },
     {
       "name": "46617, 자누브시나주'",
-      "count": 20
+      "count": 21
     },
     {
       "name": "Krnjak 64A, 47242 크르냐크",
@@ -8249,6 +8253,15 @@
       "checkIn": null,
       "checkOut": null,
       "amount": 705713,
+      "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HMMDA2QM4R",
+      "city": "46617, 자누브시나주'",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 420537,
       "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
@@ -9066,10 +9079,10 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-09-01",
+    "asOf": "2026-09-03",
     "limitDays": 90,
-    "usedDays": 56,
-    "remainingDays": 34,
+    "usedDays": 58,
+    "remainingDays": 32,
     "window": "180 days",
     "status": "active",
     "projection": {
@@ -9179,12 +9192,6 @@
   },
   "sleep": [
     {
-      "date": "2026-08-05",
-      "sleepHours": 9.45,
-      "recharge": 118.0,
-      "balance": "7.22"
-    },
-    {
       "date": "2026-08-06",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -9261,19 +9268,15 @@
       "sleepHours": 8.77,
       "recharge": 110.0,
       "balance": "7.92"
+    },
+    {
+      "date": "2026-09-03",
+      "sleepHours": 9.04,
+      "recharge": 113.0,
+      "balance": "7.43"
     }
   ],
   "reflections": [
-    {
-      "id": "48o06bkqrv8u2ja37ndc57o9u8",
-      "date": "2026-07-18",
-      "title": "실제 흐름 / Threads와 Instagram 역할 분리",
-      "intent": "카드뉴스 최신 항목 1개에서 Card 1 original / Cards 2-5 제목 스타일 / local_config 경계만 확인한다.",
-      "did": "Threads 부흥과 Instagram 병행 전략을 marketing-109로 닫고, 쾰른 셀프웨딩스냅을 첫 게시 후보로 좁혔다. 운영 안정화와 Marketing 지식 승격도 함께 진행됐다.",
-      "why": "마스터님의 새 요청이 오늘 사용자 축에서 가장 직접적인 판단 신호였다.",
-      "carry": "쾰른 셀프웨딩스냅 Threads 초안 1개와 Instagram 표지 문구 1개로 좁힌다.",
-      "drop": "Threads와 Instagram을 같은 문장 복붙으로 운영하는 흐름."
-    },
     {
       "id": "g6654hj3e0i65772upri7bea78",
       "date": "2026-07-19",
@@ -9382,6 +9385,16 @@
       "did": null,
       "why": null,
       "carry": "피그마에 아카이브 이미지를 올리고 이미지 인사이트 1개를 고른다. 수면 실험: 취침 전 유튜브를 보던 시간에 알람을 맞추고 스마트폰은 거실에 둔다. 기대: 남은 라이언에어 예약 3개를 마무리하고 비행기 편 세팅을 완료한다.",
+      "drop": null
+    },
+    {
+      "id": "mc14tj7ttnh0fh111dpu412vp8",
+      "date": "2026-09-03",
+      "title": "내일 의도 / 다합에서의 쉼, 이탈리아 한 달의 시작",
+      "intent": "이탈리아 한 달을 여행·인사이트·기록이 함께 남는 리듬으로 시작합니다.\\n첫 손잡이: 오늘의 실험 결과를 세 가지 기준으로 확인합니다.\\n변경 허용 조건: 실제 이동·컨디션에 따라 기록의 양은 줄여도 됩니다.",
+      "did": null,
+      "why": null,
+      "carry": null,
       "drop": null
     }
   ]

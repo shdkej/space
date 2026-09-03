@@ -24,6 +24,11 @@ $('#mode-toggle').addEventListener('click', () => { const night = document.body.
 let map;
 const mapStyles = { day: 'mapbox://styles/mapbox/streets-v12', night: 'mapbox://styles/mapbox/navigation-night-v1' };
 let mapStyleMode = 'day';
+window.__SAFETY_MAP_DIAGNOSTICS__ = () => {
+  if (!map) return { ready: false };
+  const center = map.getCenter();
+  return { ready: Boolean(map.loaded()), center: [Number(center.lng.toFixed(5)), Number(center.lat.toFixed(5))], zoom: Number(map.getZoom().toFixed(2)), styleMode: mapStyleMode };
+};
 function mapMessage(message) { $('#map-output').textContent = message; }
 function setMapStyle(mode) {
   if (!map) return;

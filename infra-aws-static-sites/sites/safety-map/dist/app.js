@@ -22,7 +22,19 @@ function card(city, detail = false) { return `<article class="${detail ? 'detail
 function render() { $('#rome-card').innerHTML = card(cities[0], true); $('#city-grid').innerHTML = cities.map((c) => card(c)).join(''); $('#report-city').innerHTML = cities.map((c) => `<option>${safe(c.name)}</option>`).join(''); }
 $('#mode-toggle').addEventListener('click', () => { const night = document.body.classList.toggle('night'); $('#mode-toggle').textContent = night ? '☀ 주간 맥락 보기' : '☾ 야간 맥락 보기'; $('#mode-toggle').setAttribute('aria-pressed', String(night)); });
 let map;
+const mapStyles = { day: 'mapbox://styles/mapbox/streets-v12', night: 'mapbox://styles/mapbox/navigation-night-v1' };
+let mapStyleMode = 'day';
 function mapMessage(message) { $('#map-output').textContent = message; }
+function setMapStyle(mode) {
+  if (!map) return;
+  mapStyleMode = mode;
+  map.setStyle(mapStyles[mode]);
+  const isNight = mode === 'night';
+  const toggle = $('#map-style-toggle');
+  toggle.textContent = isNight ? '주간 지도 보기' : '야간 지도 보기';
+  toggle.setAttribute('aria-pressed', String(isNight));
+  mapMessage(`${isNight ? '야간' : '주간'} 지도 레이어를 열었어요. 이 전환은 지도 표현만 바꾸며 안전 신호는 추가하지 않습니다.`);
+}
 function loadMap() {
   const config = window.__SAFETY_MAP_CONFIG__;
   if (!config || !config.accessToken || !window.mapboxgl) {
@@ -31,7 +43,7 @@ function loadMap() {
   }
   try {
     mapboxgl.accessToken = config.accessToken;
-    map = new mapboxgl.Map({ container: 'map', style: 'mapbox://styles/mapbox/streets-v12', center: [12.4964, 41.9028], zoom: 12, attributionControl: true });
+    map = new mapboxgl.Map({ container: 'map', style: mapStyles.day, center: [12.4964, 41.9028], zoom: 12, attributionControl: true });
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('error', () => mapMessage('지도를 불러오지 못했어요. 잠시 뒤 다시 열어보세요. 안전 신호는 현재 검증된 데이터가 없습니다.'));
     map.on('load', () => mapMessage('장소와 도로 맥락을 열었어요. 이 정보는 안전 판단이나 경로 추천이 아닙니다. 안전 신호: 현재 검증된 데이터 없음.'));
@@ -51,6 +63,7 @@ function searchPlace() {
 }
 $('#place-search-submit').addEventListener('click', searchPlace);
 $('#place-search').addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); searchPlace(); } });
+$('#map-style-toggle').addEventListener('click', () => setMapStyle(mapStyleMode === 'day' ? 'night' : 'day'));
 $('#report-form').addEventListener('submit', (event) => { event.preventDefault(); const note = $('#report-note').value.trim(); const output = $('#report-output'); if (containsSensitiveInput(note)) { output.textContent = 'URL·계정·연락처·주소·좌표 등 식별/위치 정보는 제거해 주세요. 이 양식은 로컬 형식 점검만 합니다.'; return; } output.textContent = '입력 형식을 이 브라우저에서만 점검했습니다. 어떤 정보도 전송·저장·대기열 등록·제출하지 않았습니다.'; event.target.reset(); });
 render();
 loadMap();

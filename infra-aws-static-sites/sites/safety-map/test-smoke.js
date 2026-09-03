@@ -5,7 +5,7 @@ const html = fs.readFileSync(`${path}/index.html`, 'utf8');
 const js = fs.readFileSync(`${path}/app.js`, 'utf8');
 const css = fs.readFileSync(`${path}/styles.css`, 'utf8');
 const { containsSensitiveInput } = require('./app.js');
-const required = ['mode-toggle', 'display-disclosure', 'report-form', 'city-grid', 'ad-slot', 'map', 'place-search', 'place-search-submit', 'runtime-map-config.js', 'mapbox-gl.js'];
+const required = ['mode-toggle', 'display-disclosure', 'report-form', 'city-grid', 'ad-slot', 'map', 'place-search', 'place-search-submit', 'map-style-toggle', 'runtime-map-config.js', 'mapbox-gl.js'];
 for (const item of required) if (!html.includes(item)) throw new Error(`missing UI anchor: ${item}`);
 if (!js.includes('No tracking, geolocation, incident feed, or safety score') || !html.includes('안전 신호: 현재 검증된 데이터 없음')) throw new Error('missing conservative data semantics');
 const expectedCities = ['Rome', 'Palermo', 'Catania', 'Naples', 'Istanbul', 'Cairo', 'Barcelona', 'Paris', 'London', 'New York'];
@@ -15,6 +15,7 @@ if (sourceCount !== 10) throw new Error(`expected 10 fixture sources, found ${so
 if (!js.includes("cities.map((c) => card(c))") || !js.includes('COVERAGE: city-level context only; no live street, road, block, or incident data')) throw new Error('every city card must render source/checked/confidence/coverage limits');
 if (js.includes("kind:'caution'") || js.includes('CONTEXT READY') || js.includes('NO LIVE FEED')) throw new Error('risk-semantic fixture labels remain');
 if (!js.includes('new mapboxgl.Map') || !js.includes('search/geocode/v6/forward') || !js.includes('안전 판단이나 경로 추천이 아닙니다')) throw new Error('missing actual map place/road context implementation');
+if (!js.includes('mapbox://styles/mapbox/navigation-night-v1') || !js.includes('map.setStyle(mapStyles[mode])') || !js.includes("#map-style-toggle")) throw new Error('missing actual Mapbox day/night style transition');
 if (html.includes('fixture-map') || html.includes('ZONE A') || html.includes('demo-layer-toggle')) throw new Error('fixture map UI remains after actual map integration');
 if (!html.includes('광고 / 제휴 안내') || !html.includes('지도, 출처, 정렬 로직과 독립')) throw new Error('ad labeling/separation is incomplete');
 for (const phrase of ['전송·저장·대기열 등록·제출을 하지 않습니다', 'URL·@계정·전화번호·좌표(소수점/DMS/Plus Code)', '이 브라우저에서 입력 점검하기']) if (!html.includes(phrase)) throw new Error(`missing report privacy disclosure: ${phrase}`);

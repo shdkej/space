@@ -13,3 +13,5 @@ body.night { --paper:var(--night); --panel:#1b2b26; --ink:var(--night-paper); --
 .map-search input { min-height:44px; min-width:230px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:.55rem .7rem; font:inherit; }
 .map-toolbar button:focus-visible,.map-search input:focus-visible { outline:3px solid var(--lime); outline-offset:2px; }
 @media (max-width:680px) { .map-canvas { min-height:390px; }.map-search { align-items:stretch; flex-direction:column; }.map-search input { min-width:0; width:100%; } }
+.map-actions { display:flex; flex-wrap:wrap; gap:8px; }
+@media (max-width:680px) { .map-actions { width:100%; }.map-actions button { flex:1 1 10rem; } }

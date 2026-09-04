@@ -2408,11 +2408,19 @@
       return { total: tasks.length, done, active: active && active.title, deviations: deviations.length };
     }
 
-    // 실행 회차는 dispatcher handoff 수다. 진전 수와 혼동하지 않도록
-    // PRD 계획의 완료 태스크 수를 별도로 표시한다.
-    function traceCycleCount(trace) {
+    // 카드의 실행 수는 실제 산출물·검증·차단 근거를 남긴 실행만 센다.
+    // dispatcher handoff는 단순 인계/점검 기록이므로 작업 진전으로 보이지
+    // 않도록 별도 점검 수로 표시한다.
+    function traceExecutionCounts(trace) {
       if (!trace || !Array.isArray(trace.events)) return null;
-      return trace.events.filter(event => event && event.type === "dispatcher_handoff").length;
+      const events = trace.events.filter(Boolean);
+      const substantive = events.filter(event => event.type === "execution" && (
+        (Array.isArray(event.evidence_paths) && event.evidence_paths.length > 0)
+        || (Array.isArray(event.artifacts) && event.artifacts.length > 0)
+        || ["pass", "fail", "blocked", "completed"].includes(String(event.status || "").toLowerCase())
+      )).length;
+      const checks = events.filter(event => event.type === "dispatcher_handoff").length;
+      return { substantive, checks };
     }
 
     async function addExecutionStrip(it, card) {
@@ -2424,13 +2432,14 @@
       try { plan = planText ? JSON.parse(planText) : null; } catch (_) {}
       try { trace = traceText ? JSON.parse(traceText) : null; } catch (_) {}
       const summary = taskPlanSummary(plan);
-      const cycleCount = traceCycleCount(trace);
-      if (!summary && cycleCount === null) return;
+      const executionCounts = traceExecutionCounts(trace);
+      if (!summary && executionCounts === null) return;
 
       const strip = document.createElement("div");
       strip.className = "execution-strip";
       const rows = [];
-      if (cycleCount !== null) rows.push(["실행", cycleCount + "회차"]);
+      if (executionCounts !== null) rows.push(["실행", executionCounts.substantive + "회차"]);
+      if (executionCounts && executionCounts.checks) rows.push(["점검", executionCounts.checks + "회"]);
       if (summary) rows.push(["태스크", summary.done + "/" + summary.total]);
       if (summary && summary.active) rows.push(["현재", summary.active]);
       for (const [label, value] of rows) {

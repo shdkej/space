@@ -977,23 +977,29 @@
       return await r.json();
     }
 
-    async function fetchArtifactsList(id) {
-      if (!id) return [];
-      const listing = await ghDir("artifacts/" + encodeURIComponent(id));
+    async function fetchArtifactDirectory(path) {
+      const listing = await ghDir(path);
       if (!listing) return [];
-      const items = listing
-        .filter(x => x.type === "file" && detectKind(x.name))
-        .sort((a, b) => a.name.localeCompare(b.name));
+      const items = listing.filter(x => x.type === "file" && detectKind(x.name));
+      const directories = listing.filter(x => x.type === "dir");
       const tasks = items.map(async (it) => {
         if (!it.download_url) return null;
         const kind = detectKind(it.name);
         try {
-          if (kind === "image") return { name: it.name, kind, url: it.download_url };
+          const relativePath = String(it.path || "").replace(/^artifacts\//, "");
+          if (kind === "image") return { name: it.name, path: "artifacts/" + relativePath, kind, url: it.download_url };
           const text = await fetchText(it.download_url);
-          return { name: it.name, kind, text, url: it.download_url };
+          return { name: it.name, path: "artifacts/" + relativePath, kind, text, url: it.download_url };
         } catch (e) { return null; }
       });
-      return (await Promise.all(tasks)).filter(Boolean);
+      const nested = await Promise.all(directories.map(dir => fetchArtifactDirectory(dir.path)));
+      return (await Promise.all(tasks)).filter(Boolean).concat(nested.flat());
+    }
+
+    async function fetchArtifactsList(id) {
+      if (!id) return [];
+      const items = await fetchArtifactDirectory("artifacts/" + encodeURIComponent(id));
+      return items.sort((a, b) => String(a.path || a.name).localeCompare(String(b.path || b.name)));
     }
 
     async function fetchLatestReport(id) {

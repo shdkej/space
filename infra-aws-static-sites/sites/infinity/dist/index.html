@@ -1735,22 +1735,27 @@
       ];
     }
 
-    function buildTaskLogRows(item) {
+    function buildTaskLogRows(item, bundle) {
       const loopId = metaValue(item, ["origin_loop_id", "knowledge_loop_id"]);
       const matching = knowledgeLoopEvents.filter((entry) => entry.id === loopId || entry.infinity_intent_id === item.id);
-      if (!matching.length) return [{ label: "남긴 로그", value: "연결된 구조화 로그가 없습니다." }];
-      return matching.flatMap((entry) => [
-        { label: "로그", value: [entry.at, entry.type, entry.summary].filter(Boolean).join(" · "), key: true },
-        { label: "원문", value: entry.source_url || entry.source_log || "없음" },
-      ]);
+      const outputs = new Set([
+        ...(bundle && bundle.artifacts || []).map((entry) => entry.path || entry.name),
+        ...(bundle && bundle.reports || []).map((entry) => entry.path || entry.name),
+      ].filter(Boolean));
+      const usageCount = matching.reduce((total, entry) => {
+        const value = Number(entry.usage_count ?? entry.used_count ?? entry.use_count ?? 0);
+        return total + (Number.isFinite(value) ? value : 0);
+      }, 0);
+      return [
+        { label: "이번 작업 산출물", value: outputs.size + "개", key: true },
+        { label: "지식 로그 반영", value: matching.length ? "반영됨" : "미반영", key: true },
+        { label: "이 로그 활용", value: usageCount + "회", key: true },
+      ];
     }
 
-    function taskLogSummary(item) {
-      const loopId = metaValue(item, ["origin_loop_id", "knowledge_loop_id"]);
-      const matching = knowledgeLoopEvents.filter((entry) => entry.id === loopId || entry.infinity_intent_id === item.id);
-      if (!matching.length) return "구조화 로그 없음";
-      const latest = matching[matching.length - 1];
-      return "구조화 로그 " + matching.length + "건 · " + (latest.type || "기록");
+    function taskLogSummary(item, bundle) {
+      const rows = buildTaskLogRows(item, bundle);
+      return rows.map((row) => row.value).join(" · ");
     }
 
     function contextMapSummary(pack, item) {
@@ -1863,14 +1868,9 @@
       // instead of becoming separate product-facing stages.
       setTaskTrace("request", "요청 쿼리", traceStageRows(trace, "request", buildTaskQueryRows(item)), traceRequestSummary(trace, item));
       const evidenceRows = traceStageRows(trace, "evidence", fallbackEvidence);
-      const outputRows = traceStageRows(trace, "outputs", fallbackOutputs);
-      const verificationRows = traceStageRows(trace, "verification", fallbackVerification);
       setTaskTrace("evidence", "조회한 경로 · Context Map", evidenceRows, trace ? concise(evidenceRows.map(row => row.value).join(" · ")) : contextMapSummary(bundle.contextPack, item));
-      const custodyRows = traceStageRows(trace, "custody", [{ label: "상태", value: "인계 기록 없음" }]);
-      const decisionRows = traceStageRows(trace, "decision", fallbackDecision);
-      const logRows = buildTaskLogRows(item)
-        .concat(outputRows, verificationRows, custodyRows, decisionRows);
-      setTaskTrace("logs", "남긴 로그", logRows, concise(logRows.map(row => row.value).join(" · ")));
+      const logRows = buildTaskLogRows(item, bundle);
+      setTaskTrace("logs", "작업 로그 요약", logRows, taskLogSummary(item, bundle));
     }
 
     function renderImmediateDetail(item, sourceLabel) {

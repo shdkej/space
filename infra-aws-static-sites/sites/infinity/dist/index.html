@@ -1648,9 +1648,12 @@
       const contextPackPath = contextPackPathFor(hydratedItem, archive);
       const contextPackText = contextPackPath ? await fetchMaybeText(contextPackPath) : null;
       const contextPack = parseContextPack(contextPackText);
-      let artifacts = knownArtifacts;
+      // 선언된 핵심 산출물만 보여주면, 같은 artifact 폴더에 있는 PRD·실행
+      // 계획·증거 파일이 화면에서 사라진다. 선언된 항목과 폴더 목록을 병합한다.
+      const discoveredArtifacts = await fetchArtifactsList(item.id);
+      const artifactPaths = new Set(knownArtifacts.map(entry => entry.path || entry.name));
+      let artifacts = knownArtifacts.concat(discoveredArtifacts.filter(entry => !artifactPaths.has(entry.path || entry.name)));
       let reports = knownReports;
-      if (!artifacts.length) artifacts = await fetchArtifactsList(item.id);
       if (!reports.length) {
         const latestReport = await fetchLatestReport(hydratedItem.id);
         reports = latestReport ? [latestReport] : [];

@@ -16,6 +16,7 @@ if (!js.includes("cities.map((c) => card(c))") || !js.includes('COVERAGE: city-l
 if (js.includes("kind:'caution'") || js.includes('CONTEXT READY') || js.includes('NO LIVE FEED')) throw new Error('risk-semantic fixture labels remain');
 if (!js.includes('new mapboxgl.Map') || !js.includes('search/geocode/v6/forward') || !js.includes('안전 판단이나 경로 추천이 아닙니다')) throw new Error('missing actual map place/road context implementation');
 if (!js.includes('mapbox://styles/mapbox/navigation-night-v1') || !js.includes('map.setStyle(mapStyles[mode])') || !js.includes("#map-style-toggle")) throw new Error('missing actual Mapbox day/night style transition');
+if (!js.includes('function syncMapMode(mode)') || !js.includes("$('#mode-toggle').addEventListener('click', () => setMapStyle") || !js.includes('mapStyles[mapStyleMode]')) throw new Error('day/night controls must share one page and Mapbox style state');
 if (html.includes('fixture-map') || html.includes('ZONE A') || html.includes('demo-layer-toggle')) throw new Error('fixture map UI remains after actual map integration');
 if (!html.includes('광고 / 제휴 안내') || !html.includes('지도, 출처, 정렬 로직과 독립')) throw new Error('ad labeling/separation is incomplete');
 for (const phrase of ['전송·저장·대기열 등록·제출을 하지 않습니다', 'URL·@계정·전화번호·좌표(소수점/DMS/Plus Code)', '이 브라우저에서 입력 점검하기']) if (!html.includes(phrase)) throw new Error(`missing report privacy disclosure: ${phrase}`);

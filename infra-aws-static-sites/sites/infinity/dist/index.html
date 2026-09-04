@@ -1889,7 +1889,9 @@
 
       renderTraceContract(hydratedItem || item, bundle);
 
-      for (const report of reports) {
+      // 산출물은 문서(Markdown)만 노출한다. 이미지·해시·원시 capture는
+      // 증거 보관용이며 카드의 실행 타임라인을 흐리지 않는다.
+      for (const report of reports.filter(report => /\\.md$/i.test(report.path || report.name || ""))) {
         const title = report.path || ("reports/" + item.id + "/" + report.name);
         renderArtifactEntry("Report: " + title, report, "kind-report");
       }
@@ -1901,7 +1903,7 @@
         addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
       }
       addThreadDraftsBlock(collectThreadDrafts(bundle));
-      for (const a of artifacts) {
+      for (const a of artifacts.filter(a => /\\.md$/i.test(a.path || a.name || ""))) {
         const title = a.path || ("artifacts/" + item.id + "/" + a.name);
         renderArtifactEntry("Artifact: " + title, a, "kind-artifact");
       }

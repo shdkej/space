@@ -1321,7 +1321,13 @@
       slot.rows.forEach((row) => {
         const line = document.createElement("div"); line.className = "task-trace-row";
         const label = document.createElement("div"); label.className = "task-trace-label"; label.textContent = row.label;
-        const value = document.createElement("div"); value.className = "task-trace-value"; value.textContent = row.value;
+        const value = row.pre ? document.createElement("pre") : document.createElement("div");
+        value.className = "task-trace-value";
+        if (row.href) {
+          const link = document.createElement("a"); link.href = row.href; link.target = "_blank";
+          link.rel = "noopener noreferrer"; link.textContent = row.value;
+          value.appendChild(link);
+        } else value.textContent = row.value;
         line.append(label, value); body.appendChild(line);
       });
     }
@@ -1544,10 +1550,13 @@
       const seen = new Set();
       const entries = [];
       for (const key of keys) {
-        const path = normalizePath(item.meta && item.meta[key]);
-        if (!path || seen.has(path) || !detectKind(path)) continue;
-        seen.add(path);
-        entries.push({ key, path, kindClass });
+        const raw = String(item.meta && item.meta[key] || "");
+        for (const candidate of raw.split(";")) {
+          const path = normalizePath(candidate.trim());
+          if (!path || seen.has(path) || !detectKind(path)) continue;
+          seen.add(path);
+          entries.push({ key, path, kindClass });
+        }
       }
       return entries;
     }
@@ -1658,7 +1667,9 @@
         const latestReport = await fetchLatestReport(hydratedItem.id);
         reports = latestReport ? [latestReport] : [];
       }
-      const data = { item: hydratedItem, archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack, tracePath: traceBundle.path, trace: traceBundle.trace };
+      const taskPlanViewPath = normalizePath(metaValue(hydratedItem, ["task_plan_view"]));
+      const taskPlanViewText = taskPlanViewPath ? await fetchMaybeText(taskPlanViewPath) : null;
+      const data = { item: hydratedItem, archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack, taskPlanViewPath, taskPlanViewText, tracePath: traceBundle.path, trace: traceBundle.trace };
       detailCache.set(key, { t: Date.now(), data });
       return data;
     }
@@ -1862,8 +1873,22 @@
       setTaskTrace("evidence", "조회한 경로 · Context Map", evidenceRows, trace ? concise(evidenceRows.map(row => row.value).join(" · ")) : contextMapSummary(bundle.contextPack, item));
       const custodyRows = traceStageRows(trace, "custody", [{ label: "상태", value: "인계 기록 없음" }]);
       const decisionRows = traceStageRows(trace, "decision", fallbackDecision);
+      const documentRows = [];
+      if (bundle.taskPlanViewPath) {
+        documentRows.push(bundle.taskPlanViewText
+          ? { label: "실행 계획 정본", value: bundle.taskPlanViewText, pre: true }
+          : { label: "실행 계획 정본", value: bundle.taskPlanViewPath, href: SOURCES.rawBase + bundle.taskPlanViewPath });
+      }
+      for (const entry of bundle.artifacts || []) {
+        const path = entry.path || entry.name;
+        if (path) documentRows.push({ label: "산출물 문서", value: path, href: SOURCES.rawBase + path });
+      }
+      for (const entry of bundle.reports || []) {
+        const path = entry.path || entry.name;
+        if (path) documentRows.push({ label: "리포트 문서", value: path, href: SOURCES.rawBase + path });
+      }
       const logRows = buildTaskLogRows(item)
-        .concat(outputRows, verificationRows, custodyRows, decisionRows);
+        .concat(documentRows, outputRows, verificationRows, custodyRows, decisionRows);
       setTaskTrace("logs", "남긴 로그", logRows, concise(logRows.map(row => row.value).join(" · ")));
     }
 
@@ -1885,34 +1910,9 @@
     }
 
     function appendLoadedDetail(item, bundle) {
-      const { item: hydratedItem, archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack } = bundle;
-
-      renderTraceContract(hydratedItem || item, bundle);
-
-      // 산출물은 문서(Markdown)만 노출한다. 이미지·해시·원시 capture는
-      // 증거 보관용이며 카드의 실행 타임라인을 흐리지 않는다.
-      for (const report of reports.filter(report => /\\.md$/i.test(report.path || report.name || ""))) {
-        const title = report.path || ("reports/" + item.id + "/" + report.name);
-        renderArtifactEntry("Report: " + title, report, "kind-report");
-      }
-
-      const archivePath = archive ? normalizePath(archive.path) : "";
-      const normalizedDetailPath = normalizePath(detailPath);
-      if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
-      if (detailText && normalizedDetailPath !== archivePath) {
-        addDetailBlock("상세 파일: " + detailPath, detailText, "kind-detail");
-      }
-      addThreadDraftsBlock(collectThreadDrafts(bundle));
-      for (const a of artifacts.filter(a => /\\.md$/i.test(a.path || a.name || ""))) {
-        const title = a.path || ("artifacts/" + item.id + "/" + a.name);
-        renderArtifactEntry("Artifact: " + title, a, "kind-artifact");
-      }
-
-      if (rateLimited) {
-        addDetailBlock("GitHub API 제한", "미인증 API 호출(60/시간) 한도에 도달했습니다. 잠시 후 다시 시도해주세요. (artifacts/reports 디렉토리 listing이 누락될 수 있습니다.)", "kind-empty");
-      } else if (!archive && !detailText && !artifacts.length && !reports.length) {
-        addDetailBlock("추가 상세", "연결된 archive intent / artifacts / reports가 아직 없습니다.", "kind-empty");
-      }
+      // 상세는 세 섹션만 유지한다. 문서·리포트·검증은 남긴 로그의
+      // 구조화 행과 링크로 집계해, 구형 독립 블록이 다시 생기지 않게 한다.
+      renderTraceContract(bundle.item || item, bundle);
     }
 
     async function openDetailModal(item, sourceLabel) {

@@ -1408,7 +1408,6 @@
       const st = String(item.meta && item.meta.status || "").toLowerCase();
       const canResolveWaiting = source === "waiting" || st === "waiting";
       const canRequestArchive = source === "active" || source === "waiting" || st === "active" || st === "waiting";
-      if (!canResolveWaiting && !canRequestArchive) return;
 
       const block = makeBlock("대시보드 액션", "kind-action", { expanded: true });
       const panel = document.createElement("div");
@@ -1416,7 +1415,9 @@
 
       const note = document.createElement("div");
       note.className = "action-note";
-      note.textContent = "SAM이 확인 가능한 범위에서 대기 사유 해소를 시작합니다. 공개 게시, 결제, 권한 변경, 계정 생성 완료 전에는 멈춥니다.";
+      note.textContent = canResolveWaiting || canRequestArchive
+        ? "SAM이 확인 가능한 범위에서 대기 사유 해소를 시작합니다. 공개 게시, 결제, 권한 변경, 계정 생성 완료 전에는 멈춥니다."
+        : "이 Intent는 완료되어 추가 대시보드 액션이 없습니다.";
 
       const row = document.createElement("div");
       row.className = "action-row";
@@ -1427,7 +1428,7 @@
         addActionButton(row, item, sourceLabel, "archive_request", "Archive 요청", "확인 후 처리");
       }
       panel.appendChild(note);
-      panel.appendChild(row);
+      if (row.childElementCount) panel.appendChild(row);
       block.appendChild(panel);
     }
 

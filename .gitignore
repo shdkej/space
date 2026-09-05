@@ -27,3 +27,4 @@ infra-aws-static-sites/sites/travel/data/*.json
 # Generated only by the protected gateway deployment step; it contains the
 # browser-visible, domain-restricted Mapbox public token and must never be committed.
 infra-aws-static-sites/sites/safety-map/dist/runtime-map-config.js
+infra-aws-static-sites/sites/safety-map-experiment-03/dist/runtime-map-config.js

@@ -41,6 +41,19 @@
       }
     },
     {
+      "app": "safety-map-experiment-03",
+      "name": "Safety Map Experiment 03",
+      "domain_name": "safety-map-experiment-03.aws.shdkej.com",
+      "kind": "tool",
+      "detail": "Interactive global place map with an explicit no-safety-data boundary",
+      "deployment_name": "safety map experiment 03",
+      "spa_fallback": false,
+      "tags": {
+        "data_boundary": "no-safety-claims",
+        "privacy_boundary": "no-user-data"
+      }
+    },
+    {
       "app": "schengen",
       "name": "Schengen Calculator",
       "domain_name": "schengen.aws.shdkej.com",

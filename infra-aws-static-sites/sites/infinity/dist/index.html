@@ -1893,20 +1893,13 @@
     }
 
     function renderImmediateDetail(item, sourceLabel) {
-      addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
       beginTaskTrace();
       const queryRows = buildTaskQueryRows(item);
       setTaskTrace("request", "요청 쿼리", queryRows, concise(queryRows[0].value));
       setTaskTrace("evidence", "조회한 경로 · Context Map", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }], contextMapSummary(null, item));
       setTaskTrace("logs", "남긴 로그", [{ label: "상태", value: "구조화 로그를 불러오는 중" }], "불러오는 중");
-      addActionBlock(item, sourceLabel);
-      const st = String(item.meta.status || "").toLowerCase();
-      if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") {
-        // A waiting card opens its collected log, where the blocker and next
-        // decision are recorded alongside the other execution evidence.
-        showTaskTrace("logs");
-        addStructuredBlock("Waiting 기대값", buildWaitingRows(item), "kind-waiting");
-      }
+      // 상세 화면은 요청·근거·로그 세 섹션만 보인다. 상태와 다음 행동은
+      // 남긴 로그의 구조화 행으로 합쳐 로딩 뒤에도 별도 블록을 만들지 않는다.
     }
 
     function appendLoadedDetail(item, bundle) {

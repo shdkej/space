@@ -7,7 +7,7 @@
   const start = () => {
     if (!config?.accessToken || !window.mapboxgl) { setStatus('보호 설정 대기'); return; }
     mapboxgl.accessToken = config.accessToken;
-    map = new mapboxgl.Map({container:'map',style:styles.light,center:[12.4964,41.9028],zoom:3.1});
+    map = new mapboxgl.Map({container:'map',style:styles.light,center:[12.4964,41.9028],zoom:3.1,performanceMetricsCollection:false});
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
     map.on('load', () => { fallback.hidden = true; setStatus('탐색 가능'); const layer = document.createElement('button'); layer.className = 'layer-toggle'; layer.type = 'button'; layer.textContent = '위성'; layer.setAttribute('aria-pressed','false'); layer.onclick = () => { const satellite = layer.getAttribute('aria-pressed') !== 'true'; map.setStyle(styles[satellite ? 'satellite' : 'light']); layer.setAttribute('aria-pressed', String(satellite)); layer.textContent = satellite ? '기본' : '위성'; }; map.getContainer().append(layer); });
     map.on('error', () => setStatus('연결을 다시 확인 중'));

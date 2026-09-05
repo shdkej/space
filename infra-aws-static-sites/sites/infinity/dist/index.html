@@ -2397,7 +2397,8 @@
       const tasks = plan.tasks;
       const completeStates = new Set(["done", "completed", "skipped"]);
       const done = tasks.filter(task => completeStates.has(String(task.status || "").toLowerCase())).length;
-      const active = tasks.find(task => String(task.status || "").toLowerCase() === "active");
+      const activeStates = new Set(["active", "in_progress", "in-progress", "running"]);
+      const active = tasks.find(task => activeStates.has(String(task.status || "").toLowerCase()));
       const deviations = Array.isArray(plan.deviations) ? plan.deviations : [];
       return { total: tasks.length, done, active: active && active.title, deviations: deviations.length };
     }

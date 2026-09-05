@@ -1747,22 +1747,26 @@
       ];
     }
 
-    function buildTaskLogRows(item) {
+    function buildTaskLogRows(item, bundle) {
       const loopId = metaValue(item, ["origin_loop_id", "knowledge_loop_id"]);
       const matching = knowledgeLoopEvents.filter((entry) => entry.id === loopId || entry.infinity_intent_id === item.id);
-      if (!matching.length) return [{ label: "남긴 로그", value: "연결된 구조화 로그가 없습니다." }];
-      return matching.flatMap((entry) => [
-        { label: "로그", value: [entry.at, entry.type, entry.summary].filter(Boolean).join(" · "), key: true },
-        { label: "원문", value: entry.source_url || entry.source_log || "없음" },
-      ]);
+      const outputs = new Set([
+        ...(bundle && bundle.artifacts || []).map((entry) => entry.path || entry.name),
+        ...(bundle && bundle.reports || []).map((entry) => entry.path || entry.name),
+      ].filter(Boolean));
+      const usageCount = matching.reduce((total, entry) => {
+        const value = Number(entry.usage_count ?? entry.used_count ?? entry.use_count ?? 0);
+        return total + (Number.isFinite(value) ? value : 0);
+      }, 0);
+      return [
+        { label: "산출물 개수", value: outputs.size + "개", key: true },
+        { label: "남은 로그 유무", value: matching.length ? "있음" : "없음", key: true },
+        { label: "인용 횟수", value: usageCount + "회", key: true },
+      ];
     }
 
-    function taskLogSummary(item) {
-      const loopId = metaValue(item, ["origin_loop_id", "knowledge_loop_id"]);
-      const matching = knowledgeLoopEvents.filter((entry) => entry.id === loopId || entry.infinity_intent_id === item.id);
-      if (!matching.length) return "구조화 로그 없음";
-      const latest = matching[matching.length - 1];
-      return "구조화 로그 " + matching.length + "건 · " + (latest.type || "기록");
+    function taskLogSummary(item, bundle) {
+      return buildTaskLogRows(item, bundle).map((row) => row.value).join(" · ");
     }
 
     function contextMapSummary(pack, item) {
@@ -1875,44 +1879,44 @@
       // instead of becoming separate product-facing stages.
       setTaskTrace("request", "요청 쿼리", traceStageRows(trace, "request", buildTaskQueryRows(item)), traceRequestSummary(trace, item));
       const evidenceRows = traceStageRows(trace, "evidence", fallbackEvidence);
-      const outputRows = traceStageRows(trace, "outputs", fallbackOutputs);
-      const verificationRows = traceStageRows(trace, "verification", fallbackVerification);
       setTaskTrace("evidence", "조회한 경로 · Context Map", evidenceRows, trace ? concise(evidenceRows.map(row => row.value).join(" · ")) : contextMapSummary(bundle.contextPack, item));
-      const custodyRows = traceStageRows(trace, "custody", [{ label: "상태", value: "인계 기록 없음" }]);
-      const decisionRows = traceStageRows(trace, "decision", fallbackDecision);
-      const documentRows = [];
-      if (bundle.taskPlanViewPath) {
-        documentRows.push(bundle.taskPlanViewText
-          ? { label: "실행 계획 정본", value: bundle.taskPlanViewText, pre: true }
-          : { label: "실행 계획 정본", value: bundle.taskPlanViewPath, href: SOURCES.rawBase + bundle.taskPlanViewPath });
-      }
-      for (const entry of bundle.artifacts || []) {
-        const path = entry.path || entry.name;
-        if (path) documentRows.push({ label: "산출물 문서", value: path, href: SOURCES.rawBase + path });
-      }
-      for (const entry of bundle.reports || []) {
-        const path = entry.path || entry.name;
-        if (path) documentRows.push({ label: "리포트 문서", value: path, href: SOURCES.rawBase + path });
-      }
-      const logRows = buildTaskLogRows(item)
-        .concat(documentRows, outputRows, verificationRows, custodyRows, decisionRows);
-      setTaskTrace("logs", "남긴 로그", logRows, concise(logRows.map(row => row.value).join(" · ")));
+      const logRows = buildTaskLogRows(item, bundle);
+      setTaskTrace("logs", "작업 로그 요약", logRows, taskLogSummary(item, bundle));
     }
 
     function renderImmediateDetail(item, sourceLabel) {
+      addStructuredBlock("카드 요약", buildSummaryRows(item, sourceLabel), "kind-summary");
       beginTaskTrace();
       const queryRows = buildTaskQueryRows(item);
       setTaskTrace("request", "요청 쿼리", queryRows, concise(queryRows[0].value));
       setTaskTrace("evidence", "조회한 경로 · Context Map", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }], contextMapSummary(null, item));
       setTaskTrace("logs", "남긴 로그", [{ label: "상태", value: "구조화 로그를 불러오는 중" }], "불러오는 중");
-      // 상세 화면은 요청·근거·로그 세 섹션만 보인다. 상태와 다음 행동은
-      // 남긴 로그의 구조화 행으로 합쳐 로딩 뒤에도 별도 블록을 만들지 않는다.
+      addActionBlock(item, sourceLabel);
+      const st = String(item.meta.status || "").toLowerCase();
+      if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") showTaskTrace("logs");
     }
 
     function appendLoadedDetail(item, bundle) {
-      // 상세는 세 섹션만 유지한다. 문서·리포트·검증은 남긴 로그의
-      // 구조화 행과 링크로 집계해, 구형 독립 블록이 다시 생기지 않게 한다.
-      renderTraceContract(bundle.item || item, bundle);
+      const { item: hydratedItem, archive, artifacts, reports } = bundle;
+      renderTraceContract(hydratedItem || item, bundle);
+      const markdownReports = reports.filter(report => /\.md$/i.test(report.path || report.name || ""));
+      for (const report of markdownReports) {
+        const title = report.path || ("reports/" + item.id + "/" + report.name);
+        renderArtifactEntry("Report: " + title, report, "kind-report");
+      }
+      if (!markdownReports.length) addDetailBlock("Report: 기록 없음", "연결된 리포트가 없습니다.", "kind-report");
+      if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
+      else {
+        const intentRows = buildSummaryRows(hydratedItem || item, "INTENTS.md")
+          .map((row) => "- " + row.label + ": " + row.value).join("\n");
+        addDetailBlock("Intent 원장: INTENTS.md", intentRows || "현재 Intent 원장 기록이 없습니다.", "kind-archive");
+      }
+      const markdownArtifacts = artifacts.filter(entry => /\.md$/i.test(entry.path || entry.name || ""));
+      for (const entry of markdownArtifacts) {
+        const title = entry.path || ("artifacts/" + item.id + "/" + entry.name);
+        renderArtifactEntry("Artifact: " + title, entry, "kind-artifact");
+      }
+      if (!markdownArtifacts.length) addDetailBlock("Artifact: 기록 없음", "연결된 산출물이 없습니다.", "kind-artifact");
     }
 
     async function openDetailModal(item, sourceLabel) {

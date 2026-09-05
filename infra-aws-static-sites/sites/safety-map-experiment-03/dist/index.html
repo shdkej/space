@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="장소를 탐색하는 전역 지도 실험입니다. 안전을 점수로 단정하지 않습니다." />
+    <title>어느 도시를 보고 계신가요? — 지도 실험</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="focus-field" aria-label="전역 지도 FocusField">
+        <div class="atmosphere" aria-hidden="true"></div>
+        <div class="map-surface" aria-label="지도 연결 준비 중" role="img">
+          <div class="meridian meridian-one"></div><div class="meridian meridian-two"></div>
+          <div class="parallel parallel-one"></div><div class="parallel parallel-two"></div>
+          <svg class="routes" viewBox="0 0 1000 760" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M-40 535C159 445 224 626 397 497S735 357 1040 463" />
+            <path d="M183 -40C297 160 190 298 424 399S701 565 841 800" />
+            <path d="M-30 228C167 202 217 95 388 190S716 281 1030 133" />
+          </svg>
+          <span class="map-status">GLOBAL FIELD / 준비 중</span>
+        </div>
+        <p class="field-caption">장소를 찾으면 지도가 여기에서 열립니다.</p>
+      </section>
+
+      <header class="type-rail">
+        <p class="eyebrow">PLACE / CONTEXT / 03</p>
+        <h1>어느 도시를<br />보고 계신가요?</h1>
+        <p class="intro">장소를 검색해 지도를 살펴보세요. 이 화면은 탐색을 돕고, 안전을 점수로 단정하지 않습니다.</p>
+        <form class="search-form" novalidate>
+          <label for="place-search">도시·랜드마크 검색</label>
+          <div class="search-row">
+            <input id="place-search" name="place" type="search" placeholder="예: 로마, 테르미니역" autocomplete="off" />
+            <button type="button" disabled aria-disabled="true">곧 연결</button>
+          </div>
+        </form>
+        <aside class="boundary" aria-label="안전 데이터 경계">
+          <span class="boundary-mark" aria-hidden="true">—</span>
+          <p>이 지역의 신뢰할 수 있는 공개 안전 데이터는 아직 연결되지 않았습니다. 현지 공공기관과 최신 안내를 함께 확인하세요.</p>
+        </aside>
+      </header>
+      <footer class="footer-rail"><span>EXPERIMENT 03</span><span>NO SCORE · NO ROUTE · NO TRACKING</span></footer>
+    </main>
+  </body>
+</html>

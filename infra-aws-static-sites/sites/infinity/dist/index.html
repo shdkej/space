@@ -924,8 +924,15 @@
 
     async function fetchMaybeText(path) {
       if (!path) return null;
-      try { return await fetchText(SOURCES.rawBase + path.replace(/^\/+/, "")); }
-      catch (e) { return null; }
+      const normalized = path.replace(/^\/+/, "");
+      const apiPath = normalized.split("/").map(encodeURIComponent).join("/");
+      // raw.githubusercontent.com은 브라우저마다 수 분 전 revision을 줄 수 있다.
+      // 원장·계획은 Contents API의 main ref를 먼저 읽고 raw는 장애 보조로만 쓴다.
+      try { return await fetchText(SOURCES.apiBase + apiPath + "?ref=main"); }
+      catch (e) {
+        try { return await fetchText(SOURCES.rawBase + normalized); }
+        catch (_) { return null; }
+      }
     }
 
     async function fetchTextWithFallback(primaryUrl, fallbackUrl) {

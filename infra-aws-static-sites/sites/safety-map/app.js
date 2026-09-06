@@ -23,8 +23,6 @@ function render() { $('#rome-card').innerHTML = card(cities[0], true); $('#city-
 let map;
 const mapStyles = { day: 'mapbox://styles/mapbox/streets-v12', night: 'mapbox://styles/mapbox/navigation-night-v1' };
 let mapStyleMode = 'day';
-// Synthetic fixture: demonstrates the marker treatment, never a risk judgment.
-const demoAttentionMarker = { coordinates: [12.4922, 41.8902], label: '주의 표시 예시', detail: '테스트 마커입니다. 실제 위험 정보나 안전 판단이 아닙니다.' };
 window.__SAFETY_MAP_DIAGNOSTICS__ = () => {
   if (!map) return { ready: false };
   const center = map.getCenter();
@@ -60,17 +58,7 @@ function loadMap() {
     map = new mapboxgl.Map({ container: 'map', style: mapStyles[mapStyleMode], center: [12.4964, 41.9028], zoom: 12, attributionControl: true });
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('error', () => mapMessage('지도를 불러오지 못했어요. 잠시 뒤 다시 열어보세요. 안전 신호는 현재 검증된 데이터가 없습니다.'));
-    map.on('load', () => {
-      syncMapMode(mapStyleMode);
-      const marker = document.createElement('button');
-      marker.type = 'button'; marker.textContent = '!';
-      marker.style.cssText = 'width:34px;height:34px;border:3px solid #fff;border-radius:50% 50% 50% 0;background:#df2e23;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(116,21,13,.44);font:800 18px/1 system-ui,sans-serif;transform:rotate(-45deg)';
-      marker.setAttribute('aria-label', `${demoAttentionMarker.label}. ${demoAttentionMarker.detail}`);
-      marker.addEventListener('click', () => mapMessage(`${demoAttentionMarker.label}를 열었어요. ${demoAttentionMarker.detail}`));
-      new mapboxgl.Marker({ element: marker, anchor: 'bottom' }).setLngLat(demoAttentionMarker.coordinates)
-        .setPopup(new mapboxgl.Popup({ offset: 18 }).setHTML(`<strong>${demoAttentionMarker.label}</strong><br>${demoAttentionMarker.detail}`)).addTo(map);
-      mapMessage('장소와 도로 맥락을 열었어요. 빨간 ! 표시는 표시 방식 테스트이며, 안전 판단이나 경로 추천이 아닙니다.');
-    });
+    map.on('load', () => { syncMapMode(mapStyleMode); mapMessage('장소와 도로 맥락을 열었어요. 이 정보는 안전 판단이나 경로 추천이 아닙니다. 안전 신호: 현재 검증된 데이터 없음.'); });
   } catch (_) { mapMessage('지도를 불러오지 못했어요. 잠시 뒤 다시 열어보세요. 안전 신호는 현재 검증된 데이터가 없습니다.'); }
 }
 function searchPlace() {

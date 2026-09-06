@@ -1,5 +1,5 @@
 (() => {
-  const form = document.querySelector('.search-form'), input = document.querySelector('#place-search');
+  const form = document.querySelector('.search-form'), input = document.querySelector('#place-search'), countrySelect = document.querySelector('#verified-country');
   const status = document.querySelector('#map-status'), fallback = document.querySelector('#map-fallback');
   const config = window.SAFETY_MAP_E03_CONFIG, styles = { light: 'mapbox://styles/mapbox/light-v11', satellite: 'mapbox://styles/mapbox/satellite-streets-v12' };
   let map;
@@ -23,7 +23,8 @@
   form.addEventListener('submit', async (event) => {
     event.preventDefault(); const query = input.value.trim(); if (!query) return input.focus();
     if (!map) { setStatus('보호 설정이 필요합니다'); return; }
-    try { const response = await fetch(`https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(query)}&bbox=12.25,41.75,12.75,42.10&limit=1&access_token=${encodeURIComponent(mapboxgl.accessToken)}`); const data = await response.json(); const item = data.features?.[0]; if (!item?.geometry?.coordinates) throw Error(); map.flyTo({center:item.geometry.coordinates,zoom:12,essential:true}); setStatus(item.properties?.name || query); } catch { setStatus('장소를 찾지 못했습니다'); }
+    try { const response = await fetch(`https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(query)}&bbox=12.25,41.75,12.75,42.10&proximity=12.4964,41.9028&limit=1&access_token=${encodeURIComponent(mapboxgl.accessToken)}`); if (!response.ok) throw Error(); const data = await response.json(); const item = data.features?.[0]; if (!item?.geometry?.coordinates) throw Error(); map.flyTo({center:item.geometry.coordinates,zoom:15,essential:true}); setStatus(item.properties?.name || query); } catch { setStatus('장소를 찾지 못했습니다. 로마 안의 장소·랜드마크 이름으로 다시 검색해 주세요.'); }
   });
+  countrySelect.addEventListener('change', () => { map.flyTo({ center:[12.4885,41.8905], zoom:14, essential:true }); setStatus('이탈리아 · 로마 테스트 영역'); });
   start();
 })();

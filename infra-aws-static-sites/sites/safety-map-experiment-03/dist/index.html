@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" />
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      .type-rail{width:min(470px,calc(100% - 48px));padding-top:clamp(30px,6vh,64px);padding-bottom:64px;pointer-events:none}.type-rail input,.type-rail button,.type-rail select{pointer-events:auto}.search-row button{color:#284353;cursor:pointer}.country-select-label{margin-top:17px}.search-form select{width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--ink);border-radius:0;background:rgba(248,251,252,.76);color:var(--ink);font:500 14px Pretendard,sans-serif;cursor:pointer}.country-select-note,.map-boundary{max-width:420px;margin:10px 0 0;color:#45606f;font-size:11px;line-height:1.55}.map-boundary{padding-top:14px;border-top:1px solid var(--line)}
+    </style>
   </head>
   <body>
     <main class="app-shell">
@@ -40,17 +43,11 @@
             <input id="place-search" name="place" type="search" placeholder="예: 테르미니역, 트레비 분수" autocomplete="off" />
             <button id="search-submit" type="submit">지도에서 찾기</button>
           </div>
+          <label class="country-select-label" for="verified-country">검증 구역이 있는 국가</label>
+          <select id="verified-country" aria-describedby="verified-country-note"><option value="rome-demo">이탈리아 · 로마 (표시 방식 테스트)</option></select>
+          <p id="verified-country-note" class="country-select-note">현재는 테스트 영역만 있습니다. 실제 검증 구역이 추가되면 이 목록에서 바로 이동할 수 있습니다.</p>
         </form>
-        <section class="evidence-state" aria-labelledby="evidence-title">
-          <p class="eyebrow">ROME / EVIDENCE STATUS</p>
-          <h2 id="evidence-title">로마에는 아직<br />표시할 검증 근거가 없습니다</h2>
-          <p>공개 출처의 접근·최근성·지역 단위·독립성 조건을 모두 확인하기 전에는 사용자 경험 기반 주의 신호를 표시하지 않습니다.</p>
-          <p class="evidence-note">이 상태는 안전 또는 위험을 뜻하지 않습니다. 현재 적격 입력: 0 · 마지막 확인: 2026-09-06</p>
-        </section>
-        <aside class="boundary" aria-label="안전 데이터 경계">
-          <span class="boundary-mark" aria-hidden="true">—</span>
-          <p>이 지역의 신뢰할 수 있는 공개 안전 데이터는 아직 연결되지 않았습니다. 현지 공공기관과 최신 안내를 함께 확인하세요.</p>
-        </aside>
+        <p class="map-boundary">빨간 영역은 표시 방식 테스트입니다. 실제 위험 판단·안전 보장이 아닙니다.</p>
       </header>
       <footer class="footer-rail"><span>EXPERIMENT 03 / ITERATION 04</span><span>NO SCORE · NO ROUTE · NO TRACKING</span></footer>
     </main>

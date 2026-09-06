@@ -41,6 +41,19 @@
       }
     },
     {
+      "app": "safety-map-experiment-03",
+      "name": "Safety Map Experiment 04",
+      "domain_name": "safety-map-experiment-03.aws.shdkej.com",
+      "kind": "tool",
+      "detail": "Rome attention-area interaction experiment",
+      "deployment_name": "safety map experiment 04",
+      "spa_fallback": false,
+      "tags": {
+        "data_boundary": "demo-area-not-a-risk-claim",
+        "privacy_boundary": "no-user-data"
+      }
+    },
+    {
       "app": "schengen",
       "name": "Schengen Calculator",
       "domain_name": "schengen.aws.shdkej.com",

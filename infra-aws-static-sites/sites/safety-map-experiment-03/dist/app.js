@@ -38,7 +38,7 @@
   form.addEventListener('submit', async (event) => {
     event.preventDefault(); const query = input.value.trim(); if (!query) return input.focus();
     if (!map) { setStatus('보호 설정이 필요합니다'); return; }
-    if (/termini/i.test(query)) { map.fitBounds(termini.bounds,{padding:70,maxZoom:14,essential:true}); setStatus('Roma Termini'); return; }
+    if (/termini/i.test(query)) { map.fitBounds(termini.bounds,{padding:70,maxZoom:14,essential:true}); setStatus('Roma Termini · 근거 열림'); showDrawer(); return; }
     try { const response = await fetch(`https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(query)}&limit=1&bbox=12.2,41.7,12.8,42.1&proximity=12.4964,41.9028&access_token=${encodeURIComponent(mapboxgl.accessToken)}`); const data = await response.json(); const item = data.features?.[0]; if (!item?.geometry?.coordinates) throw Error(); map.flyTo({center:item.geometry.coordinates,zoom:13,essential:true}); setStatus(item.properties?.name || query); } catch { setStatus('로마 안에서 장소를 찾지 못했습니다'); }
   });
   start();

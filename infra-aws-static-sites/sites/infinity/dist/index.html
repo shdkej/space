@@ -1912,12 +1912,12 @@
           .map((row) => "- " + row.label + ": " + row.value).join("\n");
         addDetailBlock("Intent 원장: INTENTS.md", intentRows || "현재 Intent 원장 기록이 없습니다.", "kind-archive");
       }
-      const markdownArtifacts = artifacts.filter(entry => /\.md$/i.test(entry.path || entry.name || ""));
-      for (const entry of markdownArtifacts) {
+      const displayArtifacts = artifacts.filter(entry => entry.kind === "image" || /\.md$/i.test(entry.path || entry.name || ""));
+      for (const entry of displayArtifacts) {
         const title = entry.path || ("artifacts/" + item.id + "/" + entry.name);
         renderArtifactEntry("Artifact: " + title, entry, "kind-artifact");
       }
-      if (!markdownArtifacts.length) addDetailBlock("Artifact: 기록 없음", "연결된 산출물이 없습니다.", "kind-artifact");
+      if (!displayArtifacts.length) addDetailBlock("Artifact: 기록 없음", "연결된 산출물이 없습니다.", "kind-artifact");
     }
 
     async function openDetailModal(item, sourceLabel) {

@@ -22,15 +22,15 @@
     if (!installEvidenceLayer()) return;
     fallback.hidden = true;
     setStatus('Termini 근거 신호 표시');
-    map.on('mouseenter','termini-caution-fill',()=>map.getCanvas().style.cursor='pointer');
-    map.on('mouseleave','termini-caution-fill',()=>map.getCanvas().style.cursor='');
-    map.on('click','termini-caution-fill',showDrawer);
   };
+  const isInTerminiArea = ({ lng, lat }) => lng >= termini.bounds[0][0] && lng <= termini.bounds[1][0] && lat >= termini.bounds[0][1] && lat <= termini.bounds[1][1];
   const start = () => {
     if (!config?.accessToken || !window.mapboxgl) { setStatus('보호 설정 대기'); return; }
     mapboxgl.accessToken = config.accessToken;
     map = new mapboxgl.Map({container:'map',style:styles.light,center:termini.center,zoom:13.1,performanceMetricsCollection:false});
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+    map.on('mousemove', (event) => { map.getCanvas().style.cursor = isInTerminiArea(event.lngLat) ? 'pointer' : ''; });
+    map.on('click', (event) => { if (isInTerminiArea(event.lngLat)) showDrawer(); });
     map.on('load', () => { map.once('idle', activateEvidence); const layer = document.createElement('button'); layer.className = 'layer-toggle'; layer.type = 'button'; layer.textContent = '위성'; layer.setAttribute('aria-pressed','false'); layer.onclick = () => { const satellite = layer.getAttribute('aria-pressed') !== 'true'; map.setStyle(styles[satellite ? 'satellite' : 'light']); layer.setAttribute('aria-pressed', String(satellite)); layer.textContent = satellite ? '기본' : '위성'; }; map.getContainer().append(layer); });
     map.on('style.load', () => map.once('idle', activateEvidence));
     map.on('error', () => setStatus('지도 연결 중 · 근거는 열 수 있습니다'));

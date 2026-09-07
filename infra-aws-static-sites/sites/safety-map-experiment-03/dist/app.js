@@ -1,21 +1,38 @@
 (() => {
   const form = document.querySelector('.search-form'), input = document.querySelector('#place-search');
   const status = document.querySelector('#map-status'), fallback = document.querySelector('#map-fallback');
+  const drawer = document.querySelector('#evidence-drawer'), drawerClose = document.querySelector('#drawer-close');
   const config = window.SAFETY_MAP_E03_CONFIG, styles = { light: 'mapbox://styles/mapbox/light-v11', satellite: 'mapbox://styles/mapbox/satellite-streets-v12' };
   let map;
+  const termini = { center:[12.5018,41.9010], bounds:[[12.4938,41.8964],[12.5098,41.9058]] };
+  const terminiArea = { type:'Feature', properties:{name:'Roma Termini · 환승 시 소지품 주의'}, geometry:{type:'Polygon',coordinates:[[[12.4943,41.8970],[12.5078,41.8970],[12.5093,41.9013],[12.5065,41.9053],[12.4973,41.9058],[12.4938,41.9016],[12.4943,41.8970]]]}};
   const setStatus = (value) => { status.textContent = `GLOBAL FIELD / ${value}`; };
+  const showDrawer = () => { drawer.hidden = false; drawerClose.focus(); };
+  const hideDrawer = () => { drawer.hidden = true; };
+  drawerClose.addEventListener('click', hideDrawer);
+  const installEvidenceLayer = () => {
+    if (map.getSource('termini-caution')) return;
+    map.addSource('termini-caution', {type:'geojson',data:{type:'FeatureCollection',features:[terminiArea]}});
+    map.addLayer({id:'termini-caution-fill',type:'fill',source:'termini-caution',paint:{'fill-color':'#d94c45','fill-opacity':0.32}});
+    map.addLayer({id:'termini-caution-line',type:'line',source:'termini-caution',paint:{'line-color':'#aa302c','line-width':2,'line-opacity':0.86}});
+    map.on('mouseenter','termini-caution-fill',()=>map.getCanvas().style.cursor='pointer');
+    map.on('mouseleave','termini-caution-fill',()=>map.getCanvas().style.cursor='');
+    map.on('click','termini-caution-fill',showDrawer);
+  };
   const start = () => {
     if (!config?.accessToken || !window.mapboxgl) { setStatus('보호 설정 대기'); return; }
     mapboxgl.accessToken = config.accessToken;
-    map = new mapboxgl.Map({container:'map',style:styles.light,center:[12.4964,41.9028],zoom:3.1,performanceMetricsCollection:false});
+    map = new mapboxgl.Map({container:'map',style:styles.light,center:termini.center,zoom:13.1,performanceMetricsCollection:false});
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-    map.on('load', () => { fallback.hidden = true; setStatus('탐색 가능'); const layer = document.createElement('button'); layer.className = 'layer-toggle'; layer.type = 'button'; layer.textContent = '위성'; layer.setAttribute('aria-pressed','false'); layer.onclick = () => { const satellite = layer.getAttribute('aria-pressed') !== 'true'; map.setStyle(styles[satellite ? 'satellite' : 'light']); layer.setAttribute('aria-pressed', String(satellite)); layer.textContent = satellite ? '기본' : '위성'; }; map.getContainer().append(layer); });
+    map.on('load', () => { fallback.hidden = true; installEvidenceLayer(); setStatus('Termini 근거 신호 표시'); const layer = document.createElement('button'); layer.className = 'layer-toggle'; layer.type = 'button'; layer.textContent = '위성'; layer.setAttribute('aria-pressed','false'); layer.onclick = () => { const satellite = layer.getAttribute('aria-pressed') !== 'true'; map.setStyle(styles[satellite ? 'satellite' : 'light']); layer.setAttribute('aria-pressed', String(satellite)); layer.textContent = satellite ? '기본' : '위성'; }; map.getContainer().append(layer); });
+    map.on('style.load', installEvidenceLayer);
     map.on('error', () => setStatus('연결을 다시 확인 중'));
   };
   form.addEventListener('submit', async (event) => {
     event.preventDefault(); const query = input.value.trim(); if (!query) return input.focus();
     if (!map) { setStatus('보호 설정이 필요합니다'); return; }
-    try { const response = await fetch(`https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(query)}&limit=1&access_token=${encodeURIComponent(mapboxgl.accessToken)}`); const data = await response.json(); const item = data.features?.[0]; if (!item?.geometry?.coordinates) throw Error(); map.flyTo({center:item.geometry.coordinates,zoom:12,essential:true}); setStatus(item.properties?.name || query); } catch { setStatus('장소를 찾지 못했습니다'); }
+    if (/termini/i.test(query)) { map.fitBounds(termini.bounds,{padding:70,maxZoom:14,essential:true}); setStatus('Roma Termini'); return; }
+    try { const response = await fetch(`https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(query)}&limit=1&bbox=12.2,41.7,12.8,42.1&proximity=12.4964,41.9028&access_token=${encodeURIComponent(mapboxgl.accessToken)}`); const data = await response.json(); const item = data.features?.[0]; if (!item?.geometry?.coordinates) throw Error(); map.flyTo({center:item.geometry.coordinates,zoom:13,essential:true}); setStatus(item.properties?.name || query); } catch { setStatus('로마 안에서 장소를 찾지 못했습니다'); }
   });
   start();
 })();

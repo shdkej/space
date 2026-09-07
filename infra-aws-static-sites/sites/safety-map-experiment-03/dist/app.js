@@ -1,7 +1,7 @@
 (() => {
   const form = document.querySelector('.search-form'), input = document.querySelector('#place-search');
   const status = document.querySelector('#map-status'), fallback = document.querySelector('#map-fallback');
-  const drawer = document.querySelector('#evidence-drawer'), drawerClose = document.querySelector('#drawer-close');
+  const drawer = document.querySelector('#evidence-drawer'), drawerClose = document.querySelector('#drawer-close'), fallbackEvidenceOpen = document.querySelector('#fallback-evidence-open');
   const config = window.SAFETY_MAP_E03_CONFIG, styles = { light: 'mapbox://styles/mapbox/light-v11', satellite: 'mapbox://styles/mapbox/satellite-streets-v12' };
   let map;
   const termini = { center:[12.5018,41.9010], bounds:[[12.4938,41.8964],[12.5098,41.9058]] };
@@ -10,11 +10,18 @@
   const showDrawer = () => { drawer.hidden = false; drawerClose.focus(); };
   const hideDrawer = () => { drawer.hidden = true; };
   drawerClose.addEventListener('click', hideDrawer);
+  fallbackEvidenceOpen.addEventListener('click', showDrawer);
   const installEvidenceLayer = () => {
-    if (map.getSource('termini-caution')) return;
+    if (!map.isStyleLoaded() || map.getSource('termini-caution')) return false;
     map.addSource('termini-caution', {type:'geojson',data:{type:'FeatureCollection',features:[terminiArea]}});
     map.addLayer({id:'termini-caution-fill',type:'fill',source:'termini-caution',paint:{'fill-color':'#d94c45','fill-opacity':0.32}});
     map.addLayer({id:'termini-caution-line',type:'line',source:'termini-caution',paint:{'line-color':'#aa302c','line-width':2,'line-opacity':0.86}});
+    return true;
+  };
+  const activateEvidence = () => {
+    if (!installEvidenceLayer()) return;
+    fallback.hidden = true;
+    setStatus('Termini 근거 신호 표시');
     map.on('mouseenter','termini-caution-fill',()=>map.getCanvas().style.cursor='pointer');
     map.on('mouseleave','termini-caution-fill',()=>map.getCanvas().style.cursor='');
     map.on('click','termini-caution-fill',showDrawer);
@@ -24,9 +31,9 @@
     mapboxgl.accessToken = config.accessToken;
     map = new mapboxgl.Map({container:'map',style:styles.light,center:termini.center,zoom:13.1,performanceMetricsCollection:false});
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-    map.on('load', () => { fallback.hidden = true; installEvidenceLayer(); setStatus('Termini 근거 신호 표시'); const layer = document.createElement('button'); layer.className = 'layer-toggle'; layer.type = 'button'; layer.textContent = '위성'; layer.setAttribute('aria-pressed','false'); layer.onclick = () => { const satellite = layer.getAttribute('aria-pressed') !== 'true'; map.setStyle(styles[satellite ? 'satellite' : 'light']); layer.setAttribute('aria-pressed', String(satellite)); layer.textContent = satellite ? '기본' : '위성'; }; map.getContainer().append(layer); });
-    map.on('style.load', installEvidenceLayer);
-    map.on('error', () => setStatus('연결을 다시 확인 중'));
+    map.on('load', () => { map.once('idle', activateEvidence); const layer = document.createElement('button'); layer.className = 'layer-toggle'; layer.type = 'button'; layer.textContent = '위성'; layer.setAttribute('aria-pressed','false'); layer.onclick = () => { const satellite = layer.getAttribute('aria-pressed') !== 'true'; map.setStyle(styles[satellite ? 'satellite' : 'light']); layer.setAttribute('aria-pressed', String(satellite)); layer.textContent = satellite ? '기본' : '위성'; }; map.getContainer().append(layer); });
+    map.on('style.load', () => map.once('idle', activateEvidence));
+    map.on('error', () => setStatus('지도 연결 중 · 근거는 열 수 있습니다'));
   };
   form.addEventListener('submit', async (event) => {
     event.preventDefault(); const query = input.value.trim(); if (!query) return input.focus();

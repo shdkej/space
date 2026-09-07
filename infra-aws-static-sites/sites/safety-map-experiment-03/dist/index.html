@@ -11,6 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" />
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      .fallback-evidence-open{position:absolute;z-index:1;left:50%;top:52%;transform:translate(-50%,-50%) rotate(-8deg);width:clamp(112px,16vw,176px);aspect-ratio:1.45;border:2px solid rgba(170,48,44,.85);border-radius:44% 56% 51% 49%;background:rgba(217,76,69,.32);color:#74241f;font:700 12px/1.35 Pretendard,sans-serif;cursor:pointer;box-shadow:0 8px 20px rgba(95,38,33,.18)}
+      .fallback-evidence-open:focus-visible{outline:3px solid #193142;outline-offset:4px}.type-rail{pointer-events:none}.search-form,.fallback-evidence-open{pointer-events:auto}.search-row button{color:#28677e;cursor:pointer}.evidence-drawer{z-index:4}
+      @media (max-width:600px){.fallback-evidence-open{width:132px;top:58%}}
+    </style>
   </head>
   <body>
     <main class="app-shell">
@@ -25,6 +30,7 @@
             <path d="M183 -40C297 160 190 298 424 399S701 565 841 800" />
             <path d="M-30 228C167 202 217 95 388 190S716 281 1030 133" />
           </svg>
+          <button id="fallback-evidence-open" class="fallback-evidence-open" type="button" aria-controls="evidence-drawer">Termini<br />근거 보기</button>
           <span id="map-status" class="map-status">GLOBAL FIELD / 지도 연결 준비 중</span>
         </div>
         <p class="field-caption">영역을 누르면 근거와 한계를 확인할 수 있습니다.</p>

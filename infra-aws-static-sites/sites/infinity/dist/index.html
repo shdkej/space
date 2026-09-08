@@ -1907,12 +1907,11 @@
     function appendLoadedDetail(item, bundle) {
       const { item: hydratedItem, archive, artifacts, reports } = bundle;
       renderTraceContract(hydratedItem || item, bundle);
-      const markdownReports = reports.filter(report => /\.md$/i.test(report.path || report.name || ""));
-      for (const report of markdownReports) {
+      for (const report of reports) {
         const title = report.path || ("reports/" + item.id + "/" + report.name);
         renderArtifactEntry("Report: " + title, report, "kind-report");
       }
-      if (!markdownReports.length) addDetailBlock("Report: 기록 없음", "연결된 리포트가 없습니다.", "kind-report");
+      if (!reports.length) addDetailBlock("Report: 기록 없음", "연결된 리포트가 없습니다.", "kind-report");
       if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
       else {
         const intentRows = buildSummaryRows(hydratedItem || item, "INTENTS.md")

@@ -1625,7 +1625,11 @@
       if (!archive || !archive.text) return item;
       const archiveMeta = parseArchiveMeta(archive.text);
       if (!Object.keys(archiveMeta).length) return item;
-      return Object.assign({}, item, { meta: Object.assign({}, archiveMeta, item.meta || {}) });
+      // INTENTS.md keeps a compact lifecycle index and can retain an older
+      // report pointer after the canonical archive record gains final outputs.
+      // Let the archive record win so its plan and all report links remain
+      // visible in the completed card.
+      return Object.assign({}, item, { meta: Object.assign({}, item.meta || {}, archiveMeta) });
     }
 
     // Trace files are deliberately fetched from the same immutable Infinity

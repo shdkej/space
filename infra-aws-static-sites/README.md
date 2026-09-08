@@ -39,6 +39,10 @@ Static apps live under one path:
 infra-aws-static-sites/sites/<app>/dist/
 ```
 
+The Card News Library also includes `composer.html`: a browser-only,
+photo-first editor that keeps uploaded images local, places movable caption
+layers on a 1080×1350 canvas, and exports both PNG and reusable layout JSON.
+
 The app registry lives at:
 
 ```text

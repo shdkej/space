@@ -1,7 +1,9 @@
-# monitoring_personal 레포의 CRD 설정을 ArgoCD로 싱크
-# - PrometheusRule: alert rules → Prometheus Operator 자동 감지
-# - AlertmanagerConfig: slack 연동 → Alertmanager 자동 참조
-# - ConfigMap (dashboards): grafana_dashboard=1 label → Grafana sidecar 자동 로드
+# Monitoring GitOps 연결: Space는 kube-prometheus-stack 기반을 소유하고,
+# monitoring_personal은 아래 CRD·ConfigMap·exporter 리소스의 소스 정본을 소유한다.
+# - PrometheusRule / AlertmanagerConfig / ServiceMonitor
+# - Grafana datasource·dashboard ConfigMap과 exporter Deployment/Service
+# Docker/Compose는 운영 경로가 아니다. monitoring_personal push 후 이 앱의
+# Synced/Healthy revision과 Prometheus·Grafana 결과를 검증한다.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

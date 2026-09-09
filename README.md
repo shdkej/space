@@ -39,6 +39,18 @@
 - 비밀값은 코드·Terraform·문서에 넣지 않고 대상 플랫폼의 secret store를 통해 주입합니다.
 - 배포 전 plan/build/test, 배포 후 health/URL 검증, 실패 시 직전 artifact/image 태그로의 롤백 경로를 남깁니다.
 
+## Monitoring — Space는 기반과 GitOps 연결, Monitoring 저장소는 설정 정본
+
+`modules/k3s-apps/monitoring.tf`는 `kube-prometheus-stack` 기반의 Prometheus, Grafana,
+Prometheus Operator와 Grafana dashboard sidecar를 제공합니다. `argocd/apps/monitoring-config.yaml`은
+`monitoring_personal` 저장소를 Argo CD 애플리케이션 `monitoring-config`에 연결하고 자동 sync,
+prune, self-heal을 적용합니다.
+
+exporter, `ServiceMonitor`, alert/rule, Grafana datasource/dashboard ConfigMap의 소스 정본은
+`monitoring_personal`입니다. 변경 흐름은 `monitoring_personal`에서 Kustomize·테스트 검증과
+commit/push → Argo CD의 새 revision `Synced/Healthy` → Kubernetes 리소스와 Prometheus 쿼리 →
+Grafana sidecar reload 및 실제 패널 확인입니다. Docker/Compose는 이 운영 경로에 사용하지 않습니다.
+
 ## cloud
 - digitalocean
 - ~~aws free tier (expired)~~

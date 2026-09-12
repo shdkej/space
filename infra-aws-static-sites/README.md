@@ -43,6 +43,11 @@ The Card News Library also includes `composer.html`: a browser-only,
 photo-first editor that keeps uploaded images local, places movable caption
 layers on a 1080×1350 canvas, and exports both PNG and reusable layout JSON.
 
+The Infinity dashboard applies cached Archive titles and summary fields before
+each polling render. Existing Archive cards therefore retain their rendered
+state; only a newly discovered record receives one follow-up update after its
+canonical detail is fetched.
+
 The app registry lives at:
 
 ```text

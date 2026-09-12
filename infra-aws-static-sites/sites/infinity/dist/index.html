@@ -3149,6 +3149,28 @@
     let archiveHydrationRun = 0;
     let archiveRerenderTimer = null;
 
+    function archiveTemplatePath(item) {
+      if (!item || !item.meta) return "";
+      return normalizePath(item.meta.detail || (item.id ? "intents/archive/" + item.id + ".md" : ""));
+    }
+
+    function applyArchiveTemplate(item, cached) {
+      if (!item || !item.meta || !cached) return false;
+      let changed = false;
+      if (cached.title && item.title !== cached.title) {
+        item.title = cached.title;
+        changed = true;
+      }
+      if (hasArchiveTemplate(cached)) {
+        for (const [key, value] of Object.entries(cached)) {
+          if (key === "title" || !value || item.meta[key] === value) continue;
+          item.meta[key] = value;
+          changed = true;
+        }
+      }
+      return changed;
+    }
+
     function rerenderArchiveLane() {
       renderColumn("done", lastDoneItems, lastDoneSource, { force: true });
     }
@@ -3185,35 +3207,26 @@
 
     function applyCachedArchiveTemplates(items) {
       for (const item of items) {
-        if (!item || !item.meta || !(item.meta.detail || item.id)) continue;
-        const path = normalizePath(item.meta.detail || ("intents/archive/" + item.id + ".md"));
+        const path = archiveTemplatePath(item);
+        if (!path) continue;
         const cached = archiveTemplateCache.get(path);
         if (!cached) continue;
-        if (cached.title) item.title = cached.title;
-        if (hasArchiveTemplate(cached)) Object.assign(item.meta, cached);
+        applyArchiveTemplate(item, cached);
       }
     }
 
     async function hydrateArchiveTemplates(items, run) {
       const targets = items
-        .filter(it => it && it.meta && (it.meta.detail || it.id) && !hasArchiveTemplate(it.meta));
+        .filter(it => {
+          const path = archiveTemplatePath(it);
+          return path && path.startsWith("intents/archive/")
+            && !hasArchiveTemplate(it.meta)
+            && !archiveTemplateCache.has(path);
+        });
       let changed = false;
       for (const item of targets) {
         if (run !== archiveHydrationRun) return changed;
-        const path = normalizePath(item.meta.detail || ("intents/archive/" + item.id + ".md"));
-        if (!path || !path.startsWith("intents/archive/")) continue;
-        if (archiveTemplateCache.has(path)) {
-          const cached = archiveTemplateCache.get(path);
-          if (cached.title) {
-            item.title = cached.title;
-            changed = true;
-          }
-          if (hasArchiveTemplate(cached)) {
-            Object.assign(item.meta, cached);
-            changed = true;
-          }
-          continue;
-        }
+        const path = archiveTemplatePath(item);
         try {
           const text = await fetchText(SOURCES.rawBase + path);
           if (run !== archiveHydrationRun) return changed;

@@ -2819,10 +2819,25 @@
       }
     }
 
-    function renderColumn(key, items, sourceLabel) {
+    const laneRenderSignatures = new Map();
+
+    function laneRenderSignature(key, items, sourceLabel) {
+      return JSON.stringify({
+        key,
+        sourceLabel,
+        archiveFilter: key === "done" ? archiveFilterQuery() : "",
+        archiveTag: key === "done" ? activeArchiveTag : "",
+        items,
+      });
+    }
+
+    function renderColumn(key, items, sourceLabel, options = {}) {
       const col = document.querySelector('.column[data-key="' + key + '"]');
       const cards = col.querySelector("[data-cards]");
       const count = col.querySelector("[data-count]");
+      const signature = laneRenderSignature(key, items, sourceLabel);
+      if (!options.force && laneRenderSignatures.get(key) === signature) return;
+      laneRenderSignatures.set(key, signature);
       cards.innerHTML = "";
 
       if (key === "done") {
@@ -3043,11 +3058,9 @@
     async function fetchMaybeWikiText(path) { try { return await fetchText(SOURCES.wikiRawBase + path); } catch (_) { return ""; } }
 
     async function loadAndRender() {
-      archiveHydrationRun += 1;
-      archiveTemplateCache.clear();
-      detailCache.clear();
+      const hydrationRun = ++archiveHydrationRun;
       clearErrors();
-      statusEl.textContent = "로딩 중...";
+      statusEl.textContent = lastDoneItems.length ? "동기화 중..." : "로딩 중...";
       let intentsText = "", gatesText = "";
       // 공개 raw 파일을 우선 사용해 GitHub API 지연·rate limit 때문에
       // 정본 대시보드 전체가 "로딩 중"에 멈추지 않도록 한다.
@@ -3118,7 +3131,7 @@
       // Archive 필터 재적용을 위해 최신 doneItems 보관
       lastDoneItems = doneItems;
       lastDoneSource = "GATES.md";
-      scheduleArchiveHydration(doneItems);
+      scheduleArchiveHydration(doneItems, hydrationRun);
       Promise.all([loadKnowledgeLoop(), loadPromotionIndex()]).catch(error => showError("지식 흐름 로드 실패: " + error.message));
 
       statusEl.textContent = "업데이트: " + new Date().toLocaleString("ko-KR");
@@ -3132,7 +3145,7 @@
     let archiveRerenderTimer = null;
 
     function rerenderArchiveLane() {
-      renderColumn("done", lastDoneItems, lastDoneSource);
+      renderColumn("done", lastDoneItems, lastDoneSource, { force: true });
     }
 
     function scheduleArchiveRerender() {
@@ -3143,18 +3156,17 @@
       }, 120);
     }
 
-    function scheduleArchiveHydration(items) {
-      const run = ++archiveHydrationRun;
+    function scheduleArchiveHydration(items, run) {
       const start = () => {
         if (run !== archiveHydrationRun) return;
         const latestFirst = items.slice(0, 24);
         setTimeout(async () => {
-          const changed = await hydrateArchiveTemplates(latestFirst, run, scheduleArchiveRerender);
+          const changed = await hydrateArchiveTemplates(latestFirst, run);
           if (changed && run === archiveHydrationRun) scheduleArchiveRerender();
         }, 350);
         if (items.length > latestFirst.length) {
           setTimeout(async () => {
-            const changed = await hydrateArchiveTemplates(items.slice(24), run, null);
+            const changed = await hydrateArchiveTemplates(items.slice(24), run);
             if (changed && run === archiveHydrationRun) scheduleArchiveRerender();
           }, 2500);
         }
@@ -3166,7 +3178,7 @@
       }
     }
 
-    async function hydrateArchiveTemplates(items, run, onProgress) {
+    async function hydrateArchiveTemplates(items, run) {
       const targets = items
         .filter(it => it && it.meta && (it.meta.detail || it.id) && !hasArchiveTemplate(it.meta));
       let changed = false;
@@ -3183,7 +3195,6 @@
           if (hasArchiveTemplate(cached)) {
             Object.assign(item.meta, cached);
             changed = true;
-            if (onProgress) onProgress();
           }
           continue;
         }
@@ -3200,7 +3211,6 @@
           if (hasArchiveTemplate(template)) {
             Object.assign(item.meta, template);
             changed = true;
-            if (onProgress) onProgress();
           }
         } catch (e) {
           archiveTemplateCache.set(path, {});

@@ -3105,6 +3105,11 @@
         ...archiveCommentItems,
       ]);
 
+      // Keep prior archive enrichments when a poll reparses the compact ledger.
+      // Without this merge, the lane briefly reverts to the compact record and
+      // then redraws again once the same cached detail is applied.
+      applyCachedArchiveTemplates(doneItems);
+
       renderColumn("inbox",   inboxItems,   "INTENTS.md");
       renderColumn("active",  activeItems,  "INTENTS.md");
       renderColumn("waiting", waitingItems, "Waiting");
@@ -3178,6 +3183,17 @@
       }
     }
 
+    function applyCachedArchiveTemplates(items) {
+      for (const item of items) {
+        if (!item || !item.meta || !(item.meta.detail || item.id)) continue;
+        const path = normalizePath(item.meta.detail || ("intents/archive/" + item.id + ".md"));
+        const cached = archiveTemplateCache.get(path);
+        if (!cached) continue;
+        if (cached.title) item.title = cached.title;
+        if (hasArchiveTemplate(cached)) Object.assign(item.meta, cached);
+      }
+    }
+
     async function hydrateArchiveTemplates(items, run) {
       const targets = items
         .filter(it => it && it.meta && (it.meta.detail || it.id) && !hasArchiveTemplate(it.meta));
@@ -3213,7 +3229,8 @@
             changed = true;
           }
         } catch (e) {
-          archiveTemplateCache.set(path, {});
+          // Do not cache failures: the next polling cycle should retry a
+          // transient GitHub/network error instead of freezing an incomplete card.
         }
       }
       return changed;

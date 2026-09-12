@@ -1920,11 +1920,6 @@
     function appendLoadedDetail(item, bundle) {
       const { item: hydratedItem, archive, artifacts, reports } = bundle;
       renderTraceContract(hydratedItem || item, bundle);
-      for (const report of reports) {
-        const title = report.path || ("reports/" + item.id + "/" + report.name);
-        renderArtifactEntry("Report: " + title, report, "kind-report");
-      }
-      if (!reports.length) addDetailBlock("Report: 기록 없음", "연결된 리포트가 없습니다.", "kind-report");
       if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
       else {
         const intentRows = buildSummaryRows(hydratedItem || item, "INTENTS.md")
@@ -1938,11 +1933,16 @@
           renderArtifactEntry(prefix + ": " + title, entry, kindClass);
         }
       };
-      // The final result is intentionally shown ahead of investigative notes.
-      // T1, evidence, candidates, and Red reviews remain available below it.
+      // The final result is intentionally shown before reports and investigative
+      // notes. T1, evidence, candidates, and Red reviews remain below it.
       renderArtifacts("final", "최종 산출물", "kind-final");
+      for (const report of reports) {
+        const title = report.path || ("reports/" + item.id + "/" + report.name);
+        renderArtifactEntry("Report: " + title, report, "kind-report");
+      }
+      if (!reports.length) addDetailBlock("Report: 기록 없음", "연결된 리포트가 없습니다.", "kind-report");
       renderArtifacts("work", "중간 작업물", "kind-work");
-      renderArtifacts("legacy", "기존 산출물", "kind-artifact");
+      renderArtifacts("legacy", "기존 중간 작업물", "kind-work");
       if (!displayArtifacts.length) addDetailBlock("Artifact: 기록 없음", "연결된 산출물이 없습니다.", "kind-artifact");
     }
 

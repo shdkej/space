@@ -1808,6 +1808,12 @@
         { label: "Route", value: pack.route || "없음", key: true },
         { label: "상태", value: pack.status || "없음" },
         { label: "생성 시각", value: pack.built_at || "없음" },
+        { label: "zg 선검사", value: pack.preflight ? [
+          "쿼리: " + (pack.preflight.query || "없음"),
+          "방식: " + (pack.preflight.discovery || "없음") + " → " + (pack.preflight.verification || "없음"),
+          "후보: " + (pack.preflight.result_count ?? "없음") + "개",
+        ].join("\n") : "기존 Context Pack (zg 기록 없음)" },
+        { label: "zg 선택 결과", value: Array.isArray(pack.selected_context) ? pack.selected_context.map((entry) => [entry.path, entry.reason, entry.verified_term ? "rg 검증어: " + entry.verified_term : entry.verification].filter(Boolean).join(" · ")).join("\n") : "없음" },
         { label: "필수 문서", value: Array.isArray(pack.required_documents) ? pack.required_documents.join("\n") : "없음" },
         { label: "검색 범위", value: Array.isArray(pack.search_scopes) ? pack.search_scopes.join("\n") : "없음" },
       ];
@@ -1836,7 +1842,7 @@
       }
       if (typeof value !== "object") return [{ label: fallbackLabel, value: traceValue(value) }];
       const rows = [];
-      const labels = { raw: "원문 요청", normalized_query: "정리된 작업", context_pack: "Context Pack", evidence_paths: "확인한 경로", searches: "검색", report_path: "최종 리포트", red_status: "Red 검증", red_report_path: "Red 근거", remote_verified: "원격 반영 확인", remote_proof_path: "원격 확인 근거", run_id: "Dispatcher 실행", canonical_sha: "기준 revision", agent: "인계 담당", session_key: "세션", next_decision: "다음 결정", status: "상태", reason: "기록 한계" };
+      const labels = { raw: "원문 요청", normalized_query: "정리된 작업", context_pack: "Context Pack", evidence_paths: "확인한 경로", searches: "검색", wiki_pages: "참조한 Agent Wiki", report_path: "최종 리포트", red_status: "Red 검증", red_report_path: "Red 근거", remote_verified: "원격 반영 확인", remote_proof_path: "원격 확인 근거", run_id: "Dispatcher 실행", canonical_sha: "기준 revision", agent: "인계 담당", session_key: "세션", next_decision: "다음 결정", status: "상태", reason: "기록 한계" };
       for (const [key, entry] of Object.entries(value)) {
         if (["events", "stage", "type", "at", "timestamp"].includes(key)) continue;
         const rendered = traceValue(entry);

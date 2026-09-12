@@ -1676,7 +1676,7 @@
       // The human-readable task timeline is a first-class artifact. Including
       // task_plan_doc here lets the detail panel render its fenced tree with
       // preserved indentation instead of leaving the plan as an opaque path.
-      const knownArtifactRefs = pathFieldEntries(hydratedItem, ["artifact", "evidence", "approval_request", "task_plan_doc"], "kind-artifact");
+      const knownArtifactRefs = pathFieldEntries(hydratedItem, ["final_artifact", "artifact", "evidence", "approval_request", "task_plan_doc"], "kind-artifact");
       const knownReportRefs = pathFieldEntries(hydratedItem, ["report", "red_report", "previous_red_report"], "kind-report");
       const [knownArtifacts, knownReports] = await Promise.all([
         fetchKnownEntries(knownArtifactRefs),

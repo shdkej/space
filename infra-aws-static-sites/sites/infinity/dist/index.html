@@ -528,6 +528,10 @@
     .detail-block.kind-detail h3 { background: #042f2e; border-left-color: #2dd4bf; }
     .detail-block.kind-threads { border-color: #2dd4bf; }
     .detail-block.kind-threads h3 { background: #042f2e; border-left-color: #5eead4; }
+    .detail-block.kind-final { border-color: #22c55e; }
+    .detail-block.kind-final h3 { background: #052e16; border-left-color: #4ade80; }
+    .detail-block.kind-work { border-color: #64748b; }
+    .detail-block.kind-work h3 { background: #1e293b; border-left-color: #94a3b8; }
     .detail-block.kind-artifact { border-color: #f59e0b; }
     .detail-block.kind-artifact h3 { background: #3b2a08; border-left-color: #fbbf24; }
     .detail-block.kind-report { border-color: #38bdf8; }
@@ -1030,6 +1034,8 @@
       "kind-action": "Action",
       "kind-detail": "Detail",
       "kind-threads": "Threads",
+      "kind-final": "최종 결과",
+      "kind-work": "중간 작업물",
       "kind-artifact": "Artifact",
       "kind-report": "Report",
       "kind-empty": "Empty",
@@ -1457,6 +1463,13 @@
       if (entry.kind === "image") addImageBlock(title, entry.url, kindClass);
       else if (entry.kind === "html") addHtmlBlock(title, entry.text, kindClass, opts);
       else addDetailBlock(title, entry.text, kindClass);
+    }
+
+    function artifactStage(entry) {
+      const path = String(entry && (entry.path || entry.name) || "").replace(/\\/g, "/");
+      if (/^artifacts\/[^/]+\/final\//.test(path)) return "final";
+      if (/^artifacts\/[^/]+\/work\//.test(path)) return "work";
+      return "legacy";
     }
 
     function extractLine(sectionText, label) {
@@ -1919,10 +1932,17 @@
         addDetailBlock("Intent 원장: INTENTS.md", intentRows || "현재 Intent 원장 기록이 없습니다.", "kind-archive");
       }
       const displayArtifacts = artifacts.filter(entry => entry.kind === "image" || /\.md$/i.test(entry.path || entry.name || ""));
-      for (const entry of displayArtifacts) {
-        const title = entry.path || ("artifacts/" + item.id + "/" + entry.name);
-        renderArtifactEntry("Artifact: " + title, entry, "kind-artifact");
-      }
+      const renderArtifacts = (stage, prefix, kindClass) => {
+        for (const entry of displayArtifacts.filter(candidate => artifactStage(candidate) === stage)) {
+          const title = entry.path || ("artifacts/" + item.id + "/" + entry.name);
+          renderArtifactEntry(prefix + ": " + title, entry, kindClass);
+        }
+      };
+      // The final result is intentionally shown ahead of investigative notes.
+      // T1, evidence, candidates, and Red reviews remain available below it.
+      renderArtifacts("final", "최종 산출물", "kind-final");
+      renderArtifacts("work", "중간 작업물", "kind-work");
+      renderArtifacts("legacy", "기존 산출물", "kind-artifact");
       if (!displayArtifacts.length) addDetailBlock("Artifact: 기록 없음", "연결된 산출물이 없습니다.", "kind-artifact");
     }
 

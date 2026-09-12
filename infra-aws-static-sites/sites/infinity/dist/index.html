@@ -1936,11 +1936,15 @@
       // The final result is intentionally shown before reports and investigative
       // notes. T1, evidence, candidates, and Red reviews remain below it.
       renderArtifacts("final", "최종 산출물", "kind-final");
-      for (const report of reports) {
+      for (const report of reports.filter(candidate => candidate.key !== "red_report" && candidate.key !== "previous_red_report")) {
         const title = report.path || ("reports/" + item.id + "/" + report.name);
         renderArtifactEntry("Report: " + title, report, "kind-report");
       }
-      if (!reports.length) addDetailBlock("Report: 기록 없음", "연결된 리포트가 없습니다.", "kind-report");
+      if (!reports.some(candidate => candidate.key !== "red_report" && candidate.key !== "previous_red_report")) addDetailBlock("Report: 기록 없음", "연결된 리포트가 없습니다.", "kind-report");
+      for (const redReport of reports.filter(candidate => candidate.key === "red_report" || candidate.key === "previous_red_report")) {
+        const title = redReport.path || ("artifacts/" + item.id + "/" + redReport.name);
+        renderArtifactEntry("Red 검토: " + title, redReport, "kind-work");
+      }
       renderArtifacts("work", "중간 작업물", "kind-work");
       renderArtifacts("legacy", "기존 중간 작업물", "kind-work");
       if (!displayArtifacts.length) addDetailBlock("Artifact: 기록 없음", "연결된 산출물이 없습니다.", "kind-artifact");

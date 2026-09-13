@@ -243,7 +243,7 @@
     .promotion-empty { padding: 16px; color: var(--muted); }
     @media (max-width: 800px) { .promotion-page { margin: 14px 10px; } .promotion-row { grid-template-columns: 1fr; gap: 5px; } .promotion-row-head { display: none; } }
     .task-trace-strip { display: grid; gap: 10px; }
-    .task-trace-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .task-trace-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
     .task-trace-tab { position: relative; min-width: 0; min-height: 74px; padding: 10px 12px; border-radius: 10px; background: #111827; border-color: #475569; color: #e2e8f0; text-align: left; }
     .task-trace-tab:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 50%; transform: translateY(-50%); color: #38bdf8; font-size: 16px; font-weight: 700; z-index: 2; pointer-events: none; }
     .task-trace-tab:hover, .task-trace-tab.active { border-color: #0e7490; background: linear-gradient(145deg, #12334a, #111827); }
@@ -257,7 +257,7 @@
     .knowledge-fab { position: fixed; left: 22px; bottom: 22px; z-index: 20; min-height: 48px; padding: 0 18px; border: 1px solid rgba(125,211,252,.62); border-radius: 999px; background: radial-gradient(circle at 25% 20%, rgba(224,242,254,.32), transparent 28%), linear-gradient(135deg, #075985, #0e7490); color: #ecfeff; box-shadow: 0 14px 34px rgba(2,132,199,.28), 0 4px 12px rgba(0,0,0,.34); font-size: 13px; font-weight: 750; letter-spacing: -.01em; }
     .knowledge-fab::before { content: "✦"; margin-right: 7px; color: #fef3c7; }
     .knowledge-fab:hover { transform: translateY(-2px); background: linear-gradient(135deg, #0284c7, #0891b2); box-shadow: 0 18px 38px rgba(2,132,199,.36), 0 4px 12px rgba(0,0,0,.3); }
-    @media (max-width: 640px) { .task-trace-tabs { grid-template-columns: repeat(3, minmax(150px, 1fr)); overflow-x: auto; padding: 2px; } .task-trace-tab:not(:last-child)::after { right: -14px; } .knowledge-fab { left: 14px; bottom: 14px; } }
+    @media (max-width: 640px) { .task-trace-tabs { grid-template-columns: repeat(4, minmax(150px, 1fr)); overflow-x: auto; padding: 2px; } .task-trace-tab:not(:last-child)::after { right: -14px; } .knowledge-fab { left: 14px; bottom: 14px; } }
     @media (max-width: 1100px) { .knowledge-loop-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
     @media (max-width: 640px) { .knowledge-loop { margin: 14px 10px 2px; } .knowledge-loop-grid { grid-template-columns: 1fr; } }
     .archive-filter {
@@ -1695,7 +1695,9 @@
         const latestReport = await fetchLatestReport(hydratedItem.id);
         reports = latestReport ? [latestReport] : [];
       }
-      const taskPlanViewPath = normalizePath(metaValue(hydratedItem, ["task_plan_view"]));
+      const declaredPlan = metaValue(hydratedItem, ["task_plan_doc", "task_plan_view"]);
+      const structuredPlan = metaValue(hydratedItem, ["task_plan"]);
+      const taskPlanViewPath = normalizePath(declaredPlan || (structuredPlan ? structuredPlan.replace(/\.json$/i, ".md") : ""));
       const taskPlanViewText = taskPlanViewPath ? await fetchMaybeText(taskPlanViewPath) : null;
       const data = { item: hydratedItem, archive, detailPath, detailText, artifacts, reports, contextPackPath, contextPack, taskPlanViewPath, taskPlanViewText, tracePath: traceBundle.path, trace: traceBundle.trace };
       detailCache.set(key, { t: Date.now(), data });
@@ -1884,31 +1886,45 @@
       return concise(raw || normalized || metaValue(item, ["user_request", "requested_query", "query", "goal"]));
     }
 
+    function uniqueRows(rows) {
+      const seen = new Set();
+      return rows.filter((row) => {
+        const key = (row.label || "") + "\u0000" + (row.value || "");
+        if (!row.value || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function buildPlanRows(item, bundle) {
+      const path = bundle.taskPlanViewPath || normalizePath(metaValue(item, ["task_plan_doc"]));
+      if (!path) return [{ label: "실행 계획", value: "탐색형 리서치 · 별도 태스크 계획 없음", key: true }];
+      return [{ label: "사람용 실행 계획", value: path, key: true }, { label: "계획 상태", value: bundle.taskPlanViewText ? "기록 있음" : "파일을 불러오지 못함" }];
+    }
+
+    function buildResultRows(item, bundle) {
+      return uniqueRows([
+        { label: "최종 산출물", value: bundle.artifacts.map(entry => entry.path || entry.name).filter(path => /\/final\//.test(path)).join("\n") },
+        { label: "리포트", value: bundle.reports.map(entry => entry.path || entry.name).join("\n") },
+        { label: "Red 검증", value: metaValue(item, ["red_status"]) },
+        { label: "원격 검증", value: metaValue(item, ["remote_verified", "verification"]) },
+        { label: "결과", value: metaValue(item, ["result", "metric_result"]) },
+        { label: "다음 결정", value: metaValue(item, ["next_action", "metric_next_decision", "decision"]) },
+      ]);
+    }
+
     function renderTraceContract(item, bundle) {
       const trace = bundle.trace;
-      const fallbackEvidence = buildContextMapRows(item, bundle.contextPackPath, bundle.contextPack);
-      const fallbackOutputs = [
-        { label: "Artifact", value: bundle.artifacts.map(entry => entry.path || entry.name).join("\n") || "기록 없음" },
-        { label: "Report", value: bundle.reports.map(entry => entry.path || entry.name).join("\n") || "기록 없음" },
-      ];
-      const fallbackVerification = [
-        { label: "Red", value: metaValue(item, ["red_status"]) || "기록 없음" },
-        { label: "원격 검증", value: metaValue(item, ["remote_verified", "verification"]) || "기록 없음" },
-        { label: "결과", value: metaValue(item, ["result", "metric_result"]) || "기록 없음" },
-      ];
-      const fallbackDecision = [
-        { label: "다음 결정", value: metaValue(item, ["next_action", "metric_next_decision", "decision"]) || "기록 없음", key: true },
-        { label: "지표 다음 결정", value: metaValue(item, ["metric_next_decision"]) || "기록 없음" },
-        { label: "막힘·승인", value: metaValue(item, ["blocker", "permission", "boundary"]) || "없음" },
-      ];
-      // The detail UI intentionally has only three sections.  Completion
-      // evidence remains visible, but is collected as structured log rows
-      // instead of becoming separate product-facing stages.
       setTaskTrace("request", "요청 쿼리", traceStageRows(trace, "request", buildTaskQueryRows(item)), traceRequestSummary(trace, item));
-      const evidenceRows = traceStageRows(trace, "evidence", fallbackEvidence);
-      setTaskTrace("evidence", "조회한 경로 · Context Map", evidenceRows, trace ? concise(evidenceRows.map(row => row.value).join(" · ")) : contextMapSummary(bundle.contextPack, item));
-      const logRows = buildTaskLogRows(item, bundle);
-      setTaskTrace("logs", "작업 로그 요약", logRows, taskLogSummary(item, bundle));
+      const researchRows = uniqueRows([
+        ...buildContextMapRows(item, bundle.contextPackPath, bundle.contextPack),
+        ...traceStageRows(trace, "evidence", []),
+      ]);
+      setTaskTrace("research", "조사 근거 · ZG", researchRows, researchRows.some(row => row.label === "zg 선검사") ? "ZG 선검사와 선택 근거" : "기존 기록 · ZG 메타 없음");
+      const planRows = buildPlanRows(item, bundle);
+      setTaskTrace("plan", "실행 계획", planRows, planRows[0].value);
+      const resultRows = buildResultRows(item, bundle);
+      setTaskTrace("result", "결과", resultRows.length ? resultRows : [{ label: "결과", value: "진행 중 · 산출물 없음" }], resultRows.map(row => row.value).join(" · ") || "진행 중");
     }
 
     function renderImmediateDetail(item, sourceLabel) {
@@ -1916,11 +1932,12 @@
       beginTaskTrace();
       const queryRows = buildTaskQueryRows(item);
       setTaskTrace("request", "요청 쿼리", queryRows, concise(queryRows[0].value));
-      setTaskTrace("evidence", "조회한 경로 · Context Map", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }], contextMapSummary(null, item));
-      setTaskTrace("logs", "남긴 로그", [{ label: "상태", value: "구조화 로그를 불러오는 중" }], "불러오는 중");
+      setTaskTrace("research", "조사 근거 · ZG", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }], "불러오는 중");
+      setTaskTrace("plan", "실행 계획", [{ label: "계획", value: "불러오는 중" }], "불러오는 중");
+      setTaskTrace("result", "결과", [{ label: "상태", value: "불러오는 중" }], "불러오는 중");
       addActionBlock(item, sourceLabel);
       const st = String(item.meta.status || "").toLowerCase();
-      if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") showTaskTrace("logs");
+      if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") showTaskTrace("result");
     }
 
     function appendLoadedDetail(item, bundle) {

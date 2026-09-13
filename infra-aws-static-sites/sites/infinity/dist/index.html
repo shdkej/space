@@ -1982,14 +1982,16 @@
       }
     }
 
-    // markdown 의 ## 헤더 단위로 잘라 { name: body } 맵 반환
+    // INTENTS.md의 최상위 lifecycle 헤더만 분리한다. 각 intent 안의
+    // `## Archive Card` 같은 상세 헤더를 섹션으로 잘못 인식하면 이후
+    // Archive 항목 전체가 목록에서 사라진다.
     function splitSections(md) {
       const lines = md.split(/\r?\n/);
       const sections = {};
       let current = "__preamble__";
       sections[current] = [];
       for (const line of lines) {
-        const m = line.match(/^##\s+(.+?)\s*$/);
+        const m = line.match(/^##\s+(Inbox|Active|Waiting|Archive)\s*$/);
         if (m) {
           current = m[1].trim();
           if (!sections[current]) sections[current] = [];

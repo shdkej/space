@@ -48,13 +48,6 @@ each polling render. Existing Archive cards therefore retain their rendered
 state; only a newly discovered record receives one follow-up update after its
 canonical detail is fetched.
 
-Intent detail uses one fixed evidence flow: `요청 쿼리 → 조사 근거 · ZG → 실행 계획 → 결과`.
-The Context Pack is the source for ZG preflight and selected-context records;
-trace events add execution evidence without replacing that source. Intents
-without a task plan are shown explicitly as exploratory research, while a
-declared `task_plan_doc` (or the Markdown peer of `task_plan`) is the
-human-readable execution-plan source.
-
 The app registry lives at:
 
 ```text

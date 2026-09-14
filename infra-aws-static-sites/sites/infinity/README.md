@@ -15,7 +15,7 @@ Infinity의 `Inbox / Active / Waiting / Archive` 원장을 읽는 정적 대시�
 - Infinity `INTENTS.md`, `GATES.md` — 상태의 정본
 - Infinity `intents/archive/` — Archive 카드의 상세 보강 입력
 - Infinity `data/knowledge-loop.json` — 지식 흐름 모달 입력
-- Agent Wiki `content/docs/promotion-index.json` — 프로모션 인덱스 입력
+- Infinity `data/promotion-index.json` — 프로모션 인덱스 입력
 
 ## 검증과 배포
 

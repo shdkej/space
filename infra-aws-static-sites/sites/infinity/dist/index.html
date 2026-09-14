@@ -242,6 +242,39 @@
     .promotion-targets a { color: #a5f3fc; text-decoration: none; border-bottom: 1px solid #0e7490; }
     .promotion-empty { padding: 16px; color: var(--muted); }
     @media (max-width: 800px) { .promotion-page { margin: 14px 10px; } .promotion-row { grid-template-columns: 1fr; gap: 5px; } .promotion-row-head { display: none; } }
+    .reflection-map { margin: 0 14px 18px; padding: 16px; border: 1px solid #155e75; border-radius: 14px; background: radial-gradient(circle at 88% 12%, rgba(34,211,238,.14), transparent 34%), #0f1b2d; }
+    .reflection-map-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; }
+    .reflection-map-title { margin: 0; font-size: 18px; letter-spacing: -.025em; }
+    .reflection-map-note { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .reflection-total { color: #e0f2fe; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .reflection-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 15px; }
+    .reflection-stat { min-width: 0; padding: 10px; border: 1px solid rgba(148,163,184,.25); border-radius: 9px; background: rgba(15,23,42,.66); }
+    .reflection-stat strong { display: block; color: #f8fafc; font-size: 19px; font-variant-numeric: tabular-nums; }
+    .reflection-stat span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; line-height: 1.35; }
+    .reflection-controls { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 15px; }
+    .reflection-filter { padding: 6px 9px; border: 1px solid #475569; border-radius: 999px; background: #101b2d; color: #cbd5e1; font-size: 11px; }
+    .reflection-filter.active { color: #ecfeff; border-color: #67e8f9; background: #164e63; }
+    .reflection-filter::before { content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 6px 1px 0; border-radius: 50%; background: currentColor; vertical-align: middle; }
+    .reflection-filter[data-filter="all"]::before { background: #e2e8f0; }
+    .reflection-filter[data-filter="reflected"]::before { background: #34d399; }
+    .reflection-filter[data-filter="selected"]::before { background: #fbbf24; }
+    .reflection-filter[data-filter="reviewing"]::before { background: #94a3b8; }
+    .reflection-filter[data-filter="rejected"]::before { background: #f87171; }
+    .reflection-field { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 12px; padding: 11px; border: 1px solid rgba(148,163,184,.22); border-radius: 10px; background: rgba(2,6,23,.36); }
+    .reflection-dot { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 2px; background: #64748b; opacity: .9; cursor: pointer; }
+    .reflection-dot:hover, .reflection-dot:focus-visible { outline: 2px solid #e0f2fe; outline-offset: 2px; transform: scale(1.35); z-index: 1; }
+    .reflection-dot.reflected { background: #34d399; }
+    .reflection-dot.selected { background: #fbbf24; }
+    .reflection-dot.reviewing { background: #94a3b8; }
+    .reflection-dot.rejected { background: #f87171; }
+    .reflection-dot.dimmed { opacity: .13; }
+    .reflection-file-list { display: grid; gap: 0; margin-top: 12px; border-top: 1px solid rgba(148,163,184,.2); }
+    .reflection-file { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 8px 0; border-bottom: 1px solid rgba(148,163,184,.15); font-size: 11px; }
+    .reflection-file-state { color: #bae6fd; }
+    .reflection-file-source { color: #dbeafe; overflow-wrap: anywhere; text-decoration: none; }
+    .reflection-file-target { color: #6ee7b7; text-decoration: none; white-space: nowrap; }
+    .reflection-more { margin: 9px 0 0; color: var(--muted); font-size: 11px; }
+    @media (max-width: 800px) { .reflection-map { margin: 0 10px 14px; } .reflection-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } .reflection-file { grid-template-columns: 64px minmax(0, 1fr); } .reflection-file-target { grid-column: 2; white-space: normal; } }
     .task-trace-strip { display: grid; gap: 10px; }
     .task-trace-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .task-trace-tab { position: relative; min-width: 0; min-height: 74px; padding: 10px 12px; border-radius: 10px; background: #111827; border-color: #475569; color: #e2e8f0; text-align: left; }
@@ -778,6 +811,20 @@
     </div>
   </div>
   <div id="knowledge-staging" hidden>
+  <section class="reflection-map" id="reflection-map" aria-labelledby="reflection-map-title">
+    <div class="reflection-map-head">
+      <div>
+        <h2 class="reflection-map-title" id="reflection-map-title">KL → Agent Wiki 반영 맵</h2>
+        <p class="reflection-map-note" id="reflection-map-note">KL 문서를 읽는 중입니다.</p>
+      </div>
+      <span class="reflection-total" id="reflection-map-updated"></span>
+    </div>
+    <div class="reflection-summary" id="reflection-summary"></div>
+    <div class="reflection-controls" id="reflection-controls" aria-label="반영 상태 필터"></div>
+    <div class="reflection-field" id="reflection-field" aria-label="KL 문서 상태 맵"></div>
+    <div class="reflection-file-list" id="reflection-file-list" aria-live="polite"></div>
+    <p class="reflection-more" id="reflection-more"></p>
+  </section>
   <section class="knowledge-loop" id="knowledge-loop-section" aria-labelledby="knowledge-loop-title">
     <div class="knowledge-loop-head">
       <div>
@@ -851,7 +898,7 @@
       <div class="cards" data-cards></div>
     </section>
   </main>
-  <button type="button" class="knowledge-fab" id="knowledge-open">지식 흐름</button>
+  <button type="button" class="knowledge-fab" id="knowledge-open">KL 반영 맵</button>
   <div class="modal-backdrop" id="detail-modal" aria-hidden="true">
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
       <div class="modal-head">
@@ -865,7 +912,7 @@
   <div class="modal-backdrop" id="knowledge-modal" aria-hidden="true">
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="knowledge-modal-title">
       <div class="modal-head">
-        <div class="modal-title" id="knowledge-modal-title">지식 흐름</div>
+        <div class="modal-title" id="knowledge-modal-title">KL → Agent Wiki 반영 맵</div>
         <span class="spacer"></span>
         <button class="modal-close" id="knowledge-close">닫기</button>
       </div>
@@ -3031,29 +3078,97 @@
       updated.textContent = generatedAt ? "갱신 " + generatedAt : "";
     }
 
+    let reflectionEntries = [];
+    let reflectionFilter = "all";
+
+    function reflectionCategory(entry) {
+      if (entry.wiki_reflected) return "reflected";
+      if (entry.status === "selected") return "selected";
+      if (entry.status === "rejected") return "rejected";
+      return "reviewing";
+    }
+
+    function reflectionLabel(category) {
+      return ({ reflected: "위키 반영됨", selected: "승격 대기", reviewing: "검토 중", rejected: "보존 제외" })[category] || "전체";
+    }
+
+    function renderReflectionMap() {
+      const summary = document.getElementById("reflection-summary");
+      const controls = document.getElementById("reflection-controls");
+      const field = document.getElementById("reflection-field");
+      const list = document.getElementById("reflection-file-list");
+      const note = document.getElementById("reflection-map-note");
+      const more = document.getElementById("reflection-more");
+      const buckets = { reflected: [], selected: [], reviewing: [], rejected: [] };
+      reflectionEntries.forEach((entry) => buckets[reflectionCategory(entry)].push(entry));
+      summary.replaceChildren();
+      [
+        ["reflected", "Wiki 반영됨"],
+        ["selected", "승격 대기"],
+        ["reviewing", "검토 중"],
+        ["rejected", "보존 제외"],
+      ].forEach(([category, label]) => {
+        const stat = document.createElement("div"); stat.className = "reflection-stat";
+        const value = document.createElement("strong"); value.textContent = String(buckets[category].length);
+        const caption = document.createElement("span"); caption.textContent = label;
+        stat.append(value, caption); summary.appendChild(stat);
+      });
+      controls.replaceChildren();
+      [["all", "전체"], ["reflected", "위키 반영됨"], ["selected", "승격 대기"], ["reviewing", "검토 중"], ["rejected", "보존 제외"]].forEach(([category, label]) => {
+        const button = document.createElement("button"); button.type = "button"; button.className = "reflection-filter" + (reflectionFilter === category ? " active" : "");
+        button.dataset.filter = category; button.textContent = label + " · " + (category === "all" ? reflectionEntries.length : buckets[category].length);
+        button.addEventListener("click", () => { reflectionFilter = category; renderReflectionMap(); }); controls.appendChild(button);
+      });
+      field.replaceChildren();
+      reflectionEntries.forEach((entry) => {
+        const category = reflectionCategory(entry); const dot = document.createElement("button");
+        dot.type = "button"; dot.className = "reflection-dot " + category + (reflectionFilter !== "all" && reflectionFilter !== category ? " dimmed" : "");
+        dot.title = reflectionLabel(category) + " · " + entry.source;
+        dot.setAttribute("aria-label", dot.title);
+        dot.addEventListener("click", () => { reflectionFilter = category; renderReflectionMap(); }); field.appendChild(dot);
+      });
+      const visible = reflectionEntries.filter((entry) => reflectionFilter === "all" || reflectionCategory(entry) === reflectionFilter);
+      list.replaceChildren();
+      visible.slice(0, 12).forEach((entry) => {
+        const row = document.createElement("article"); row.className = "reflection-file";
+        const state = document.createElement("span"); state.className = "reflection-file-state"; state.textContent = reflectionLabel(reflectionCategory(entry));
+        const source = document.createElement("a"); source.className = "reflection-file-source"; source.href = SOURCES.knowledgeLabBase + entry.source; source.target = "_blank"; source.rel = "noopener"; source.textContent = entry.source;
+        row.append(state, source);
+        if (entry.promotion_targets && entry.promotion_targets.length) { const target = document.createElement("a"); target.className = "reflection-file-target"; target.href = "https://shdkej.com/agent-wiki" + entry.promotion_targets[0]; target.target = "_blank"; target.rel = "noopener"; target.textContent = "Wiki 보기 ↗"; row.appendChild(target); }
+        list.appendChild(row);
+      });
+      note.textContent = "점 하나가 KL 문서 1개입니다. 초록은 Agent Wiki에 명시적으로 연결된 문서, 나머지는 아직 위키 반영 대상이 아니거나 검토 상태입니다.";
+      more.textContent = visible.length > 12 ? "현재 " + reflectionLabel(reflectionFilter) + " " + visible.length + "개 중 12개만 표시합니다. 점을 누르면 같은 상태로 필터링됩니다." : "";
+    }
+
     async function loadPromotionIndex() {
       const model = await fetch(SOURCES.promotionIndex, { cache: "no-cache" }).then((response) => {
         if (!response.ok) throw new Error("promotion index HTTP " + response.status);
         return response.json();
       });
-      renderPromotionIndex(Array.isArray(model.entries) ? model.entries : [], model.generated_at || "");
+      reflectionEntries = Array.isArray(model.entries) ? model.entries : [];
+      document.getElementById("reflection-map-updated").textContent = reflectionEntries.length ? "KL 문서 " + reflectionEntries.length + "개 · 갱신 " + (model.generated_at || "") : "";
+      renderPromotionIndex(reflectionEntries, model.generated_at || "");
+      renderReflectionMap();
     }
 
     function openKnowledgeModal() {
+      const reflection = document.getElementById("reflection-map");
       const loop = document.getElementById("knowledge-loop-section");
       const promotion = document.getElementById("promotion-page");
       promotion.hidden = false;
-      knowledgeModalBody.append(loop, promotion);
+      knowledgeModalBody.append(reflection, loop, promotion);
       knowledgeModal.classList.add("open");
       knowledgeModal.setAttribute("aria-hidden", "false");
       document.body.classList.add("modal-open");
     }
 
     function closeKnowledgeModal() {
+      const reflection = document.getElementById("reflection-map");
       const loop = document.getElementById("knowledge-loop-section");
       const promotion = document.getElementById("promotion-page");
       promotion.hidden = true;
-      knowledgeStaging.append(loop, promotion);
+      knowledgeStaging.append(reflection, loop, promotion);
       knowledgeModal.classList.remove("open");
       knowledgeModal.setAttribute("aria-hidden", "true");
       document.body.classList.remove("modal-open");

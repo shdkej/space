@@ -1865,7 +1865,7 @@
             : entry.verification === "no-match"
               ? "실제 매치 없음 · 작업은 계속"
               : entry.verified_term
-                ? "rg 검증어: " + entry.verified_term
+                ? "이전 영수증 · 실제 매치 줄 미기록 (검색어: " + entry.verified_term + ")"
                 : entry.verification;
           return [entry.path, entry.reason, evidence].filter(Boolean).join(" · ");
         }).join("\n") : "없음" },

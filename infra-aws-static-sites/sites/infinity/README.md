@@ -10,7 +10,9 @@ Shows the live Infinity intent registry and its execution evidence at
 - `dist/index.html` reads `INTENTS.md`, task details, Context Packs, traces, and
   artifacts from the `shdkej/infinity` repository's `main` branch.
 - The evidence view keeps execution-trace rows and Context Pack rows together.
-  This includes the `zg` preflight receipt and its selected Agent Wiki paths.
+  This includes the `zg` preflight receipt, selected Agent Wiki paths, and—when
+  available—the exact matched term, line, and short excerpt. A `no-match` is
+  shown explicitly and does not stop the Intent.
 - Context Pack data is read from `intents/context/<intent-id>.json`; an absent or
   older pack is rendered as unavailable rather than inferred.
 

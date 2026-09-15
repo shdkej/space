@@ -1858,7 +1858,17 @@
           "방식: " + (pack.preflight.discovery || "없음") + " → " + (pack.preflight.verification || "없음"),
           "후보: " + (pack.preflight.result_count ?? "없음") + "개",
         ].join("\n") : "기존 Context Pack (zg 기록 없음)" },
-        { label: "zg 선택 결과", value: Array.isArray(pack.selected_context) ? pack.selected_context.map((entry) => [entry.path, entry.reason, entry.verified_term ? "rg 검증어: " + entry.verified_term : entry.verification].filter(Boolean).join(" · ")).join("\n") : "없음" },
+        { label: "zg 선택 결과", value: Array.isArray(pack.selected_context) ? pack.selected_context.map((entry) => {
+          const match = entry.match;
+          const evidence = match
+            ? "매치: `" + match.term + "` · L" + match.line + " · " + match.excerpt
+            : entry.verification === "no-match"
+              ? "실제 매치 없음 · 작업은 계속"
+              : entry.verified_term
+                ? "rg 검증어: " + entry.verified_term
+                : entry.verification;
+          return [entry.path, entry.reason, evidence].filter(Boolean).join(" · ");
+        }).join("\n") : "없음" },
         { label: "필수 문서", value: Array.isArray(pack.required_documents) ? pack.required_documents.join("\n") : "없음" },
         { label: "검색 범위", value: Array.isArray(pack.search_scopes) ? pack.search_scopes.join("\n") : "없음" },
       ];

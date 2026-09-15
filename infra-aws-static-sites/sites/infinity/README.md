@@ -10,8 +10,9 @@ Shows the live Infinity intent registry and its execution evidence at
 - `dist/index.html` reads `INTENTS.md`, task details, Context Packs, traces, and
   artifacts from the `shdkej/infinity` repository's `main` branch.
 - The evidence view keeps execution-trace rows and Context Pack rows together.
-  This includes the `zg` preflight receipt, selected Agent Wiki paths, and—when
-  available—the exact matched term, line, and short excerpt. A `no-match` is
+  This includes the `zg` preflight receipt, selected Agent Wiki paths, and the
+  selected section's heading, line range, and short excerpt (`locator`). Older
+  Context Packs still render their legacy exact-match receipt. A `no-match` is
   shown explicitly and does not stop the Intent.
 - Context Pack data is read from `intents/context/<intent-id>.json`; an absent or
   older pack is rendered as unavailable rather than inferred.
@@ -21,12 +22,14 @@ Shows the live Infinity intent registry and its execution evidence at
 There is no build step. Validate the inline JavaScript after edits:
 
 ```sh
-sed -n '928,3400p' dist/index.html | node -e 'let s=""; process.stdin.on("data", c => s += c).on("end", () => new Function(s))'
+awk '/<script>/{n++; next} n == 2 && /<\/script>/{exit} n == 2 {print}' dist/index.html | node -e 'let s=""; process.stdin.on("data", c => s += c).on("end", () => new Function(s))'
 ```
 
 Pushes that change `dist/` trigger the Space static-site workflow. Verify the
 live page by opening an Intent with a v3 Context Pack and confirming the
-`zg 선검사` and `zg 선택 결과` rows in **조회한 경로 · Context Map**.
+`zg 선검사` and `zg 선택 결과` rows in **조회한 경로 · Context Map**. A current
+locator must display `섹션`, `L<start>–<end>`, and `발췌` for each selected
+document section.
 
 ## Limit
 

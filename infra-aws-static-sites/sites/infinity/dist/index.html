@@ -1860,7 +1860,16 @@
         ].join("\n") : "기존 Context Pack (zg 기록 없음)" },
         { label: "zg 선택 결과", value: Array.isArray(pack.selected_context) ? pack.selected_context.map((entry) => {
           const match = entry.match;
-          const evidence = match
+          const locator = entry.locator;
+          const evidence = locator
+            ? [
+                locator.heading ? "섹션: " + locator.heading : "선택 구간",
+                Number.isInteger(locator.start_line) && Number.isInteger(locator.end_line)
+                  ? "L" + locator.start_line + "–" + locator.end_line
+                  : "행 범위 미기록",
+                locator.excerpt ? "발췌: " + locator.excerpt : "발췌 미기록",
+              ].join(" · ")
+            : match
             ? "매치: `" + match.term + "` · L" + match.line + " · " + match.excerpt
             : entry.verification === "no-match"
               ? "실제 매치 없음 · 작업은 계속"

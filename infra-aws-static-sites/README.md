@@ -46,7 +46,9 @@ layers on a 1080×1350 canvas, and exports both PNG and reusable layout JSON.
 The Infinity dashboard applies cached Archive titles and summary fields before
 each polling render. Existing Archive cards therefore retain their rendered
 state; only a newly discovered record receives one follow-up update after its
-canonical detail is fetched.
+canonical detail is fetched. A completed Intent may appear in the canonical
+Archive ledger, a completion comment, and GATES, but the dashboard renders one
+Archive card per Intent ID, preferring the canonical ledger record.
 
 The app registry lives at:
 

@@ -15,18 +15,17 @@ Infinity의 `Inbox / Active / Waiting / Archive` 원장을 읽는 정적 대시�
 - Infinity `INTENTS.md`, `GATES.md` — 상태의 정본
 - Infinity `intents/archive/` — Archive 카드의 상세 보강 입력
 - Infinity `data/knowledge-loop.json` — 지식 흐름 모달 입력
-- Infinity `data/promotion-index.json` — KL 전체 문서의 상태·명시적 Agent Wiki 연결을 담는 반영 맵 입력
+- Infinity `data/promotion-index.json` — KL 전체 문서의 상태·명시적 Agent Wiki `outputs/` 연결을 담는 반영 맵 입력
 
 ## KL 반영 맵
 
 왼쪽 아래 `KL 반영 맵` 플로팅 버튼은 Knowledge Lab의 ingest 문서 전체를 한 화면의 점 필드로 표시합니다. 점 하나는 KL 문서 하나입니다.
 
-- 초록: Agent Wiki 문서에서 원본 경로가 명시적으로 연결된 문서
-- 노랑: Agent Wiki 승격이 결정됐지만 아직 연결이 없는 문서
-- 회색: `queued` 또는 `reviewed` 상태로 검토 중인 문서
-- 빨강: `rejected`로 보존만 하는 문서
+- 초록: 실제 Agent Wiki `outputs/` 출처 링크 또는 ingest의 유효 outputs target이 있는 문서(`reflected`)
+- 노랑: `selected`지만 아직 유효한 outputs 연결이 없는 문서(`pending_promotion`)
+- 회색: 로그·일지·원문 보관처럼 Agent Wiki 승격 대상이 아닌 KL 자료(`not_applicable`)
 
-이 화면의 “반영됨”은 파일명이나 의미 유사도로 추정하지 않고, `promotion-index.json`의 `promotion_targets`가 있을 때만 표시합니다. 읽기 모델은 Knowledge Lab의 `source/openclaw-system/scripts/build_promotion_index.mjs`가 `ingest/manifest.jsonl` 전체와 Agent Wiki 문서를 대조해 생성합니다.
+이 화면의 “반영됨”은 파일명이나 의미 유사도로 추정하지 않고, `promotion-index.json`의 `promotion_targets` 또는 명시적 ingest target이 있을 때만 표시합니다. 읽기 모델은 Knowledge Lab의 `source/openclaw-system/scripts/build_promotion_index.mjs`가 `ingest/manifest.jsonl`, `ingest/INDEX.md`, Agent Wiki `outputs/**/*.mdx`를 대조해 생성합니다.
 
 ## 검증과 배포
 

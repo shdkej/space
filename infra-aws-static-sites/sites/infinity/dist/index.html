@@ -257,16 +257,14 @@
     .reflection-filter::before { content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 6px 1px 0; border-radius: 50%; background: currentColor; vertical-align: middle; }
     .reflection-filter[data-filter="all"]::before { background: #e2e8f0; }
     .reflection-filter[data-filter="reflected"]::before { background: #34d399; }
-    .reflection-filter[data-filter="selected"]::before { background: #fbbf24; }
-    .reflection-filter[data-filter="reviewing"]::before { background: #94a3b8; }
-    .reflection-filter[data-filter="rejected"]::before { background: #f87171; }
+    .reflection-filter[data-filter="pending_promotion"]::before { background: #fbbf24; }
+    .reflection-filter[data-filter="not_applicable"]::before { background: #94a3b8; }
     .reflection-field { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 12px; padding: 11px; border: 1px solid rgba(148,163,184,.22); border-radius: 10px; background: rgba(2,6,23,.36); }
     .reflection-dot { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 2px; background: #64748b; opacity: .9; cursor: pointer; }
     .reflection-dot:hover, .reflection-dot:focus-visible { outline: 2px solid #e0f2fe; outline-offset: 2px; transform: scale(1.35); z-index: 1; }
     .reflection-dot.reflected { background: #34d399; }
-    .reflection-dot.selected { background: #fbbf24; }
-    .reflection-dot.reviewing { background: #94a3b8; }
-    .reflection-dot.rejected { background: #f87171; }
+    .reflection-dot.pending_promotion { background: #fbbf24; }
+    .reflection-dot.not_applicable { background: #94a3b8; }
     .reflection-dot.dimmed { opacity: .13; }
     .reflection-file-list { display: grid; gap: 0; margin-top: 12px; border-top: 1px solid rgba(148,163,184,.2); }
     .reflection-file { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 8px 0; border-bottom: 1px solid rgba(148,163,184,.15); font-size: 11px; }
@@ -839,7 +837,7 @@
     <div class="promotion-head">
       <div>
         <h2 class="promotion-title" id="promotion-title">소스 → Ingest → Wiki 승격</h2>
-        <p class="promotion-note" id="promotion-note">Knowledge Lab 원장의 명시 출처와 Wiki 연결만 표시합니다.</p>
+        <p class="promotion-note" id="promotion-note">파일명·내용 유사도 대신 KL ingest 원장의 명시 출처·target만 표시합니다.</p>
       </div>
       <span class="meta" id="promotion-updated"></span>
     </div>
@@ -3050,9 +3048,12 @@
     }
 
     function promotionState(entry) {
-      if (entry.status === "selected") return "승격 필요 · 검토 완료";
-      if (entry.promotion_targets && entry.promotion_targets.length) return "Wiki 승격 연결됨";
-      return "KL 선별 보관 · Wiki 연결 미기록";
+      if (entry.promotion_state === "reflected") return "Wiki 반영됨";
+      if (entry.promotion_state === "pending_promotion") return "승격 대기 · 검토 완료";
+      if (entry.promotion_state === "not_applicable") return "위키 승격 대상 아님";
+      if (entry.status === "selected") return "승격 대기 · 검토 완료";
+      if (entry.promotion_targets && entry.promotion_targets.length) return "Wiki 반영됨";
+      return "위키 승격 대상 아님";
     }
 
     function renderPromotionIndex(entries, generatedAt) {
@@ -3071,10 +3072,10 @@
         const ingest = document.createElement("div"); ingest.className = "promotion-source"; ingest.textContent = entry.status + (entry.reason ? " · " + entry.reason : "");
         const targets = document.createElement("div"); targets.className = "promotion-targets";
         (entry.promotion_targets || []).forEach((target) => { const link = document.createElement("a"); link.href = "https://shdkej.com/agent-wiki" + target; link.target = "_blank"; link.rel = "noopener"; link.textContent = target.replace(/^\/docs\//, ""); targets.appendChild(link); });
-        if (!targets.children.length) { const text = document.createElement("span"); text.className = "promotion-source"; text.textContent = entry.status === "selected" ? "아직 승격 전" : (entry.promotion_target_note || "명시 연결 없음"); targets.appendChild(text); }
+        if (!targets.children.length) { const text = document.createElement("span"); text.className = "promotion-source"; text.textContent = entry.promotion_reason || entry.promotion_target_note || "명시 연결 없음"; targets.appendChild(text); }
         row.append(state, source, ingest, targets); host.appendChild(row);
       });
-      note.textContent = "선별·통합된 " + entries.length + "개 소스를 표시합니다. Wiki 연결은 출처 또는 ingest target으로 명시된 경우만 보여줍니다.";
+      note.textContent = "KL 문서 " + entries.length + "개를 표시합니다. 반영은 outputs 출처 링크 또는 ingest target이 명시된 경우만 인정하며, 위키 대상이 아닌 자료는 별도로 표시합니다.";
       updated.textContent = generatedAt ? "갱신 " + generatedAt : "";
     }
 
@@ -3082,14 +3083,14 @@
     let reflectionFilter = "all";
 
     function reflectionCategory(entry) {
+      if (entry.promotion_state) return entry.promotion_state;
       if (entry.wiki_reflected) return "reflected";
-      if (entry.status === "selected") return "selected";
-      if (entry.status === "rejected") return "rejected";
-      return "reviewing";
+      if (entry.status === "selected") return "pending_promotion";
+      return "not_applicable";
     }
 
     function reflectionLabel(category) {
-      return ({ reflected: "위키 반영됨", selected: "승격 대기", reviewing: "검토 중", rejected: "보존 제외" })[category] || "전체";
+      return ({ reflected: "위키 반영됨", pending_promotion: "승격 대기", not_applicable: "위키 대상 아님" })[category] || "전체";
     }
 
     function renderReflectionMap() {
@@ -3099,14 +3100,13 @@
       const list = document.getElementById("reflection-file-list");
       const note = document.getElementById("reflection-map-note");
       const more = document.getElementById("reflection-more");
-      const buckets = { reflected: [], selected: [], reviewing: [], rejected: [] };
+      const buckets = { reflected: [], pending_promotion: [], not_applicable: [] };
       reflectionEntries.forEach((entry) => buckets[reflectionCategory(entry)].push(entry));
       summary.replaceChildren();
       [
         ["reflected", "Wiki 반영됨"],
-        ["selected", "승격 대기"],
-        ["reviewing", "검토 중"],
-        ["rejected", "보존 제외"],
+        ["pending_promotion", "승격 대기"],
+        ["not_applicable", "위키 대상 아님"],
       ].forEach(([category, label]) => {
         const stat = document.createElement("div"); stat.className = "reflection-stat";
         const value = document.createElement("strong"); value.textContent = String(buckets[category].length);
@@ -3114,7 +3114,7 @@
         stat.append(value, caption); summary.appendChild(stat);
       });
       controls.replaceChildren();
-      [["all", "전체"], ["reflected", "위키 반영됨"], ["selected", "승격 대기"], ["reviewing", "검토 중"], ["rejected", "보존 제외"]].forEach(([category, label]) => {
+      [["all", "전체"], ["reflected", "위키 반영됨"], ["pending_promotion", "승격 대기"], ["not_applicable", "위키 대상 아님"]].forEach(([category, label]) => {
         const button = document.createElement("button"); button.type = "button"; button.className = "reflection-filter" + (reflectionFilter === category ? " active" : "");
         button.dataset.filter = category; button.textContent = label + " · " + (category === "all" ? reflectionEntries.length : buckets[category].length);
         button.addEventListener("click", () => { reflectionFilter = category; renderReflectionMap(); }); controls.appendChild(button);
@@ -3137,7 +3137,7 @@
         if (entry.promotion_targets && entry.promotion_targets.length) { const target = document.createElement("a"); target.className = "reflection-file-target"; target.href = "https://shdkej.com/agent-wiki" + entry.promotion_targets[0]; target.target = "_blank"; target.rel = "noopener"; target.textContent = "Wiki 보기 ↗"; row.appendChild(target); }
         list.appendChild(row);
       });
-      note.textContent = "점 하나가 KL 문서 1개입니다. 초록은 Agent Wiki에 명시적으로 연결된 문서, 나머지는 아직 위키 반영 대상이 아니거나 검토 상태입니다.";
+      note.textContent = "점 하나가 KL 문서 1개입니다. 초록은 명시적 outputs 연결, 노랑은 승격 대기, 회색은 애초 위키 승격 대상이 아닌 자료입니다.";
       more.textContent = visible.length > 12 ? "현재 " + reflectionLabel(reflectionFilter) + " " + visible.length + "개 중 12개만 표시합니다. 점을 누르면 같은 상태로 필터링됩니다." : "";
     }
 

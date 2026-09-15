@@ -1919,7 +1919,9 @@
           || (stage === "verification" && eventType === "archive")
           || (stage === "evidence" && eventType === "intake"))) rows.push(...traceRows(event, eventType === "dispatcher_handoff" ? "인계·보관 기록" : "기록"));
       }
-      return rows.length ? rows : fallbackRows;
+      // Execution trace rows describe what happened; Context Pack rows retain
+      // the zg search receipt. Show both so the trace cannot hide preflight.
+      return rows.length ? rows.concat(fallbackRows) : fallbackRows;
     }
 
     function traceRequestSummary(trace, item) {

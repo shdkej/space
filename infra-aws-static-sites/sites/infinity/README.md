@@ -16,6 +16,9 @@ Shows the live Infinity intent registry and its execution evidence at
   shown explicitly and does not stop the Intent.
 - Context Pack data is read from `intents/context/<intent-id>.json`; an absent or
   older pack is rendered as unavailable rather than inferred.
+- In the detail view, **대시보드 액션** uses green while **최종 산출물** uses a
+  plum accent. The colors distinguish an available operation from completed
+  output without changing the content order.
 
 ## Development and verification
 

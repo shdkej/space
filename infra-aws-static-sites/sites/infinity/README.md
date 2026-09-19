@@ -19,6 +19,9 @@ Shows the live Infinity intent registry and its execution evidence at
 - In the detail view, **대시보드 액션** uses green while **최종 산출물** uses a
   plum accent. The colors distinguish an available operation from completed
   output without changing the content order.
+- The intent detail closes through a persistent, bottom-centered circular
+  control. Its 44px touch target stays above the mobile safe area so a long
+  detail can be dismissed without returning to the top of the page.
 
 ## Development and verification
 

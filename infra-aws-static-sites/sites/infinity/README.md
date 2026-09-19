@@ -8,7 +8,9 @@ Shows the live Infinity intent registry and its execution evidence at
 ## Data and behavior
 
 - `dist/index.html` reads `INTENTS.md`, task details, Context Packs, traces, and
-  artifacts from the `shdkej/infinity` repository's `main` branch.
+  artifacts from the `shdkej/infinity` repository's `main` branch. The main
+  registry is fetched through the GitHub Contents API first so a refresh sees a
+  just-pushed Archive card; the raw URL is only a fallback when that API fails.
 - The evidence view keeps execution-trace rows and Context Pack rows together.
   This includes the `zg` preflight receipt, selected Agent Wiki paths, and the
   selected section's heading, line range, and short excerpt (`locator`). Older

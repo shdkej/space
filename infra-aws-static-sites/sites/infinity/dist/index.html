@@ -940,7 +940,7 @@
     <a href="https://github.com/shdkej/infinity/blob/main/INTENTS.md" target="_blank" rel="noopener">INTENTS.md</a>
     ·
     <a href="https://github.com/shdkej/infinity/blob/main/GATES.md" target="_blank" rel="noopener">GATES.md</a>
-    — 클라이언트에서 GitHub raw URL을 직접 호출합니다 (수 분 캐시 지연 가능)
+    — GitHub Contents API를 우선 읽고 raw URL은 장애 시에만 사용합니다
   </footer>
   <script>
     const SOURCES = {
@@ -3235,11 +3235,11 @@
       clearErrors();
       statusEl.textContent = lastDoneItems.length ? "동기화 중..." : "로딩 중...";
       let intentsText = "", gatesText = "";
-      // 공개 raw 파일을 우선 사용해 GitHub API 지연·rate limit 때문에
-      // 정본 대시보드 전체가 "로딩 중"에 멈추지 않도록 한다.
-      try { intentsText = await fetchTextWithFallback(SOURCES.rawIntents, SOURCES.intents); }
+      // Contents API의 main ref는 원장 반영을 즉시 확인하는 정본 경로다.
+      // raw URL은 CDN이 직전 revision을 줄 수 있어 장애 시 fallback으로만 쓴다.
+      try { intentsText = await fetchTextWithFallback(SOURCES.intents, SOURCES.rawIntents); }
       catch (e) { showError("INTENTS.md 로드 실패: " + e.message); }
-      try { gatesText = await fetchTextWithFallback(SOURCES.rawGates, SOURCES.gates); }
+      try { gatesText = await fetchTextWithFallback(SOURCES.gates, SOURCES.rawGates); }
       catch (e) { showError("GATES.md 로드 실패: " + e.message); }
 
       const intentSections = splitSections(intentsText);

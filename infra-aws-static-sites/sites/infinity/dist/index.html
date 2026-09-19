@@ -513,7 +513,12 @@
       max-height: calc(100vh - 126px);
       -webkit-overflow-scrolling: touch;
     }
-    .detail-modal-body { flex: 1 1 auto; }
+    /* A flex child defaults to its content height.  On a long mobile detail
+       that can push the action and document blocks outside the scrollable
+       viewport after the persistent close control is added.  Give the body a
+       definite share of the dialog and allow it to shrink, so every block
+       remains in the same scroll region. */
+    .detail-modal-body { flex: 1 1 0; min-height: 0; }
     .detail-modal-foot {
       flex: 0 0 auto;
       display: flex; justify-content: center;

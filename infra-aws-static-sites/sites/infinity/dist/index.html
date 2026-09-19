@@ -495,7 +495,7 @@
       width: min(1440px, calc(100vw - 48px)); max-height: calc(100vh - 48px);
       background: #0f172a; border: 1px solid var(--border);
       border-radius: 14px; box-shadow: 0 24px 80px rgba(0,0,0,.45);
-      overflow: hidden;
+      overflow: hidden; display: flex; flex-direction: column;
     }
     .modal-head {
       display: flex; gap: 12px; align-items: center; flex-wrap: nowrap;
@@ -513,6 +513,23 @@
       max-height: calc(100vh - 126px);
       -webkit-overflow-scrolling: touch;
     }
+    .detail-modal-body { flex: 1 1 auto; }
+    .detail-modal-foot {
+      flex: 0 0 auto;
+      display: flex; justify-content: center;
+      padding: 10px 16px max(14px, env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(148, 163, 184, .18);
+      background: #0f172a;
+    }
+    .detail-modal-close {
+      width: 44px; height: 44px; padding: 0;
+      display: inline-grid; place-items: center;
+      border: 1px solid #475569; border-radius: 50%;
+      background: #1e293b; color: #e2e8f0;
+      font-size: 21px; line-height: 1; cursor: pointer;
+    }
+    .detail-modal-close:hover { background: #334155; border-color: #94a3b8; }
+    .detail-modal-close:focus-visible { outline: 3px solid #7dd3fc; outline-offset: 3px; }
     .detail-block {
       border: 1px solid var(--border); border-radius: 10px;
       background: #111827; overflow: hidden;
@@ -751,8 +768,9 @@
     }
     @media (max-width: 640px) {
       .modal-backdrop { padding: 0; }
-      .modal { width: 100%; min-height: 100%; max-height: none; border-radius: 0; border-left: 0; border-right: 0; }
-      .modal-body { max-height: calc(100vh - 112px); padding: 16px 14px 26px; }
+      .modal { width: 100%; height: 100%; min-height: 100%; max-height: none; border-radius: 0; border-left: 0; border-right: 0; }
+      .modal-body { max-height: none; padding: 16px 14px 26px; }
+      .detail-modal-foot { padding-bottom: max(18px, env(safe-area-inset-bottom)); }
       .markdown-body { padding: 18px 16px; font-size: 13px; line-height: 1.72; }
       .detail-field {
         grid-template-columns: 1fr;
@@ -903,10 +921,11 @@
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
       <div class="modal-head">
         <div class="modal-title" id="detail-title">상세 내용</div>
-        <span class="spacer"></span>
-        <button class="modal-close" id="detail-close">닫기</button>
       </div>
-      <div class="modal-body" id="detail-body"></div>
+      <div class="modal-body detail-modal-body" id="detail-body"></div>
+      <div class="detail-modal-foot">
+        <button class="detail-modal-close" id="detail-close" type="button" aria-label="상세 닫기" title="닫기">×</button>
+      </div>
     </section>
   </div>
   <div class="modal-backdrop" id="knowledge-modal" aria-hidden="true">

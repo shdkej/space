@@ -2017,10 +2017,16 @@
 
     function keepDetailViewport(render) {
       const bodyRect = detailBody.getBoundingClientRect();
-      const anchor = [...detailBody.children].find((child) => {
+      const isVisible = (child) => {
         const rect = child.getBoundingClientRect();
         return rect.bottom > bodyRect.top + 12 && rect.top < bodyRect.bottom;
-      });
+      };
+      // The action is the first interactive section and is visible while the
+      // trace is still a short loading placeholder.  Prefer it as the anchor:
+      // replacing that placeholder with the full trace must not make the
+      // action appear to vanish below the fold.
+      const anchor = [...detailBody.children].find((child) => child.classList.contains("kind-action") && isVisible(child))
+        || [...detailBody.children].find(isVisible);
       const beforeTop = anchor ? anchor.getBoundingClientRect().top : null;
       const beforeScrollTop = detailBody.scrollTop;
       render();

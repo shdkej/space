@@ -24,6 +24,8 @@ Shows the live Infinity intent registry and its execution evidence at
 - The intent detail closes through a persistent, bottom-centered circular
   control. Its 44px touch target stays above the mobile safe area so a long
   detail can be dismissed without returning to the top of the page.
+- The KL → Agent Wiki map uses the same persistent, bottom-centered circular
+  close control and touch target as the intent detail.
 
 ## Development and verification
 

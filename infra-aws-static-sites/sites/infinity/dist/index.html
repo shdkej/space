@@ -2043,6 +2043,11 @@
         renderArtifacts("work", "중간 작업물", "kind-work");
         renderArtifacts("legacy", "기존 중간 작업물", "kind-work");
         if (!displayArtifacts.length) addDetailBlock("Artifact: 기록 없음", "연결된 산출물이 없습니다.", "kind-artifact");
+        // The live trace can grow substantially once its remote records arrive.
+        // Keep the actions and their linked documents directly after the card
+        // summary; placing the trace last prevents its late expansion from
+        // pushing those sections out of view.
+        if (taskTraceHost) detailBody.appendChild(taskTraceHost);
       });
     }
 

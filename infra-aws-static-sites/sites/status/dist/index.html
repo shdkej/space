@@ -1479,7 +1479,7 @@
         { id: "system", label: "System" },
         { id: "surfaces", label: "Surfaces" },
         { id: "agents", label: "Agents" },
-        { id: "output", label: "Output" },
+        { id: "output", label: "Loop" },
         { id: "monitoring", label: "Monitoring" },
       ];
       let currentTab = "system";
@@ -2069,6 +2069,16 @@
             ]),
             { name: "PDCA loop", state: "ok", detail: "Plan · Do · Check · Act", meta: "loop" },
           ],
+        }];
+        const loopRows = (model.panels.agents.groups || [])
+          .flatMap((group) => group.rows || [])
+          .filter((item) => /loops/.test(item.meta || "") || /예약/.test(item.detail || ""));
+        model.panels.output.title = "Loop";
+        model.panels.output.sub = "현재 활성화된 예약 크론만 표시합니다.";
+        model.panels.output.summary = [["Active", loopRows.length], ["Source", "cron"], ["State", loopRows.length ? "running" : "waiting"]];
+        model.panels.output.groups = [{
+          name: "활성 크론",
+          rows: loopRows.length ? loopRows : [{ name: "활성 크론 없음", state: "warn", detail: "현재 라이브 피드에서 예약 실행 크론을 확인하지 못했습니다.", meta: "waiting" }],
         }];
         model.panels.monitoring = {
           title: "Monitoring",

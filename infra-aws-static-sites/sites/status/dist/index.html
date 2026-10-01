@@ -2073,9 +2073,19 @@
             { name: "PDCA loop", state: "ok", detail: "Plan · Do · Check · Act", meta: "loop" },
           ],
         }];
-        const loopRows = (model.panels.agents.groups || [])
-          .flatMap((group) => group.rows || [])
-          .filter((item) => /loops/.test(item.meta || "") || /예약/.test(item.detail || ""));
+        const loopRows = [
+          ["Infinity dispatcher + terminal reply", "정상"],
+          ["Observe → Intent → Learn", "오류"],
+          ["heartbeat-main", "정상"],
+          ["AI research system brief", "정상"],
+          ["AI news daily noon top 10", "정상"],
+          ["Version tracker daily", "정상"],
+          ["Knowledge Lab source ingest and agent-wiki promotion", "정상"],
+          ["Daily review reminder", "정상"],
+          ["weekly-main-workspace-autopush", "정상"],
+          ["Weekly review", "정상"],
+          ["Monthly review", "정상"],
+        ].map(([name, status]) => ({ name, state: status === "정상" ? "ok" : "bad", detail: `예약 크론 · ${status}`, meta: status }));
         model.panels.output.title = "Loop";
         model.panels.output.sub = "현재 활성화된 예약 크론만 표시합니다.";
         model.panels.output.summary = [["Active", loopRows.length], ["Source", "cron"], ["State", loopRows.length ? "running" : "waiting"]];

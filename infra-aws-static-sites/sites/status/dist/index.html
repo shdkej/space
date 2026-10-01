@@ -2098,11 +2098,40 @@
         });
         model.panels.output.title = "Loop";
         model.panels.output.sub = "현재 활성화된 예약 크론만 표시합니다.";
-        model.panels.output.summary = [["Active", loopRows.length], ["Source", "cron"], ["State", loopRows.length ? "running" : "waiting"]];
+        const liveOutputs = Array.isArray(liveFeed?.outputs) ? liveFeed.outputs : [];
+        const liveOutputErrors = liveOutputs.filter((item) => item.state !== "ok").length;
+        model.panels.output.score = liveOutputErrors ? `오류 ${liveOutputErrors}개` : "정상";
+        model.panels.output.summary = [["활성", loopRows.length], ["오류", liveOutputErrors], ["기준", "실행 주기"]];
         model.panels.output.groups = [{
           name: "활성 크론",
           rows: loopRows.length ? loopRows : [{ name: "활성 크론 없음", state: "warn", detail: "현재 라이브 피드에서 예약 실행 크론을 확인하지 못했습니다.", meta: "waiting" }],
         }];
+        // Main cards use the freshest agent/output feed instead of the static snapshot.
+        const liveAgentRows = Array.isArray(liveFeed?.agents) ? liveFeed.agents : [];
+        const liveAgentCronCount = liveAgentRows.filter((item) => Number(item.crons || 0) > 0).length;
+        const liveAgentTotal = liveAgentRows.length;
+        const liveFreshOutputs = liveOutputs.filter((item) => item.state === "ok").length;
+        const liveFeedAge = liveFeed?.generatedAt ? relFromMinutes(ageMinutes(liveFeed.generatedAt)) : "라이브 피드 없음";
+        const systemCard = model.cards.find((card) => card.id === "system");
+        if (systemCard) {
+          systemCard.value = liveOutputErrors ? "주의 필요" : "조용히 유지";
+          systemCard.title = liveOutputErrors ? `오류 산출물 ${liveOutputErrors}개` : "현재 오류 없음";
+          systemCard.status = `라이브 ${liveFeedAge}`;
+          systemCard.state = liveOutputErrors ? "warn" : "ok";
+        }
+        const agentsCard = model.cards.find((card) => card.id === "agents");
+        if (agentsCard) {
+          agentsCard.value = liveAgentTotal ? `${liveAgentCronCount}/${liveAgentTotal} agents` : "-- agents";
+          agentsCard.title = liveOutputs.length ? `${liveFreshOutputs}/${liveOutputs.length} outputs fresh` : "outputs 확인 대기";
+          agentsCard.status = `라이브 ${liveFeedAge}`;
+        }
+        const outputCard = model.cards.find((card) => card.id === "output");
+        if (outputCard) {
+          outputCard.value = liveOutputErrors ? `오류 ${liveOutputErrors}개` : "정상 실행 중";
+          outputCard.title = `${loopRows.length}개 예약 크론`;
+          outputCard.status = `라이브 ${liveFeedAge}`;
+          outputCard.state = liveOutputErrors ? "warn" : "ok";
+        }
         model.panels.monitoring = {
           title: "Monitoring",
           score: relFromMinutes(ageMinutes(data.generatedAt)),

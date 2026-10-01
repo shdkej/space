@@ -921,6 +921,13 @@
         overflow-wrap: break-word;
       }
 
+      .monitoring-layer-stack .list-row {
+        min-height: 92px;
+        border: 1px solid rgba(38, 51, 47, .22);
+        border-radius: 14px;
+        background: rgba(248, 251, 252, .58);
+      }
+
       /* ─── floating nav (detail) ────────────────── */
       .floating-nav {
         position: fixed;
@@ -1399,6 +1406,7 @@
           <section class="detail-panel" id="panel-surfaces" aria-label="Surfaces detail"></section>
           <section class="detail-panel" id="panel-agents" aria-label="Agents detail"></section>
           <section class="detail-panel" id="panel-output" aria-label="Output detail"></section>
+          <section class="detail-panel" id="panel-monitoring" aria-label="Monitoring detail"></section>
           <section class="detail-panel" id="panel-content" aria-label="Content detail"></section>
         </div>
       </section>
@@ -1426,6 +1434,7 @@
         { id: "surfaces", label: "Surfaces" },
         { id: "agents", label: "Agents" },
         { id: "output", label: "Output" },
+        { id: "monitoring", label: "Monitoring" },
         { id: "content", label: "Content" },
       ];
       let currentTab = "system";
@@ -1952,7 +1961,7 @@
             </div>
             ${groups.map((group) => `
               <div class="group-title${group.name === "Needs attention" ? " is-attention" : ""}">${safe(group.name)}</div>
-              <div class="list-stack">
+              <div class="list-stack${id === "monitoring" ? " monitoring-layer-stack" : ""}">
                 ${(group.rows || []).map((item) => row(item, item.meta, item.href)).join("")}
               </div>
             `).join("")}
@@ -1997,6 +2006,19 @@
 
       function render(data, liveFeed) {
         model = buildModel(data, liveFeed);
+        model.panels.monitoring = {
+          title: "Monitoring",
+          score: "L1—L5",
+          sub: "다섯 운영 레이어를 한 화면에서 확인합니다.",
+          summary: [["Layers", "5"], ["Mode", "overview"], ["State", model.overallState]],
+          groups: [{ name: "Layer helix", rows: [
+            { name: "L1 Business · CC", state: "warn", detail: "Carrying capacity · 연결 대기", meta: "--" },
+            { name: "L2 Product · Sales", state: "warn", detail: "판매량 · 금액 · 연결 대기", meta: "--" },
+            { name: "L3 Content · Threads", state: "warn", detail: "조회수 · 좋아요 · minimal_collector", meta: "--" },
+            { name: "L4 System · Runtime", state: model.overallState, detail: "OpenClaw · Infinity · Wiki", meta: `${model.okChecks}/${model.totalChecks}` },
+            { name: "L5 Resource · Infra", state: "warn", detail: "서버 · Lambda · DB · 연결 대기", meta: "--" },
+          ] }],
+        };
         const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);
         document.body.dataset.overall = model.overallState;
         $("heroKicker").textContent = "Space status";

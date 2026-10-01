@@ -921,83 +921,6 @@
         overflow-wrap: break-word;
       }
 
-      /* Content signal signature: a small broadcast set, because the user
-         reads views and reactions as a show rather than a spreadsheet. */
-      .content-signal {
-        display: grid;
-        gap: 16px;
-        margin-bottom: 22px;
-      }
-
-      .broadcast-stage {
-        display: block;
-      }
-
-      .tv-object {
-        position: relative;
-        min-height: 220px;
-        padding: 18px 18px 22px;
-        border: 1px solid #202020;
-        border-radius: 16px 16px 22px 22px;
-        background: #111;
-        color: #f7f7f5;
-        box-shadow: 0 8px 0 #d9d9d5;
-      }
-
-      .tv-object::before,
-      .tv-object::after {
-        content: "";
-        position: absolute;
-        bottom: 8px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #d7b56b;
-      }
-
-      .tv-object::before { left: 18px; }
-      .tv-object::after { right: 18px; }
-
-      .tv-screen {
-        display: grid;
-        align-content: center;
-        min-height: 132px;
-        padding: 16px;
-        border-radius: 14px;
-        grid-template-columns: 1fr auto;
-        gap: 16px;
-        background: #fff;
-        color: #111;
-        box-shadow: inset 0 0 0 1px #111;
-      }
-
-      .signal-label { color: #555; font-size: 10px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
-      .signal-number { margin-top: 6px; font-size: clamp(34px, 7vw, 58px); font-weight: 850; letter-spacing: -.07em; line-height: .95; }
-      .signal-caption { margin-top: 8px; color: #666; font-size: 12px; }
-
-      .thumb-object {
-        display: grid;
-        place-items: center;
-        min-height: 130px;
-        min-width: 128px;
-        padding: 14px;
-        border: 1px solid #111;
-        border-radius: 10px;
-        background: #f4f4f2;
-      }
-
-      .thumb-mark { font-size: 38px; line-height: 1; filter: grayscale(1); }
-      .thumb-value { margin-top: 8px; color: #111; font-size: 24px; font-weight: 850; letter-spacing: -.06em; }
-      .thumb-note { margin-top: 5px; color: #666; font-size: 10px; text-align: center; }
-
-      .content-source { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 11px; line-height: 1.45; }
-      .content-source a { color: var(--focus); font-weight: 750; }
-      @media (max-width: 520px) {
-        .tv-object { min-height: 190px; }
-        .tv-screen { grid-template-columns: 1fr 112px; gap: 10px; padding: 12px; }
-        .thumb-object { min-width: 112px; }
-      }
-
       /* ─── floating nav (detail) ────────────────── */
       .floating-nav {
         position: fixed;
@@ -1276,10 +1199,6 @@
 
       /* Spatial Type surface: text is the primary object; controls appear as
          an indexed reading path instead of a wall of glass panels. */
-      .floating-nav { display: flex; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
-      .floating-nav::-webkit-scrollbar { display: none; }
-      .nav-button { flex: 0 0 88px; }
-
       body {
         background:
           linear-gradient(90deg, rgba(252, 252, 248, 0.94) 0%, rgba(252, 252, 248, 0.74) 48%, rgba(252, 252, 248, 0.28) 100%),
@@ -1507,7 +1426,7 @@
         { id: "surfaces", label: "Surfaces" },
         { id: "agents", label: "Agents" },
         { id: "output", label: "Output" },
-        { id: "monitoring", label: "Monitoring" },
+        { id: "content", label: "Content" },
       ];
       let currentTab = "system";
       let model = null;
@@ -1860,9 +1779,6 @@
 
         return {
           generatedAt: data.generatedAt,
-          content: window.__contentLive || {
-            account: "minimal_collector", threads: "--", followers: "--", views: "미노출", likes: "미노출", source: "https://www.threads.com/@minimal_collector"
-          },
           overallState: displayState,
           overallLabel: heroLabel,
           heroLines,
@@ -2028,28 +1944,6 @@
 
       function renderPanels() {
         Object.entries(model.panels).forEach(([id, panel]) => {
-          if (id === "content") {
-            const content = model.content || {};
-            $(`panel-${id}`).innerHTML = `
-              <div class="content-signal">
-                <div class="broadcast-stage">
-                  <article class="tv-object" aria-label="조회수와 좋아요를 담은 TV 지표">
-                    <div class="tv-screen">
-                      <div><div class="signal-label">Views / 조회수</div><div class="signal-number">${safe(content.views)}</div><div class="signal-caption">TV 안에 담긴 콘텐츠 도달</div></div>
-                      <div class="thumb-object" aria-label="좋아요 지표"><div><div class="thumb-mark" aria-hidden="true">👍</div><div class="thumb-value">${safe(content.likes)}</div><div class="thumb-note">Likes / 좋아요</div></div></div>
-                    </div>
-                  </article>
-                </div>
-                <div class="content-source"><span>@${safe(content.account)} · ${safe(content.threads)} Threads · ${safe(content.followers)} Followers</span><a href="${safe(content.source)}" target="_blank" rel="noopener">원자료 ↗</a></div>
-              </div>
-              <div class="summary-strip">
-                ${panel.summary.map(([key, value]) => summaryTile(key, value)).join("")}
-              </div>
-              <div class="group-title">Data status</div>
-              <div class="list-stack">${row({name: "최근 글 목록", state: "warn", detail: "프로필 화면에서 개별 글과 반응 수가 노출되지 않았습니다.", meta: "not exposed", reason: "로그인된 원자료 수집 경로가 연결되면 최근 글별 조회수와 좋아요를 이 화면에 채웁니다."})}</div>
-            `;
-            return;
-          }
           const groups = (panel.groups || [{ name: "Details", rows: panel.rows || [] }])
             .filter((group) => (group.rows || []).length > 0);
           $(`panel-${id}`).innerHTML = `
@@ -2103,25 +1997,6 @@
 
       function render(data, liveFeed) {
         model = buildModel(data, liveFeed);
-        model.panels.monitoring = {
-          title: "Monitoring",
-          score: "L1—L5",
-          sub: "운영의 다섯 레이어를 한 화면에서 봅니다.",
-          summary: [["Layers", "5"], ["Content", model.content?.views ?? "미노출"], ["State", model.overallState]],
-          groups: [{ name: "Layer helix", rows: [
-            { name: "L1 Business · CC", state: "warn", detail: "Carrying capacity 연결 대기", meta: "--" },
-            { name: "L2 Product · Sales", state: "warn", detail: "판매량 · 금액 연결 대기", meta: "--" },
-            { name: "L3 Content · Threads", state: "warn", detail: `@${model.content?.account || "minimal_collector"} · 조회수 ${model.content?.views ?? "미노출"} · 좋아요 ${model.content?.likes ?? "미노출"}`, meta: "source" },
-            { name: "L4 System · Runtime", state: model.overallState, detail: "OpenClaw · Infinity · Wiki", meta: `${model.okChecks}/${model.totalChecks}` },
-            { name: "L5 Resource · Infra", state: "warn", detail: "Server · Lambda · DB 연결 대기", meta: "--" },
-          ] }],
-        };
-        model.cards = [
-          { id: "system", label: "Now", value: model.cards[0]?.value || "주의 필요", title: model.cards[0]?.title || "현재 상태", status: model.cards[0]?.status || "상태 확인", state: model.overallState },
-          { id: "agents", label: "Balance", value: `${model.okChecks}/${model.totalChecks} services`, title: "운영 신호", status: "Agents · Surfaces", state: model.overallState },
-          { id: "output", label: "Loop", value: "다음 주기 대기", title: "수집 루프", status: "Output freshness", state: "ok" },
-          { id: "monitoring", label: "Monitoring", value: "L1 — L5", title: "레이어 한눈에 보기", status: "Business · Product · Content · System · Resource", state: "ok" },
-        ];
         const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);
         document.body.dataset.overall = model.overallState;
         $("heroKicker").textContent = "Space status";
@@ -2219,20 +2094,8 @@
       Promise.all([
         fetch("./status.json", { cache: "no-store" }).then((response) => response.json()),
         loadAgentsLive(),
-        fetch("./content-live.json", { cache: "no-store" }).then((response) => response.json()).catch(() => null),
       ])
-        .then(([data, liveFeed, contentLive]) => {
-          const profile = contentLive?.profile || {};
-          window.__contentLive = {
-            account: contentLive?.account || "minimal_collector",
-            threads: profile.threads ?? "--",
-            followers: profile.followers ?? "--",
-            views: contentLive?.metrics?.views ?? "미노출",
-            likes: contentLive?.metrics?.likes ?? "미노출",
-            source: contentLive?.source || "https://www.threads.com/@minimal_collector",
-          };
-          render(data, liveFeed);
-        })
+        .then(([data, liveFeed]) => render(data, liveFeed))
         .catch(() => {
           document.body.dataset.overall = "warn";
           $("heroLineTwo").textContent = "feed unavailable";

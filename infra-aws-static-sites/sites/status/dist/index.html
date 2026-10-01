@@ -2042,7 +2042,8 @@
         delete model.panels.content;
         const systemRows = (model.panels.system.groups || [])
           .flatMap((group) => group.rows || [])
-          .filter((item) => /^L[1-4]\b/.test(item.name));
+          .filter((item) => /^L[1-4]\b/.test(item.name))
+          .sort((a, b) => Number(a.name.match(/^L(\d+)/)?.[1] || 99) - Number(b.name.match(/^L(\d+)/)?.[1] || 99));
         model.panels.system.summary = [];
         model.panels.system.groups = [{
           name: "운영 흐름",
@@ -2066,7 +2067,7 @@
             { name: "L2 제품 · 사용", state: "ok", detail: "활성 사용자 1명 · 페이지뷰 5회 · 세션 5회", meta: "7일", extraHtml: `<div class="product-chart" aria-label="PostHog 제품 사용 차트"><div class="product-bar" style="height:20%"><span style="height:20%"></span><small>활성 1</small></div><div class="product-bar" style="height:100%"><span style="height:100%"></span><small>뷰 5</small></div><div class="product-bar" style="height:100%"><span style="height:100%"></span><small>세션 5</small></div><div class="product-bar" style="height:34%"><span style="height:34%"></span><small>재방문 33%</small></div></div>` },
             { name: "L3 콘텐츠", state: "ok", detail: "결혼식 대신 신혼여행 한달차, 엄청 싸웠습니다", meta: "첫 글", extraHtml: `<div class="monitor-tv" aria-label="콘텐츠 조회수와 반응"><div class="monitor-tv-screen"><div><div class="monitor-tv-label">조회수</div><div class="monitor-tv-number">102</div><div class="monitor-tv-note">댓글 18 · 재게시 4 · 공유 13</div></div><div class="monitor-like"><div class="monitor-like-icon" aria-hidden="true">👍</div><div class="monitor-like-number">102</div><div class="monitor-like-note">좋아요</div></div></div></div>` },
             { name: "L4 시스템", state: model.overallState, detail: "세 저장소의 마지막 업데이트", meta: "GitHub", extraHtml: `<div class="system-repo-grid" aria-label="저장소 마지막 업데이트"><div class="system-repo"><div class="system-repo-name">오픈클로</div><div class="system-repo-date">10월 1일<br>10:08</div></div><div class="system-repo"><div class="system-repo-name">인피니티</div><div class="system-repo-date">10월 1일<br>18:00</div></div><div class="system-repo"><div class="system-repo-name">위키</div><div class="system-repo-date">10월 1일<br>20:19</div></div></div>` },
-            { name: "L5 리소스", state: "warn", detail: "서버 · 람다 · 데이터베이스 · 연결 대기", meta: "--" },
+            { name: "L5 리소스", state: "ok", detail: "Prometheus 노드 3대", meta: "3/3 정상", extraHtml: `<div class="system-repo-grid" aria-label="Prometheus 노드 상태"><div class="system-repo"><div class="system-repo-name">oracle-arm-1</div><div class="system-repo-date">정상<br>10.0.0.84</div></div><div class="system-repo"><div class="system-repo-name">oracle-arm-2</div><div class="system-repo-date">정상<br>10.0.0.65</div></div><div class="system-repo"><div class="system-repo-name">oracle-amd-1</div><div class="system-repo-date">정상<br>10.0.0.144</div></div></div>` },
           ] }],
         };
         const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);

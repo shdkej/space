@@ -921,12 +921,14 @@
         overflow-wrap: break-word;
       }
       .monitoring-layer-stack .list-row { min-height: 92px; border: 1px solid rgba(38,51,47,.22); border-radius: 14px; background: rgba(248,251,252,.58); }
-      .monitor-tv { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; margin:10px 0 14px; padding:14px; border:1px solid #222; border-radius:14px 14px 18px 18px; background:#111; color:#111; box-shadow:0 6px 0 #d6d6d2; }
-      .monitor-tv-screen { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; min-height:128px; padding:14px; border:1px solid #222; border-radius:9px; background:#fff; }
+      .monitor-tv { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; margin:10px 0 14px; padding:22px 14px 18px; border:1.5px solid #222; border-radius:22px 22px 26px 26px; background:transparent; color:#111; box-shadow:0 5px 0 rgba(34,34,34,.12); }
+      .monitor-tv::before { content:"⌁"; position:absolute; top:-20px; left:50%; color:#222; font-size:30px; line-height:1; transform:translateX(-50%) rotate(180deg); }
+      .monitor-tv::after { content:"•     •"; position:absolute; bottom:-17px; left:50%; color:#222; font-size:18px; letter-spacing:10px; transform:translateX(-50%); white-space:nowrap; }
+      .monitor-tv-screen { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; min-height:128px; padding:14px; border:1px solid #222; border-radius:14px; background:rgba(255,255,255,.16); }
       .monitor-tv-label { color:#666; font-size:10px; font-weight:750; letter-spacing:.1em; text-transform:uppercase; }
       .monitor-tv-number { margin-top:5px; font-size:clamp(30px,8vw,54px); font-weight:850; letter-spacing:-.07em; line-height:1; }
       .monitor-tv-note { margin-top:7px; color:#666; font-size:11px; }
-      .monitor-like { display:grid; place-items:center; min-width:112px; min-height:100px; padding:10px; border:1px solid #222; border-radius:8px; background:#f3f3f1; text-align:center; }
+      .monitor-like { display:grid; place-items:center; min-width:112px; min-height:100px; padding:10px; border:1px solid #222; border-radius:14px; background:transparent; text-align:center; }
       .monitor-like-icon { font-size:36px; filter:grayscale(1); }
       .monitor-like-number { margin-top:5px; font-size:22px; font-weight:850; }
       .monitor-like-note { color:#666; font-size:10px; }
@@ -1978,9 +1980,7 @@
           const groups = (panel.groups || [{ name: "Details", rows: panel.rows || [] }])
             .filter((group) => (group.rows || []).length > 0);
           $(`panel-${id}`).innerHTML = `
-            <div class="summary-strip">
-              ${panel.summary.map(([key, value]) => summaryTile(key, value)).join("")}
-            </div>
+            ${id === "monitoring" ? "" : `<div class="summary-strip">${panel.summary.map(([key, value]) => summaryTile(key, value)).join("")}</div>`}
             ${groups.map((group) => `
               <div class="group-title${group.name === "Needs attention" ? " is-attention" : ""}">${safe(group.name)}</div>
               <div class="list-stack${id === "monitoring" ? " monitoring-layer-stack" : ""}">
@@ -2033,7 +2033,7 @@
         delete model.panels.content;
         model.panels.monitoring = {
           title: "Monitoring",
-          score: "L1—L5",
+          score: relFromMinutes(ageMinutes(data.generatedAt)),
           sub: "다섯 운영 레이어를 한 화면에서 확인합니다.",
           summary: [["Layers", "5"], ["Mode", "overview"], ["State", model.overallState]],
           groups: [{ name: "Layer helix", rows: [

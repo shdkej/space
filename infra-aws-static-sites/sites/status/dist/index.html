@@ -939,11 +939,24 @@
       .product-chart { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; align-items:end; width:100%; max-width:100%; height:58px; margin-top:10px; padding:0 2px 16px; overflow:hidden; box-sizing:border-box; }
       .product-bar { position:relative; min-height:4px; border:1px solid #222; border-bottom:0; background:rgba(34,34,34,.14); }
       .product-bar span { position:absolute; right:3px; bottom:3px; left:3px; display:block; background:#222; }
+      .product-bar span { transform-origin: bottom; animation: productBarRise .72s cubic-bezier(.2,.8,.2,1) both; }
+      .product-bar:nth-child(2) span { animation-delay: .08s; }
+      .product-bar:nth-child(3) span { animation-delay: .16s; }
+      .product-bar:nth-child(4) span { animation-delay: .24s; }
       .product-bar small { position:absolute; top:calc(100% + 4px); left:0; max-width:100%; overflow:hidden; color:#666; font-size:8px; white-space:nowrap; text-overflow:clip; }
       .system-repo-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:10px; }
       .system-repo { min-width:0; padding:10px 8px; border:1px solid rgba(34,34,34,.28); border-radius:10px; background:rgba(255,255,255,.32); }
       .system-repo-name { overflow:hidden; font-size:11px; font-weight:750; text-overflow:ellipsis; white-space:nowrap; }
       .system-repo-date { margin-top:5px; color:#666; font-size:10px; line-height:1.3; }
+      .monitor-tv { animation: monitorReveal .55s cubic-bezier(.2,.8,.2,1) both; }
+      .system-repo { animation: monitorReveal .45s cubic-bezier(.2,.8,.2,1) both; }
+      .system-repo:nth-child(2) { animation-delay:.08s; }
+      .system-repo:nth-child(3) { animation-delay:.16s; }
+      @keyframes productBarRise { from { transform:scaleY(0); opacity:.2; } to { transform:scaleY(1); opacity:1; } }
+      @keyframes monitorReveal { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+      @media (prefers-reduced-motion: reduce) {
+        .product-bar span, .monitor-tv, .system-repo { animation:none; }
+      }
 
       .monitoring-layer-stack .list-row {
         min-height: 92px;

@@ -935,6 +935,10 @@
       .floating-nav { display:flex; overflow-x:auto; justify-content:flex-start; scrollbar-width:none; }
       .floating-nav::-webkit-scrollbar { display:none; }
       .nav-button { flex:0 0 88px; }
+      .product-chart { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; align-items:end; height:58px; margin-top:10px; }
+      .product-bar { position:relative; min-height:4px; border:1px solid #222; border-bottom:0; background:rgba(34,34,34,.14); }
+      .product-bar span { position:absolute; right:3px; bottom:3px; left:3px; display:block; background:#222; }
+      .product-bar small { position:absolute; top:calc(100% + 4px); left:0; color:#666; font-size:9px; white-space:nowrap; }
 
       .monitoring-layer-stack .list-row {
         min-height: 92px;
@@ -2038,7 +2042,7 @@
           summary: [["Layers", "5"], ["Mode", "overview"], ["State", model.overallState]],
           groups: [{ name: "운영 레이어", rows: [
             { name: "L1 비즈니스 · CC", state: "warn", detail: "수용 가능량 · 연결 대기", meta: "--" },
-            { name: "L2 제품 · 판매", state: "warn", detail: "판매량 · 금액 · 연결 대기", meta: "--" },
+            { name: "L2 제품 · 사용", state: "ok", detail: "활성 사용자 1명 · 페이지뷰 5회 · 세션 5회", meta: "7일", extraHtml: `<div class="product-chart" aria-label="PostHog 제품 사용 차트"><div class="product-bar" style="height:20%"><span style="height:20%"></span><small>활성 1</small></div><div class="product-bar" style="height:100%"><span style="height:100%"></span><small>뷰 5</small></div><div class="product-bar" style="height:100%"><span style="height:100%"></span><small>세션 5</small></div><div class="product-bar" style="height:34%"><span style="height:34%"></span><small>재방문 33%</small></div></div>` },
             { name: "L3 콘텐츠", state: "ok", detail: "결혼식 대신 신혼여행 한달차, 엄청 싸웠습니다", meta: "첫 글", extraHtml: `<div class="monitor-tv" aria-label="콘텐츠 조회수와 반응"><div class="monitor-tv-screen"><div><div class="monitor-tv-label">조회수</div><div class="monitor-tv-number">102</div><div class="monitor-tv-note">댓글 18 · 재게시 4 · 공유 13</div></div><div class="monitor-like"><div class="monitor-like-icon" aria-hidden="true">👍</div><div class="monitor-like-number">102</div><div class="monitor-like-note">좋아요</div></div></div></div>` },
             { name: "L4 시스템", state: model.overallState, detail: "오픈클로 · 인피니티 · 위키", meta: `${model.okChecks}/${model.totalChecks}` },
             { name: "L5 리소스", state: "warn", detail: "서버 · 람다 · 데이터베이스 · 연결 대기", meta: "--" },

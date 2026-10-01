@@ -2040,6 +2040,22 @@
         // Content is no longer a standalone menu. Remove its legacy panel
         // before renderPanels() so a missing DOM node cannot abort hydration.
         delete model.panels.content;
+        const systemRows = (model.panels.system.groups || [])
+          .flatMap((group) => group.rows || [])
+          .filter((item) => /^L[1-4]\b/.test(item.name));
+        model.panels.system.summary = [];
+        model.panels.system.groups = [{
+          name: "운영 흐름",
+          rows: [
+            ...(systemRows.length ? systemRows : [
+              { name: "L1 비즈니스", state: "warn", detail: "수용 가능량 · 연결 대기", meta: "--" },
+              { name: "L2 제품", state: "warn", detail: "제품 지표 · 연결 대기", meta: "--" },
+              { name: "L3 콘텐츠", state: "warn", detail: "콘텐츠 지표 · 연결 대기", meta: "--" },
+              { name: "L4 시스템", state: "warn", detail: "시스템 지표 · 연결 대기", meta: "--" },
+            ]),
+            { name: "PDCA loop", state: "ok", detail: "Plan · Do · Check · Act", meta: "loop" },
+          ],
+        }];
         model.panels.monitoring = {
           title: "Monitoring",
           score: relFromMinutes(ageMinutes(data.generatedAt)),

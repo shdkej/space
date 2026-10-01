@@ -920,6 +920,19 @@
         line-height: 1.55;
         overflow-wrap: break-word;
       }
+      .monitoring-layer-stack .list-row { min-height: 92px; border: 1px solid rgba(38,51,47,.22); border-radius: 14px; background: rgba(248,251,252,.58); }
+      .monitor-tv { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; margin:10px 0 14px; padding:14px; border:1px solid #222; border-radius:14px 14px 18px 18px; background:#111; color:#111; box-shadow:0 6px 0 #d6d6d2; }
+      .monitor-tv-screen { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; min-height:128px; padding:14px; border:1px solid #222; border-radius:9px; background:#fff; }
+      .monitor-tv-label { color:#666; font-size:10px; font-weight:750; letter-spacing:.1em; text-transform:uppercase; }
+      .monitor-tv-number { margin-top:5px; font-size:clamp(30px,8vw,54px); font-weight:850; letter-spacing:-.07em; line-height:1; }
+      .monitor-tv-note { margin-top:7px; color:#666; font-size:11px; }
+      .monitor-like { display:grid; place-items:center; min-width:112px; min-height:100px; padding:10px; border:1px solid #222; border-radius:8px; background:#f3f3f1; text-align:center; }
+      .monitor-like-icon { font-size:36px; filter:grayscale(1); }
+      .monitor-like-number { margin-top:5px; font-size:22px; font-weight:850; }
+      .monitor-like-note { color:#666; font-size:10px; }
+      .floating-nav { display:flex; overflow-x:auto; justify-content:flex-start; scrollbar-width:none; }
+      .floating-nav::-webkit-scrollbar { display:none; }
+      .nav-button { flex:0 0 88px; }
 
       .monitoring-layer-stack .list-row {
         min-height: 92px;
@@ -1407,7 +1420,6 @@
           <section class="detail-panel" id="panel-agents" aria-label="Agents detail"></section>
           <section class="detail-panel" id="panel-output" aria-label="Output detail"></section>
           <section class="detail-panel" id="panel-monitoring" aria-label="Monitoring detail"></section>
-          <section class="detail-panel" id="panel-content" aria-label="Content detail"></section>
         </div>
       </section>
 
@@ -1435,7 +1447,6 @@
         { id: "agents", label: "Agents" },
         { id: "output", label: "Output" },
         { id: "monitoring", label: "Monitoring" },
-        { id: "content", label: "Content" },
       ];
       let currentTab = "system";
       let model = null;
@@ -1955,10 +1966,12 @@
         Object.entries(model.panels).forEach(([id, panel]) => {
           const groups = (panel.groups || [{ name: "Details", rows: panel.rows || [] }])
             .filter((group) => (group.rows || []).length > 0);
+          const monitoringVisual = id === "monitoring" ? `<div class="monitor-tv" aria-label="L3 Content 조회수와 좋아요"><div class="monitor-tv-screen"><div><div class="monitor-tv-label">Views / 조회수</div><div class="monitor-tv-number">미노출</div><div class="monitor-tv-note">공개 프로필에서 게시물 조회수 미노출</div></div><div class="monitor-like"><div class="monitor-like-icon" aria-hidden="true">👍</div><div class="monitor-like-number">미노출</div><div class="monitor-like-note">Likes / 좋아요</div></div></div></div>` : "";
           $(`panel-${id}`).innerHTML = `
             <div class="summary-strip">
               ${panel.summary.map(([key, value]) => summaryTile(key, value)).join("")}
             </div>
+            ${monitoringVisual}
             ${groups.map((group) => `
               <div class="group-title${group.name === "Needs attention" ? " is-attention" : ""}">${safe(group.name)}</div>
               <div class="list-stack${id === "monitoring" ? " monitoring-layer-stack" : ""}">

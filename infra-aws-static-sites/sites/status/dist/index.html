@@ -431,6 +431,15 @@
         height: min(26svh, 210px);
       }
 
+      .hero-copy {
+        padding: 8px 4px 4px;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+      .hero-lead, .hero-meta { display: none; }
+      .hero-title { font-size: clamp(24px, 4vw, 36px); }
+
       .control-card {
         position: relative;
         min-width: 0;
@@ -1274,6 +1283,40 @@
         }
       }
 
+      /* Layer helix: one readable box per layer, with the navigation kept on
+         one horizontal rail on narrow screens. */
+      .overview-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: minmax(116px, auto);
+        align-self: stretch;
+        overflow-y: auto;
+        padding-right: 2px;
+      }
+
+      .control-card {
+        min-height: 116px;
+        grid-template-columns: minmax(92px, .34fr) minmax(0, 1fr) auto;
+        grid-template-rows: 1fr;
+        align-items: center;
+        border: 1px solid rgba(38, 51, 47, .24);
+        border-radius: 16px;
+        background: rgba(248, 251, 252, .62);
+      }
+
+      .floating-nav {
+        display: flex;
+        overflow-x: auto;
+        justify-content: flex-start;
+        scrollbar-width: none;
+      }
+      .floating-nav::-webkit-scrollbar { display: none; }
+      .nav-button { flex: 0 0 88px; }
+
+      @media (max-width: 639px) {
+        .overview-grid { grid-template-columns: 1fr; height: auto; }
+        .control-card { grid-template-columns: 78px minmax(0, 1fr) auto; }
+      }
+
       /* Spatial Type surface: text is the primary object; controls appear as
          an indexed reading path instead of a wall of glass panels. */
       body {
@@ -2099,6 +2142,13 @@
 
       function render(data, liveFeed) {
         model = buildModel(data, liveFeed);
+        model.cards = [
+          { id: "system", label: "L1 Business", value: "--", title: "CC / carrying capacity", status: "신호 연결 대기", state: "warn" },
+          { id: "surfaces", label: "L2 Product", value: "--", title: "판매량 · 금액", status: "제품 지표", state: "warn" },
+          { id: "content", label: "L3 Content", value: model.content?.views ?? "미노출", title: "조회수 · 좋아요", status: `@${model.content?.account || "minimal_collector"}`, state: "warn" },
+          { id: "agents", label: "L4 System", value: `${model.okChecks}/${model.totalChecks}`, title: "OpenClaw · Infinity · Wiki", status: "서비스 신호", state: model.overallState },
+          { id: "output", label: "L5 Resource", value: "--", title: "서버 · Lambda · DB", status: "리소스 지표", state: "warn" },
+        ];
         const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);
         document.body.dataset.overall = model.overallState;
         $("heroKicker").textContent = "Space status";

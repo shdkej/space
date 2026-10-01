@@ -923,7 +923,6 @@
       .monitoring-layer-stack .list-row { min-height: 92px; border: 1px solid rgba(38,51,47,.22); border-radius: 14px; background: rgba(248,251,252,.58); }
       .monitoring-layer-stack .list-row:nth-child(4) { border-color: rgba(47,143,123,.52); background: rgba(224,247,239,.38); }
       .monitoring-layer-stack .list-row:nth-child(5) { border-color: rgba(185,130,43,.62); background: rgba(255,246,220,.52); }
-      .monitoring-layer-stack .list-row:nth-child(5) .row-name::before { content:"●"; margin-right:7px; color:#b9822b; font-size:10px; }
       .monitoring-layer-stack .list-row:nth-child(5) .system-repo { border-color: rgba(79,157,138,.72); background: rgba(221,247,236,.72); }
       .monitoring-layer-stack .list-row:nth-child(5) .system-repo-date { color: #327562; }
       .monitor-tv { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; margin:10px 0 14px; padding:22px 14px 18px; border:1.5px solid #222; border-radius:22px 22px 26px 26px; background:transparent; color:#111; box-shadow:0 5px 0 rgba(34,34,34,.12); }
@@ -2076,18 +2075,27 @@
           ],
         }];
         const loopRows = [
-          ["Infinity dispatcher + terminal reply", "정상"],
-          ["Observe → Intent → Learn", "오류"],
-          ["heartbeat-main", "정상"],
-          ["AI research system brief", "정상"],
-          ["AI news daily noon top 10", "정상"],
-          ["Version tracker daily", "정상"],
-          ["Knowledge Lab source ingest and agent-wiki promotion", "정상"],
-          ["Daily review reminder", "정상"],
-          ["weekly-main-workspace-autopush", "정상"],
-          ["Weekly review", "정상"],
-          ["Monthly review", "정상"],
-        ].map(([name, status]) => ({ name, state: status === "정상" ? "ok" : "bad", detail: `예약 크론 · ${status}`, meta: status }));
+          ["09:00", "AI research system brief", "정상"],
+          ["12:30", "Weekly review (Sunday night)", "정상"],
+          ["12:40", "Monthly review (1st night)", "정상"],
+          ["12:00", "AI news daily noon top 10", "정상"],
+          ["16:00", "Version tracker daily", "정상"],
+          ["22:00", "Daily review reminder (Italy 22:00)", "정상"],
+          ["04:30", "Knowledge Lab source ingest and agent-wiki promotion", "정상"],
+          ["10분마다", "Infinity dispatcher + terminal reply", "정상"],
+          ["30분마다", "heartbeat-main", "정상"],
+          ["30분마다", "Observe → Intent → Learn", "오류"],
+          ["12시간마다", "Worldpackers EU dev opportunities monitor", "정상"],
+        ].map(([schedule, name, status]) => ({
+          name,
+          state: status === "정상" ? "ok" : "bad",
+          detail: `실행 시간 · ${schedule}`,
+          meta: status,
+          reason: status === "오류" ? "최근 실행 상태가 오류입니다. openclaw cron 로그에서 상세 원인을 확인해야 합니다." : null,
+        })).sort((a, b) => {
+          const order = (row) => row.detail.includes("10분") ? 10 : row.detail.includes("30분") ? 30 : row.detail.includes("12시간") ? 720 : Number(row.detail.match(/(\d{2}):(\d{2})/)?.[1] || 99) * 60 + Number(row.detail.match(/(\d{2}):(\d{2})/)?.[2] || 0);
+          return order(a) - order(b);
+        });
         model.panels.output.title = "Loop";
         model.panels.output.sub = "현재 활성화된 예약 크론만 표시합니다.";
         model.panels.output.summary = [["Active", loopRows.length], ["Source", "cron"], ["State", loopRows.length ? "running" : "waiting"]];

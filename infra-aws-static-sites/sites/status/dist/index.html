@@ -1853,7 +1853,7 @@
               label: "Monitoring",
               value: "L1—L5",
               title: "레이어 한눈에 보기",
-              status: "Business · Product · Content · System · Resource",
+              status: "비즈니스 · 제품 · 콘텐츠 · 시스템 · 리소스",
               state: "ok",
             },
           ],
@@ -2036,12 +2036,12 @@
           score: relFromMinutes(ageMinutes(data.generatedAt)),
           sub: "다섯 운영 레이어를 한 화면에서 확인합니다.",
           summary: [["Layers", "5"], ["Mode", "overview"], ["State", model.overallState]],
-          groups: [{ name: "Layer helix", rows: [
-            { name: "L1 Business · CC", state: "warn", detail: "Carrying capacity · 연결 대기", meta: "--" },
-            { name: "L2 Product · Sales", state: "warn", detail: "판매량 · 금액 · 연결 대기", meta: "--" },
-            { name: "L3 Content · Threads", state: "warn", detail: "조회수 · 좋아요 · minimal_collector", meta: "--", extraHtml: `<div class="monitor-tv" aria-label="L3 Content 조회수와 좋아요"><div class="monitor-tv-screen"><div><div class="monitor-tv-label">Views / 조회수</div><div class="monitor-tv-number">미노출</div><div class="monitor-tv-note">공개 프로필에서 게시물 조회수 미노출</div></div><div class="monitor-like"><div class="monitor-like-icon" aria-hidden="true">👍</div><div class="monitor-like-number">미노출</div><div class="monitor-like-note">Likes / 좋아요</div></div></div></div>` },
-            { name: "L4 System · Runtime", state: model.overallState, detail: "OpenClaw · Infinity · Wiki", meta: `${model.okChecks}/${model.totalChecks}` },
-            { name: "L5 Resource · Infra", state: "warn", detail: "서버 · Lambda · DB · 연결 대기", meta: "--" },
+          groups: [{ name: "운영 레이어", rows: [
+            { name: "L1 비즈니스 · CC", state: "warn", detail: "수용 가능량 · 연결 대기", meta: "--" },
+            { name: "L2 제품 · 판매", state: "warn", detail: "판매량 · 금액 · 연결 대기", meta: "--" },
+            { name: "L3 콘텐츠", state: "ok", detail: "결혼식 대신 신혼여행 한달차, 엄청 싸웠습니다", meta: "첫 글", extraHtml: `<div class="monitor-tv" aria-label="콘텐츠 조회수와 반응"><div class="monitor-tv-screen"><div><div class="monitor-tv-label">조회수</div><div class="monitor-tv-number">102</div><div class="monitor-tv-note">댓글 18 · 재게시 4 · 공유 13</div></div><div class="monitor-like"><div class="monitor-like-icon" aria-hidden="true">👍</div><div class="monitor-like-number">102</div><div class="monitor-like-note">좋아요</div></div></div></div>` },
+            { name: "L4 시스템", state: model.overallState, detail: "오픈클로 · 인피니티 · 위키", meta: `${model.okChecks}/${model.totalChecks}` },
+            { name: "L5 리소스", state: "warn", detail: "서버 · 람다 · 데이터베이스 · 연결 대기", meta: "--" },
           ] }],
         };
         const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);

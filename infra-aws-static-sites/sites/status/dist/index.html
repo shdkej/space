@@ -1399,6 +1399,7 @@
           <section class="detail-panel" id="panel-surfaces" aria-label="Surfaces detail"></section>
           <section class="detail-panel" id="panel-agents" aria-label="Agents detail"></section>
           <section class="detail-panel" id="panel-output" aria-label="Output detail"></section>
+          <section class="detail-panel" id="panel-content" aria-label="Content detail"></section>
         </div>
       </section>
 
@@ -1425,6 +1426,7 @@
         { id: "surfaces", label: "Surfaces" },
         { id: "agents", label: "Agents" },
         { id: "output", label: "Output" },
+        { id: "content", label: "Content" },
       ];
       let currentTab = "system";
       let model = null;
@@ -1813,6 +1815,14 @@
               status: `Snapshot ${snapshotFresh.label}`,
               state: outputCount || snapshotFresh.state !== "ok" ? "warn" : "ok",
             },
+            {
+              id: "content",
+              label: "Content",
+              value: "수집 대기",
+              title: "minimal_collector",
+              status: "Threads 원자료 연결 전",
+              state: "warn",
+            },
           ],
           panels: {
             system: {
@@ -1910,6 +1920,23 @@
                     detail: "agents-live.json이 없거나 오래됐습니다 — 수집기 신호를 확인하세요.",
                     meta: "stale",
                   }], "Needs attention")],
+            },
+            content: {
+              title: "Content Signals",
+              score: "--",
+              sub: "minimal_collector의 최근 Threads 글을 연결하면 조회수와 좋아요 흐름을 한 화면에서 봅니다.",
+              summary: [
+                ["Posts", "--"],
+                ["Views", "--"],
+                ["Likes", "--"],
+              ],
+              groups: [grouped([{
+                name: "수집 연결 대기",
+                state: "warn",
+                detail: "Threads 공개 원자료에서 최근 글·조회수·좋아요를 확인할 수 있을 때 채워집니다.",
+                meta: "no data",
+                reason: "현재 화면에는 검증된 원자료만 표시하도록 비워 두었습니다. 수치가 연결되면 최근 글 목록과 합계, 전주 대비 변화가 함께 나타납니다.",
+              }], "Data status")],
             },
           },
         };

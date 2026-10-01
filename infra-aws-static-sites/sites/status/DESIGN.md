@@ -69,3 +69,6 @@ Agents 패널은 `agents-live.json`이 30분 이내면 라이브 렌더, 아니�
 - 2026-07-26: 물결 사진 기반 에메랄드 키컬러 적용. CMS 작업은 유지하고 status 정적 사이트에 별도 반영: `dist/index.html`의 HUD/배경/전환 플래시, `dist/assets/saem-scene.js`의 수면·조명·mote·이끼 색을 에메랄드 수면 계열로 갱신.
 - 2026-07-10: System 탭 판정 근거 모달 — warn/bad 행 클릭 시 이유(reason)를 모달로 표시. reason은 수집기가 레이어별로 내려주고(크론은 개수만, 백로그·산출물 이름은 기존 public 범위), Overall·Backlog 행은 프론트가 이미 받은 데이터로 조립.
 - 2026-07-05: 샘(Saem) 3D 리디자인. 이전의 Hers-inspired 정적 backdrop(spatial-presence.css)과 미커밋 여행 히어로 변경분은 이 리디자인으로 대체. 브랜드 정본과 어긋난 인물형 `status-companion-v1.webp` 제거.
+# Content 메뉴 추가
+
+Status의 Content 메뉴는 3층 콘텐츠 레이어의 첫 화면이다. `minimal_collector`의 검증된 최근 Threads 원자료가 연결되면 게시물 수, 조회수, 좋아요 수를 모바일에서 빠르게 읽을 수 있도록 요약 스트립과 최근 글 목록으로 보여준다. 원자료가 없을 때는 추정 수치를 만들지 않고 `수집 연결 대기` 상태를 보여준다.

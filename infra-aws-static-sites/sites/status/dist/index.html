@@ -1602,6 +1602,7 @@
             <div class="row-main">
               <div class="row-name">${safe(item.name)}</div>
               <div class="row-detail">${safe(item.detail || host(item.url) || item.hosting || "")}</div>
+              ${item.extraHtml || ""}
             </div>
             <div class="row-meta">${safe(meta)}</div>
           </${tag}>
@@ -1836,12 +1837,12 @@
               state: outputCount || snapshotFresh.state !== "ok" ? "warn" : "ok",
             },
             {
-              id: "content",
-              label: "Content",
-              value: "수집 대기",
-              title: "minimal_collector",
-              status: "Threads 원자료 연결 전",
-              state: "warn",
+              id: "monitoring",
+              label: "Monitoring",
+              value: "L1—L5",
+              title: "레이어 한눈에 보기",
+              status: "Business · Product · Content · System · Resource",
+              state: "ok",
             },
           ],
           panels: {
@@ -1966,12 +1967,10 @@
         Object.entries(model.panels).forEach(([id, panel]) => {
           const groups = (panel.groups || [{ name: "Details", rows: panel.rows || [] }])
             .filter((group) => (group.rows || []).length > 0);
-          const monitoringVisual = id === "monitoring" ? `<div class="monitor-tv" aria-label="L3 Content 조회수와 좋아요"><div class="monitor-tv-screen"><div><div class="monitor-tv-label">Views / 조회수</div><div class="monitor-tv-number">미노출</div><div class="monitor-tv-note">공개 프로필에서 게시물 조회수 미노출</div></div><div class="monitor-like"><div class="monitor-like-icon" aria-hidden="true">👍</div><div class="monitor-like-number">미노출</div><div class="monitor-like-note">Likes / 좋아요</div></div></div></div>` : "";
           $(`panel-${id}`).innerHTML = `
             <div class="summary-strip">
               ${panel.summary.map(([key, value]) => summaryTile(key, value)).join("")}
             </div>
-            ${monitoringVisual}
             ${groups.map((group) => `
               <div class="group-title${group.name === "Needs attention" ? " is-attention" : ""}">${safe(group.name)}</div>
               <div class="list-stack${id === "monitoring" ? " monitoring-layer-stack" : ""}">
@@ -2030,7 +2029,7 @@
           groups: [{ name: "Layer helix", rows: [
             { name: "L1 Business · CC", state: "warn", detail: "Carrying capacity · 연결 대기", meta: "--" },
             { name: "L2 Product · Sales", state: "warn", detail: "판매량 · 금액 · 연결 대기", meta: "--" },
-            { name: "L3 Content · Threads", state: "warn", detail: "조회수 · 좋아요 · minimal_collector", meta: "--" },
+            { name: "L3 Content · Threads", state: "warn", detail: "조회수 · 좋아요 · minimal_collector", meta: "--", extraHtml: `<div class="monitor-tv" aria-label="L3 Content 조회수와 좋아요"><div class="monitor-tv-screen"><div><div class="monitor-tv-label">Views / 조회수</div><div class="monitor-tv-number">미노출</div><div class="monitor-tv-note">공개 프로필에서 게시물 조회수 미노출</div></div><div class="monitor-like"><div class="monitor-like-icon" aria-hidden="true">👍</div><div class="monitor-like-number">미노출</div><div class="monitor-like-note">Likes / 좋아요</div></div></div></div>` },
             { name: "L4 System · Runtime", state: model.overallState, detail: "OpenClaw · Infinity · Wiki", meta: `${model.okChecks}/${model.totalChecks}` },
             { name: "L5 Resource · Infra", state: "warn", detail: "서버 · Lambda · DB · 연결 대기", meta: "--" },
           ] }],

@@ -2086,10 +2086,10 @@
           ["30분마다", "heartbeat-main", "정상"],
           ["30분마다", "Observe → Intent → Learn", "오류"],
           ["12시간마다", "Worldpackers EU dev opportunities monitor", "정상"],
-        ].map(([schedule, name, status]) => ({
+        ].map(([schedule, name, status, actor]) => ({
           name,
           state: status === "정상" ? "ok" : "bad",
-          detail: `실행 시간 · ${schedule}`,
+          detail: `실행 주체 · ${actor || "OpenClaw"} · ${schedule}`,
           meta: status,
           reason: status === "오류" ? "최근 실행 상태가 오류입니다. openclaw cron 로그에서 상세 원인을 확인해야 합니다." : null,
         })).sort((a, b) => {

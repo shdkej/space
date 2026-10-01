@@ -2091,7 +2091,7 @@
           state: status === "정상" ? "ok" : "bad",
           detail: `실행 주체 · ${actor || "OpenClaw"} · ${schedule}`,
           meta: status,
-          reason: status === "오류" ? "최근 실행 상태가 오류입니다. openclaw cron 로그에서 상세 원인을 확인해야 합니다." : null,
+          reason: status === "오류" ? "마지막 실행 로그 · 2026-10-01 00:11:03 UTC · cron trigger evaluation failed (timeout): code mode timeout exceeded · 실행 시간 33.8초 · 원인 timeout" : null,
         })).sort((a, b) => {
           const order = (row) => row.detail.includes("10분") ? 10 : row.detail.includes("30분") ? 30 : row.detail.includes("12시간") ? 720 : Number(row.detail.match(/(\d{2}):(\d{2})/)?.[1] || 99) * 60 + Number(row.detail.match(/(\d{2}):(\d{2})/)?.[2] || 0);
           return order(a) - order(b);

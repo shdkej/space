@@ -921,6 +921,81 @@
         overflow-wrap: break-word;
       }
 
+      /* Content signal signature: a small broadcast set, because the user
+         reads views and reactions as a show rather than a spreadsheet. */
+      .content-signal {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 22px;
+      }
+
+      .broadcast-stage {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(150px, .75fr);
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .tv-object {
+        position: relative;
+        min-height: 178px;
+        padding: 18px 18px 22px;
+        border: 1px solid rgba(38, 51, 47, .34);
+        border-radius: 22px 22px 30px 30px;
+        background: #202b2a;
+        color: #f7fff9;
+        box-shadow: 0 14px 0 rgba(38, 51, 47, .12), 0 22px 34px rgba(38, 51, 47, .16);
+      }
+
+      .tv-object::before,
+      .tv-object::after {
+        content: "";
+        position: absolute;
+        bottom: 8px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #d7b56b;
+      }
+
+      .tv-object::before { left: 18px; }
+      .tv-object::after { right: 18px; }
+
+      .tv-screen {
+        display: grid;
+        align-content: center;
+        min-height: 132px;
+        padding: 16px;
+        border-radius: 14px;
+        background: radial-gradient(circle at 70% 25%, rgba(172, 235, 214, .28), transparent 34%), #456f69;
+        box-shadow: inset 0 0 0 6px rgba(13, 30, 28, .24), inset 0 0 30px rgba(193, 255, 227, .14);
+      }
+
+      .signal-label { color: rgba(247, 255, 249, .72); font-size: 10px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+      .signal-number { margin-top: 6px; font-size: clamp(34px, 7vw, 58px); font-weight: 850; letter-spacing: -.07em; line-height: .95; }
+      .signal-caption { margin-top: 8px; color: rgba(247, 255, 249, .76); font-size: 12px; }
+
+      .thumb-object {
+        display: grid;
+        place-items: center;
+        min-height: 178px;
+        padding: 18px;
+        border: 1px solid rgba(38, 51, 47, .2);
+        border-radius: 22px;
+        background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(216,239,229,.7));
+      }
+
+      .thumb-mark { font-size: 54px; line-height: 1; filter: drop-shadow(0 8px 8px rgba(38, 51, 47, .15)); }
+      .thumb-value { margin-top: 8px; color: var(--ink); font-size: 28px; font-weight: 850; letter-spacing: -.06em; }
+      .thumb-note { margin-top: 5px; color: var(--muted); font-size: 11px; text-align: center; }
+
+      .content-source { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+      .content-source a { color: var(--focus); font-weight: 750; }
+      @media (max-width: 520px) {
+        .broadcast-stage { grid-template-columns: 1fr; }
+        .tv-object, .thumb-object { min-height: 156px; }
+      }
+
       /* ─── floating nav (detail) ────────────────── */
       .floating-nav {
         position: fixed;
@@ -1779,6 +1854,9 @@
 
         return {
           generatedAt: data.generatedAt,
+          content: window.__contentLive || {
+            account: "minimal_collector", threads: "--", followers: "--", views: "미노출", likes: "미노출", source: "https://www.threads.com/@minimal_collector"
+          },
           overallState: displayState,
           overallLabel: heroLabel,
           heroLines,
@@ -1944,6 +2022,36 @@
 
       function renderPanels() {
         Object.entries(model.panels).forEach(([id, panel]) => {
+          if (id === "content") {
+            const content = model.content || {};
+            $(`panel-${id}`).innerHTML = `
+              <div class="content-signal">
+                <div class="broadcast-stage">
+                  <article class="tv-object" aria-label="조회수 TV 지표">
+                    <div class="tv-screen">
+                      <div class="signal-label">Views / 조회수</div>
+                      <div class="signal-number">${safe(content.views)}</div>
+                      <div class="signal-caption">로그아웃 공개 화면에서 미노출</div>
+                    </div>
+                  </article>
+                  <article class="thumb-object" aria-label="좋아요 지표">
+                    <div>
+                      <div class="thumb-mark" aria-hidden="true">👍</div>
+                      <div class="thumb-value">${safe(content.likes)}</div>
+                      <div class="thumb-note">좋아요 / 공개 원자료 없음</div>
+                    </div>
+                  </article>
+                </div>
+                <div class="content-source"><span>@${safe(content.account)} · ${safe(content.threads)} Threads · ${safe(content.followers)} Followers</span><a href="${safe(content.source)}" target="_blank" rel="noopener">원자료 ↗</a></div>
+              </div>
+              <div class="summary-strip">
+                ${panel.summary.map(([key, value]) => summaryTile(key, value)).join("")}
+              </div>
+              <div class="group-title">Data status</div>
+              <div class="list-stack">${row({name: "최근 글 목록", state: "warn", detail: "프로필 화면에서 개별 글과 반응 수가 노출되지 않았습니다.", meta: "not exposed", reason: "로그인된 원자료 수집 경로가 연결되면 최근 글별 조회수와 좋아요를 이 화면에 채웁니다."})}</div>
+            `;
+            return;
+          }
           const groups = (panel.groups || [{ name: "Details", rows: panel.rows || [] }])
             .filter((group) => (group.rows || []).length > 0);
           $(`panel-${id}`).innerHTML = `
@@ -2094,8 +2202,20 @@
       Promise.all([
         fetch("./status.json", { cache: "no-store" }).then((response) => response.json()),
         loadAgentsLive(),
+        fetch("./content-live.json", { cache: "no-store" }).then((response) => response.json()).catch(() => null),
       ])
-        .then(([data, liveFeed]) => render(data, liveFeed))
+        .then(([data, liveFeed, contentLive]) => {
+          const profile = contentLive?.profile || {};
+          window.__contentLive = {
+            account: contentLive?.account || "minimal_collector",
+            threads: profile.threads ?? "--",
+            followers: profile.followers ?? "--",
+            views: contentLive?.metrics?.views ?? "미노출",
+            likes: contentLive?.metrics?.likes ?? "미노출",
+            source: contentLive?.source || "https://www.threads.com/@minimal_collector",
+          };
+          render(data, liveFeed);
+        })
         .catch(() => {
           document.body.dataset.overall = "warn";
           $("heroLineTwo").textContent = "feed unavailable";

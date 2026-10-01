@@ -1219,6 +1219,16 @@
 
       /* Spatial Type surface: text is the primary object; controls appear as
          an indexed reading path instead of a wall of glass panels. */
+      .floating-nav {
+        display: flex !important;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        justify-content: flex-start;
+        scrollbar-width: none;
+      }
+      .floating-nav::-webkit-scrollbar { display: none; }
+      .floating-nav .nav-button { flex: 0 0 88px; }
       body {
         background:
           linear-gradient(90deg, rgba(252, 252, 248, 0.94) 0%, rgba(252, 252, 248, 0.74) 48%, rgba(252, 252, 248, 0.28) 100%),

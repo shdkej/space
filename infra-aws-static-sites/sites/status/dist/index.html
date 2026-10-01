@@ -2019,6 +2019,9 @@
 
       function render(data, liveFeed) {
         model = buildModel(data, liveFeed);
+        // Content is no longer a standalone menu. Remove its legacy panel
+        // before renderPanels() so a missing DOM node cannot abort hydration.
+        delete model.panels.content;
         model.panels.monitoring = {
           title: "Monitoring",
           score: "L1—L5",

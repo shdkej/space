@@ -431,15 +431,6 @@
         height: min(26svh, 210px);
       }
 
-      .hero-copy {
-        padding: 8px 4px 4px;
-        border: 0;
-        background: transparent;
-        box-shadow: none;
-      }
-      .hero-lead, .hero-meta { display: none; }
-      .hero-title { font-size: clamp(24px, 4vw, 36px); }
-
       .control-card {
         position: relative;
         min-width: 0;
@@ -1283,42 +1274,12 @@
         }
       }
 
-      /* Layer helix: one readable box per layer, with the navigation kept on
-         one horizontal rail on narrow screens. */
-      .overview-grid {
-        grid-template-columns: 1fr;
-        grid-auto-rows: minmax(116px, auto);
-        align-self: stretch;
-        overflow-y: auto;
-        padding-right: 2px;
-      }
-
-      .control-card {
-        min-height: 116px;
-        grid-template-columns: minmax(92px, .34fr) minmax(0, 1fr) auto;
-        grid-template-rows: 1fr;
-        align-items: center;
-        border: 1px solid rgba(38, 51, 47, .24);
-        border-radius: 16px;
-        background: rgba(248, 251, 252, .62);
-      }
-
-      .floating-nav {
-        display: flex;
-        overflow-x: auto;
-        justify-content: flex-start;
-        scrollbar-width: none;
-      }
+      /* Spatial Type surface: text is the primary object; controls appear as
+         an indexed reading path instead of a wall of glass panels. */
+      .floating-nav { display: flex; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
       .floating-nav::-webkit-scrollbar { display: none; }
       .nav-button { flex: 0 0 88px; }
 
-      @media (max-width: 639px) {
-        .overview-grid { grid-template-columns: 1fr; height: auto; }
-        .control-card { grid-template-columns: 78px minmax(0, 1fr) auto; }
-      }
-
-      /* Spatial Type surface: text is the primary object; controls appear as
-         an indexed reading path instead of a wall of glass panels. */
       body {
         background:
           linear-gradient(90deg, rgba(252, 252, 248, 0.94) 0%, rgba(252, 252, 248, 0.74) 48%, rgba(252, 252, 248, 0.28) 100%),
@@ -1546,7 +1507,7 @@
         { id: "surfaces", label: "Surfaces" },
         { id: "agents", label: "Agents" },
         { id: "output", label: "Output" },
-        { id: "content", label: "Content" },
+        { id: "monitoring", label: "Monitoring" },
       ];
       let currentTab = "system";
       let model = null;
@@ -2142,12 +2103,24 @@
 
       function render(data, liveFeed) {
         model = buildModel(data, liveFeed);
+        model.panels.monitoring = {
+          title: "Monitoring",
+          score: "L1—L5",
+          sub: "운영의 다섯 레이어를 한 화면에서 봅니다.",
+          summary: [["Layers", "5"], ["Content", model.content?.views ?? "미노출"], ["State", model.overallState]],
+          groups: [{ name: "Layer helix", rows: [
+            { name: "L1 Business · CC", state: "warn", detail: "Carrying capacity 연결 대기", meta: "--" },
+            { name: "L2 Product · Sales", state: "warn", detail: "판매량 · 금액 연결 대기", meta: "--" },
+            { name: "L3 Content · Threads", state: "warn", detail: `@${model.content?.account || "minimal_collector"} · 조회수 ${model.content?.views ?? "미노출"} · 좋아요 ${model.content?.likes ?? "미노출"}`, meta: "source" },
+            { name: "L4 System · Runtime", state: model.overallState, detail: "OpenClaw · Infinity · Wiki", meta: `${model.okChecks}/${model.totalChecks}` },
+            { name: "L5 Resource · Infra", state: "warn", detail: "Server · Lambda · DB 연결 대기", meta: "--" },
+          ] }],
+        };
         model.cards = [
-          { id: "system", label: "L1 Business", value: "--", title: "CC / carrying capacity", status: "신호 연결 대기", state: "warn" },
-          { id: "surfaces", label: "L2 Product", value: "--", title: "판매량 · 금액", status: "제품 지표", state: "warn" },
-          { id: "content", label: "L3 Content", value: model.content?.views ?? "미노출", title: "조회수 · 좋아요", status: `@${model.content?.account || "minimal_collector"}`, state: "warn" },
-          { id: "agents", label: "L4 System", value: `${model.okChecks}/${model.totalChecks}`, title: "OpenClaw · Infinity · Wiki", status: "서비스 신호", state: model.overallState },
-          { id: "output", label: "L5 Resource", value: "--", title: "서버 · Lambda · DB", status: "리소스 지표", state: "warn" },
+          { id: "system", label: "Now", value: model.cards[0]?.value || "주의 필요", title: model.cards[0]?.title || "현재 상태", status: model.cards[0]?.status || "상태 확인", state: model.overallState },
+          { id: "agents", label: "Balance", value: `${model.okChecks}/${model.totalChecks} services`, title: "운영 신호", status: "Agents · Surfaces", state: model.overallState },
+          { id: "output", label: "Loop", value: "다음 주기 대기", title: "수집 루프", status: "Output freshness", state: "ok" },
+          { id: "monitoring", label: "Monitoring", value: "L1 — L5", title: "레이어 한눈에 보기", status: "Business · Product · Content · System · Resource", state: "ok" },
         ];
         const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);
         document.body.dataset.overall = model.overallState;

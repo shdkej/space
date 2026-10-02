@@ -1837,12 +1837,11 @@
         const latestPost = liveFeed?.monitoring?.content?.recentPosts?.[0];
         if (hasFeed) {
           heroLines[0] = liveCronErrors ? "크론 오류 확인" : liveContentState === "ok" ? "라이브 운영 정상" : "라이브 데이터 확인";
-          heroLines[1] = latestPost
-            ? `최근 글 · ${latestPost.title || "새 콘텐츠"}에 반응이 이어지고 있습니다`
-            : "최근 콘텐츠 흐름을 확인하는 중입니다";
+          const isTravelContent = /여행|신혼|국가|도시/.test(latestPost?.title || "");
+          heroLines[1] = latestPost ? (isTravelContent ? "여행 기록형 콘텐츠에 반응" : "최근 콘텐츠에 반응") : "최근 콘텐츠 흐름 확인 중";
         }
         const liveHeroLabel = hasFeed
-          ? (latestPost ? `콘텐츠 흐름 · ${latestPost.likes ?? "--"} 좋아요 · ${latestPost.replies ?? "--"} 댓글` : "콘텐츠 흐름 · 최근 게시물 확인 중")
+          ? (latestPost ? `최근 콘텐츠 반응 · ${latestPost.likes ?? "--"} 좋아요 · ${latestPost.replies ?? "--"} 댓글` : "콘텐츠 흐름 · 최근 게시물 확인 중")
           : heroLabel;
         const liveMetaScore = hasFeed && latestPost
           ? `최근 글 반응 · 좋아요 ${latestPost.likes ?? "--"} · 댓글 ${latestPost.replies ?? "--"}`

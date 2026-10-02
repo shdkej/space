@@ -2142,6 +2142,8 @@
             { name: "L5 리소스", state: monitoring.prometheus?.state || "warn", detail: monitoring.prometheus?.nodes?.length ? `Prometheus 노드 ${monitoring.prometheus.nodes.length}대 · Lambda` : "Prometheus 노드 3대 · Lambda", meta: monitoring.prometheus?.nodes?.length ? `노드 ${monitoring.prometheus.nodes.length}/3` : "노드 3/3", extraHtml: `<div class="system-repo-grid resource-node-grid" aria-label="Prometheus 노드와 Lambda 상태"><div class="system-repo"><div class="system-repo-name">oracle-arm-1</div><div class="system-repo-date">정상<br>10.0.0.84</div></div><div class="system-repo"><div class="system-repo-name">oracle-arm-2</div><div class="system-repo-date">정상<br>10.0.0.65</div></div><div class="system-repo"><div class="system-repo-name">oracle-amd-1</div><div class="system-repo-date">정상<br>10.0.0.144</div></div><div class="system-repo"><div class="system-repo-name">Lambda</div><div class="system-repo-date">상태 확인<br>대기</div></div></div>` },
           ] }],
         };
+        const recentPosts = Array.isArray(monitoring.content?.recentPosts) ? monitoring.content.recentPosts.slice(0, 5) : [];
+        if (recentPosts.length) model.panels.monitoring.groups.push({ name: "최근 게시물", rows: recentPosts.map((post) => ({ name: post.title || "제목 없음", state: "ok", detail: `좋아요 ${post.likes ?? "--"} · 댓글 ${post.replies ?? "--"}`, meta: post.date ? stamp(post.date) : "Threads", href: post.url })) });
         const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);
         document.body.dataset.overall = model.overallState;
         $("heroKicker").textContent = "Space status";

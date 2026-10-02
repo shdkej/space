@@ -1404,7 +1404,9 @@
       if (!canResolveWaiting && !canRequestArchive) return;
       const approvalRequired = String(item.meta && item.meta.approval_required || "").toLowerCase() === "true"
         || String(item.meta && item.meta.permission_level || "").toLowerCase() === "approval_required"
-        || String(item.meta && item.meta.waiting_reason || "").includes("승인");
+        || String(item.meta && item.meta.waiting_reason || "").includes("승인")
+        || String(item.meta && item.meta.blocker || "").includes("승인")
+        || Boolean(item.meta && item.meta.allowed_after_approval);
 
       const block = makeBlock("대시보드 액션", "kind-action", { expanded: true });
       const panel = document.createElement("div");

@@ -2127,6 +2127,7 @@
         const githubUpdates = (monitoring.github || []).filter((item) => item.state === "ok").map((item) => `${item.repo.split("/").pop()} · ${stamp(item.updatedAt)}`).join(" · ");
         const posthogMetrics = monitoring.posthog?.metrics || {};
         const contentMetrics = monitoring.content || {};
+        if (contentMetrics.metrics?.views == null && contentMetrics.metrics?.likes != null) contentMetrics.metrics.views = contentMetrics.metrics.likes;
         const businessMetrics = monitoring.business || {};
         model.panels.monitoring = {
           title: "Monitoring",

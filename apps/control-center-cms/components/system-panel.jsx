@@ -66,7 +66,7 @@ function LayerHeader({ title, status }) {
 
 function SystemSignature({ snapshot, payload, layerStatuses }) {
   const waitingForUser = (payload.intents?.items?.waiting || []).filter(
-    (it) => (it.waiting_on || "").toLowerCase() === "user"
+    needsUserApproval
   ).length;
   const activeCount = payload.intents?.counts?.active ?? 0;
   const cronCount = payload.crons?.length ?? 0;
@@ -129,6 +129,13 @@ function daysSince(iso) {
   return Number.isNaN(d) ? null : d;
 }
 
+function needsUserApproval(it) {
+  return (it.waiting_on || "").toLowerCase() === "user"
+    || String(it.approval_required).toLowerCase() === "true"
+    || (it.permission_level || "").toLowerCase() === "approval_required"
+    || (it.waiting_reason || "").toLowerCase().includes("승인");
+}
+
 function traceLine(it) {
   const parts = [];
   if (it.approval_date) parts.push(`승인 ${it.approval_date.slice(5)}`);
@@ -163,8 +170,8 @@ function IntentCard({ it, done }) {
 function PipelineBoard({ intents }) {
   const items = intents?.items || {};
   const waiting = items.waiting || [];
-  const yourTurn = waiting.filter((it) => (it.waiting_on || "").toLowerCase() === "user");
-  const otherWaiting = waiting.filter((it) => (it.waiting_on || "").toLowerCase() !== "user");
+  const yourTurn = waiting.filter(needsUserApproval);
+  const otherWaiting = waiting.filter((it) => !needsUserApproval(it));
   const completed = (intents?.completed || []).slice(0, 6);
   const columns = [
     { key: "inbox", label: "접수", list: items.inbox || [] },
@@ -190,6 +197,14 @@ function PipelineBoard({ intents }) {
                   {it.next_action && (
                     <p className="mt-0.5 pl-1 text-xs text-muted-foreground">첫 액션: {it.next_action}</p>
                   )}
+                  <div className="mt-2 flex gap-2">
+                    <Button size="sm" className="h-7 text-xs" onClick={() => window.alert(`승인 요청: ${it.id}`)}>
+                      승인
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => window.alert(`보류 요청: ${it.id}`)}>
+                      보류
+                    </Button>
+                  </div>
                 </div>
               );
             })}
@@ -334,7 +349,7 @@ export default function SystemPanel() {
       <LayerHeader
         title="요청 파이프라인 — 발화 → 승인(L2) → 실행(L3) → 산출(L4) → 통보"
         status={
-          (payload.intents?.items?.waiting || []).some((it) => (it.waiting_on || "").toLowerCase() === "user")
+          (payload.intents?.items?.waiting || []).some(needsUserApproval)
             ? "degraded"
             : "operational"
         }

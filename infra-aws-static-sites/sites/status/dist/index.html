@@ -2131,7 +2131,8 @@
         const githubUpdates = (monitoring.github || []).filter((item) => item.state === "ok").map((item) => `${item.repo.split("/").pop()} · ${stamp(item.updatedAt)}`).join(" · ");
         const posthogMetrics = monitoring.posthog?.metrics || {};
         const contentMetrics = monitoring.content || {};
-        if (contentMetrics.metrics?.views == null && contentMetrics.metrics?.likes != null) contentMetrics.metrics.views = contentMetrics.metrics.likes;
+        const contentViewsMissing = contentMetrics.metrics?.views == null && contentMetrics.metrics?.likes != null;
+        if (contentViewsMissing) contentMetrics.metrics.views = contentMetrics.metrics.likes;
         const businessMetrics = monitoring.business || {};
         model.panels.monitoring = {
           title: "Monitoring",
@@ -2173,6 +2174,7 @@
         const recentPosts = Array.isArray(liveFeed?.monitoring?.content?.recentPosts) ? liveFeed.monitoring.content.recentPosts.slice(0, 3) : [];
         const l3Row = [...document.querySelectorAll("#panel-monitoring .list-row")].find((el) => el.querySelector(".row-name")?.textContent.includes("L3 콘텐츠"));
         if (l3Row && recentPosts.length) {
+          if (contentViewsMissing) l3Row.querySelector(".monitor-tv-label").textContent = "좋아요";
           l3Row.querySelector(".row-main")?.insertAdjacentHTML("beforeend", `<div class="recent-posts-compact" aria-label="최근 게시물">${recentPosts.map((post) => `<div class="recent-post-compact"><span class="recent-post-compact-title">${safe(post.title || "제목 없음")}</span><span class="recent-post-compact-meta">♥ ${safe(post.likes ?? "--")} · 댓글 ${safe(post.replies ?? "--")}</span></div>`).join("")}</div>`);
         }
 

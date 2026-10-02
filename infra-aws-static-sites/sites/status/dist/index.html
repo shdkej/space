@@ -2074,35 +2074,20 @@
               { name: "L4 시스템", state: "warn", detail: "시스템 지표 · 연결 대기", meta: "--" },
             ]),
             { name: "PDCA loop", state: "ok", detail: "Plan · Do · Check · Act", meta: "loop" },
-            { name: "노션 소셜 미디어 콘텐츠", state: "ok", detail: "콘텐츠 목록 · 146개", meta: "Notion" },
+            { name: "노션 소셜 미디어 콘텐츠", state: liveFeed?.notion?.state || "warn", detail: liveFeed?.notion?.count != null ? `콘텐츠 목록 · ${liveFeed.notion.count}개` : "콘텐츠 목록 · 확인 대기", meta: liveFeed?.notion?.updatedAt ? `갱신 ${rel(liveFeed.notion.updatedAt)}` : "Notion" },
           ],
         }];
-        const loopRows = [
-          ["09:00", "AI research system brief", "정상", "SAM"],
-          ["12:30", "Weekly review (Sunday night)", "정상", "SAM"],
-          ["12:40", "Monthly review (1st night)", "정상", "SAM"],
-          ["12:00", "AI news daily noon top 10", "정상", "지니"],
-          ["16:00", "Version tracker daily", "정상", "SAM"],
-          ["22:00", "Daily review reminder (Italy 22:00)", "정상", "SAM"],
-          ["04:30", "Knowledge Lab source ingest and agent-wiki promotion", "정상", "SAM"],
-          ["10분마다", "Infinity dispatcher + terminal reply", "정상", "지니"],
-          ["30분마다", "heartbeat-main", "정상", "SAM"],
-          ["30분마다", "Observe → Intent → Learn", "오류", "SAM"],
-          ["12시간마다", "Worldpackers EU dev opportunities monitor", "정상", "hj"],
-        ].map(([schedule, name, status, actor]) => ({
-          name,
-          state: status === "정상" ? "ok" : "bad",
-          detail: `${actor || "SAM"} · ${schedule}`,
-          meta: status,
-          reason: status === "오류" ? "마지막 실행 로그 · 2026-10-01 00:11:03 UTC · cron trigger evaluation failed (timeout): code mode timeout exceeded · 실행 시간 33.8초 · 원인 timeout" : null,
-        })).sort((a, b) => {
-          const order = (row) => row.detail.includes("10분") ? 10 : row.detail.includes("30분") ? 30 : row.detail.includes("12시간") ? 720 : Number(row.detail.match(/(\d{2}):(\d{2})/)?.[1] || 99) * 60 + Number(row.detail.match(/(\d{2}):(\d{2})/)?.[2] || 0);
-          return order(a) - order(b);
-        });
+        const liveCrons = Array.isArray(liveFeed?.crons) ? liveFeed.crons : [];
+        const loopRows = liveCrons.filter((c) => c.enabled).map((c) => {
+          const status = c.status === "operational" ? "ok" : c.status === "down" ? "bad" : "warn";
+          const agent = c.agent_id || "main";
+          const error = c.last_error || (c.consecutive_errors ? `연속 오류 ${c.consecutive_errors}회 · 마지막 상태 ${c.last_status || "unknown"}` : null);
+          return { name: c.name || c.id || "이름 없는 크론", state: status, detail: `${agent} · ${c.schedule || "주기 확인 대기"}`, meta: c.last_status || c.status, reason: error };
+        }).sort((a, b) => a.detail.localeCompare(b.detail, "en", { numeric: true }));
         model.panels.output.title = "Loop";
         model.panels.output.sub = "현재 활성화된 예약 크론만 표시합니다.";
         const liveOutputs = Array.isArray(liveFeed?.outputs) ? liveFeed.outputs : [];
-        const liveOutputErrors = liveOutputs.filter((item) => item.state !== "ok").length;
+        const liveOutputErrors = liveCrons.filter((item) => item.enabled && item.status !== "operational").length;
         model.panels.output.score = liveOutputErrors ? `오류 ${liveOutputErrors}개` : "정상";
         model.panels.output.summary = [["활성", loopRows.length], ["오류", liveOutputErrors], ["기준", "실행 주기"]];
         model.panels.output.groups = [{

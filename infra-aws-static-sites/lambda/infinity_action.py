@@ -112,7 +112,10 @@ def handler(event, context):
     if not _authorized(event, payload):
         return _response(401, {"error": "unauthorized"}, origin)
 
-    intent_id = _clean_text(payload.get("intent_id") or payload.get("intentId"), 80)
+    # Infinity intent ids may contain several descriptive segments plus a date
+    # suffix (for example ...-20261002). Do not truncate before grammar
+    # validation, or a valid dashboard card becomes ``invalid_intent_id``.
+    intent_id = _clean_text(payload.get("intent_id") or payload.get("intentId"), 160)
     action = _clean_text(payload.get("action"), 64)
     source = _clean_text(payload.get("source") or "dashboard", 80)
     page = _clean_text(payload.get("page") or payload.get("path"), 400)

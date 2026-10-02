@@ -1478,6 +1478,9 @@
       const st = String(item.meta && item.meta.status || "").toLowerCase();
       const canResolveWaiting = source === "waiting" || st === "waiting";
       const canRequestArchive = source === "active" || source === "waiting" || st === "active" || st === "waiting";
+      const approvalRequired = String(item.meta && item.meta.approval_required || "").toLowerCase() === "true"
+        || String(item.meta && item.meta.permission_level || "").toLowerCase() === "approval_required"
+        || String(item.meta && item.meta.waiting_reason || "").includes("승인");
 
       const block = makeBlock("대시보드 액션", "kind-action", { expanded: true });
       const panel = document.createElement("div");
@@ -1492,10 +1495,10 @@
       const row = document.createElement("div");
       row.className = "action-row";
       if (canResolveWaiting) {
-        addActionButton(row, item, sourceLabel, "resolve_waiting", "SAM이 확인 시작", "대기 중");
+        addActionButton(row, item, sourceLabel, "resolve_waiting", approvalRequired ? "승인" : "SAM이 확인 시작", approvalRequired ? "승인 대기" : "대기 중");
       }
       if (canRequestArchive) {
-        addActionButton(row, item, sourceLabel, "archive_request", "Archive 요청", "확인 후 처리");
+        addActionButton(row, item, sourceLabel, "archive_request", approvalRequired ? "보류" : "Archive 요청", approvalRequired ? "보류 선택" : "확인 후 처리");
       }
       panel.appendChild(note);
       if (row.childElementCount) panel.appendChild(row);

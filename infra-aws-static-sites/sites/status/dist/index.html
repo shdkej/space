@@ -1841,6 +1841,16 @@
         const liveHeroLabel = hasFeed
           ? `${totalAgents}개 에이전트 · ${(liveFeed.crons || []).length}개 크론 · 노션 ${liveFeed.notion?.count ?? "--"}개 · ${liveCronErrors ? "오류 확인 필요" : "최신 수집"}`
           : heroLabel;
+        const latestPost = liveFeed?.monitoring?.content?.recentPosts?.[0];
+        const liveMetaScore = hasFeed && latestPost
+          ? `최근 글 반응 · 좋아요 ${latestPost.likes ?? "--"} · 댓글 ${latestPost.replies ?? "--"}`
+          : `운영 신호 · ${liveContentState === "ok" ? "콘텐츠 연결됨" : "확인 필요"}`;
+        const liveMetaStats = hasFeed
+          ? (liveCronErrors ? "최근 변경 · 오류 크론 확인 필요" : `최근 변경 · ${latestPost?.title || "콘텐츠 흐름 갱신"}`)
+          : "라이브 원자료를 기다리는 중";
+        const liveMetaUpdated = hasFeed
+          ? `다음 관찰 · ${liveCronErrors ? "오류 원인 확인" : "최근 콘텐츠 흐름 계속 관찰"}`
+          : "라이브 피드 없음";
         const nowTitle = attentionRows[0]
           ? `${attentionRows[0].name} 확인`
           : `${okChecks}/${checks.length} services`;
@@ -1863,9 +1873,9 @@
           okChecks,
           totalChecks: checks.length,
           meta: {
-            score: `보조 점수 ${score}/100`,
-            stats: `Services ${okChecks}/${checks.length} · Agents ${okAgents}/${totalAgents} · Outputs ${outputRatio}`,
-            updated: `Snapshot ${snapshotFresh.label} · ${relFromMinutes(snapshotAge)} / Agent ${hasFeed ? `${agentFresh.label} · ${relFromMinutes(liveFeed.ageMinutes)}` : "missing"}`,
+            score: liveMetaScore,
+            stats: liveMetaStats,
+            updated: liveMetaUpdated,
           },
           cards: [
             {

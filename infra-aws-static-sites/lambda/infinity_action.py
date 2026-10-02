@@ -26,7 +26,7 @@ ALLOWED_ACTIONS = {
     "knowledge_research",
 }
 ACTION_TOKEN_SHA256 = os.environ.get("ACTION_TOKEN_SHA256", "").strip().lower()
-INTENT_ID_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-\d+$")
+INTENT_ID_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)+$")
 # Agent Wiki loop IDs identify a log event, not an Infinity task. They have a
 # separate grammar and dedupe boundary.
 KNOWLEDGE_LOOP_ID_RE = re.compile(r"^kl-loop-[a-z0-9]+(?:-[a-z0-9]+)+$")

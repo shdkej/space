@@ -1580,8 +1580,11 @@
             ageMinutes: age,
             generatedAt: data.generatedAt,
             agents: data.agents,
+            crons: Array.isArray(data.crons) ? data.crons : [],
             outputs: Array.isArray(data.outputs) ? data.outputs : [],
             system: data.system || null,
+            notion: data.notion || null,
+            monitoring: data.monitoring || null,
           };
         } catch (_error) {
           return { live: false, ageMinutes: null, generatedAt: null, agents: null, outputs: [], system: null };
@@ -2129,7 +2132,7 @@
           sub: "다섯 운영 레이어를 한 화면에서 확인합니다.",
           summary: [["Layers", "5"], ["Mode", "overview"], ["State", model.overallState]],
           groups: [{ name: "운영 레이어", rows: [
-            ...(layers.slice(0, 4).map((layer, index) => ({ name: `L${index + 1} ${layer.name}`, state: layer.state, detail: index === 1 && Object.keys(posthogMetrics).length ? "PostHog exporter · Prometheus 수집값" : index === 3 && githubUpdates ? githubUpdates : layer.reason || "라이브 판정 근거 없음", meta: "라이브" }))),
+            ...((liveFeed?.system?.layers || []).slice(0, 4).map((layer, index) => ({ name: `L${index + 1} ${layer.name}`, state: layer.state, detail: index === 1 && Object.keys(posthogMetrics).length ? "PostHog exporter · Prometheus 수집값" : index === 3 && githubUpdates ? githubUpdates : layer.reason || "라이브 판정 근거 없음", meta: "라이브" }))),
             { name: "L5 리소스", state: monitoring.prometheus?.state || "warn", detail: monitoring.prometheus?.nodes?.length ? `Prometheus 노드 ${monitoring.prometheus.nodes.length}대` : "Prometheus 원자료 연결 대기", meta: monitoring.prometheus?.nodes?.length ? "라이브" : "수집 대기", extraHtml: `<div class="system-repo-grid resource-node-grid" aria-label="Prometheus 노드와 Lambda 상태">${(monitoring.prometheus?.nodes || []).map((node) => `<div class="system-repo"><div class="system-repo-name">${safe(node.name || "node")}</div><div class="system-repo-date">${safe(node.status || "확인")}</div></div>`).join("")}<div class="system-repo"><div class="system-repo-name">Lambda</div><div class="system-repo-date">Prometheus 지표<br>없음</div></div></div>` },
           ] }],
         };

@@ -923,6 +923,10 @@
       .monitoring-layer-stack .list-row { min-height: 92px; border: 1px solid rgba(38,51,47,.22); border-radius: 14px; background: rgba(248,251,252,.58); }
       .monitoring-layer-stack .list-row:nth-child(4) { border-color: rgba(47,143,123,.52); background: rgba(224,247,239,.38); }
       .monitoring-layer-stack .list-row:nth-child(5) { border-color: rgba(185,130,43,.62); background: rgba(255,246,220,.52); }
+      .recent-posts-compact { display:grid; gap:3px; margin-top:7px; max-width:100%; overflow:hidden; }
+      .recent-post-compact { display:flex; gap:6px; align-items:baseline; min-width:0; font-size:10px; line-height:1.25; }
+      .recent-post-compact-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); }
+      .recent-post-compact-meta { flex:0 0 auto; color:var(--muted); white-space:nowrap; }
       .monitoring-layer-stack .list-row:nth-child(5) .system-repo { border-color: rgba(79,157,138,.72); background: rgba(221,247,236,.72); }
       .monitoring-layer-stack .list-row:nth-child(5) .system-repo-date { color: #327562; }
       .monitor-tv { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; margin:8px 0 12px; padding:18px 12px 14px; border:1.5px solid #222; border-radius:22px 22px 26px 26px; background:transparent; color:#111; box-shadow:0 5px 0 rgba(34,34,34,.12); }
@@ -2142,8 +2146,6 @@
             { name: "L5 리소스", state: monitoring.prometheus?.state || "warn", detail: monitoring.prometheus?.nodes?.length ? `Prometheus 노드 ${monitoring.prometheus.nodes.length}대 · Lambda` : "Prometheus 노드 3대 · Lambda", meta: monitoring.prometheus?.nodes?.length ? `노드 ${monitoring.prometheus.nodes.length}/3` : "노드 3/3", extraHtml: `<div class="system-repo-grid resource-node-grid" aria-label="Prometheus 노드와 Lambda 상태"><div class="system-repo"><div class="system-repo-name">oracle-arm-1</div><div class="system-repo-date">정상<br>10.0.0.84</div></div><div class="system-repo"><div class="system-repo-name">oracle-arm-2</div><div class="system-repo-date">정상<br>10.0.0.65</div></div><div class="system-repo"><div class="system-repo-name">oracle-amd-1</div><div class="system-repo-date">정상<br>10.0.0.144</div></div><div class="system-repo"><div class="system-repo-name">Lambda</div><div class="system-repo-date">상태 확인<br>대기</div></div></div>` },
           ] }],
         };
-        const recentPosts = Array.isArray(monitoring.content?.recentPosts) ? monitoring.content.recentPosts.slice(0, 5) : [];
-        if (recentPosts.length) model.panels.monitoring.groups.push({ name: "최근 게시물", rows: recentPosts.map((post) => ({ name: post.title || "제목 없음", state: "ok", detail: `좋아요 ${post.likes ?? "--"} · 댓글 ${post.replies ?? "--"}`, meta: post.date ? stamp(post.date) : "Threads", href: post.url })) });
         const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);
         document.body.dataset.overall = model.overallState;
         $("heroKicker").textContent = "Space status";
@@ -2168,6 +2170,11 @@
         ].join("");
 
         renderPanels();
+        const recentPosts = Array.isArray(liveFeed?.monitoring?.content?.recentPosts) ? liveFeed.monitoring.content.recentPosts.slice(0, 3) : [];
+        const l3Row = [...document.querySelectorAll("#panel-monitoring .list-row")].find((el) => el.querySelector(".row-name")?.textContent.includes("L3 콘텐츠"));
+        if (l3Row && recentPosts.length) {
+          l3Row.querySelector(".row-main")?.insertAdjacentHTML("beforeend", `<div class="recent-posts-compact" aria-label="최근 게시물">${recentPosts.map((post) => `<div class="recent-post-compact"><span class="recent-post-compact-title">${safe(post.title || "제목 없음")}</span><span class="recent-post-compact-meta">♥ ${safe(post.likes ?? "--")} · 댓글 ${safe(post.replies ?? "--")}</span></div>`).join("")}</div>`);
+        }
 
         document.querySelectorAll(".control-card").forEach((el) => {
           el.addEventListener("click", () => setTab(el.dataset.tab));

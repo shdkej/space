@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-05T21:20:51.570422+00:00",
+  "generatedAt": "2026-10-05T21:48:02.126792+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -22,8 +22,8 @@
   },
   "current": {
     "date": "2026-10-06",
-    "location": "Southern France / Paris",
-    "mapQuery": "Southern France / Paris, France"
+    "location": "Barcelona",
+    "mapQuery": "Barcelona, Spain"
   },
   "categoryTotals": {
     "other": 12662200,
@@ -49,24 +49,24 @@
   },
   "countryCategoryTotals": [
     {
-      "country": "France",
-      "total": 6069608,
-      "categories": {
-        "stay": 3161646,
-        "other": 2546445,
-        "transport": 235066,
-        "cafe": 74164,
-        "food": 44521,
-        "visa": 7766
-      }
-    },
-    {
       "country": "Egypt",
       "total": 5956840,
       "categories": {
         "stay": 3134076,
         "other": 2541344,
         "transport": 281420
+      }
+    },
+    {
+      "country": "국가 미확인 예약",
+      "total": 5911880,
+      "categories": {
+        "stay": 3128226,
+        "other": 2503997,
+        "transport": 153206,
+        "cafe": 74164,
+        "food": 44521,
+        "visa": 7766
       }
     },
     {
@@ -89,11 +89,12 @@
     },
     {
       "country": "Spain",
-      "total": 2037104,
+      "total": 2194832,
       "categories": {
-        "stay": 965126,
-        "other": 925306,
+        "stay": 998546,
+        "other": 967754,
         "groceries": 90678,
+        "transport": 81860,
         "visa": 55994
       }
     },
@@ -10322,24 +10323,34 @@
         "lng": 2.1686
       },
       {
-        "name": "Southern France / Paris, France",
-        "lat": 48.8566,
-        "lng": 2.3522
+        "name": "Argentina, Argentina",
+        "lat": -34.6037,
+        "lng": -58.3816
       },
       {
-        "name": "Northern Italy / Switzerland, Italy / Switzerland",
-        "lat": 45.4642,
-        "lng": 9.19
+        "name": "Barcelona, Spain",
+        "lat": 41.3874,
+        "lng": 2.1686
       },
       {
-        "name": "France Revisit, France",
+        "name": "Madrid, Spain",
+        "lat": 40.4168,
+        "lng": -3.7038
+      },
+      {
+        "name": "Portugal, Portugal",
+        "lat": 38.7223,
+        "lng": -9.1393
+      },
+      {
+        "name": "Paris, France",
         "lat": 48.8566,
         "lng": 2.3522
       },
       {
         "name": "London, United Kingdom",
-        "lat": 51.5072,
-        "lng": -0.1276
+        "lat": 51.5074,
+        "lng": -0.1278
       },
       {
         "name": "Copenhagen, Denmark",
@@ -10357,22 +10368,17 @@
         "lng": -74.006
       },
       {
-        "name": "Las Vegas / Los Angeles, United States",
-        "lat": 34.0522,
-        "lng": -118.2437
-      },
-      {
         "name": "Peru, Peru",
-        "lat": -13.5319,
-        "lng": -71.9675
+        "lat": -12.0464,
+        "lng": -77.0428
       },
       {
         "name": "Bolivia, Bolivia",
-        "lat": -20.1338,
-        "lng": -67.4891
+        "lat": -16.4897,
+        "lng": -68.1193
       },
       {
-        "name": "Argentina, Argentina",
+        "name": "Argentina / Chile Patagonia, Argentina / Chile",
         "lat": -34.6037,
         "lng": -58.3816
       }
@@ -11432,146 +11438,6 @@
       "lng": 2.1686
     },
     {
-      "city": "Southern France / Paris",
-      "country": "France",
-      "status": "planned",
-      "startDate": "2026-09-26",
-      "endDate": "2026-10-07",
-      "source": "master route sketch / wishlist",
-      "note": "Lyon Biennale, Paris, Louvre, Pompidou, possible Mont-Saint-Michel.",
-      "transportIn": "스페인 -> 프랑스",
-      "transportOut": "열차/항공: 프랑스 -> 이탈리아/스위스",
-      "schengen": true,
-      "lat": 48.8566,
-      "lng": 2.3522
-    },
-    {
-      "city": "Northern Italy / Switzerland",
-      "country": "Italy / Switzerland",
-      "status": "planned",
-      "startDate": "2026-10-07",
-      "endDate": "2026-10-18",
-      "source": "master route sketch",
-      "note": "Northern Italy, possible Dolomites, Switzerland, then back toward France/UK.",
-      "transportIn": "프랑스 -> 이탈리아/스위스",
-      "transportOut": "열차/항공: 스위스/프랑스 -> 런던",
-      "schengen": true,
-      "lat": 45.4642,
-      "lng": 9.19
-    },
-    {
-      "city": "France Revisit",
-      "country": "France",
-      "status": "planned",
-      "startDate": "2026-10-18",
-      "endDate": "2026-10-23",
-      "source": "master route sketch",
-      "note": "Buffer before UK; use for Paris, Normandy, or cheaper London connection.",
-      "transportIn": "스위스/이탈리아 -> 프랑스",
-      "transportOut": "열차/항공: 프랑스 -> 런던",
-      "schengen": true,
-      "lat": 48.8566,
-      "lng": 2.3522
-    },
-    {
-      "city": "London",
-      "country": "United Kingdom",
-      "status": "planned",
-      "startDate": "2026-10-23",
-      "endDate": "2026-10-27",
-      "source": "Schengen buffer plan / wishlist",
-      "note": "UK break; Tate Modern and Hatchards are wishlist anchors.",
-      "transportIn": "프랑스/스위스 -> 런던",
-      "transportOut": "항공 후보: 런던 -> 코펜하겐",
-      "schengen": false,
-      "lat": 51.5072,
-      "lng": -0.1276
-    },
-    {
-      "city": "Copenhagen",
-      "country": "Denmark",
-      "status": "planned",
-      "startDate": "2026-10-27",
-      "endDate": "2026-10-30",
-      "source": "wishlist",
-      "note": "Royal Library, Glyptotek, HAY House; short final Schengen leg.",
-      "transportIn": "런던 -> 코펜하겐",
-      "transportOut": "항공 후보: 코펜하겐 -> 레이캬비크",
-      "schengen": true,
-      "lat": 55.6761,
-      "lng": 12.5683
-    },
-    {
-      "city": "Reykjavik",
-      "country": "Iceland",
-      "status": "planned",
-      "startDate": "2026-10-30",
-      "endDate": "2026-11-02",
-      "source": "master route sketch",
-      "note": "Iceland finale before Americas; aurora hunting is optional.",
-      "transportIn": "코펜하겐 -> 레이캬비크",
-      "transportOut": "장거리 항공: 아이슬란드 -> 미국",
-      "schengen": true,
-      "lat": 64.1466,
-      "lng": -21.9426
-    },
-    {
-      "city": "New York",
-      "country": "United States",
-      "status": "planned",
-      "startDate": "2026-11-02",
-      "endDate": "2026-11-09",
-      "source": "master route sketch / wishlist",
-      "note": "MoMA, Guggenheim, Central Park; possible Peabody Library side trip.",
-      "transportIn": "아이슬란드 -> 뉴욕",
-      "transportOut": "미국 국내 이동: 뉴욕 -> 라스베이거스/로스앤젤레스",
-      "schengen": false,
-      "lat": 40.7128,
-      "lng": -74.006
-    },
-    {
-      "city": "Las Vegas / Los Angeles",
-      "country": "United States",
-      "status": "planned",
-      "startDate": "2026-11-09",
-      "endDate": "2026-11-18",
-      "source": "master route sketch",
-      "note": "Western US leg; stamina and flight price should decide exact split.",
-      "transportIn": "미국 국내 이동",
-      "transportOut": "장거리 항공: 미국 -> 페루",
-      "schengen": false,
-      "lat": 34.0522,
-      "lng": -118.2437
-    },
-    {
-      "city": "Peru",
-      "country": "Peru",
-      "status": "planned",
-      "startDate": "2026-11-18",
-      "endDate": "2026-11-28",
-      "source": "wishlist",
-      "note": "Machu Picchu / Cusco region candidate; altitude pacing needed.",
-      "transportIn": "미국 -> 리마/쿠스코",
-      "transportOut": "육로/항공: 페루 -> 볼리비아",
-      "schengen": false,
-      "lat": -13.5319,
-      "lng": -71.9675
-    },
-    {
-      "city": "Bolivia",
-      "country": "Bolivia",
-      "status": "planned",
-      "startDate": "2026-11-28",
-      "endDate": "2026-12-06",
-      "source": "wishlist",
-      "note": "Uyuni is the main anchor; altitude and night bus fatigue need care.",
-      "transportIn": "페루 -> 볼리비아",
-      "transportOut": "육로/항공: 볼리비아 -> 아르헨티나",
-      "schengen": false,
-      "lat": -20.1338,
-      "lng": -67.4891
-    },
-    {
       "city": "Argentina",
       "country": "Argentina",
       "status": "planned",
@@ -11580,6 +11446,127 @@
       "note": "Final South America block; exact return date still open.",
       "transportIn": "볼리비아 -> 아르헨티나",
       "transportOut": "귀국편 TBD",
+      "schengen": false,
+      "lat": -34.6037,
+      "lng": -58.3816
+    },
+    {
+      "city": "Barcelona",
+      "country": "Spain",
+      "status": "planned",
+      "startDate": "2026-10-06",
+      "endDate": "2026-10-09",
+      "source": "2026 master route plan",
+      "schengen": true,
+      "lat": 41.3874,
+      "lng": 2.1686
+    },
+    {
+      "city": "Madrid",
+      "country": "Spain",
+      "status": "planned",
+      "startDate": "2026-10-09",
+      "endDate": "2026-10-10",
+      "source": "2026 master route plan",
+      "schengen": true,
+      "lat": 40.4168,
+      "lng": -3.7038
+    },
+    {
+      "city": "Portugal",
+      "country": "Portugal",
+      "status": "planned",
+      "startDate": "2026-10-10",
+      "endDate": "2026-10-13",
+      "source": "2026 master route plan",
+      "schengen": true,
+      "lat": 38.7223,
+      "lng": -9.1393
+    },
+    {
+      "city": "Paris",
+      "country": "France",
+      "status": "planned",
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-18",
+      "source": "2026 master route plan",
+      "schengen": true,
+      "lat": 48.8566,
+      "lng": 2.3522
+    },
+    {
+      "city": "London",
+      "country": "United Kingdom",
+      "status": "planned",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-22",
+      "source": "2026 master route plan",
+      "schengen": false,
+      "lat": 51.5074,
+      "lng": -0.1278
+    },
+    {
+      "city": "Copenhagen",
+      "country": "Denmark",
+      "status": "planned",
+      "startDate": "2026-10-22",
+      "endDate": "2026-10-24",
+      "source": "2026 master route plan",
+      "schengen": false,
+      "lat": 55.6761,
+      "lng": 12.5683
+    },
+    {
+      "city": "Reykjavik",
+      "country": "Iceland",
+      "status": "planned",
+      "startDate": "2026-10-24",
+      "endDate": "2026-11-01",
+      "source": "2026 master route plan",
+      "schengen": false,
+      "lat": 64.1466,
+      "lng": -21.9426
+    },
+    {
+      "city": "New York",
+      "country": "United States",
+      "status": "planned",
+      "startDate": "2026-11-01",
+      "endDate": "2026-11-06",
+      "source": "2026 master route plan",
+      "schengen": false,
+      "lat": 40.7128,
+      "lng": -74.006
+    },
+    {
+      "city": "Peru",
+      "country": "Peru",
+      "status": "planned",
+      "startDate": "2026-11-06",
+      "endDate": "2026-11-20",
+      "source": "2026 master route plan",
+      "schengen": false,
+      "lat": -12.0464,
+      "lng": -77.0428
+    },
+    {
+      "city": "Bolivia",
+      "country": "Bolivia",
+      "status": "planned",
+      "startDate": "2026-11-20",
+      "endDate": "2026-11-29",
+      "source": "2026 master route plan",
+      "schengen": false,
+      "lat": -16.4897,
+      "lng": -68.1193
+    },
+    {
+      "city": "Argentina / Chile Patagonia",
+      "country": "Argentina / Chile",
+      "status": "planned",
+      "startDate": "2026-11-29",
+      "endDate": "2026-12-19",
+      "source": "2026 master route plan",
       "schengen": false,
       "lat": -34.6037,
       "lng": -58.3816

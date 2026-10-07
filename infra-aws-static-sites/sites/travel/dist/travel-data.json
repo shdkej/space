@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-06T14:40:03.604311+00:00",
+  "generatedAt": "2026-10-07T14:40:04.988156+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,25 +8,25 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 28582519,
-    "travelLoggedKrw": 28582519,
-    "remainingMinKrw": 1417481,
-    "remainingMaxKrw": 11417481,
-    "reservedPctMin": 95.3,
+    "loggedKrw": 28765153,
+    "travelLoggedKrw": 28765153,
+    "remainingMinKrw": 1234847,
+    "remainingMaxKrw": 11234847,
+    "reservedPctMin": 95.9,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 190550,
+    "reserveBurnKrw": 189244,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-06",
+    "date": "2026-10-08",
     "location": "Barcelona",
     "mapQuery": "Barcelona, Spain"
   },
   "categoryTotals": {
-    "other": 12662200,
+    "other": 12844834,
     "stay": 11332278,
     "transport": 1591212,
     "gear": 1446349,
@@ -37,7 +37,7 @@
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 12662200,
+    "other": 12844834,
     "stay": 11332278,
     "transport": 1591212,
     "gear": 1446349,
@@ -70,6 +70,17 @@
       }
     },
     {
+      "country": "Spain",
+      "total": 2377466,
+      "categories": {
+        "other": 1150388,
+        "stay": 998546,
+        "groceries": 90678,
+        "transport": 81860,
+        "visa": 55994
+      }
+    },
+    {
       "country": "여행 준비",
       "total": 2337743,
       "categories": {
@@ -85,17 +96,6 @@
         "other": 1304344,
         "stay": 780807,
         "transport": 137848
-      }
-    },
-    {
-      "country": "Spain",
-      "total": 2194832,
-      "categories": {
-        "stay": 998546,
-        "other": 967754,
-        "groceries": 90678,
-        "transport": 81860,
-        "visa": 55994
       }
     },
     {
@@ -543,6 +543,14 @@
     {
       "date": "2026-10-06",
       "amount": 157728
+    },
+    {
+      "date": "2026-10-07",
+      "amount": 47878
+    },
+    {
+      "date": "2026-10-08",
+      "amount": 134756
     }
   ],
   "bookedCosts": [
@@ -957,6 +965,126 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_75142c9m7124ab9l8l2j0b9k88qjgba26osk6ba48opjcga18l13eh9k6k",
+      "date": "2026-10-08",
+      "time": "06:03",
+      "amount": 7410,
+      "merchant": "CAFE CELIA",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_88q30dhh64oj0b9m74r4cb9k88sj0b9p651j8b9m8op3ahho74q3ad1n64",
+      "date": "2026-10-08",
+      "time": "05:07",
+      "amount": 79306,
+      "merchant": "Meia Nau Porto",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6orj4c1i850k8b9p60q3ib9k8d2jcb9o8csjiba26t34chhj8opk8cq66k",
+      "date": "2026-10-08",
+      "time": "03:32",
+      "amount": 9911,
+      "merchant": "Conserveira do Bolhao",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_7513gg9o6d2k6ba58opjcb9k8cq38ba26kq4aba46cs44e246ssjec1k70",
+      "date": "2026-10-08",
+      "time": "03:22",
+      "amount": 7626,
+      "merchant": "PEIXARIA SARA",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8ks46dpi8p13gba26gp32b9k8ks32b9o8ko3ab9g6p138g9h60rkcc9k70",
+      "date": "2026-10-08",
+      "time": "03:17",
+      "amount": 7626,
+      "merchant": "PEIXARIA  ROSA",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8ook4hi58l13cba560pk2b9k8l24aba18h2k6ba66p1k6h216ko42e9i8g",
+      "date": "2026-10-08",
+      "time": "03:16",
+      "amount": 12196,
+      "merchant": "ROSA GONCALVES",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6co44d9m6os42b9h6gpjeb9k64rj6b9p6cs3ab9h8gok2ci284sjicq66o",
+      "date": "2026-10-08",
+      "time": "00:45",
+      "amount": 4570,
+      "merchant": "MANTEIGARIA CLERIGOS",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_70qjigpg69136ba16go32b9k88pj6b9p8opjcba58gp3gchl74r4cgq58k",
+      "date": "2026-10-08",
+      "time": "00:24",
+      "amount": 6111,
+      "merchant": "CD R.C.SANCHES II",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8csk2ghl8l1k2b9k60okcb9k6oq32b9o892jaba174q3gh1n8gojcc268g",
+      "date": "2026-10-07",
+      "time": "16:41",
+      "amount": 3516,
+      "merchant": "TRANSP INTERMODAIS PORTO",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_70q36dho60pj2ba68p0j0b9k88rj0ba16gsj4b9i8kq3cghj6orjaci16k",
+      "date": "2026-10-07",
+      "time": "11:54",
+      "amount": 44362,
+      "merchant": "PREGAR BAIXA",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6co30c1h6opj6b9g61332b9k74ojaba16t2k4ba260sjgg9g6d13ic2160",
       "date": "2026-10-06",
@@ -5515,6 +5643,126 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_75142c9m7124ab9l8l2j0b9k88qjgba26osk6ba48opjcga18l13eh9k6k",
+      "date": "2026-10-08",
+      "time": "06:03",
+      "amount": 7410,
+      "merchant": "CAFE CELIA",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_88q30dhh64oj0b9m74r4cb9k88sj0b9p651j8b9m8op3ahho74q3ad1n64",
+      "date": "2026-10-08",
+      "time": "05:07",
+      "amount": 79306,
+      "merchant": "Meia Nau Porto",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6orj4c1i850k8b9p60q3ib9k8d2jcb9o8csjiba26t34chhj8opk8cq66k",
+      "date": "2026-10-08",
+      "time": "03:32",
+      "amount": 9911,
+      "merchant": "Conserveira do Bolhao",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_7513gg9o6d2k6ba58opjcb9k8cq38ba26kq4aba46cs44e246ssjec1k70",
+      "date": "2026-10-08",
+      "time": "03:22",
+      "amount": 7626,
+      "merchant": "PEIXARIA SARA",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8ks46dpi8p13gba26gp32b9k8ks32b9o8ko3ab9g6p138g9h60rkcc9k70",
+      "date": "2026-10-08",
+      "time": "03:17",
+      "amount": 7626,
+      "merchant": "PEIXARIA  ROSA",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8ook4hi58l13cba560pk2b9k8l24aba18h2k6ba66p1k6h216ko42e9i8g",
+      "date": "2026-10-08",
+      "time": "03:16",
+      "amount": 12196,
+      "merchant": "ROSA GONCALVES",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6co44d9m6os42b9h6gpjeb9k64rj6b9p6cs3ab9h8gok2ci284sjicq66o",
+      "date": "2026-10-08",
+      "time": "00:45",
+      "amount": 4570,
+      "merchant": "MANTEIGARIA CLERIGOS",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_70qjigpg69136ba16go32b9k88pj6b9p8opjcba58gp3gchl74r4cgq58k",
+      "date": "2026-10-08",
+      "time": "00:24",
+      "amount": 6111,
+      "merchant": "CD R.C.SANCHES II",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8csk2ghl8l1k2b9k60okcb9k6oq32b9o892jaba174q3gh1n8gojcc268g",
+      "date": "2026-10-07",
+      "time": "16:41",
+      "amount": 3516,
+      "merchant": "TRANSP INTERMODAIS PORTO",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_70q36dho60pj2ba68p0j0b9k88rj0ba16gsj4b9i8kq3cghj6orjaci16k",
+      "date": "2026-10-07",
+      "time": "11:54",
+      "amount": 44362,
+      "merchant": "PREGAR BAIXA",
+      "category": "other",
+      "location": "Rua da Vitória 118, 4050-633 포르투",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6co30c1h6opj6b9g61332b9k74ojaba16t2k4ba260sjgg9g6d13ic2160",
       "date": "2026-10-06",
@@ -10106,6 +10354,12 @@
       "count": 10
     },
     {
+      "name": "Rua da Vitória 118, 4050-633 포르투",
+      "count": 10,
+      "lat": 41.1448219,
+      "lng": -8.6138882
+    },
+    {
       "name": "Piazza Trieste e Trento 9, 80132 나폴리 캄파니아",
       "count": 9,
       "lat": 40.837323,
@@ -10164,10 +10418,6 @@
     {
       "name": "Sultan Ahmet Camisi, Sultan Ahmet Cami",
       "count": 7
-    },
-    {
-      "name": "Khan al Khalili, Sekat Khan Al Khalili 10A",
-      "count": 7
     }
   ],
   "map": {
@@ -10183,6 +10433,12 @@
         "count": 35,
         "lat": 52.5146525,
         "lng": 13.4290744
+      },
+      {
+        "name": "Rua da Vitória 118, 4050-633 포르투",
+        "count": 10,
+        "lat": 41.1448219,
+        "lng": -8.6138882
       },
       {
         "name": "Piazza Trieste e Trento 9, 80132 나폴리 캄파니아",
@@ -11574,7 +11830,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-06",
+    "asOf": "2026-10-08",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -11666,12 +11922,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-16",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.26"
-    },
-    {
       "date": "2026-09-17",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -11745,6 +11995,12 @@
     },
     {
       "date": "2026-10-02",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-07",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"

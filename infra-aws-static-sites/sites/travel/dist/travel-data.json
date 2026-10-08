@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-07T14:40:04.988156+00:00",
+  "generatedAt": "2026-10-08T14:40:04.874488+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,25 +8,25 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 28765153,
-    "travelLoggedKrw": 28765153,
-    "remainingMinKrw": 1234847,
-    "remainingMaxKrw": 11234847,
-    "reservedPctMin": 95.9,
+    "loggedKrw": 29270602,
+    "travelLoggedKrw": 29270602,
+    "remainingMinKrw": 729398,
+    "remainingMaxKrw": 10729398,
+    "reservedPctMin": 97.6,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 189244,
+    "reserveBurnKrw": 191311,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-08",
-    "location": "Barcelona",
-    "mapQuery": "Barcelona, Spain"
+    "date": "2026-10-09",
+    "location": "Madrid",
+    "mapQuery": "Madrid, Spain"
   },
   "categoryTotals": {
-    "other": 12844834,
+    "other": 13350283,
     "stay": 11332278,
     "transport": 1591212,
     "gear": 1446349,
@@ -37,7 +37,7 @@
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 12844834,
+    "other": 13350283,
     "stay": 11332278,
     "transport": 1591212,
     "gear": 1446349,
@@ -71,9 +71,9 @@
     },
     {
       "country": "Spain",
-      "total": 2377466,
+      "total": 2882915,
       "categories": {
-        "other": 1150388,
+        "other": 1655837,
         "stay": 998546,
         "groceries": 90678,
         "transport": 81860,
@@ -550,7 +550,11 @@
     },
     {
       "date": "2026-10-08",
-      "amount": 134756
+      "amount": 193129
+    },
+    {
+      "date": "2026-10-09",
+      "amount": 447076
     }
   ],
   "bookedCosts": [
@@ -965,6 +969,126 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_74qk2e9g6sp34b9p74o48b9k8goj6ba168r34b9l6t2j6di16t2j6ci36k",
+      "date": "2026-10-09",
+      "time": "05:57",
+      "amount": 76844,
+      "merchant": "FUNDACAO SERRALVES",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8kr4aga184p46b9j6co32b9k64s3gba16srjaba184rj4cq28d0jad9h8c",
+      "date": "2026-10-09",
+      "time": "04:46",
+      "amount": 51220,
+      "merchant": "PREGAR BAIXA",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8l13ah1m6t33eb9g64pjab9k8kpk4b9o85230b9p8p134dpg88o3gcpi88",
+      "date": "2026-10-09",
+      "time": "02:57",
+      "amount": 54887,
+      "merchant": "PARK G숪LL",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8oq3gd9j6d232b9l70p38b9k6go44b9o8opk8b9m8koj6g9m752j0ea68g",
+      "date": "2026-10-09",
+      "time": "02:51",
+      "amount": 106716,
+      "merchant": "La Pedrera",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_84ok4ci668o3ab9g8kqj4b9k88qkab9p6d2kcb9g8ks3ggpp6p0jgd2188",
+      "date": "2026-10-09",
+      "time": "02:46",
+      "amount": 146356,
+      "merchant": "Casa Battlo",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8d0j0h9h60oj8b9p8d14cb9k8h344ba16h0j2b9g751jah2668pjad248k",
+      "date": "2026-10-09",
+      "time": "00:19",
+      "amount": 6115,
+      "merchant": "CD R.C.SANCHES II",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gsjega28oo3ib9h88r42b9k8kr3gba164rjcb9g84r46ci4692jgc1j6k",
+      "date": "2026-10-09",
+      "time": "00:11",
+      "amount": 4938,
+      "merchant": "FDN ALMEIDA GARRET",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_75132gpm8l238b9o6h244b9k752j0b9p8p0k6b9g6oojccpk6t14ah246s",
+      "date": "2026-10-08",
+      "time": "12:30",
+      "amount": 6057,
+      "merchant": "SPAR",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_70qjih9m74oj6ba28ork8b9k7123cba26sq3eb9j60r36h2274rk6e9k6o",
+      "date": "2026-10-08",
+      "time": "12:23",
+      "amount": 42702,
+      "merchant": "Glovo 07OCT OPSQXEFQD",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6gsjghi574pkcb9n6l24ab9k651k4ba26p14cba28h0jcd1m8op4adpj70",
+      "date": "2026-10-08",
+      "time": "09:41",
+      "amount": 9614,
+      "merchant": "POTATO PROJECT PORTO",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_75142c9m7124ab9l8l2j0b9k88qjgba26osk6ba48opjcga18l13eh9k6k",
       "date": "2026-10-08",
@@ -5643,6 +5767,126 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_74qk2e9g6sp34b9p74o48b9k8goj6ba168r34b9l6t2j6di16t2j6ci36k",
+      "date": "2026-10-09",
+      "time": "05:57",
+      "amount": 76844,
+      "merchant": "FUNDACAO SERRALVES",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8kr4aga184p46b9j6co32b9k64s3gba16srjaba184rj4cq28d0jad9h8c",
+      "date": "2026-10-09",
+      "time": "04:46",
+      "amount": 51220,
+      "merchant": "PREGAR BAIXA",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8l13ah1m6t33eb9g64pjab9k8kpk4b9o85230b9p8p134dpg88o3gcpi88",
+      "date": "2026-10-09",
+      "time": "02:57",
+      "amount": 54887,
+      "merchant": "PARK G숪LL",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8oq3gd9j6d232b9l70p38b9k6go44b9o8opk8b9m8koj6g9m752j0ea68g",
+      "date": "2026-10-09",
+      "time": "02:51",
+      "amount": 106716,
+      "merchant": "La Pedrera",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_84ok4ci668o3ab9g8kqj4b9k88qkab9p6d2kcb9g8ks3ggpp6p0jgd2188",
+      "date": "2026-10-09",
+      "time": "02:46",
+      "amount": 146356,
+      "merchant": "Casa Battlo",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8d0j0h9h60oj8b9p8d14cb9k8h344ba16h0j2b9g751jah2668pjad248k",
+      "date": "2026-10-09",
+      "time": "00:19",
+      "amount": 6115,
+      "merchant": "CD R.C.SANCHES II",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gsjega28oo3ib9h88r42b9k8kr3gba164rjcb9g84r46ci4692jgc1j6k",
+      "date": "2026-10-09",
+      "time": "00:11",
+      "amount": 4938,
+      "merchant": "FDN ALMEIDA GARRET",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_75132gpm8l238b9o6h244b9k752j0b9p8p0k6b9g6oojccpk6t14ah246s",
+      "date": "2026-10-08",
+      "time": "12:30",
+      "amount": 6057,
+      "merchant": "SPAR",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_70qjih9m74oj6ba28ork8b9k7123cba26sq3eb9j60r36h2274rk6e9k6o",
+      "date": "2026-10-08",
+      "time": "12:23",
+      "amount": 42702,
+      "merchant": "Glovo 07OCT OPSQXEFQD",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6gsjghi574pkcb9n6l24ab9k651k4ba26p14cba28h0jcd1m8op4adpj70",
+      "date": "2026-10-08",
+      "time": "09:41",
+      "amount": 9614,
+      "merchant": "POTATO PROJECT PORTO",
+      "category": "other",
+      "location": "Parque de Serralves, Rua de D João de Castro 210",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_75142c9m7124ab9l8l2j0b9k88qjgba26osk6ba48opjcga18l13eh9k6k",
       "date": "2026-10-08",
@@ -10360,6 +10604,10 @@
       "lng": -8.6138882
     },
     {
+      "name": "Parque de Serralves, Rua de D João de Castro 210",
+      "count": 10
+    },
+    {
       "name": "Piazza Trieste e Trento 9, 80132 나폴리 캄파니아",
       "count": 9,
       "lat": 40.837323,
@@ -10414,10 +10662,6 @@
       "count": 7,
       "lat": 36.6969976,
       "lng": 24.4760331
-    },
-    {
-      "name": "Sultan Ahmet Camisi, Sultan Ahmet Cami",
-      "count": 7
     }
   ],
   "map": {
@@ -11830,7 +12074,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-08",
+    "asOf": "2026-10-09",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -11922,12 +12166,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-17",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
       "date": "2026-09-18",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -12001,6 +12239,12 @@
     },
     {
       "date": "2026-10-07",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-08",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"

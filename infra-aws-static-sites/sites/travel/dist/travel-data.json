@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-09T14:40:03.648944+00:00",
+  "generatedAt": "2026-10-10T14:40:02.927524+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,26 +8,26 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 29270602,
-    "travelLoggedKrw": 29270602,
-    "remainingMinKrw": 729398,
-    "remainingMaxKrw": 10729398,
-    "reservedPctMin": 97.6,
+    "loggedKrw": 29546184,
+    "travelLoggedKrw": 29546184,
+    "remainingMinKrw": 453816,
+    "remainingMaxKrw": 10453816,
+    "reservedPctMin": 98.5,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 191311,
+    "reserveBurnKrw": 190621,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-09",
-    "location": "Madrid",
-    "mapQuery": "Madrid, Spain"
+    "date": "2026-10-11",
+    "location": "Portugal",
+    "mapQuery": "Portugal, Portugal"
   },
   "categoryTotals": {
-    "other": 13350283,
-    "stay": 11332278,
+    "other": 13513575,
+    "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
@@ -37,8 +37,8 @@
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 13350283,
-    "stay": 11332278,
+    "other": 13513575,
+    "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
@@ -71,10 +71,10 @@
     },
     {
       "country": "Spain",
-      "total": 2882915,
+      "total": 3064581,
       "categories": {
-        "other": 1655837,
-        "stay": 998546,
+        "other": 1725213,
+        "stay": 1110836,
         "groceries": 90678,
         "transport": 81860,
         "visa": 55994
@@ -111,9 +111,9 @@
     },
     {
       "country": "Portugal",
-      "total": 1773220,
+      "total": 1867136,
       "categories": {
-        "other": 1739411,
+        "other": 1833327,
         "visa": 15812,
         "food": 11955,
         "cafe": 4464,
@@ -555,6 +555,14 @@
     {
       "date": "2026-10-09",
       "amount": 447076
+    },
+    {
+      "date": "2026-10-10",
+      "amount": 181666
+    },
+    {
+      "date": "2026-10-11",
+      "amount": 93916
     }
   ],
   "bookedCosts": [
@@ -969,6 +977,90 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_8l1kcghk8cqjeb9k64r4cb9k8p1jgb9p8h23cba48op3cg9n88s36gi18k",
+      "date": "2026-10-11",
+      "time": "04:20",
+      "amount": 78346,
+      "merchant": "SOBAN DE JO LEE",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8csjih9j610j2b9p64r32b9k70o44ba17123ib9o6oo36e9k8513echn84",
+      "date": "2026-10-11",
+      "time": "03:22",
+      "amount": 3476,
+      "merchant": "6033 Barcelona-Nova Es",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64sj4d1h6os44b9l68sj6b9k8kp36ba16h332ba16sqk2h9h88o3gd1j8k",
+      "date": "2026-10-11",
+      "time": "02:20",
+      "amount": 12094,
+      "merchant": "LAIE PARK GUELL",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8ksk8gpp74p38ba46gr4ab9k891k6b9p8opk8b9j8d138d9h850j2gpn6o",
+      "date": "2026-10-10",
+      "time": "15:30",
+      "amount": 3504,
+      "merchant": "TRANSP INTERMODAIS PORTO",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cr36dpl6gsk6b9m61244b9k6ko34b9o6csk6ba264p34dho6d2jgd1k70",
+      "date": "2026-10-10",
+      "time": "10:38",
+      "amount": 23337,
+      "merchant": "MERCADONA C",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8l132dhi8op3eb9h84o30b9k6oo30ba28p342ba164sjggpp6h0k6g9k88",
+      "date": "2026-10-10",
+      "time": "09:25",
+      "amount": 112290,
+      "merchant": "HOTEL BARCELO SANTS",
+      "category": "stay",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8p23id2164sj4b9p64q3gb9k6gq38b9p6ssk8ba574qk4h1i8cq3gc1i6o",
+      "date": "2026-10-10",
+      "time": "08:10",
+      "amount": 42535,
+      "merchant": "RENFE CERCANIAS TNA 08 1",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_74qk2e9g6sp34b9p74o48b9k8goj6ba168r34b9l6t2j6di16t2j6ci36k",
       "date": "2026-10-09",
@@ -5767,6 +5859,90 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_8l1kcghk8cqjeb9k64r4cb9k8p1jgb9p8h23cba48op3cg9n88s36gi18k",
+      "date": "2026-10-11",
+      "time": "04:20",
+      "amount": 78346,
+      "merchant": "SOBAN DE JO LEE",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8csjih9j610j2b9p64r32b9k70o44ba17123ib9o6oo36e9k8513echn84",
+      "date": "2026-10-11",
+      "time": "03:22",
+      "amount": 3476,
+      "merchant": "6033 Barcelona-Nova Es",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64sj4d1h6os44b9l68sj6b9k8kp36ba16h332ba16sqk2h9h88o3gd1j8k",
+      "date": "2026-10-11",
+      "time": "02:20",
+      "amount": 12094,
+      "merchant": "LAIE PARK GUELL",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8ksk8gpp74p38ba46gr4ab9k891k6b9p8opk8b9j8d138d9h850j2gpn6o",
+      "date": "2026-10-10",
+      "time": "15:30",
+      "amount": 3504,
+      "merchant": "TRANSP INTERMODAIS PORTO",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cr36dpl6gsk6b9m61244b9k6ko34b9o6csk6ba264p34dho6d2jgd1k70",
+      "date": "2026-10-10",
+      "time": "10:38",
+      "amount": 23337,
+      "merchant": "MERCADONA C",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8l132dhi8op3eb9h84o30b9k6oo30ba28p342ba164sjggpp6h0k6g9k88",
+      "date": "2026-10-10",
+      "time": "09:25",
+      "amount": 112290,
+      "merchant": "HOTEL BARCELO SANTS",
+      "category": "stay",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8p23id2164sj4b9p64q3gb9k6gq38b9p6ssk8ba574qk4h1i8cq3gc1i6o",
+      "date": "2026-10-10",
+      "time": "08:10",
+      "amount": 42535,
+      "merchant": "RENFE CERCANIAS TNA 08 1",
+      "category": "other",
+      "location": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_74qk2e9g6sp34b9p74o48b9k8goj6ba168r34b9l6t2j6di16t2j6ci36k",
       "date": "2026-10-09",
@@ -11208,6 +11384,15 @@
       "checkOut": null,
       "amount": 33420,
       "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "HOTEL BARCELO SANTS",
+      "city": "Mirador del Palau Nacional, Lloc Mirador del Palau Nacional",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 112290,
+      "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
   "plannedAccommodations": [
@@ -12074,7 +12259,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-09",
+    "asOf": "2026-10-11",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -12166,12 +12351,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-18",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
       "date": "2026-09-19",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -12245,6 +12424,12 @@
     },
     {
       "date": "2026-10-08",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-10",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"

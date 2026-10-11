@@ -2108,7 +2108,9 @@
     // ### [id] title 헤더 단위로 항목 추출
     function parseItems(body) {
       if (!body) return [];
-      const lines = body.split(/\r?\n/);
+      // Historical cards may remain inside HTML comments after an Archive
+      // move. They are documentation, not live cards.
+      const lines = body.replace(/<!--[\s\S]*?-->/g, "").split(/\r?\n/);
       const items = [];
       let cur = null;
       for (const line of lines) {
@@ -2158,7 +2160,7 @@
           .replace(/\d{4}-\d{2}-\d{2}(?:[T\s](?:\d{2}:\d{2}(?::\d{2})?|\d{4}(?:\d{2})?)Z?)?/g, "")
           .replace(/\s{2,}/g, " ")
           .trim();
-        const title = outcome || cleaned || text;
+        const title = shortText(outcome || cleaned || text, 72);
         const tagMeta = { ...inferTagMeta(text, idm ? idm[1] : ""), ...extractTagMeta(text) };
         const templateMeta = extractArchiveTemplate(text);
         out.push({
@@ -2607,7 +2609,9 @@
       });
       const titleEl = document.createElement("div");
       titleEl.className = "title";
-      titleEl.textContent = it.title || it.id || "(제목 없음)";
+      titleEl.textContent = compact
+        ? shortText(it.title || it.id || "(제목 없음)", 72)
+        : (it.title || it.id || "(제목 없음)");
       if (isDecision) {
         const kicker = document.createElement("div");
         kicker.className = "decision-kicker";
@@ -3294,14 +3298,22 @@
         mergeById(mergeById(archiveItems, gateDoneItems), archiveCommentItems)
       );
 
+      // Archive is terminal. A stale open-lane card with the same id must not
+      // appear beside the authoritative Archive record.
+      const archivedIds = new Set(doneItems.map(item => item.id).filter(Boolean));
+      const removeArchived = items => items.filter(item => !item.id || !archivedIds.has(item.id));
+      const visibleInboxItems = removeArchived(inboxItems);
+      const visibleActiveItems = removeArchived(activeItems);
+      const visibleWaitingItems = removeArchived(waitingItems);
+
       // Keep prior archive enrichments when a poll reparses the compact ledger.
       // Without this merge, the lane briefly reverts to the compact record and
       // then redraws again once the same cached detail is applied.
       applyCachedArchiveTemplates(doneItems);
 
-      renderColumn("inbox",   inboxItems,   "INTENTS.md");
-      renderColumn("active",  activeItems,  "INTENTS.md");
-      renderColumn("waiting", waitingItems, "Waiting");
+      renderColumn("inbox",   visibleInboxItems,   "INTENTS.md");
+      renderColumn("active",  visibleActiveItems,  "INTENTS.md");
+      renderColumn("waiting", visibleWaitingItems, "Waiting");
       renderColumn("done",    doneItems,    "GATES.md");
 
       const nowMs = Date.now();
@@ -3316,9 +3328,9 @@
         if (!stale || days > stale.days) stale = { id: it.id || "?", days };
       }
       renderSummary({
-        inbox: inboxItems.length,
-        active: activeItems.length,
-        waiting: waitingItems.length,
+        inbox: visibleInboxItems.length,
+        active: visibleActiveItems.length,
+        waiting: visibleWaitingItems.length,
         done: doneItems.length,
       }, { weekDone, stale: stale && stale.days >= 1 ? stale : null });
 

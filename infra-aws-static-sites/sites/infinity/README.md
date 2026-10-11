@@ -11,6 +11,10 @@ Shows the live Infinity intent registry and its execution evidence at
   artifacts from the `shdkej/infinity` repository's `main` branch. The main
   registry is fetched through the GitHub Contents API first so a refresh sees a
   just-pushed Archive card; the raw URL is only a fallback when that API fails.
+- The parser ignores cards retained inside HTML comments and treats a terminal
+  Archive record as authoritative over a stale Inbox/Active/Waiting duplicate.
+  Archive card titles are shortened to 72 characters on the board; the full
+  title remains available in the detail modal.
 - The evidence view keeps execution-trace rows and Context Pack rows together.
   This includes the `zg` preflight receipt, selected Agent Wiki paths, and the
   selected section's heading, line range, and short excerpt (`locator`). Older

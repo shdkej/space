@@ -1146,14 +1146,6 @@
       return text ? { path, text } : null;
     }
 
-    // Archive index comments intentionally keep only lifecycle metadata. The
-    // canonical archive record's H1 is the task description users should read
-    // as the card title, so hydrate it before treating comment text as a title.
-    function archiveTaskTitle(text) {
-      const heading = String(text || "").match(/^#\s+(?:[^—\n]+\s+—\s+)?(.+?)\s*$/m);
-      return heading ? heading[1].trim() : "";
-    }
-
     function detectKind(name) {
       if (/\.(png|jpe?g|gif|svg|webp|avif)$/i.test(name)) return "image";
       if (/\.(html?|xhtml)$/i.test(name)) return "html";
@@ -2534,10 +2526,6 @@
         result_criteria: labeledArchiveField(source, "결과 기준") || bulletArchiveField(source, "result_criteria"),
         next_action: labeledArchiveField(source, "다음 행동") || bulletArchiveField(source, "next_action"),
       };
-    }
-
-    function hasArchiveTemplate(meta) {
-      return !!(meta && (meta.archive_project || meta.archive_state || meta.result_criteria || meta.next_action));
     }
 
     function archiveTemplateFields(item) {

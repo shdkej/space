@@ -18,6 +18,10 @@ Shows the live Infinity intent registry and its execution evidence at
 - Board cards use only the YAML `title`/`task_name` fields. These fields must be
   identical display names and must not contain Markdown heading prefixes,
   `[id]` prefixes, or `- key: value` metadata lines.
+- Archive cards are parsed from monthly YAML once per refresh and rendered
+  directly from that record. Markdown detail documents and traces are fetched
+  only when a user opens a card, avoiding a second archive-wide hydration and
+  rerender pass.
 - The evidence view keeps execution-trace rows and Context Pack rows together.
   This includes the `zg` preflight receipt, selected Agent Wiki paths, and the
   selected section's heading, line range, and short excerpt (`locator`). Older

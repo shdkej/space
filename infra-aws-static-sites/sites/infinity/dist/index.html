@@ -3472,8 +3472,9 @@
     function applyArchiveTemplate(item, cached) {
       if (!item || !item.meta || !cached) return false;
       let changed = false;
-      if (cached.title && item.title !== cached.title) {
-        item.title = cached.title;
+      const cleanCachedTitle = cached.title ? cleanDisplayTitle(cached.title, item.id) : "";
+      if (cleanCachedTitle && item.title !== cleanCachedTitle) {
+        item.title = cleanCachedTitle;
         changed = true;
       }
       if (hasArchiveTemplate(cached)) {
@@ -3546,7 +3547,7 @@
           const text = await fetchText(SOURCES.rawBase + path);
           if (run !== archiveHydrationRun) return changed;
           const template = extractArchiveTemplate(text);
-          const title = archiveTaskTitle(text);
+          const title = cleanDisplayTitle(archiveTaskTitle(text), item.id);
           archiveTemplateCache.set(path, { ...template, title });
           if (title) {
             item.title = title;

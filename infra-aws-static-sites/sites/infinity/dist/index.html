@@ -2059,7 +2059,17 @@
 
     async function openDetailModal(item, sourceLabel) {
       const runId = ++detailRenderRun;
-      detailTitle.textContent = item.id ? "[" + item.id + "] " + item.title : item.title;
+      let detailHeading = String(item.title || "").trim();
+      if (item.id) {
+        const escapedId = String(item.id).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        detailHeading = detailHeading
+          .replace(new RegExp("^\\s*\\[" + escapedId + "\\]\\s*", "i"), "")
+          .replace(new RegExp("^\\s*" + escapedId + "(?:\\s*[·—:-]\\s*)?", "i"), "")
+          .trim();
+        detailTitle.textContent = "[" + item.id + "]" + (detailHeading ? " " + detailHeading : "");
+      } else {
+        detailTitle.textContent = detailHeading;
+      }
       detailBody.replaceChildren();
       detailModal.classList.add("open");
       detailModal.setAttribute("aria-hidden", "false");

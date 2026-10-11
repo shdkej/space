@@ -1837,7 +1837,8 @@
     // detail view keeps a useful ledger-derived fallback instead of inventing
     // events client-side.
     function tracePathFor(item) {
-      return item && item.id ? "traces/" + encodeURIComponent(item.id) + ".json" : "";
+      const declared = item && item.meta ? normalizePath(metaValue(item, ["trace"])) : "";
+      return declared || (item && item.id ? "data/traces/" + encodeURIComponent(item.id) + ".json" : "");
     }
 
     async function fetchIntentTrace(item) {
@@ -2151,7 +2152,7 @@
         else {
           const intentRows = buildSummaryRows(hydratedItem || item, "INTENTS.yaml")
             .map((row) => "- " + row.label + ": " + row.value).join("\n");
-          addDetailBlock("Intent 원장: INTENTS.md", intentRows || "현재 Intent 원장 기록이 없습니다.", "kind-archive");
+          addDetailBlock("Intent 원장: INTENTS.yaml", intentRows || "현재 Intent 원장 기록이 없습니다.", "kind-archive");
         }
         const displayArtifacts = artifacts.filter(entry => entry.kind === "image" || /\.md$/i.test(entry.path || entry.name || ""));
         const renderArtifacts = (stage, prefix, kindClass) => {

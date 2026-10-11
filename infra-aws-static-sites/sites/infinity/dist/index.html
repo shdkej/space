@@ -1069,7 +1069,7 @@
               while (next < useful.length && useful[next].indent > indent) { block.push(useful[next].text.trim()); next++; }
               obj[key] = val[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
             } else if (val) { obj[key] = yamlScalar(val); pos++; }
-            else { const nested = parseBlock(pos + 1, indent + 2); obj[key] = nested[0]; pos = nested[1]; }
+            else { const nextIndent = useful[pos + 1] && useful[pos + 1].marker === "- " ? useful[pos + 1].indent : indent + 2; const nested = parseBlock(pos + 1, nextIndent); obj[key] = nested[0]; pos = nested[1]; }
             while (pos < useful.length && useful[pos].indent > indent) {
               const extra = useful[pos];
               const extraPair = extra.text.match(/^([^:]+):(?:\s*(.*))?$/);
@@ -1080,7 +1080,7 @@
                 while (next < useful.length && useful[next].indent > extra.indent) { block.push(useful[next].text.trim()); next++; }
                 obj[extraKey] = extraVal[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
               } else if (extraVal) { obj[extraKey] = yamlScalar(extraVal); pos++; }
-              else { const nested = parseBlock(pos + 1, extra.indent + 2); obj[extraKey] = nested[0]; pos = nested[1]; }
+              else { const nextIndent = useful[pos + 1] && useful[pos + 1].marker === "- " ? useful[pos + 1].indent : extra.indent + 2; const nested = parseBlock(pos + 1, nextIndent); obj[extraKey] = nested[0]; pos = nested[1]; }
             }
             out.push(obj); continue;
           }
@@ -1092,7 +1092,7 @@
             while (next < useful.length && useful[next].indent > indent) { block.push(useful[next].text.trim()); next++; }
             out[key] = val[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
           } else if (val) { out[key] = yamlScalar(val); pos++; }
-          else { const nested = parseBlock(pos + 1, indent + 2); out[key] = nested[0]; pos = nested[1]; }
+          else { const nextIndent = useful[pos + 1] && useful[pos + 1].marker === "- " ? useful[pos + 1].indent : indent + 2; const nested = parseBlock(pos + 1, nextIndent); out[key] = nested[0]; pos = nested[1]; }
         }
         return [out, pos];
       }

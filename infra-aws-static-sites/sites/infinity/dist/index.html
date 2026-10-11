@@ -3408,14 +3408,12 @@
       let archiveRecords = [];
       try { archiveRecords = await fetchArchiveYamlRecords(registry); }
       catch (e) { showError("Archive YAML 로드 실패: " + e.message); }
-      const archiveNowMs = Date.now();
-      const cutoffMs = archiveNowMs - 7 * 86400000;
       const archiveItems = archiveRecords
         .map(x => yamlItemToCard(x, "archived", "INTENTS.yaml Archive"))
-        .filter(item => {
-          const time = parseDateMs(pickCompleted(item));
-          return isNaN(time) || (time <= archiveNowMs && time >= cutoffMs);
-        });
+        // Monthly YAML ledgers are the archive index. Keep every period in
+        // the searchable board; only the summary's "recent 7 days" metric is
+        // time-bounded.
+        .filter(item => item.id);
       const doneItems = sortDoneByCompletionDesc(mergeById([], archiveItems));
 
       // Archive is terminal. A stale open-lane card with the same id must not

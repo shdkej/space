@@ -2217,8 +2217,13 @@
     }
 
     function mergeById(primary, secondary) {
-      const seen = new Set(primary.map(x => x.id).filter(Boolean));
-      const merged = primary.slice();
+      const seen = new Set();
+      const merged = [];
+      for (const item of primary) {
+        if (item.id && seen.has(item.id)) continue;
+        if (item.id) seen.add(item.id);
+        merged.push(item);
+      }
       for (const item of secondary) {
         if (item.id && seen.has(item.id)) continue;
         if (item.id) seen.add(item.id);

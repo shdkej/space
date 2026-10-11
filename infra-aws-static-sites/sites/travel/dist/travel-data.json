@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-10T14:40:02.927524+00:00",
+  "generatedAt": "2026-10-11T14:40:03.371966+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,14 +8,14 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 29546184,
-    "travelLoggedKrw": 29546184,
-    "remainingMinKrw": 453816,
-    "remainingMaxKrw": 10453816,
-    "reservedPctMin": 98.5,
+    "loggedKrw": 29594738,
+    "travelLoggedKrw": 29594738,
+    "remainingMinKrw": 405262,
+    "remainingMaxKrw": 10405262,
+    "reservedPctMin": 98.6,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 190621,
+    "reserveBurnKrw": 190934,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
@@ -26,23 +26,23 @@
     "mapQuery": "Portugal, Portugal"
   },
   "categoryTotals": {
-    "other": 13513575,
+    "other": 13553769,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
-    "visa": 455565,
+    "visa": 463925,
     "food": 209250,
     "groceries": 118727,
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 13513575,
+    "other": 13553769,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
-    "visa": 455565,
+    "visa": 463925,
     "food": 209250,
     "groceries": 118727,
     "cafe": 86938
@@ -99,6 +99,17 @@
       }
     },
     {
+      "country": "Portugal",
+      "total": 1915690,
+      "categories": {
+        "other": 1873521,
+        "visa": 24172,
+        "food": 11955,
+        "cafe": 4464,
+        "stay": 1578
+      }
+    },
+    {
       "country": "Italy",
       "total": 1904723,
       "categories": {
@@ -107,17 +118,6 @@
         "transport": 86830,
         "visa": 60991,
         "cafe": 8310
-      }
-    },
-    {
-      "country": "Portugal",
-      "total": 1867136,
-      "categories": {
-        "other": 1833327,
-        "visa": 15812,
-        "food": 11955,
-        "cafe": 4464,
-        "stay": 1578
       }
     },
     {
@@ -562,7 +562,7 @@
     },
     {
       "date": "2026-10-11",
-      "amount": 93916
+      "amount": 142470
     }
   ],
   "bookedCosts": [
@@ -977,6 +977,30 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_850jae9p6h2jgb9g8gpk8b9k64p3ib9p6t144b9h6p1jaci574s30e9h8g",
+      "date": "2026-10-11",
+      "time": "23:43",
+      "amount": 8360,
+      "merchant": "SQ *XURRERIA LAIETANA",
+      "category": "visa",
+      "location": "Carrer del Consell de Cent, 296",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_7523edhi6gr36b9n64s32b9k74qjiba164ojab9h60r3adq68p2jgd1j6g",
+      "date": "2026-10-11",
+      "time": "10:23",
+      "amount": 40194,
+      "merchant": "MERCADONA C",
+      "category": "other",
+      "location": "Carrer del Consell de Cent, 296",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_8l1kcghk8cqjeb9k64r4cb9k8p1jgb9p8h23cba48op3cg9n88s36gi18k",
       "date": "2026-10-11",
@@ -5859,6 +5883,30 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_850jae9p6h2jgb9g8gpk8b9k64p3ib9p6t144b9h6p1jaci574s30e9h8g",
+      "date": "2026-10-11",
+      "time": "23:43",
+      "amount": 8360,
+      "merchant": "SQ *XURRERIA LAIETANA",
+      "category": "visa",
+      "location": "Carrer del Consell de Cent, 296",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_7523edhi6gr36b9n64s32b9k74qjiba164ojab9h60r3adq68p2jgd1j6g",
+      "date": "2026-10-11",
+      "time": "10:23",
+      "amount": 40194,
+      "merchant": "MERCADONA C",
+      "category": "other",
+      "location": "Carrer del Consell de Cent, 296",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_8l1kcghk8cqjeb9k64r4cb9k8p1jgb9p8h23cba48op3cg9n88s36gi18k",
       "date": "2026-10-11",
@@ -12351,12 +12399,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-19",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
       "date": "2026-09-20",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -12430,6 +12472,12 @@
     },
     {
       "date": "2026-10-10",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-11",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"

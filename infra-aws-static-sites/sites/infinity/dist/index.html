@@ -938,16 +938,16 @@
   </div>
   <footer>
     source:
-    <a href="https://github.com/shdkej/infinity/blob/main/INTENTS.md" target="_blank" rel="noopener">INTENTS.md</a>
+    <a href="https://github.com/shdkej/infinity/blob/main/INTENTS.yaml" target="_blank" rel="noopener">INTENTS.yaml</a>
     ·
     <a href="https://github.com/shdkej/infinity/blob/main/GATES.md" target="_blank" rel="noopener">GATES.md</a>
     — GitHub Contents API를 우선 읽고 raw URL은 장애 시에만 사용합니다
   </footer>
   <script>
     const SOURCES = {
-      intents: "https://api.github.com/repos/shdkej/infinity/contents/INTENTS.md?ref=main",
+      intents: "https://api.github.com/repos/shdkej/infinity/contents/INTENTS.yaml?ref=main",
       gates:   "https://api.github.com/repos/shdkej/infinity/contents/GATES.md?ref=main",
-      rawIntents: "https://raw.githubusercontent.com/shdkej/infinity/main/INTENTS.md",
+      rawIntents: "https://raw.githubusercontent.com/shdkej/infinity/main/INTENTS.yaml",
       rawGates: "https://raw.githubusercontent.com/shdkej/infinity/main/GATES.md",
       knowledgeLoop: "https://raw.githubusercontent.com/shdkej/infinity/main/data/knowledge-loop.json",
       promotionIndex: "https://raw.githubusercontent.com/shdkej/infinity/main/data/promotion-index.json",
@@ -1014,6 +1014,118 @@
           throw new Error(primaryError.message + "; raw fallback failed: " + fallbackError.message);
         }
       }
+    }
+
+    // INTENTS.yaml is the canonical state ledger. This small parser covers the
+    // block YAML emitted by the Infinity migration/runtime writers and avoids
+    // depending on a third-party CDN in the dashboard.
+    function yamlScalar(value) {
+      const text = String(value || "").trim();
+      if (!text) return null;
+      if (text === "null" || text === "~") return null;
+      if (text === "true") return true;
+      if (text === "false") return false;
+      if ((text[0] === "'" && text[text.length - 1] === "'") || (text[0] === '"' && text[text.length - 1] === '"')) {
+        if (text[0] === "'") return text.slice(1, -1).replace(/''/g, "'");
+        try { return JSON.parse(text); } catch (_) { return text.slice(1, -1); }
+      }
+      if (/^-?\d+(?:\.\d+)?$/.test(text)) return Number(text);
+      if (text[0] === "[" || text[0] === "{") {
+        try { return JSON.parse(text.replace(/'/g, '"')); } catch (_) { return text; }
+      }
+      return text;
+    }
+
+    function parseYamlDocument(source) {
+      const jsonCandidate = String(source || "").trim();
+      if (!jsonCandidate) return {};
+      try { return JSON.parse(jsonCandidate); } catch (_) {}
+      const lines = String(source).replace(/\r/g, "").split("\n").map((raw, index) => {
+        const match = raw.match(/^( *)((?:- )?)(.*)$/);
+        return { raw, indent: match ? match[1].length : 0, marker: match ? match[2] : "", text: match ? match[3] : "", index };
+      });
+      const useful = lines.filter(line => line.text.trim() && !line.text.trim().startsWith("#"));
+      function parseBlock(pos, indent) {
+        const first = useful[pos];
+        if (!first || first.indent < indent) return [{}, pos];
+        const isList = first.indent === indent && first.marker === "- ";
+        const out = isList ? [] : {};
+        while (pos < useful.length) {
+          const line = useful[pos];
+          if (line.indent < indent) break;
+          if (line.indent > indent) break;
+          if (isList && line.marker !== "- ") break;
+          if (!isList && line.marker === "- ") break;
+          if (isList) {
+            const content = line.text.trim();
+            if (!content) { const nested = parseBlock(pos + 1, indent + 2); out.push(nested[0]); pos = nested[1]; continue; }
+            const pair = content.match(/^([^:]+):(?:\s*(.*))?$/);
+            if (!pair) { out.push(yamlScalar(content)); pos++; continue; }
+            const obj = {};
+            const key = pair[1].trim();
+            const val = pair[2] || "";
+            if (val === ">-" || val === ">" || val === "|-" || val === "|") {
+              const block = []; let next = pos + 1;
+              while (next < useful.length && useful[next].indent > indent) { block.push(useful[next].text.trim()); next++; }
+              obj[key] = val[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
+            } else if (val) { obj[key] = yamlScalar(val); pos++; }
+            else { const nested = parseBlock(pos + 1, indent + 2); obj[key] = nested[0]; pos = nested[1]; }
+            while (pos < useful.length && useful[pos].indent > indent) {
+              const extra = useful[pos];
+              const extraPair = extra.text.match(/^([^:]+):(?:\s*(.*))?$/);
+              if (!extraPair) { pos++; continue; }
+              const extraKey = extraPair[1].trim(); const extraVal = extraPair[2] || "";
+              if (extraVal === ">-" || extraVal === ">" || extraVal === "|-" || extraVal === "|") {
+                const block = []; let next = pos + 1;
+                while (next < useful.length && useful[next].indent > extra.indent) { block.push(useful[next].text.trim()); next++; }
+                obj[extraKey] = extraVal[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
+              } else if (extraVal) { obj[extraKey] = yamlScalar(extraVal); pos++; }
+              else { const nested = parseBlock(pos + 1, extra.indent + 2); obj[extraKey] = nested[0]; pos = nested[1]; }
+            }
+            out.push(obj); continue;
+          }
+          const pair = line.text.match(/^([^:]+):(?:\s*(.*))?$/);
+          if (!pair) { pos++; continue; }
+          const key = pair[1].trim(); const val = pair[2] || "";
+          if (val === ">-" || val === ">" || val === "|-" || val === "|") {
+            const block = []; let next = pos + 1;
+            while (next < useful.length && useful[next].indent > indent) { block.push(useful[next].text.trim()); next++; }
+            out[key] = val[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
+          } else if (val) { out[key] = yamlScalar(val); pos++; }
+          else { const nested = parseBlock(pos + 1, indent + 2); out[key] = nested[0]; pos = nested[1]; }
+        }
+        return [out, pos];
+      }
+      return parseBlock(0, useful[0] ? useful[0].indent : 0)[0];
+    }
+
+    function cleanDisplayTitle(value, id) {
+      let title = String(value || "").replace(/\s+/g, " ").trim();
+      title = title.replace(/^#+\s*/, "").replace(/^\[[^\]]+\]\s*/, "");
+      if (!title || /^-\s*[A-Za-z_][A-Za-z0-9_-]*\s*:/.test(title)) {
+        title = String(id || "").replace(/[-_]+/g, " ").trim();
+      }
+      return title || "제목 없는 Intent";
+    }
+
+    function yamlItemToCard(raw, lane, source) {
+      const meta = { ...(raw || {}) };
+      const id = String(meta.id || "").trim();
+      const title = cleanDisplayTitle(meta.task_name || meta.title || meta.name, id);
+      meta.status = meta.status || String(lane || "").toLowerCase();
+      delete meta.title; delete meta.task_name; delete meta.name;
+      return { id, title, bodyLines: [], meta, source };
+    }
+
+    async function fetchArchiveYamlRecords() {
+      const listing = await ghDir("intents/archive");
+      if (!listing) return [];
+      const files = listing.filter(file => file.type === "file" && /\.ya?ml$/i.test(file.name));
+      const docs = await Promise.all(files.map(async file => {
+        try { return parseYamlDocument(await fetchText(file.download_url || SOURCES.rawBase + "intents/archive/" + encodeURIComponent(file.name))); }
+        catch (_) { return {}; }
+      }));
+      return docs.flatMap(doc => Array.isArray(doc.archive) ? doc.archive : []);
     }
 
     function normalizePath(path) {
@@ -3268,50 +3380,28 @@
       const hydrationRun = ++archiveHydrationRun;
       clearErrors();
       statusEl.textContent = lastDoneItems.length ? "동기화 중..." : "로딩 중...";
-      let intentsText = "", gatesText = "";
-      // Contents API의 main ref는 원장 반영을 즉시 확인하는 정본 경로다.
-      // raw URL은 CDN이 직전 revision을 줄 수 있어 장애 시 fallback으로만 쓴다.
+      let intentsText = "";
       try { intentsText = await fetchTextWithFallback(SOURCES.intents, SOURCES.rawIntents); }
-      catch (e) { showError("INTENTS.md 로드 실패: " + e.message); }
-      try { gatesText = await fetchTextWithFallback(SOURCES.gates, SOURCES.rawGates); }
-      catch (e) { showError("GATES.md 로드 실패: " + e.message); }
-
-      const intentSections = splitSections(intentsText);
-      const gateSections = splitSections(gatesText);
-
-      const inboxItems = mergeById(
-        parseItems(intentSections["Inbox"] || ""),
-        parseIntentComments(intentSections["Inbox"] || "", "Inbox")
-      );
-      const activeItems = mergeById(
-        parseItems(intentSections["Active"] || ""),
-        parseIntentComments(intentSections["Active"] || "", "Active")
-      );
-      // 같은 intent가 INTENTS Waiting과 GATES 대기 중에 함께 있으면 INTENTS 항목(필드가 더 풍부)만 남긴다.
-      const waitingItems = mergeById(
-        mergeById(
-          parseItems(intentSections["Waiting"] || ""),
-          parseIntentComments(intentSections["Waiting"] || "", "Waiting")
-        ).map(x => ({ ...x, source: x.source || "INTENTS.md" })),
-        parseItems(gateSections["대기 중"] || gateSections["Waiting"] || "").map(x => ({ ...x, source: "GATES.md" }))
-      );
-      const archiveCommentItems = mergeById(
-        parseArchiveComments(intentSections["Archive"] || ""),
-        [
-          ...parseArchiveComments(intentSections["Inbox"] || ""),
-          ...parseArchiveComments(intentSections["Active"] || ""),
-          ...parseArchiveComments(intentSections["Waiting"] || ""),
-        ]
-      );
-      const archiveItems = parseItems(intentSections["Archive"] || "")
-        .map(x => ({ ...x, source: "INTENTS.md Archive" }));
-      const gateDoneItems = parseItems(gateSections["처리 완료"] || gateSections["Resolved"] || "")
-        .map(x => ({ ...x, source: "GATES.md" }));
-      // 하나의 완료 Intent는 정식 Archive 원장, 완료 코멘트, GATES에 함께
-      // 남을 수 있다. 정식 Archive 원장을 우선해 ID별로 단일 카드만 만든다.
-      const doneItems = sortDoneByCompletionDesc(
-        mergeById(mergeById(archiveItems, gateDoneItems), archiveCommentItems)
-      );
+      catch (e) { showError("INTENTS.yaml 로드 실패: " + e.message); }
+      let registry = {};
+      try { registry = parseYamlDocument(intentsText); }
+      catch (e) { showError("INTENTS.yaml 파싱 실패: " + e.message); }
+      const lanes = registry && registry.lanes && typeof registry.lanes === "object" ? registry.lanes : {};
+      const inboxItems = (Array.isArray(lanes.inbox) ? lanes.inbox : []).map(x => yamlItemToCard(x, "inbox", "INTENTS.yaml"));
+      const activeItems = (Array.isArray(lanes.active) ? lanes.active : []).map(x => yamlItemToCard(x, "active", "INTENTS.yaml"));
+      const waitingItems = (Array.isArray(lanes.waiting) ? lanes.waiting : []).map(x => yamlItemToCard(x, "waiting", "INTENTS.yaml"));
+      let archiveRecords = [];
+      try { archiveRecords = await fetchArchiveYamlRecords(); }
+      catch (e) { showError("Archive YAML 로드 실패: " + e.message); }
+      const archiveNowMs = Date.now();
+      const cutoffMs = archiveNowMs - 7 * 86400000;
+      const archiveItems = archiveRecords
+        .map(x => yamlItemToCard(x, "archived", "INTENTS.yaml Archive"))
+        .filter(item => {
+          const time = parseDateMs(pickCompleted(item));
+          return isNaN(time) || (time <= archiveNowMs && time >= cutoffMs);
+        });
+      const doneItems = sortDoneByCompletionDesc(mergeById([], archiveItems));
 
       // Archive is terminal. A stale open-lane card with the same id must not
       // appear beside the authoritative Archive record.
@@ -3326,10 +3416,10 @@
       // then redraws again once the same cached detail is applied.
       applyCachedArchiveTemplates(doneItems);
 
-      renderColumn("inbox",   visibleInboxItems,   "INTENTS.md");
-      renderColumn("active",  visibleActiveItems,  "INTENTS.md");
-      renderColumn("waiting", visibleWaitingItems, "Waiting");
-      renderColumn("done",    doneItems,    "GATES.md");
+      renderColumn("inbox",   visibleInboxItems,   "INTENTS.yaml");
+      renderColumn("active",  visibleActiveItems,  "INTENTS.yaml");
+      renderColumn("waiting", visibleWaitingItems, "INTENTS.yaml");
+      renderColumn("done",    doneItems,    "INTENTS.yaml Archive");
 
       const nowMs = Date.now();
       const weekDone = doneItems.filter(it => {
@@ -3351,7 +3441,7 @@
 
       // Archive 필터 재적용을 위해 최신 doneItems 보관
       lastDoneItems = doneItems;
-      lastDoneSource = "GATES.md";
+      lastDoneSource = "INTENTS.yaml Archive";
       scheduleArchiveHydration(doneItems, hydrationRun);
       Promise.allSettled([loadKnowledgeLoop(), loadPromotionIndex()]).then(results => {
         const failed = results.filter(result => result.status === "rejected").map(result => result.reason?.message || "알 수 없는 오류");
@@ -3362,7 +3452,7 @@
     }
 
     let lastDoneItems = [];
-    let lastDoneSource = "GATES.md";
+    let lastDoneSource = "INTENTS.yaml Archive";
     let activeArchiveTag = "";
     const archiveTemplateCache = new Map();
     let archiveHydrationRun = 0;

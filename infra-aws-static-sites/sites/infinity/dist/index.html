@@ -1951,7 +1951,8 @@
 
     function buildTaskQueryRows(item) {
       return [
-        { label: "요청 쿼리", value: metaValue(item, ["user_request", "requested_query", "query"]) || metaValue(item, ["goal"]) || "기록 없음", key: true },
+        { label: "원문 요청 쿼리", value: metaValue(item, ["raw_request", "user_request", "requested_query", "query"]) || metaValue(item, ["goal"]) || "기록 없음", key: true },
+        { label: "정리된 작업 쿼리", value: metaValue(item, ["normalized_query", "search_query", "query"]) || "기록 없음" },
       ];
     }
 
@@ -1966,7 +1967,14 @@
         const value = Number(entry.usage_count ?? entry.used_count ?? entry.use_count ?? 0);
         return total + (Number.isFinite(value) ? value : 0);
       }, 0);
+      const trace = bundle && bundle.trace;
+      const events = trace && Array.isArray(trace.events) ? trace.events : [];
+      const tracePath = bundle && bundle.tracePath;
+      const declaredLog = metaValue(item, ["work_log", "execution_log", "log", "run_log"]);
       return [
+        { label: "작업 로그 경로", value: declaredLog || tracePath || "기록 없음", key: true },
+        { label: "실행 이벤트", value: events.length ? events.length + "건" : "기록 없음" },
+        { label: "최근 로그 요약", value: events.length ? concise(events.slice(-3).map(event => [event.at || event.timestamp, event.type || event.stage, event.summary || event.message].filter(Boolean).join(" · ")).filter(Boolean).join("\n"), 360) : "기록 없음" },
         { label: "산출물 개수", value: outputs.size + "개", key: true },
         { label: "남은 로그 유무", value: matching.length ? "있음" : "없음", key: true },
         { label: "인용 횟수", value: usageCount + "회", key: true },
@@ -2027,8 +2035,8 @@
 
     function buildContextMapRows(item, path, pack) {
       const rows = buildContextPackRows(path, pack);
-      const checked = metaValue(item, ["context_documents_checked"]);
-      const searches = metaValue(item, ["context_searches"]);
+      const checked = metaValue(item, ["context_documents_checked", "evidence_paths", "checked_paths"]);
+      const searches = metaValue(item, ["context_searches", "searches", "search_query"]);
       if (checked) rows.push({ label: "실제 확인 문서", value: checked, key: true });
       if (searches) rows.push({ label: "실제 검색", value: searches });
       return rows;
@@ -2125,7 +2133,7 @@
       const queryRows = buildTaskQueryRows(item);
       setTaskTrace("request", "요청 쿼리", queryRows, concise(queryRows[0].value));
       setTaskTrace("evidence", "조회한 경로 · Context Map", [{ label: "Context Pack", value: metaValue(item, ["source_context_pack", "context_pack"]) || "불러오는 중" }], contextMapSummary(null, item));
-      setTaskTrace("logs", "남긴 로그", [{ label: "상태", value: "구조화 로그를 불러오는 중" }], "불러오는 중");
+      setTaskTrace("logs", "작업 로그 요약", [{ label: "상태", value: "요청·조회 경로·실행 로그를 불러오는 중" }], "불러오는 중");
       addActionBlock(item, sourceLabel);
       const st = String(item.meta.status || "").toLowerCase();
       if (String(sourceLabel || "").toLowerCase() === "waiting" || st === "waiting") showTaskTrace("logs");
@@ -2141,7 +2149,7 @@
         renderTraceContract(hydratedItem || item, bundle);
         if (archive) addDetailBlock("Intent 원장: " + archive.path, archive.text, "kind-archive");
         else {
-          const intentRows = buildSummaryRows(hydratedItem || item, "INTENTS.md")
+          const intentRows = buildSummaryRows(hydratedItem || item, "INTENTS.yaml")
             .map((row) => "- " + row.label + ": " + row.value).join("\n");
           addDetailBlock("Intent 원장: INTENTS.md", intentRows || "현재 Intent 원장 기록이 없습니다.", "kind-archive");
         }

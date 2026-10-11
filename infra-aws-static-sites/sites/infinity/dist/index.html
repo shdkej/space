@@ -1124,6 +1124,9 @@
         const listing = await ghDir("intents/archive");
         files = (listing || []).filter(file => file.type === "file" && /\.ya?ml$/i.test(file.name)).map(file => ({ path: "intents/archive/" + file.name, download_url: file.download_url }));
       }
+      if (!files.length) {
+        files = ["2026-06.yaml", "2026-07.yaml", "2026-08.yaml", "2026-09.yaml", "2026-10.yaml", "undated.yaml"].map(name => ({ path: "intents/archive/" + name }));
+      }
       const docs = await Promise.all(files.map(async file => {
         try { return parseYamlDocument(await fetchText(file.download_url || SOURCES.rawBase + file.path)); }
         catch (_) { return {}; }

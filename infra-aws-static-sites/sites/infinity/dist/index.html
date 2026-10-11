@@ -2047,7 +2047,7 @@
       if (value === undefined || value === null || value === "") return "";
       if (Array.isArray(value)) return value.map(traceValue).filter(Boolean).join("\n");
       if (typeof value === "object") return Object.entries(value).map(([key, item]) => key + ": " + traceValue(item)).filter(Boolean).join("\n");
-      return String(value);
+      return String(value).replace(/\bINTENTS\.md\b/g, "INTENTS.yaml");
     }
 
     function traceRows(value, fallbackLabel) {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T14:40:03.371966+00:00",
+  "generatedAt": "2026-10-12T14:40:03.252510+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,25 +8,25 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 29594738,
-    "travelLoggedKrw": 29594738,
-    "remainingMinKrw": 405262,
-    "remainingMaxKrw": 10405262,
-    "reservedPctMin": 98.6,
+    "loggedKrw": 29969404,
+    "travelLoggedKrw": 29969404,
+    "remainingMinKrw": 30596,
+    "remainingMaxKrw": 10030596,
+    "reservedPctMin": 99.9,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 190934,
+    "reserveBurnKrw": 190888,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-11",
-    "location": "Portugal",
-    "mapQuery": "Portugal, Portugal"
+    "date": "2026-10-13",
+    "location": "Paris",
+    "mapQuery": "Paris, France"
   },
   "categoryTotals": {
-    "other": 13553769,
+    "other": 13928435,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
@@ -37,7 +37,7 @@
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 13553769,
+    "other": 13928435,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
@@ -90,23 +90,23 @@
       }
     },
     {
+      "country": "Portugal",
+      "total": 2290356,
+      "categories": {
+        "other": 2248187,
+        "visa": 24172,
+        "food": 11955,
+        "cafe": 4464,
+        "stay": 1578
+      }
+    },
+    {
       "country": "Hungary",
       "total": 2222999,
       "categories": {
         "other": 1304344,
         "stay": 780807,
         "transport": 137848
-      }
-    },
-    {
-      "country": "Portugal",
-      "total": 1915690,
-      "categories": {
-        "other": 1873521,
-        "visa": 24172,
-        "food": 11955,
-        "cafe": 4464,
-        "stay": 1578
       }
     },
     {
@@ -563,6 +563,14 @@
     {
       "date": "2026-10-11",
       "amount": 142470
+    },
+    {
+      "date": "2026-10-12",
+      "amount": 287260
+    },
+    {
+      "date": "2026-10-13",
+      "amount": 87406
     }
   ],
   "bookedCosts": [
@@ -977,6 +985,54 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_6oo48di38d236ba38gsk8b9k852k8ba26113gba268oj0gpk6sp32ha26o",
+      "date": "2026-10-13",
+      "time": "04:23",
+      "amount": 87406,
+      "merchant": "PASTA TOSCANA",
+      "category": "other",
+      "location": "Passeig de Gràcia, 10",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_852jcdi66133gb9n7513cb9k8l34cb9o84ojcb9m8kpj0e1o6grjehhh74",
+      "date": "2026-10-12",
+      "time": "11:50",
+      "amount": 254034,
+      "merchant": "FUTBOL CLUB BARCELONA",
+      "category": "other",
+      "location": "Passeig de Gràcia, 10",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6t334h1o692jeba48h0kab9k8or46ba2891k8b9i8osk4d9m60s4cdq464",
+      "date": "2026-10-12",
+      "time": "09:08",
+      "amount": 20455,
+      "merchant": "SQ *LADY DUMPLING BORN S.",
+      "category": "other",
+      "location": "Passeig de Gràcia, 10",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64okcghg610kaba260qjeb9k68r3aba26crk8b9j68skccq66sok4d9o88",
+      "date": "2026-10-12",
+      "time": "08:50",
+      "amount": 12771,
+      "merchant": "FUNKY BAKERS BORN",
+      "category": "other",
+      "location": "Passeig de Gràcia, 10",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_850jae9p6h2jgb9g8gpk8b9k64p3ib9p6t144b9h6p1jaci574s30e9h8g",
       "date": "2026-10-11",
@@ -5883,6 +5939,54 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_6oo48di38d236ba38gsk8b9k852k8ba26113gba268oj0gpk6sp32ha26o",
+      "date": "2026-10-13",
+      "time": "04:23",
+      "amount": 87406,
+      "merchant": "PASTA TOSCANA",
+      "category": "other",
+      "location": "Passeig de Gràcia, 10",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_852jcdi66133gb9n7513cb9k8l34cb9o84ojcb9m8kpj0e1o6grjehhh74",
+      "date": "2026-10-12",
+      "time": "11:50",
+      "amount": 254034,
+      "merchant": "FUTBOL CLUB BARCELONA",
+      "category": "other",
+      "location": "Passeig de Gràcia, 10",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6t334h1o692jeba48h0kab9k8or46ba2891k8b9i8osk4d9m60s4cdq464",
+      "date": "2026-10-12",
+      "time": "09:08",
+      "amount": 20455,
+      "merchant": "SQ *LADY DUMPLING BORN S.",
+      "category": "other",
+      "location": "Passeig de Gràcia, 10",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64okcghg610kaba260qjeb9k68r3aba26crk8b9j68skccq66sok4d9o88",
+      "date": "2026-10-12",
+      "time": "08:50",
+      "amount": 12771,
+      "merchant": "FUNKY BAKERS BORN",
+      "category": "other",
+      "location": "Passeig de Gràcia, 10",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_850jae9p6h2jgb9g8gpk8b9k64p3ib9p6t144b9h6p1jaci574s30e9h8g",
       "date": "2026-10-11",
@@ -12307,7 +12411,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-11",
+    "asOf": "2026-10-13",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -12399,12 +12503,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-20",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
       "date": "2026-09-21",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -12478,6 +12576,12 @@
     },
     {
       "date": "2026-10-11",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-12",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"

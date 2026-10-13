@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-12T14:40:03.252510+00:00",
+  "generatedAt": "2026-10-13T14:40:02.843025+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,41 +8,41 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 29969404,
-    "travelLoggedKrw": 29969404,
-    "remainingMinKrw": 30596,
-    "remainingMaxKrw": 10030596,
-    "reservedPctMin": 99.9,
+    "loggedKrw": 30978987,
+    "travelLoggedKrw": 30978987,
+    "remainingMinKrw": 0,
+    "remainingMaxKrw": 9021013,
+    "reservedPctMin": 103.3,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 190888,
+    "reserveBurnKrw": 196070,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "location": "Paris",
     "mapQuery": "Paris, France"
   },
   "categoryTotals": {
-    "other": 13928435,
+    "other": 14933232,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
-    "visa": 463925,
+    "visa": 468711,
     "food": 209250,
     "groceries": 118727,
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 13928435,
+    "other": 14933232,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
-    "visa": 463925,
+    "visa": 468711,
     "food": 209250,
     "groceries": 118727,
     "cafe": 86938
@@ -70,6 +70,17 @@
       }
     },
     {
+      "country": "Portugal",
+      "total": 3192484,
+      "categories": {
+        "other": 3145529,
+        "visa": 28958,
+        "food": 11955,
+        "cafe": 4464,
+        "stay": 1578
+      }
+    },
+    {
       "country": "Spain",
       "total": 3064581,
       "categories": {
@@ -87,17 +98,6 @@
         "gear": 1446349,
         "medical": 680000,
         "visa": 211394
-      }
-    },
-    {
-      "country": "Portugal",
-      "total": 2290356,
-      "categories": {
-        "other": 2248187,
-        "visa": 24172,
-        "food": 11955,
-        "cafe": 4464,
-        "stay": 1578
       }
     },
     {
@@ -192,6 +192,13 @@
       "categories": {
         "stay": 94000,
         "other": 40250
+      }
+    },
+    {
+      "country": "France",
+      "total": 107455,
+      "categories": {
+        "other": 107455
       }
     }
   ],
@@ -570,7 +577,11 @@
     },
     {
       "date": "2026-10-13",
-      "amount": 87406
+      "amount": 989534
+    },
+    {
+      "date": "2026-10-14",
+      "amount": 107455
     }
   ],
   "bookedCosts": [
@@ -985,6 +996,90 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_6os32hhk6h0k6ba564s36b9k8d2jcba1710jeba260rjge1l6t2k4hi26k",
+      "date": "2026-10-14",
+      "time": "04:36",
+      "amount": 62207,
+      "merchant": "WORLD DUTY FREE GROUP SAU",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64rj6ghj8orjiba188o36b9k68p38b9p8gr42ba488o4adq185242ga46o",
+      "date": "2026-10-14",
+      "time": "00:52",
+      "amount": 45248,
+      "merchant": "CERVECERIA CATALANA",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6gs3ce1h8d23ib9j8or4cb9k6cr44b9o690j4ba671134gq170rj0gi68c",
+      "date": "2026-10-13",
+      "time": "12:24",
+      "amount": 772438,
+      "merchant": "EUROSTAR INTERNATIONAL LI",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6gp3igq474sj2b9i6os42b9k8p0jgba28gpk4b9p690jiha48l236d248k",
+      "date": "2026-10-13",
+      "time": "12:11",
+      "amount": 58379,
+      "merchant": "VINITUS",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_7523cchj8kqjgb9g60rjeb9k6osj8ba16p334b9k6ssk4e9m8op3id2684",
+      "date": "2026-10-13",
+      "time": "08:09",
+      "amount": 4786,
+      "merchant": "AREAS SANTS ESTACION",
+      "category": "visa",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74p4cdpl88r3gb9j8l2k6b9k850jeb9p8p1jgb9l851j8dhh64skch1h64",
+      "date": "2026-10-13",
+      "time": "07:15",
+      "amount": 59076,
+      "merchant": "WWW.MIDATICKET.IT - Colo",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6t2jed1n6sr3gb9h85130b9k8gqj2b9o8p2jcba46kq30di28crj4hi58c",
+      "date": "2026-10-13",
+      "time": "07:09",
+      "amount": 7449,
+      "merchant": "PASTELERIA HOFMANN",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6oo48di38d236ba38gsk8b9k852k8ba26113gba268oj0gpk6sp32ha26o",
       "date": "2026-10-13",
@@ -5939,6 +6034,90 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_6os32hhk6h0k6ba564s36b9k8d2jcba1710jeba260rjge1l6t2k4hi26k",
+      "date": "2026-10-14",
+      "time": "04:36",
+      "amount": 62207,
+      "merchant": "WORLD DUTY FREE GROUP SAU",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64rj6ghj8orjiba188o36b9k68p38b9p8gr42ba488o4adq185242ga46o",
+      "date": "2026-10-14",
+      "time": "00:52",
+      "amount": 45248,
+      "merchant": "CERVECERIA CATALANA",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6gs3ce1h8d23ib9j8or4cb9k6cr44b9o690j4ba671134gq170rj0gi68c",
+      "date": "2026-10-13",
+      "time": "12:24",
+      "amount": 772438,
+      "merchant": "EUROSTAR INTERNATIONAL LI",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6gp3igq474sj2b9i6os42b9k8p0jgba28gpk4b9p690jiha48l236d248k",
+      "date": "2026-10-13",
+      "time": "12:11",
+      "amount": 58379,
+      "merchant": "VINITUS",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_7523cchj8kqjgb9g60rjeb9k6osj8ba16p334b9k6ssk4e9m8op3id2684",
+      "date": "2026-10-13",
+      "time": "08:09",
+      "amount": 4786,
+      "merchant": "AREAS SANTS ESTACION",
+      "category": "visa",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74p4cdpl88r3gb9j8l2k6b9k850jeb9p8p1jgb9l851j8dhh64skch1h64",
+      "date": "2026-10-13",
+      "time": "07:15",
+      "amount": 59076,
+      "merchant": "WWW.MIDATICKET.IT - Colo",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6t2jed1n6sr3gb9h85130b9k8gqj2b9o8p2jcba46kq30di28crj4hi58c",
+      "date": "2026-10-13",
+      "time": "07:09",
+      "amount": 7449,
+      "merchant": "PASTELERIA HOFMANN",
+      "category": "other",
+      "location": "Terminal 2, 08820 엘 프라트 데 요브레가트 Barcelona",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6oo48di38d236ba38gsk8b9k852k8ba26113gba268oj0gpk6sp32ha26o",
       "date": "2026-10-13",
@@ -12411,7 +12590,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-13",
+    "asOf": "2026-10-14",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -12503,12 +12682,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-21",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
       "date": "2026-09-22",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -12582,6 +12755,12 @@
     },
     {
       "date": "2026-10-12",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-13",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"

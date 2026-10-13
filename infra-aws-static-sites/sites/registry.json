@@ -1,6 +1,15 @@
 {
   "sites": [
     {
+      "app": "agent-adapt",
+      "name": "Agent Adapt",
+      "domain_name": "agent-adapt.aws.shdkej.com",
+      "kind": "landing",
+      "detail": "A site agent that understands, represents, and acts for an existing website",
+      "deployment_name": "agent adapt",
+      "spa_fallback": false
+    },
+    {
       "app": "instagram-maker",
       "name": "Instagram Maker",
       "domain_name": "instagram-maker.aws.shdkej.com",

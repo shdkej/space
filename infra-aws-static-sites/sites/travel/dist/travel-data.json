@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T14:40:02.843025+00:00",
+  "generatedAt": "2026-10-14T14:40:05.180698+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,41 +8,41 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 30978987,
-    "travelLoggedKrw": 30978987,
+    "loggedKrw": 31637334,
+    "travelLoggedKrw": 31637334,
     "remainingMinKrw": 0,
-    "remainingMaxKrw": 9021013,
-    "reservedPctMin": 103.3,
+    "remainingMaxKrw": 8362666,
+    "reservedPctMin": 105.5,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 196070,
+    "reserveBurnKrw": 198977,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-14",
+    "date": "2026-10-15",
     "location": "Paris",
     "mapQuery": "Paris, France"
   },
   "categoryTotals": {
-    "other": 14933232,
+    "other": 15524988,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
-    "visa": 468711,
+    "visa": 535302,
     "food": 209250,
     "groceries": 118727,
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 14933232,
+    "other": 15524988,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
-    "visa": 468711,
+    "visa": 535302,
     "food": 209250,
     "groceries": 118727,
     "cafe": 86938
@@ -159,6 +159,14 @@
       }
     },
     {
+      "country": "France",
+      "total": 765802,
+      "categories": {
+        "other": 699211,
+        "visa": 66591
+      }
+    },
+    {
       "country": "Morocco",
       "total": 679010,
       "categories": {
@@ -192,13 +200,6 @@
       "categories": {
         "stay": 94000,
         "other": 40250
-      }
-    },
-    {
-      "country": "France",
-      "total": 107455,
-      "categories": {
-        "other": 107455
       }
     }
   ],
@@ -581,7 +582,11 @@
     },
     {
       "date": "2026-10-14",
-      "amount": 107455
+      "amount": 444932
+    },
+    {
+      "date": "2026-10-15",
+      "amount": 320870
     }
   ],
   "bookedCosts": [
@@ -996,6 +1001,138 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_74rjgh1g6t2j2b9j8or30b9k651jcba171344b9j8kr32c9l74oj8ha584",
+      "date": "2026-10-15",
+      "time": "02:58",
+      "amount": 249300,
+      "merchant": "Uniqlo Le Marais",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cq30gi684sj4ba688r48b9k89246ba18d0kcba68d234c1l71146gpp6c",
+      "date": "2026-10-15",
+      "time": "02:06",
+      "amount": 10920,
+      "merchant": "BRIGAT",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6krkcgpl6kr32b9l6orj4b9k8l1j4b9p68skab9m84sjih9g6so30gpj70",
+      "date": "2026-10-15",
+      "time": "00:54",
+      "amount": 60650,
+      "merchant": "Velib Metropole",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_68oj6hhg6d13gb9l74o32b9k8osjaba285334b9l690jcgpn892jgh9n84",
+      "date": "2026-10-14",
+      "time": "23:51",
+      "amount": 5899,
+      "merchant": "SARL ALVIDIS",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gs42ghm8913eb9n8d0k6b9k8kojab9o8krj2b9k8d14ahi375130dq28o",
+      "date": "2026-10-14",
+      "time": "23:36",
+      "amount": 4100,
+      "merchant": "MIE MIE",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8kp46c1n6cok6ba665132b9k6kqjaba2891jiba18p33chi56kq3eghh8k",
+      "date": "2026-10-14",
+      "time": "14:33",
+      "amount": 45356,
+      "merchant": "COLLECTION PINAU",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8l332gpn8cpk6b9g88qj2b9k8h146b9p8cq44b9j8krjcg9n6p2j4d9n68",
+      "date": "2026-10-14",
+      "time": "14:17",
+      "amount": 66591,
+      "merchant": "ETABLISSEMENT PUBLIC",
+      "category": "visa",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60rj6e258ko44b9i6gpkab9k6cs4aba16cq32ba674o3ig9p70pj4g9o6c",
+      "date": "2026-10-14",
+      "time": "14:02",
+      "amount": 115024,
+      "merchant": "EPA  DU MUSEE DU LOUVRE",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8oqjiea18go3gb9m8gs3ib9k6goj4ba26ss30b9p8cr32d9p8514ada384",
+      "date": "2026-10-14",
+      "time": "11:51",
+      "amount": 32243,
+      "merchant": "FP PARIS CHEMIN",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6d344c1l84s46b9j7513ib9k6cojiba26123gb9l71246d1k611k8dpp74",
+      "date": "2026-10-14",
+      "time": "10:53",
+      "amount": 13774,
+      "merchant": "SNCF VOYAGEURS",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6cq4cghl850jcb9j690k4b9k6kp4cb9p711jcba68l2k6dpj68o48ea48o",
+      "date": "2026-10-14",
+      "time": "08:50",
+      "amount": 54490,
+      "merchant": "BELLOVA BVA DAB",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6os32hhk6h0k6ba564s36b9k8d2jcba1710jeba260rjge1l6t2k4hi26k",
       "date": "2026-10-14",
@@ -6034,6 +6171,138 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_74rjgh1g6t2j2b9j8or30b9k651jcba171344b9j8kr32c9l74oj8ha584",
+      "date": "2026-10-15",
+      "time": "02:58",
+      "amount": 249300,
+      "merchant": "Uniqlo Le Marais",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cq30gi684sj4ba688r48b9k89246ba18d0kcba68d234c1l71146gpp6c",
+      "date": "2026-10-15",
+      "time": "02:06",
+      "amount": 10920,
+      "merchant": "BRIGAT",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6krkcgpl6kr32b9l6orj4b9k8l1j4b9p68skab9m84sjih9g6so30gpj70",
+      "date": "2026-10-15",
+      "time": "00:54",
+      "amount": 60650,
+      "merchant": "Velib Metropole",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_68oj6hhg6d13gb9l74o32b9k8osjaba285334b9l690jcgpn892jgh9n84",
+      "date": "2026-10-14",
+      "time": "23:51",
+      "amount": 5899,
+      "merchant": "SARL ALVIDIS",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8gs42ghm8913eb9n8d0k6b9k8kojab9o8krj2b9k8d14ahi375130dq28o",
+      "date": "2026-10-14",
+      "time": "23:36",
+      "amount": 4100,
+      "merchant": "MIE MIE",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8kp46c1n6cok6ba665132b9k6kqjaba2891jiba18p33chi56kq3eghh8k",
+      "date": "2026-10-14",
+      "time": "14:33",
+      "amount": 45356,
+      "merchant": "COLLECTION PINAU",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8l332gpn8cpk6b9g88qj2b9k8h146b9p8cq44b9j8krjcg9n6p2j4d9n68",
+      "date": "2026-10-14",
+      "time": "14:17",
+      "amount": 66591,
+      "merchant": "ETABLISSEMENT PUBLIC",
+      "category": "visa",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60rj6e258ko44b9i6gpkab9k6cs4aba16cq32ba674o3ig9p70pj4g9o6c",
+      "date": "2026-10-14",
+      "time": "14:02",
+      "amount": 115024,
+      "merchant": "EPA  DU MUSEE DU LOUVRE",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8oqjiea18go3gb9m8gs3ib9k6goj4ba26ss30b9p8cr32d9p8514ada384",
+      "date": "2026-10-14",
+      "time": "11:51",
+      "amount": 32243,
+      "merchant": "FP PARIS CHEMIN",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6d344c1l84s46b9j7513ib9k6cojiba26123gb9l71246d1k611k8dpp74",
+      "date": "2026-10-14",
+      "time": "10:53",
+      "amount": 13774,
+      "merchant": "SNCF VOYAGEURS",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6cq4cghl850jcb9j690k4b9k6kp4cb9p711jcba68l2k6dpj68o48ea48o",
+      "date": "2026-10-14",
+      "time": "08:50",
+      "amount": 54490,
+      "merchant": "BELLOVA BVA DAB",
+      "category": "other",
+      "location": "1 Rue Sauval, 75001 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6os32hhk6h0k6ba564s36b9k8d2jcba1710jeba260rjge1l6t2k4hi26k",
       "date": "2026-10-14",
@@ -11093,6 +11362,12 @@
       "count": 14
     },
     {
+      "name": "1 Rue Sauval, 75001 파리",
+      "count": 11,
+      "lat": 48.8616394,
+      "lng": 2.3423202
+    },
+    {
       "name": "Muvakkithane Cd. 2, 34710 이스탄불",
       "count": 10
     },
@@ -11163,12 +11438,6 @@
       "count": 7,
       "lat": 52.3744779,
       "lng": 9.7385532
-    },
-    {
-      "name": "Milos, 848 00 Zefyria",
-      "count": 7,
-      "lat": 36.6969976,
-      "lng": 24.4760331
     }
   ],
   "map": {
@@ -11184,6 +11453,12 @@
         "count": 35,
         "lat": 52.5146525,
         "lng": 13.4290744
+      },
+      {
+        "name": "1 Rue Sauval, 75001 파리",
+        "count": 11,
+        "lat": 48.8616394,
+        "lng": 2.3423202
       },
       {
         "name": "Rua da Vitória 118, 4050-633 포르투",
@@ -11220,12 +11495,6 @@
         "count": 7,
         "lat": 52.3744779,
         "lng": 9.7385532
-      },
-      {
-        "name": "Milos, 848 00 Zefyria",
-        "count": 7,
-        "lat": 36.6969976,
-        "lng": 24.4760331
       }
     ],
     "routePoints": [
@@ -12590,7 +12859,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-14",
+    "asOf": "2026-10-15",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -12682,12 +12951,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-22",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
       "date": "2026-09-23",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -12761,6 +13024,12 @@
     },
     {
       "date": "2026-10-13",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-14",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"

@@ -1593,10 +1593,10 @@
 
       const LIVE_FRESH_MINUTES = 30;
       const LAYER_DETAIL = {
-        l1: "삶 — PDCA 4지표(방향·다음 액션·선택·요청 부합) 판정",
-        l2: "업·시스템 — 크론과 백로그의 worst 롤업",
-        l3: "워크플로우 — 검증→개선 루프가 닫히고 있는가",
-        l4: "아티팩트 — 산출물 신선도 (Output 탭과 같은 소스)",
+        l1: "삶 — 데일리 리뷰 작성 여부",
+        l2: "실행 — 오늘 실행할 예약 작업과 지연된 운영 작업",
+        l3: "흐름 — 진행 중·대기 중 작업과 막힌 흐름",
+        l4: "결과 — 결과물 최신성·검증·배포 신뢰도",
       };
 
       async function loadAgentsLive() {
@@ -1785,8 +1785,8 @@
           attentionRows.push({
             name: `L${layers.indexOf(layer) + 1 || index + 1} ${layer.name}`,
             state: layer.state,
-            detail: layer.reason || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.",
-            meta: layer.state,
+            detail: layer.reason || layer.detail || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.",
+            meta: layer.meta || layer.state,
             reason: layer.reason || "수집기가 판정 근거를 아직 보내지 않았습니다 — 다음 수집 주기 후 다시 확인하세요.",
           });
         });
@@ -1812,8 +1812,8 @@
           ...okLayers.map((layer, index) => ({
             name: `L${layers.indexOf(layer) + 1 || index + 1} ${layer.name}`,
             state: "ok",
-            detail: LAYER_DETAIL[layer.key] || "정상 판정입니다.",
-            meta: "ok",
+            detail: layer.detail || LAYER_DETAIL[layer.key] || "정상 판정입니다.",
+            meta: layer.meta || "ok",
           })),
           ...(sys ? [
             {

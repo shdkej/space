@@ -1683,6 +1683,12 @@
         `;
       }
 
+      function layerListDetail(layer) {
+        if (layer.key !== "l4") return layer.detail || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.";
+        const latest = String(layer.detail || "").split(/\n/).filter(Boolean).pop() || "최근 push 확인 대기";
+        return `${layer.meta || "GitHub 저장소"} · ${latest.replace(" 최근 푸시 ", " 최근 push ")}`;
+      }
+
       let lastReasonTrigger = null;
 
       function openReason(dataset, trigger) {
@@ -1787,7 +1793,9 @@
             state: layer.state,
             // Flow는 판정 근거(예: PDCA 지연)보다 감시 대상인 역할 인계
             // 설명을 행에 노출하고, 구체적인 지연 사유는 상세 모달에서 보여준다.
-            detail: layer.key === "l3"
+            detail: layer.key === "l4"
+              ? layerListDetail(layer)
+              : layer.key === "l3"
               ? (layer.detail || layer.reason || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.")
               : (layer.reason || layer.detail || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다."),
             meta: layer.meta || layer.state,
@@ -1816,7 +1824,7 @@
           ...okLayers.map((layer, index) => ({
             name: `L${layers.indexOf(layer) + 1 || index + 1} ${layer.name}`,
             state: "ok",
-            detail: layer.detail || LAYER_DETAIL[layer.key] || "정상 판정입니다.",
+            detail: layer.key === "l4" ? layerListDetail(layer) : (layer.detail || LAYER_DETAIL[layer.key] || "정상 판정입니다."),
             meta: layer.meta || "ok",
             reason: layer.key === "l4" ? (layer.reason || layer.detail || "GitHub 최근 푸시 정보를 확인하세요.") : null,
           })),

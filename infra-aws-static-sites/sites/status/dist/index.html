@@ -1686,7 +1686,8 @@
       function layerListDetail(layer) {
         if (layer.key !== "l4") return layer.detail || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.";
         const latest = String(layer.detail || "").split(/\n/).filter(Boolean).pop() || "최근 push 확인 대기";
-        return `${layer.meta || "GitHub 저장소"} · ${latest.replace(" 최근 푸시 ", " 최근 push ")}`;
+        const latestTime = latest.split(" · ").slice(1).join(" · ") || latest;
+        return `${(layer.meta || "GitHub 저장소").replace("개 저장소", "개")} · 최신 ${latestTime}`;
       }
 
       let lastReasonTrigger = null;

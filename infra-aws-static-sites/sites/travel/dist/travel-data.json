@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-15T14:40:03.111364+00:00",
+  "generatedAt": "2026-10-16T14:40:02.949655+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,13 +15,13 @@
     "reservedPctMin": 105.5,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 198977,
+    "reserveBurnKrw": 197733,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-15",
+    "date": "2026-10-16",
     "location": "Paris",
     "mapQuery": "Paris, France"
   },
@@ -12859,7 +12859,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-15",
+    "asOf": "2026-10-16",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -13037,16 +13037,6 @@
   ],
   "reflections": [
     {
-      "id": "cbd4stl4b2naksip8152s6iq5k",
-      "date": "2026-09-07",
-      "title": "실제 흐름 / 카타니아로 이동해 여백과 정돈을 질문하다",
-      "intent": "남은 팔레르모 장면을 아쉬움 없이 마무리하기\\n실제로 한 일: 카타니아로 이동하며 여백과 정돈의 기준을 생각함\\n변경 이유: 이동으로 하루의 중심 장면이 바뀜\\n이어갈 것: 최신 연구자료 1건으로 기준을 확인하기\\n버릴 것: 비워두기만 하면 미니멀이라는 가정",
-      "did": null,
-      "why": null,
-      "carry": null,
-      "drop": null
-    },
-    {
       "id": "h3vnm2300b6vo06udj4qglaq90",
       "date": "2026-09-08",
       "title": "내일 의도 / 최신 연구자료로 여백과 정돈의 기준 적기",
@@ -13151,6 +13141,16 @@
       "date": "2026-10-04",
       "title": "내일 의도 / 정보 균형을 체감하게 할 제품 경험 한 장면 고르기",
       "intent": "정보 균형이 사용자의 선택을 어떻게 바꾸는지 본다.\\n첫 손잡이: 작은 제품 경험 한 장면을 고르고 한 문장으로 적는다.\\n변경 허용 조건: 실제 사용자 맥락이 더 선명해지면 장면을 바꾼다.",
+      "did": null,
+      "why": null,
+      "carry": null,
+      "drop": null
+    },
+    {
+      "id": "j6hg1339mcqskbqba2fmpn9j0g",
+      "date": "2026-10-16",
+      "title": "내일 의도 / GPU 서버와 헤르메스의 첫 통신 흐름 하나 그리기",
+      "intent": "GPU 서버와 헤르메스가 내 에이전트와 통신하는 첫 흐름을 본다.\\n첫 손잡이: 입력·전달·결과를 한 줄씩 그린다.\\n변경 허용 조건: 통신보다 먼저 확인해야 할 서버 준비 조건이 발견되면 그 조건부터 좁힌다.",
       "did": null,
       "why": null,
       "carry": null,

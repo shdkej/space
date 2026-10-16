@@ -817,6 +817,24 @@
         white-space: nowrap;
       }
 
+      .list-row.ok .row-meta {
+        border-color: rgba(79, 157, 138, 0.58);
+        background: rgba(224, 247, 239, 0.64);
+        color: #327562;
+      }
+
+      .list-row.warn .row-meta {
+        border-color: rgba(185, 130, 43, 0.62);
+        background: rgba(255, 246, 220, 0.72);
+        color: #8a641f;
+      }
+
+      .list-row.bad .row-meta {
+        border-color: rgba(169, 84, 72, 0.64);
+        background: rgba(255, 232, 227, 0.76);
+        color: #8f443a;
+      }
+
       button.list-row {
         width: 100%;
         text-align: left;
@@ -1644,7 +1662,7 @@
             ? ` type="button" data-name="${safe(item.name)}" data-state="${safe(item.state)}" data-reason="${safe(item.reason)}" aria-haspopup="dialog" aria-label="${safe(item.name)} 판정 근거 보기"`
             : "";
         return `
-          <${tag} class="list-row${clickable ? " is-clickable" : ""}"${attrs}>
+          <${tag} class="list-row ${stateClass(item.state)}${clickable ? " is-clickable" : ""}"${attrs}>
             <span class="dot ${stateClass(item.state)}"></span>
             <div class="row-main">
               <div class="row-name">${safe(item.name)}</div>

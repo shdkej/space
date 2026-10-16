@@ -244,6 +244,11 @@ function layerCheckStatus(payload) {
   return "operational";
 }
 
+function reviewStatus(payload) {
+  if (payload?.review?.status) return payload.review.status;
+  return payload?.review?.latest ? "operational" : "down";
+}
+
 export default function SystemPanel() {
   const [snapshot, setSnapshot] = useState(null);
   const [actions, setActions] = useState([]);
@@ -316,7 +321,7 @@ export default function SystemPanel() {
   const heartbeatDead = snapshotAge > HEARTBEAT_STALE_MS;
   const pdcaStatus = payload.pdca?.status || "none";
   const backlogStatuses = (payload.backlogs || []).map((b) => b.status);
-  const l1Status = worst([layerCheckStatus(payload)]);
+  const l1Status = worst([layerCheckStatus(payload), reviewStatus(payload)]);
   const l2Status = worst([...cronRowStatuses(payload), ...backlogStatuses]);
   const l3Status = worst([pdcaStatus]);
   const l4Status = worst(freshnessStatuses(payload));
@@ -357,6 +362,15 @@ export default function SystemPanel() {
       <PipelineBoard intents={payload.intents} />
 
       <LayerHeader title="L1 삶 — PDCA 4지표" status={l1Status} />
+      {payload.review?.reason && payload.review.status !== "operational" && (
+        <div className="mb-3 rounded-md border border-[hsl(var(--warn))] bg-[hsl(var(--warn))]/10 px-4 py-3 text-sm">
+          <div className="flex items-center gap-2 font-medium">
+            <Dot status={payload.review.status} />
+            데일리 리뷰 경고
+          </div>
+          <p className="mt-1 text-muted-foreground">{payload.review.reason} · 최신 리뷰 {payload.review.latest || "없음"}</p>
+        </div>
+      )}
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
@@ -432,7 +446,10 @@ export default function SystemPanel() {
             <CardDescription>{payload.review?.latest || "리뷰 없음"}</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm">{payload.review?.headline || "헤드라인을 찾지 못했습니다."}</p>
+            <div className="flex items-start gap-2 text-sm">
+              <Dot status={payload.review?.status || "none"} />
+              <p>{payload.review?.reason || payload.review?.headline || "헤드라인을 찾지 못했습니다."}</p>
+            </div>
           </CardContent>
         </Card>
       </div>

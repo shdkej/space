@@ -1827,7 +1827,9 @@
             state: "ok",
             detail: layer.key === "l4" ? layerListDetail(layer) : (layer.detail || LAYER_DETAIL[layer.key] || "정상 판정입니다."),
             meta: layer.meta || "ok",
-            reason: layer.key === "l4" ? (layer.reason || layer.detail || "GitHub 최근 푸시 정보를 확인하세요.") : null,
+            reason: ["l2", "l4"].includes(layer.key)
+              ? (layer.reason || layer.detail || "상세 판정 근거를 확인하세요.")
+              : null,
           })),
           ...(sys ? [
             {

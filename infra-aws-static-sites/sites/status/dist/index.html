@@ -1785,7 +1785,11 @@
           attentionRows.push({
             name: `L${layers.indexOf(layer) + 1 || index + 1} ${layer.name}`,
             state: layer.state,
-            detail: layer.reason || layer.detail || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.",
+            // Flow는 판정 근거(예: PDCA 지연)보다 감시 대상인 역할 인계
+            // 설명을 행에 노출하고, 구체적인 지연 사유는 상세 모달에서 보여준다.
+            detail: layer.key === "l3"
+              ? (layer.detail || layer.reason || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.")
+              : (layer.reason || layer.detail || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다."),
             meta: layer.meta || layer.state,
             reason: layer.reason || "수집기가 판정 근거를 아직 보내지 않았습니다 — 다음 수집 주기 후 다시 확인하세요.",
           });

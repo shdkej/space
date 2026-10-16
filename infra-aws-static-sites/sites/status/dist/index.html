@@ -1287,6 +1287,9 @@
       }
       .floating-nav::-webkit-scrollbar { display: none; }
       .floating-nav .nav-button { flex: 0 0 88px; }
+      @media (max-width: 639px) {
+        .floating-nav .nav-button { flex: 1 1 0; min-width: 0; }
+      }
       body {
         background:
           linear-gradient(90deg, rgba(252, 252, 248, 0.94) 0%, rgba(252, 252, 248, 0.74) 48%, rgba(252, 252, 248, 0.28) 100%),

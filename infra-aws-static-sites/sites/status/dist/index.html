@@ -936,8 +936,23 @@
         color: var(--muted);
         font-size: 13px;
         line-height: 1.55;
-        white-space: pre-line;
         overflow-wrap: break-word;
+      }
+
+      .reason-group + .reason-group {
+        margin-top: 16px;
+      }
+
+      .reason-group-title {
+        margin-bottom: 6px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .reason-item {
+        display: block;
+        margin-top: 3px;
       }
       .monitoring-layer-stack .list-row { min-height: 92px; border: 1px solid rgba(38,51,47,.22); border-radius: 14px; background: rgba(248,251,252,.58); }
       .monitoring-layer-stack .list-row:nth-child(4) { border-color: rgba(47,143,123,.52); background: rgba(224,247,239,.38); }
@@ -1505,7 +1520,7 @@
             <button class="icon-button" id="reasonClose" type="button" aria-label="닫기">×</button>
           </header>
           <p class="reason-state" id="reasonState"></p>
-          <p class="reason-body" id="reasonBody"></p>
+          <div class="reason-body" id="reasonBody"></div>
         </div>
       </div>
     </main>
@@ -1698,7 +1713,27 @@
         $("reasonTitle").textContent = dataset.name;
         $("reasonState").textContent = dataset.state === "none" ? "No data" : stateLabel(dataset.state);
         $("reasonState").className = `reason-state ${stateClass(dataset.state)}`;
-        $("reasonBody").textContent = dataset.reason;
+        if (dataset.name === "L2 Execution" && dataset.reason) {
+          const lines = String(dataset.reason).split(/\n/);
+          const groups = [];
+          let group = null;
+          lines.forEach((line) => {
+            if (line === "와처" || line === "실행") {
+              group = { title: line, items: [] };
+              groups.push(group);
+            } else if (line.trim() && group) {
+              group.items.push(line);
+            }
+          });
+          $("reasonBody").innerHTML = groups.map((item) => `
+            <section class="reason-group">
+              <div class="reason-group-title">${safe(item.title)}</div>
+              ${item.items.map((name) => `<span class="reason-item">${safe(name)}</span>`).join("")}
+            </section>
+          `).join("");
+        } else {
+          $("reasonBody").textContent = dataset.reason;
+        }
         $("reasonModal").classList.add("is-open");
         $("reasonModal").setAttribute("aria-hidden", "false");
         $("reasonClose").focus();

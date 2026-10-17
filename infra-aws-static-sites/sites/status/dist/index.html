@@ -1732,7 +1732,7 @@
             </section>
           `).join("");
         } else {
-          $("reasonBody").textContent = dataset.reason;
+          $("reasonBody").innerHTML = safe(dataset.reason || "").replace(/\n/g, "<br>");
         }
         $("reasonModal").classList.add("is-open");
         $("reasonModal").setAttribute("aria-hidden", "false");

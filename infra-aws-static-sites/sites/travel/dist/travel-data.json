@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-16T14:40:02.949655+00:00",
+  "generatedAt": "2026-10-17T14:40:04.805101+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,25 +8,25 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 31637334,
-    "travelLoggedKrw": 31637334,
+    "loggedKrw": 31997569,
+    "travelLoggedKrw": 31997569,
     "remainingMinKrw": 0,
-    "remainingMaxKrw": 8362666,
-    "reservedPctMin": 105.5,
+    "remainingMaxKrw": 8002431,
+    "reservedPctMin": 106.7,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 197733,
+    "reserveBurnKrw": 197516,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-16",
-    "location": "Paris",
-    "mapQuery": "Paris, France"
+    "date": "2026-10-18",
+    "location": "London",
+    "mapQuery": "London, United Kingdom"
   },
   "categoryTotals": {
-    "other": 15524988,
+    "other": 15885223,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
@@ -37,7 +37,7 @@
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 15524988,
+    "other": 15885223,
     "stay": 11444568,
     "transport": 1591212,
     "gear": 1446349,
@@ -141,6 +141,14 @@
       }
     },
     {
+      "country": "France",
+      "total": 1126037,
+      "categories": {
+        "other": 1059446,
+        "visa": 66591
+      }
+    },
+    {
       "country": "Turkey",
       "total": 834257,
       "categories": {
@@ -156,14 +164,6 @@
         "stay": 345658,
         "other": 305856,
         "transport": 151616
-      }
-    },
-    {
-      "country": "France",
-      "total": 765802,
-      "categories": {
-        "other": 699211,
-        "visa": 66591
       }
     },
     {
@@ -587,6 +587,14 @@
     {
       "date": "2026-10-15",
       "amount": 320870
+    },
+    {
+      "date": "2026-10-17",
+      "amount": 319227
+    },
+    {
+      "date": "2026-10-18",
+      "amount": 41008
     }
   ],
   "bookedCosts": [
@@ -1001,6 +1009,198 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_6ko3aga368p3eba36p2jeb9k852jeb9o88q4cba17524aga1890k4dhp88",
+      "date": "2026-10-18",
+      "time": "06:18",
+      "amount": 2288,
+      "merchant": "HAJ ABOUDA",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_84sk2ci66l2jcba26sr48b9k88sj0b9p75248ba16d2j0d256kqkcdpl68",
+      "date": "2026-10-18",
+      "time": "06:14",
+      "amount": 12054,
+      "merchant": "PHARMACIE  SLAKM",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_852k8h9n6d348ba66soj8b9k8d0kcba288r3eb9p85332e9i8op3ggph68",
+      "date": "2026-10-18",
+      "time": "05:44",
+      "amount": 7787,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6p1j0gpo8l34cba365246b9k70sjib9o88p38b9i8ksjgd9o84o3ae1m8k",
+      "date": "2026-10-18",
+      "time": "05:43",
+      "amount": 7787,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_84oj8h1k650jeb9k74sk6b9k7523eba18gs30b9j8oojce1o6h34cd9n6k",
+      "date": "2026-10-18",
+      "time": "04:35",
+      "amount": 1327,
+      "merchant": "LIDL     2320",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74sjcha47533cb9m851jgb9k6h14aba18orj6b9m6gqj0ea270s48hhj88",
+      "date": "2026-10-18",
+      "time": "03:40",
+      "amount": 9765,
+      "merchant": "SQ *SARL MAISON ISLAND -",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60s3iha288q3ib9l70p44b9k8oskaba26ss46b9j8cr3acpo6cr3gdhk6c",
+      "date": "2026-10-17",
+      "time": "17:46",
+      "amount": 3887,
+      "merchant": "TRANSPORT BUS",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6h34cd1j651j0ba38go38b9k6ks46b9p8orj0ba66so3ghhh74qj4hi588",
+      "date": "2026-10-17",
+      "time": "11:55",
+      "amount": 92884,
+      "merchant": "LA VACHE ACROBATE",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74s4cghi6so3eb9k68rjab9k6cp3aba28l23cb9o6p14ce26890j0h2474",
+      "date": "2026-10-17",
+      "time": "10:19",
+      "amount": 3887,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60ok4d268p338ba56cqkab9k6l344b9o652jab9i6923ghi16t148e1o64",
+      "date": "2026-10-17",
+      "time": "10:18",
+      "amount": 3887,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6gq3icq38cojgb9p650jcb9k8ko3gba16gojgb9m6h2kcchp6cq36dpi88",
+      "date": "2026-10-17",
+      "time": "09:37",
+      "amount": 159873,
+      "merchant": "GL HAUSSMANN",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6or3ecq6692jib9p74o3gb9k68q32b9o64r30b9k8or46dhi6sp3ed248k",
+      "date": "2026-10-17",
+      "time": "08:38",
+      "amount": 2288,
+      "merchant": "LA MADELEINE PAU",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6sokcda284q3aba16oo44b9k8co32ba28p2j2b9n6oo44ca188q3cchk60",
+      "date": "2026-10-17",
+      "time": "08:02",
+      "amount": 15223,
+      "merchant": "ALT SOUVENIRS",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74sjadhl64qjgb9g8os30b9k8h244ba18orkcb9j8os3ahhn6kokachh8c",
+      "date": "2026-10-17",
+      "time": "06:20",
+      "amount": 22076,
+      "merchant": "MUSIAM16125CGARE",
+      "category": "other",
+      "location": "Musée d’Orsay, 62 Rue de Lille",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6h0k6d9k890jib9m8kpj4b9k68p4ab9o88s4cba28cqj4gi66gq4cda670",
+      "date": "2026-10-17",
+      "time": "01:41",
+      "amount": 7462,
+      "merchant": "Paris est touj  J",
+      "category": "other",
+      "location": "Musée d’Orsay, 62 Rue de Lille",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64r38ha474ojgb9i8koj8b9k891j2b9o68q3iba584pjeh1k6h13gh9m68",
+      "date": "2026-10-17",
+      "time": "00:40",
+      "amount": 7760,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "Musée d’Orsay, 62 Rue de Lille",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_74rjgh1g6t2j2b9j8or30b9k651jcba171344b9j8kr32c9l74oj8ha584",
       "date": "2026-10-15",
@@ -6171,6 +6371,198 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_6ko3aga368p3eba36p2jeb9k852jeb9o88q4cba17524aga1890k4dhp88",
+      "date": "2026-10-18",
+      "time": "06:18",
+      "amount": 2288,
+      "merchant": "HAJ ABOUDA",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_84sk2ci66l2jcba26sr48b9k88sj0b9p75248ba16d2j0d256kqkcdpl68",
+      "date": "2026-10-18",
+      "time": "06:14",
+      "amount": 12054,
+      "merchant": "PHARMACIE  SLAKM",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_852k8h9n6d348ba66soj8b9k8d0kcba288r3eb9p85332e9i8op3ggph68",
+      "date": "2026-10-18",
+      "time": "05:44",
+      "amount": 7787,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6p1j0gpo8l34cba365246b9k70sjib9o88p38b9i8ksjgd9o84o3ae1m8k",
+      "date": "2026-10-18",
+      "time": "05:43",
+      "amount": 7787,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_84oj8h1k650jeb9k74sk6b9k7523eba18gs30b9j8oojce1o6h34cd9n6k",
+      "date": "2026-10-18",
+      "time": "04:35",
+      "amount": 1327,
+      "merchant": "LIDL     2320",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74sjcha47533cb9m851jgb9k6h14aba18orj6b9m6gqj0ea270s48hhj88",
+      "date": "2026-10-18",
+      "time": "03:40",
+      "amount": 9765,
+      "merchant": "SQ *SARL MAISON ISLAND -",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60s3iha288q3ib9l70p44b9k8oskaba26ss46b9j8cr3acpo6cr3gdhk6c",
+      "date": "2026-10-17",
+      "time": "17:46",
+      "amount": 3887,
+      "merchant": "TRANSPORT BUS",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6h34cd1j651j0ba38go38b9k6ks46b9p8orj0ba66so3ghhh74qj4hi588",
+      "date": "2026-10-17",
+      "time": "11:55",
+      "amount": 92884,
+      "merchant": "LA VACHE ACROBATE",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74s4cghi6so3eb9k68rjab9k6cp3aba28l23cb9o6p14ce26890j0h2474",
+      "date": "2026-10-17",
+      "time": "10:19",
+      "amount": 3887,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_60ok4d268p338ba56cqkab9k6l344b9o652jab9i6923ghi16t148e1o64",
+      "date": "2026-10-17",
+      "time": "10:18",
+      "amount": 3887,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6gq3icq38cojgb9p650jcb9k8ko3gba16gojgb9m6h2kcchp6cq36dpi88",
+      "date": "2026-10-17",
+      "time": "09:37",
+      "amount": 159873,
+      "merchant": "GL HAUSSMANN",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6or3ecq6692jib9p74o3gb9k68q32b9o64r30b9k8or46dhi6sp3ed248k",
+      "date": "2026-10-17",
+      "time": "08:38",
+      "amount": 2288,
+      "merchant": "LA MADELEINE PAU",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6sokcda284q3aba16oo44b9k8co32ba28p2j2b9n6oo44ca188q3cchk60",
+      "date": "2026-10-17",
+      "time": "08:02",
+      "amount": 15223,
+      "merchant": "ALT SOUVENIRS",
+      "category": "other",
+      "location": "65 Rue de Vaugirard, 75006 파리",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74sjadhl64qjgb9g8os30b9k8h244ba18orkcb9j8os3ahhn6kokachh8c",
+      "date": "2026-10-17",
+      "time": "06:20",
+      "amount": 22076,
+      "merchant": "MUSIAM16125CGARE",
+      "category": "other",
+      "location": "Musée d’Orsay, 62 Rue de Lille",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6h0k6d9k890jib9m8kpj4b9k68p4ab9o88s4cba28cqj4gi66gq4cda670",
+      "date": "2026-10-17",
+      "time": "01:41",
+      "amount": 7462,
+      "merchant": "Paris est touj  J",
+      "category": "other",
+      "location": "Musée d’Orsay, 62 Rue de Lille",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64r38ha474ojgb9i8koj8b9k891j2b9o68q3iba584pjeh1k6h13gh9m68",
+      "date": "2026-10-17",
+      "time": "00:40",
+      "amount": 7760,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "Musée d’Orsay, 62 Rue de Lille",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_74rjgh1g6t2j2b9j8or30b9k651jcba171344b9j8kr32c9l74oj8ha584",
       "date": "2026-10-15",
@@ -11362,6 +11754,12 @@
       "count": 14
     },
     {
+      "name": "65 Rue de Vaugirard, 75006 파리",
+      "count": 13,
+      "lat": 48.8468706,
+      "lng": 2.3264855
+    },
+    {
       "name": "1 Rue Sauval, 75001 파리",
       "count": 11,
       "lat": 48.8616394,
@@ -11432,12 +11830,6 @@
     {
       "name": "Köln Hbf, Breslauer Platz 479",
       "count": 7
-    },
-    {
-      "name": "하노버, 독일",
-      "count": 7,
-      "lat": 52.3744779,
-      "lng": 9.7385532
     }
   ],
   "map": {
@@ -11453,6 +11845,12 @@
         "count": 35,
         "lat": 52.5146525,
         "lng": 13.4290744
+      },
+      {
+        "name": "65 Rue de Vaugirard, 75006 파리",
+        "count": 13,
+        "lat": 48.8468706,
+        "lng": 2.3264855
       },
       {
         "name": "1 Rue Sauval, 75001 파리",
@@ -11489,12 +11887,6 @@
         "count": 7,
         "lat": 50.9165529,
         "lng": 6.9339308
-      },
-      {
-        "name": "하노버, 독일",
-        "count": 7,
-        "lat": 52.3744779,
-        "lng": 9.7385532
       }
     ],
     "routePoints": [
@@ -12859,7 +13251,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-16",
+    "asOf": "2026-10-18",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -12951,12 +13343,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-23",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
       "date": "2026-09-25",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -13030,6 +13416,12 @@
     },
     {
       "date": "2026-10-14",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-17",
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"
@@ -13148,9 +13540,9 @@
     },
     {
       "id": "j6hg1339mcqskbqba2fmpn9j0g",
-      "date": "2026-10-16",
-      "title": "내일 의도 / GPU 서버와 헤르메스의 첫 통신 흐름 하나 그리기",
-      "intent": "GPU 서버와 헤르메스가 내 에이전트와 통신하는 첫 흐름을 본다.\\n첫 손잡이: 입력·전달·결과를 한 줄씩 그린다.\\n변경 허용 조건: 통신보다 먼저 확인해야 할 서버 준비 조건이 발견되면 그 조건부터 좁힌다.",
+      "date": "2026-10-17",
+      "title": "내일 의도 / GPU 서버에서 3D 캐릭터의 첫 장면 만들기",
+      "intent": "GPU 서버로 다음 세대의 장면 하나를 직접 만든다.\\n첫 손잡이: 3D 캐릭터의 첫 장면을 만든다.\\n변경 허용 조건: 영상·음성 작업의 준비가 먼저 필요하면 그 준비를 하나로 좁힌다.",
       "did": null,
       "why": null,
       "carry": null,

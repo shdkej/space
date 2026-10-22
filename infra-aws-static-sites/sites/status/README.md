@@ -12,7 +12,7 @@
 
 React 소스는 `src/`에 있고, `pnpm build`가 정적 산출물을 `dist/`로 만듭니다. 로컬 확인은 `pnpm dev` 또는 빌드 뒤 `python3 -m http.server 8080 --directory dist`로 합니다.
 
-화면 컴포넌트는 `MagicCard`, `ShineBorder`, `BorderBeam`, `NumberTicker`와 Radix Tabs를 사용합니다. 운영 데이터 계약은 기존 `status.json`과 선택적 `agents-live.json`을 유지합니다.
+화면은 shadcn/ui의 기본 Card·Badge 패턴과 Radix Tabs를 기준으로 구성합니다. 운영 데이터 계약은 기존 `status.json`과 선택적 `agents-live.json`을 유지하며, Monitoring은 L1 비즈니스부터 L5 리소스까지 라이브 데이터를 그대로 읽습니다.
 
 ## 데이터·외부 의존성
 

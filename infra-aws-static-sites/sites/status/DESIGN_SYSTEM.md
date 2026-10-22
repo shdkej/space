@@ -2,7 +2,7 @@
 
 `src/main.jsx`·`src/styles.css`의 React 컴포넌트와 토큰, `dist/assets/mascot-ambient.jpg`에서 쓰는 패턴·토큰.
 
-`dist/`는 Vite 정적 빌드 산출물이며 직접 컴포넌트 소스로 수정하지 않는다. UI는 Radix Tabs와 로컬 Magic UI primitives(`MagicCard`, `ShineBorder`, `BorderBeam`, `NumberTicker`)로 구성한다.
+`dist/`는 Vite 정적 빌드 산출물이며 직접 컴포넌트 소스로 수정하지 않는다. UI는 shadcn/ui 기본 Card·Badge 패턴과 Radix Tabs로 구성하며, 별도 장식용 Magic UI 효과는 사용하지 않는다.
 
 ## Mascot image pattern
 

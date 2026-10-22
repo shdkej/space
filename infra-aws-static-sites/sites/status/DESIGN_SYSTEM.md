@@ -1,6 +1,8 @@
 # Status Design System
 
-`dist/index.html`의 인라인 `<style>` + `dist/assets/mascot-ambient.jpg`에서 쓰는 패턴·토큰.
+`src/main.jsx`·`src/styles.css`의 React 컴포넌트와 토큰, `dist/assets/mascot-ambient.jpg`에서 쓰는 패턴·토큰.
+
+`dist/`는 Vite 정적 빌드 산출물이며 직접 컴포넌트 소스로 수정하지 않는다. UI는 Radix Tabs와 로컬 Magic UI primitives(`MagicCard`, `ShineBorder`, `BorderBeam`, `NumberTicker`)로 구성한다.
 
 ## Mascot image pattern
 

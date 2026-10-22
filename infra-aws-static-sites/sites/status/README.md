@@ -10,7 +10,9 @@
 
 ## 실행·개발
 
-`dist/`를 정적 파일 서버로 열면 됩니다. 예: `python3 -m http.server 8080 --directory dist`
+React 소스는 `src/`에 있고, `pnpm build`가 정적 산출물을 `dist/`로 만듭니다. 로컬 확인은 `pnpm dev` 또는 빌드 뒤 `python3 -m http.server 8080 --directory dist`로 합니다.
+
+화면 컴포넌트는 `MagicCard`, `ShineBorder`, `BorderBeam`, `NumberTicker`와 Radix Tabs를 사용합니다. 운영 데이터 계약은 기존 `status.json`과 선택적 `agents-live.json`을 유지합니다.
 
 ## 데이터·외부 의존성
 

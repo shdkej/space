@@ -1452,74 +1452,49 @@
         .card-value { font-size: 20px; }
         .card-title { font-size: 11px; }
       }
-      /* Premium transparent glass pass — layout intentionally unchanged. */
+      /* shadcn/ui baseline — neutral tokens only, layout intentionally unchanged. */
       :root {
-        color-scheme: dark;
-        --bg: #070a12;
-        --ink: #f4f6ff;
-        --muted: rgba(218, 224, 245, .70);
-        --faint: rgba(201, 211, 238, .48);
-        --ok: #64e1cf;
-        --warn: #efc779;
-        --bad: #f18491;
-        --glass: rgba(15, 20, 36, .27);
-        --glass-strong: rgba(25, 32, 56, .46);
-        --glass-border: rgba(220, 231, 255, .18);
-        --glass-blur: blur(22px) saturate(145%);
-        --shadow-soft: 0 24px 70px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255,255,255,.12);
-        --focus: #a9b5ff;
+        color-scheme: light;
+        --bg: #f8fafc;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --faint: #94a3b8;
+        --ok: #16a34a;
+        --warn: #ca8a04;
+        --bad: #dc2626;
+        --glass: #ffffff;
+        --glass-strong: #f8fafc;
+        --glass-border: #e2e8f0;
+        --glass-blur: none;
+        --shadow-soft: 0 1px 2px rgba(15,23,42,.06);
+        --focus: #2563eb;
       }
-      html, body { background: #070a12; }
-      body {
-        color: var(--ink);
-        background:
-          radial-gradient(ellipse at 12% 8%, rgba(95, 87, 202, .28), transparent 34%),
-          radial-gradient(ellipse at 86% 18%, rgba(35, 160, 170, .20), transparent 30%),
-          radial-gradient(ellipse at 62% 92%, rgba(112, 66, 154, .18), transparent 38%),
-          linear-gradient(145deg, #080b14 0%, #0f1627 52%, #080b13 100%);
-      }
-      body::before {
-        opacity: .72;
-        mix-blend-mode: screen;
-        background:
-          linear-gradient(118deg, transparent 0 24%, rgba(160, 175, 255, .10) 24.2% 24.35%, transparent 24.5% 62%, rgba(89, 219, 208, .08) 62.2% 62.35%, transparent 62.5%),
-          radial-gradient(circle at 78% 20%, rgba(255,255,255,.7), transparent 2px),
-          radial-gradient(circle at 74% 22%, rgba(130,155,255,.34), transparent 16%);
-      }
-      body::after { opacity: .32; background: radial-gradient(circle at 50% 40%, transparent 0 18%, rgba(0,0,0,.48) 100%); }
-      .app-shell::before { background: linear-gradient(120deg, rgba(255,255,255,.08), transparent 34%, rgba(103,130,255,.06) 68%, transparent); }
+      html, body { background: var(--bg); }
+      body { color: var(--ink); background: var(--bg); }
+      body::before, body::after, .app-shell::before { display: none; }
       .hero-copy, .control-card, .detail-view, .icon-button, .detail-score, .summary-tile, .list-row, .floating-nav {
-        border-color: rgba(220, 231, 255, .18);
-        background: linear-gradient(145deg, rgba(27, 35, 60, .34), rgba(9, 13, 26, .18));
+        border-color: var(--glass-border);
+        background: var(--glass);
         box-shadow: var(--shadow-soft);
-        backdrop-filter: var(--glass-blur);
-        -webkit-backdrop-filter: var(--glass-blur);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
       }
-      .hero-copy::before, .control-card::before, .detail-view::before {
-        content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
-        background: linear-gradient(120deg, rgba(255,255,255,.12), transparent 24%, transparent 68%, rgba(137,158,255,.08));
-        opacity: .75;
-      }
-      .hero-copy { position: relative; overflow: hidden; }
-      .control-card { overflow: hidden; }
-      .detail-view { overflow: hidden; }
-      .hero-kicker { color: #9eaaff; text-shadow: 0 0 18px rgba(136,151,255,.44); }
-      .hero-title { color: #f7f8ff; text-shadow: 0 6px 24px rgba(0,0,0,.28); }
-      .hero-title .hero-emphasis { color: #aab5ff; text-shadow: 0 0 30px rgba(134,147,255,.42); }
+      .hero-kicker { color: #475569; text-shadow: none; }
+      .hero-title, .hero-title .hero-emphasis { color: var(--ink); text-shadow: none; }
       .hero-lead, .hero-meta, .detail-title p, .row-detail { color: var(--muted); }
-      .hero-meta strong, .row-name, .summary-v, .detail-title h1, .group-title { color: #f2f5ff; }
-      .card-label, .card-bottom, .row-meta, .summary-k { color: var(--faint); }
+      .hero-meta strong, .row-name, .summary-v, .detail-title h1, .group-title { color: var(--ink); }
+      .card-label, .card-bottom, .row-meta, .summary-k { color: var(--muted); }
       .control-card:hover, .control-card:focus-visible, .list-row:hover, .list-row:focus-visible {
-        border-color: rgba(169, 181, 255, .48);
-        background: linear-gradient(145deg, rgba(50, 61, 103, .46), rgba(18, 25, 49, .28));
-        box-shadow: 0 22px 58px rgba(0,0,0,.38), 0 0 24px rgba(116, 130, 255, .10), inset 0 1px 0 rgba(255,255,255,.16);
+        border-color: #cbd5e1;
+        background: var(--glass-strong);
+        box-shadow: 0 1px 2px rgba(15,23,42,.08);
       }
-      .group-title::after { background: rgba(220,231,255,.16); }
-      .dot.ok { box-shadow: 0 0 12px rgba(100,225,207,.72); } .dot.warn { box-shadow: 0 0 12px rgba(239,199,121,.62); } .dot.bad { box-shadow: 0 0 12px rgba(241,132,145,.68); }
-      .floating-nav { background: rgba(12, 17, 32, .36); }
-      .nav-button { color: rgba(218,224,245,.70); } .nav-button.is-current, .nav-button:hover { color:#fff; background:rgba(156,169,255,.12); border-color:rgba(169,181,255,.34); }
-      .transition-flash { background: rgba(158, 172, 255, .74); box-shadow: 0 0 34px rgba(158,172,255,.8); }
-      @media (prefers-reduced-motion: reduce) { .hero-copy::before, .control-card::before, .detail-view::before { display:none; } }
+      .group-title::after { background: var(--glass-border); }
+      .dot.ok, .dot.warn, .dot.bad { box-shadow: none; }
+      .floating-nav { background: var(--glass); }
+      .nav-button { color: var(--muted); }
+      .nav-button.is-current, .nav-button:hover { color: var(--ink); background: #f1f5f9; border-color: #cbd5e1; }
+      .transition-flash { background: rgba(37,99,235,.24); box-shadow: none; }
     </style>
   </head>
   <body data-mode="overview">

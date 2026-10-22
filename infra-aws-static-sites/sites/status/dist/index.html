@@ -1513,6 +1513,18 @@
       .nav-button { color: var(--muted); }
       .nav-button.is-current, .nav-button:hover { color: #fff; background: rgba(158, 173, 255, .13); border-color: rgba(173,188,255,.36); }
       .transition-flash { background: rgba(158,172,255,.72); box-shadow: 0 0 30px rgba(158,172,255,.72); }
+      /* Local Magic UI primitives: MagicCard, ShineBorder, BorderBeam, NumberTicker. */
+      .magic-card { isolation: isolate; transform: translateZ(0); transition: transform .28s var(--ease), border-color .28s var(--ease), box-shadow .28s var(--ease); }
+      .magic-card::before { z-index: -1; }
+      .magic-card:hover { transform: translateY(-2px) perspective(700px) rotateX(.5deg); }
+      .magic-card:hover::before { opacity: 1; background: radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(156,170,255,.17), transparent 34%); }
+      .shine-border { border: 1px solid transparent; background-clip: padding-box; }
+      .shine-border::after { z-index: -1; inset: -1px; width: auto; height: auto; border-radius: inherit; background: conic-gradient(from 180deg at 50% 50%, transparent 0deg, rgba(168,181,255,.55) 42deg, transparent 86deg, transparent 210deg, rgba(101,229,202,.45) 250deg, transparent 300deg); opacity: .34; animation: shineBorder 7s linear infinite; }
+      .border-beam { position: absolute; top: 0; left: -24%; z-index: 2; width: 24%; height: 1px; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(225,231,255,.96), transparent); box-shadow: 0 0 14px rgba(163,176,255,.78); animation: magicBorderBeam 5s linear infinite; }
+      .magic-list-item { transition: transform .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease); }
+      .magic-list-item:hover { transform: translateX(3px); }
+      .number-ticker { font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+      @keyframes shineBorder { to { transform: rotate(360deg); } }
       @media (prefers-reduced-motion: reduce) { .hero-copy::after, .control-card::after, .detail-view::after { animation: none; } }
     </style>
   </head>
@@ -1748,7 +1760,7 @@
             ? ` type="button" data-name="${safe(item.name)}" data-state="${safe(item.state)}" data-reason="${safe(item.reason)}" aria-haspopup="dialog" aria-label="${safe(item.name)} 판정 근거 보기"`
             : "";
         return `
-          <${tag} class="list-row ${stateClass(item.state)}${clickable ? " is-clickable" : ""}"${attrs}>
+          <${tag} class="list-row magic-list-item ${stateClass(item.state)}${clickable ? " is-clickable" : ""}"${attrs}>
             <span class="dot ${stateClass(item.state)}"></span>
             <div class="row-main">
               <div class="row-name">${safe(item.name)}</div>
@@ -1812,13 +1824,14 @@
 
       function card(item) {
         return `
-          <button class="control-card" type="button" data-tab="${safe(item.id)}" aria-label="${safe(item.label)} 상세 보기">
+          <button class="control-card magic-card shine-border" type="button" data-tab="${safe(item.id)}" aria-label="${safe(item.label)} 상세 보기">
+            <span class="border-beam" aria-hidden="true"></span>
             <span class="card-top">
               <span class="dot ${stateClass(item.state)}"></span>
               <span class="card-label">${safe(item.label)}</span>
             </span>
             <span class="card-mid">
-              <span class="card-value">${safe(item.value)}</span>
+              <span class="card-value number-ticker">${safe(item.value)}</span>
               <span class="card-title">${safe(item.title)}</span>
             </span>
             <span class="card-bottom">
@@ -2346,6 +2359,11 @@
 
         document.querySelectorAll(".control-card").forEach((el) => {
           el.addEventListener("click", () => setTab(el.dataset.tab));
+          el.addEventListener("pointermove", (event) => {
+            const rect = el.getBoundingClientRect();
+            el.style.setProperty("--pointer-x", `${((event.clientX - rect.left) / rect.width) * 100}%`);
+            el.style.setProperty("--pointer-y", `${((event.clientY - rect.top) / rect.height) * 100}%`);
+          });
         });
         document.querySelectorAll(".nav-button").forEach((el) => {
           el.addEventListener("click", () => {

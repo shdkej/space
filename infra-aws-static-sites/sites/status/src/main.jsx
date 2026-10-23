@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import * as Tabs from "@radix-ui/react-tabs";
 import { ArrowLeft, CheckCircle2, CircleAlert, CircleX, Clock3, ExternalLink, Activity } from "lucide-react";
 import "./styles.css";
 
@@ -110,7 +109,6 @@ function App() {
     </section>
     <section className="detail-view" aria-label="Status detail">
       <div className="detail-head"><button className="icon-button" onClick={() => setDetail(false)} aria-label="첫 화면으로 돌아가기"><ArrowLeft /></button><div><h2>{panel.title}</h2><p>{panel.subtitle}</p></div><Badge state={model.state}>{stateLabel(model.state)}</Badge></div>
-      <Tabs.Root value={tab} onValueChange={setTab} className="tabs-root"><Tabs.List className="tabs-list" aria-label="Status sections">{Object.entries(panels).map(([id, item]) => <Tabs.Trigger key={id} value={id} className="tab-trigger">{item.title}</Tabs.Trigger>)}</Tabs.List></Tabs.Root>
       <div className="detail-scroll"><section className="detail-panel"><div className="summary-strip"><div><small>Rows</small><b>{panel.rows.length}</b></div><div><small>State</small><b>{stateLabel(model.state)}</b></div><div><small>Updated</small><b>{relative(age(data.generatedAt))}</b></div></div><div className="list-stack">{panel.rows.map((row, index) => <div className="list-item" key={`${row.name}-${index}`}><span className={`status-dot ${row.state}`}><StateIcon state={row.state} /></span><div><strong>{row.name}</strong><p>{row.detail}</p></div><Badge state={row.state}>{row.meta}</Badge>{row.url && <a href={row.url} target="_blank" rel="noreferrer" aria-label={`${row.name} 열기`}><ExternalLink /></a>}</div>)}</div></section></div>
     </section>
     <nav className="floating-nav" aria-label="Status navigation"><button onClick={() => setDetail(false)} className={!detail ? "is-current" : ""}>Overview</button>{Object.entries(panels).map(([id, item]) => <button key={id} onClick={() => openDetail(id)} className={detail && tab === id ? "is-current" : ""}>{item.title}</button>)}</nav>

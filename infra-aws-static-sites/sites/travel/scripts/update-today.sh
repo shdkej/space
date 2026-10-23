@@ -31,6 +31,26 @@ load_systemd_env GOG_KEYRING_PASSWORD
 load_systemd_env NOTION_KIMNOZ_TRAVEL_API_KEY
 load_systemd_env NOTION_API_TOKEN
 
+# Cron does not inherit the interactive shell's ~/.env. Keep the token out of
+# the unit override, but load the existing local dotenv file when available.
+load_dotenv_env() {
+  local key="$1"
+  local current="${!key:-}"
+  local dotenv="${HOME}/.env"
+  if [[ -n "$current" || ! -r "$dotenv" ]]; then
+    return
+  fi
+
+  local value
+  value="$(sed -nE "s/^${key}=['\"]?([^'\"]*)['\"]?[[:space:]]*$/\\1/p" "$dotenv" | tail -n 1)"
+  if [[ -n "$value" ]]; then
+    export "$key=$value"
+  fi
+}
+
+load_dotenv_env NOTION_KIMNOZ_TRAVEL_API_KEY
+load_dotenv_env NOTION_API_TOKEN
+
 echo "[$(date -u +%FT%TZ)] Updating Travel Ledger for $TODAY"
 
 "$APP_DIR/scripts/build-travel-data.py" \

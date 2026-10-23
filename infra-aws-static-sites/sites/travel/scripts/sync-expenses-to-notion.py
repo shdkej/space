@@ -114,8 +114,10 @@ def expense_payload(database_id, expense):
             "국가/구간": {"rich_text": text_value(location)},
             "국가별도시": {"rich_text": text_value(location)},
             "결제수단": {"select": {"name": "미확인"}},
-            "통화": {"select": {"name": "KRW"}},
-            "메모": {"rich_text": text_value(" · ".join(note_parts))},
+            # The live expense DB uses `비고`; older drafts used `메모` and
+            # `통화`, which caused the whole Notion POST to fail when the
+            # schema was corrected.
+            "비고": {"rich_text": text_value(" · ".join(note_parts))},
         },
     }
 

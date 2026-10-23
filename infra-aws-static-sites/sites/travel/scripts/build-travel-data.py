@@ -1513,7 +1513,31 @@ def mapped_amount_for_stop(stop, travel_expenses):
 
 def route_with_mapped_amounts(travel_expenses):
     route = []
-    for stop in ROUTE:
+    # Keep the historical route details above, but use the latest master-plan
+    # sequence for the still-future part of the trip. The old route grouped
+    # these stops into broad regions, which made the dashboard disagree with
+    # plans/2026-03-eurafrica-americas-trip.md.
+    future_route = [
+        ("Barcelona", "Spain", "2026-10-06", "2026-10-09", 41.3874, 2.1686),
+        ("Madrid", "Spain", "2026-10-09", "2026-10-10", 40.4168, -3.7038),
+        ("Portugal", "Portugal", "2026-10-10", "2026-10-13", 38.7223, -9.1393),
+        ("Paris", "France", "2026-10-13", "2026-10-18", 48.8566, 2.3522),
+        ("London", "United Kingdom", "2026-10-18", "2026-10-22", 51.5074, -0.1278),
+        ("Copenhagen", "Denmark", "2026-10-22", "2026-10-24", 55.6761, 12.5683),
+        ("Reykjavik", "Iceland", "2026-10-24", "2026-11-01", 64.1466, -21.9426),
+        ("New York", "United States", "2026-11-01", "2026-11-06", 40.7128, -74.0060),
+        ("Peru", "Peru", "2026-11-06", "2026-11-20", -12.0464, -77.0428),
+        ("Bolivia", "Bolivia", "2026-11-20", "2026-11-29", -16.4897, -68.1193),
+        ("Argentina / Chile Patagonia", "Argentina / Chile", "2026-11-29", "2026-12-19", -34.6037, -58.3816),
+    ]
+    historical = [stop for stop in ROUTE if stop.get("endDate", "") <= "2026-10-05"]
+    source_route = historical + [
+        {"city": city, "country": country, "status": "planned", "startDate": start,
+         "endDate": end, "source": "2026 master route plan", "schengen": country in {"Spain", "Portugal", "France"},
+         "lat": lat, "lng": lng}
+        for city, country, start, end, lat, lng in future_route
+    ]
+    for stop in source_route:
         item = dict(stop)
         journey_payment = item.get("transportInPayment") or item.get("transportOutPayment")
         if journey_payment and journey_payment.get("amount"):

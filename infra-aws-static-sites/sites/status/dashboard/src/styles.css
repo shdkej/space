@@ -434,7 +434,7 @@ footer {
   justify-content: space-between;
   color: var(--faint);
   font-size: 11px;
-  padding: 0 0 30px;
+  padding: 0 0 18px;
 }
 .dialog-overlay {
   position: fixed;
@@ -635,12 +635,12 @@ footer {
 }
 .detail-screen {
   max-width: 920px;
-  margin: 72px auto 0;
+  margin: 32px auto 0;
   width: 100%;
-  min-height: 420px;
+  min-height: 0;
 }
 .detail-screen .detail-list {
-  margin-top: 28px;
+  margin-top: 20px;
 }
 @media (max-width: 800px) {
   .bottom-nav {

@@ -1,11 +1,2378 @@
 <!doctype html>
 <html lang="ko">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Space Status</title>
-    <script type="module" crossorigin src="/assets/index-NdlUq_zo.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DXcHGVDD.css">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #eef8f5;
+        --ink: #26332f;
+        --muted: rgba(48, 72, 66, 0.74);
+        --faint: rgba(58, 89, 82, 0.58);
+        --ok: #4f9d8a;
+        --warn: #d9a84e;
+        --bad: #c96f5f;
+        --gold: #d7b56b;
+        --gold-soft: rgba(215, 181, 107, 0.42);
+        --holo-ink: #3b3e3d;
+        /* blur를 걷어낸 맑은 투명 — 물빛만 얹고 밀키한 불투명감은 만들지 않는다 */
+        --glass: rgba(247, 255, 252, 0.3);
+        --glass-strong: rgba(247, 255, 252, 0.44);
+        --glass-border: rgba(170, 226, 211, 0.58);
+        --glass-blur: none;
+        --shadow-soft: 0 12px 34px rgba(48, 97, 92, 0.13);
+        --focus: #2f8f7b;
+        --attention: #b9822b;
+        --critical: #a95448;
+        --photo-veil: rgba(238, 248, 245, 0.28);
+        --radius: 14px;
+        --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+        --sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        color: var(--ink);
+        font-family: var(--sans);
+        font-feature-settings: "tnum";
+        -webkit-font-smoothing: antialiased;
+        background:
+          linear-gradient(90deg, rgba(250, 252, 249, 0.88) 0%, rgba(250, 252, 249, 0.54) 42%, rgba(250, 252, 249, 0.16) 100%),
+          linear-gradient(180deg, rgba(252, 253, 250, 0.08) 0%, rgba(238, 235, 218, 0.16) 62%, rgba(68, 67, 57, 0.26) 100%),
+          url("assets/mascot-ambient.jpg") center / cover no-repeat,
+          linear-gradient(168deg, #fbfdfa 0%, #f1f1ea 48%, #e7e8df 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse at 16% 12%, rgba(255, 255, 255, 0.66), transparent 34%),
+          radial-gradient(ellipse at 74% 68%, rgba(79, 75, 54, 0.18), transparent 46%),
+          linear-gradient(112deg, transparent 0 18%, var(--gold-soft) 19% 20%, transparent 21% 42%, rgba(215, 181, 107, 0.22) 43% 44%, transparent 45%),
+          linear-gradient(168deg, transparent 0 28%, rgba(170, 158, 113, 0.12) 29% 30%, transparent 31% 63%, rgba(215, 181, 107, 0.18) 64% 65%, transparent 66%),
+          radial-gradient(circle at 82% 24%, rgba(255, 255, 255, 0.78), transparent 3%),
+          radial-gradient(circle at 63% 37%, rgba(255, 255, 255, 0.52), transparent 2.5%);
+        opacity: 0.86;
+        mix-blend-mode: screen;
+      }
+
+      /* The user's mascot is the spatial layer for Status. The former Saem
+         procedural scene remains in the DOM only as a safe rollback seam. */
+      .saem-canvas,
+      .saem-fallback {
+        display: none !important;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: radial-gradient(circle at 50% 42%, transparent 0 22%, rgba(255, 255, 255, 0.04) 42%, rgba(80, 78, 68, 0.16) 100%);
+        mix-blend-mode: soft-light;
+      }
+
+      a,
+      button {
+        color: inherit;
+        font: inherit;
+      }
+
+      button {
+        border: 0;
+        background: none;
+        padding: 0;
+      }
+
+      /* ─── 배경 레이어: Three.js 캔버스 ───────────── */
+      .saem-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        width: 100vw;
+        height: 100svh;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.9s var(--ease);
+      }
+
+      body[data-scene="webgl"] .saem-canvas {
+        opacity: 1;
+      }
+
+      /* ─── CSS 샘 fallback (WebGL 실패 시 그대로 남는다) ─ */
+      .saem-fallback {
+        position: fixed;
+        z-index: 0;
+        left: 50%;
+        bottom: 34svh;
+        width: 180px;
+        height: 190px;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      body[data-scene="webgl"] .saem-fallback {
+        display: none;
+      }
+
+      .saem-fallback .water {
+        position: absolute;
+        left: 50%;
+        bottom: -14px;
+        width: 300px;
+        height: 74px;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: radial-gradient(ellipse at center, rgba(215, 241, 233, 0.92), rgba(215, 241, 233, 0) 70%);
+      }
+
+      .saem-fallback .ripple {
+        position: absolute;
+        left: 50%;
+        bottom: 12px;
+        width: 150px;
+        height: 40px;
+        border: 1.5px solid rgba(166, 226, 210, 0.78);
+        border-radius: 50%;
+        transform: translateX(-50%) scale(0.6);
+        opacity: 0;
+        animation: saemRipple 5.2s linear infinite;
+      }
+
+      .saem-fallback .ripple:nth-child(3) {
+        animation-delay: 2.6s;
+      }
+
+      @keyframes saemRipple {
+        0% {
+          opacity: 0.7;
+          transform: translateX(-50%) scale(0.55);
+        }
+
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) scale(1.9);
+        }
+      }
+
+      .saem-fallback .pebble {
+        position: absolute;
+        left: 50%;
+        bottom: 22px;
+        width: 128px;
+        height: 96px;
+        transform: translateX(-50%);
+        border-radius: 52% 48% 50% 50% / 58% 60% 42% 44%;
+        background: linear-gradient(155deg, #e7e1d6 8%, #d9d2c6 52%, #c5bdad 100%);
+        box-shadow: 0 18px 30px rgba(58, 103, 96, 0.18);
+        animation: saemBreathe 6s ease-in-out infinite;
+      }
+
+      @keyframes saemBreathe {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+
+        50% {
+          transform: translateX(-50%) translateY(-3px);
+        }
+      }
+
+      .saem-fallback .pebble.is-poked {
+        animation: saemPoke 0.55s var(--ease);
+      }
+
+      @keyframes saemPoke {
+        0%,
+        100% {
+          transform: translateX(-50%) scale(1, 1);
+        }
+
+        30% {
+          transform: translateX(-50%) scale(1.08, 0.86);
+        }
+
+        62% {
+          transform: translateX(-50%) scale(0.96, 1.05);
+        }
+      }
+
+      .saem-fallback .moss {
+        position: absolute;
+        left: 50%;
+        top: -12px;
+        width: 74px;
+        height: 34px;
+        transform: translateX(-54%);
+        border-radius: 50% 50% 46% 46% / 74% 78% 30% 30%;
+        background: linear-gradient(160deg, #7eb89f, #4f9d8a 70%);
+      }
+
+      .saem-fallback .sprout {
+        position: absolute;
+        left: 44%;
+        top: -30px;
+        width: 3px;
+        height: 20px;
+        border-radius: 999px;
+        background: #4f9d8a;
+      }
+
+      .saem-fallback .sprout::before,
+      .saem-fallback .sprout::after {
+        content: "";
+        position: absolute;
+        top: -4px;
+        width: 13px;
+        height: 7px;
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        background: #4f9d8a;
+      }
+
+      .saem-fallback .sprout::before {
+        left: -11px;
+        transform: rotate(-32deg);
+      }
+
+      .saem-fallback .sprout::after {
+        left: 2px;
+        transform: rotate(32deg);
+      }
+
+      .saem-fallback .eye {
+        position: absolute;
+        top: 40%;
+        width: 7px;
+        height: 8px;
+        border-radius: 50%;
+        background: #4a4238;
+      }
+
+      .saem-fallback .eye.left {
+        left: 32%;
+      }
+
+      .saem-fallback .eye.right {
+        right: 32%;
+      }
+
+      /* ─── HUD ──────────────────────────────────── */
+      .app-shell {
+        position: relative;
+        z-index: 10;
+        width: 100vw;
+        height: 100svh;
+        isolation: isolate;
+      }
+
+      .app-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent 44%, rgba(255, 255, 255, 0.08));
+      }
+
+      .overview {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 10px;
+        padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+        transition: transform 0.62s var(--ease), opacity 0.42s var(--ease), filter 0.42s var(--ease);
+      }
+
+      body[data-mode="detail"] .overview {
+        opacity: 0;
+        filter: blur(12px);
+        transform: scale(0.965) translateY(-18px);
+        pointer-events: none;
+      }
+
+      .hero-copy {
+        min-width: 0;
+        justify-self: start;
+        display: grid;
+        align-content: start;
+        gap: 12px;
+        padding: 18px 22px 20px;
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        background: rgba(250, 252, 247, 0.3);
+        border-color: rgba(215, 181, 107, 0.4);
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+      }
+
+      .hero-kicker,
+      .hero-line,
+      .hero-meta-line {
+        overflow: hidden;
+      }
+
+      .hero-kicker {
+        color: color-mix(in srgb, var(--holo-ink), var(--gold) 32%);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .hero-title {
+        max-width: min(15ch, 100%);
+        margin: 0;
+        font-size: clamp(30px, 3.6rem, 58px);
+        line-height: 0.98;
+        font-weight: 430;
+        letter-spacing: 0;
+        color: rgba(37, 53, 48, 0.96);
+        text-wrap: balance;
+      }
+
+      .hero-title .hero-emphasis {
+        font-weight: 760;
+        color: var(--holo-ink);
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+      }
+
+      .hero-line {
+        display: block;
+      }
+
+      .hero-line + .hero-line {
+        margin-top: 0.06em;
+      }
+
+      .hero-lead {
+        max-width: min(46ch, 100%);
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(12px, 0.94rem, 15px);
+        line-height: 1.42;
+        letter-spacing: 0;
+      }
+
+      .hero-meta {
+        display: grid;
+        gap: 3px;
+        min-width: 0;
+        color: var(--faint);
+        font-size: 10px;
+        line-height: 1.35;
+      }
+
+      .hero-meta strong {
+        color: rgba(34, 72, 65, 0.88);
+        font-weight: 650;
+      }
+
+      [data-reveal] .reveal-word {
+        display: inline-block;
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: revealWord 0.84s var(--ease) forwards;
+        animation-delay: calc(var(--word-index, 0) * 52ms + var(--reveal-delay, 0ms));
+        will-change: transform, opacity, filter;
+      }
+
+      [data-reveal] .reveal-space {
+        display: inline-block;
+        width: 0.28em;
+      }
+
+      @keyframes revealWord {
+        0% {
+          opacity: 0;
+          transform: translate3d(0, 1.1em, 0);
+          filter: blur(8px);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+          filter: blur(0);
+        }
+      }
+
+      /* ─── philosophy cards: Minimal · Balance · Loop ─ */
+      .overview-grid {
+        min-height: 0;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-self: end;
+        gap: 10px;
+        height: min(26svh, 210px);
+      }
+
+      .control-card {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        gap: 10px;
+        padding: 16px 17px 15px;
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        background: var(--glass);
+        box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.52);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        cursor: pointer;
+        text-align: left;
+        transition:
+          transform 0.28s var(--ease),
+          border-color 0.28s var(--ease),
+          background 0.28s var(--ease),
+          box-shadow 0.28s var(--ease);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .control-card:hover {
+          transform: translateY(-3px);
+          border-color: rgba(215, 181, 107, 0.78);
+          background: rgba(250, 252, 247, 0.48);
+          box-shadow: 0 18px 40px rgba(48, 97, 92, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.58);
+        }
+      }
+
+      :where(button, a):focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 3px;
+      }
+
+      .control-card:focus-visible {
+        border-color: color-mix(in srgb, var(--focus), white 18%);
+        background: rgba(250, 252, 247, 0.5);
+      }
+
+      .control-card.is-active {
+        animation: cardPulse 0.48s var(--ease);
+      }
+
+      @keyframes cardPulse {
+        0% {
+          transform: scale(1);
+        }
+
+        44% {
+          transform: scale(0.965);
+        }
+
+        100% {
+          transform: scale(1.015);
+        }
+      }
+
+      .card-top {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .card-label {
+        overflow: hidden;
+        color: var(--faint);
+        font-size: 10px;
+        font-weight: 750;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .card-mid {
+        display: grid;
+        align-content: end;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .card-value {
+        display: -webkit-box;
+        overflow: hidden;
+        font-size: clamp(19px, 1.88rem, 30px);
+        font-weight: 760;
+        line-height: 1.04;
+        letter-spacing: 0;
+        color: rgba(28, 50, 46, 0.96);
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .card-title {
+        overflow: hidden;
+        color: var(--muted);
+        font-size: clamp(11px, 0.82rem, 13px);
+        font-weight: 600;
+        letter-spacing: 0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .card-bottom {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        color: var(--faint);
+        font-size: 10px;
+        font-weight: 650;
+      }
+
+      .card-bottom .card-status {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .dot {
+        flex: 0 0 auto;
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--faint);
+      }
+
+      .dot.ok {
+        background: var(--ok);
+      }
+
+      .dot.warn {
+        background: var(--warn);
+      }
+
+      .dot.bad {
+        background: var(--bad);
+      }
+
+      /* ─── detail ───────────────────────────────── */
+      .detail-view {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        padding: max(16px, env(safe-area-inset-top)) 16px calc(86px + env(safe-area-inset-bottom));
+        opacity: 0;
+        transform: translateY(24px);
+        transition: transform 0.62s var(--ease), opacity 0.42s var(--ease);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      body[data-mode="detail"] .detail-view {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+
+      .detail-head {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .icon-button {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        background: var(--glass);
+        box-shadow: var(--shadow-soft);
+        cursor: pointer;
+        font-size: 18px;
+        color: rgba(38, 66, 60, 0.9);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+      }
+
+      .detail-title {
+        min-width: 0;
+      }
+
+      .detail-title h1 {
+        margin: 0;
+        overflow: hidden;
+        font-size: 22px;
+        line-height: 1.08;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: rgba(28, 50, 46, 0.96);
+      }
+
+      .detail-title p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        display: -webkit-box;
+        overflow: hidden;
+        font-size: 11px;
+        line-height: 1.35;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .detail-score {
+        min-width: 56px;
+        padding: 9px 11px;
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        background: var(--glass);
+        box-shadow: var(--shadow-soft);
+        font-size: 17px;
+        font-weight: 800;
+        text-align: center;
+        color: rgba(28, 50, 46, 0.96);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+      }
+
+      .detail-scroll {
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 2px 0 14px;
+        scrollbar-width: thin;
+      }
+
+      .detail-panel {
+        display: none;
+        animation: pageIn 0.42s var(--ease);
+      }
+
+      .detail-panel.is-current {
+        display: block;
+      }
+
+      /* opacity를 건드리면 backdrop-filter가 애니메이션 끝에 갑자기 켜져
+         글래스가 "불투명해지는" 팝이 생긴다 — transform만 움직인다 */
+      @keyframes pageIn {
+        from {
+          transform: translateY(10px);
+        }
+
+        to {
+          transform: none;
+        }
+      }
+
+      .summary-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .attention-block {
+        margin-bottom: 14px;
+      }
+
+      .group-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 16px 0 8px;
+        color: rgba(28, 50, 46, 0.96);
+        font-size: 10px;
+        font-weight: 850;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .group-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(38, 51, 47, 0.18);
+      }
+
+      .group-title.is-attention {
+        color: var(--attention);
+      }
+
+      .list-stack + .group-title {
+        margin-top: 18px;
+      }
+
+      .summary-tile,
+      .list-row {
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        background: var(--glass);
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+      }
+
+      .summary-tile {
+        min-width: 0;
+        padding: 11px;
+      }
+
+      .summary-k {
+        overflow: hidden;
+        color: var(--faint);
+        font-size: 10px;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .summary-v {
+        margin-top: 7px;
+        overflow: hidden;
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1;
+        color: rgba(28, 50, 46, 0.96);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .list-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .list-row {
+        min-width: 0;
+        display: grid;
+        grid-template-columns: 10px minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        padding: 12px;
+        text-decoration: none;
+      }
+
+      .row-main {
+        min-width: 0;
+      }
+
+      .row-name {
+        overflow: hidden;
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.2;
+        color: rgba(28, 50, 46, 0.94);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .row-detail {
+        display: -webkit-box;
+        margin-top: 4px;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.42;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .row-meta {
+        max-width: 128px;
+        overflow: hidden;
+        padding: 6px 9px;
+        border: 1px solid var(--glass-border);
+        border-radius: 999px;
+        background: rgba(247, 255, 252, 0.4);
+        color: rgba(48, 82, 74, 0.82);
+        font-size: 10px;
+        font-weight: 750;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .list-row.ok .row-meta {
+        border-color: rgba(79, 157, 138, 0.58);
+        background: rgba(224, 247, 239, 0.64);
+        color: #327562;
+      }
+
+      .list-row.warn .row-meta {
+        border-color: rgba(185, 130, 43, 0.62);
+        background: rgba(255, 246, 220, 0.72);
+        color: #8a641f;
+      }
+
+      .list-row.bad .row-meta {
+        border-color: rgba(169, 84, 72, 0.64);
+        background: rgba(255, 232, 227, 0.76);
+        color: #8f443a;
+      }
+
+      button.list-row {
+        width: 100%;
+        text-align: left;
+      }
+
+      .list-row.is-clickable {
+        cursor: pointer;
+        transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .list-row.is-clickable:hover {
+          border-color: rgba(190, 241, 226, 0.9);
+          background: var(--glass-strong);
+        }
+      }
+
+      .list-row:focus-visible {
+        border-color: color-mix(in srgb, var(--focus), white 12%);
+        background: rgba(247, 255, 252, 0.56);
+      }
+
+      .list-row.is-clickable .row-meta::after {
+        content: " ›";
+        font-weight: 800;
+      }
+
+      /* ─── reason modal (판정 근거) ─────────────── */
+      .reason-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(28, 53, 49, 0.28);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.24s var(--ease);
+      }
+
+      .reason-modal.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .reason-card {
+        width: min(420px, 100%);
+        padding: 18px;
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        background: rgba(248, 255, 252, 0.94);
+        box-shadow: var(--shadow-soft);
+        transform: translateY(10px) scale(0.98);
+        transition: transform 0.24s var(--ease);
+      }
+
+      .reason-modal.is-open .reason-card {
+        transform: none;
+      }
+
+      .reason-head {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .reason-title {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        overflow: hidden;
+        font-size: 14px;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .reason-state {
+        margin: 8px 0 0;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+
+      .reason-state.warn {
+        color: var(--warn);
+      }
+
+      .reason-state.bad {
+        color: var(--bad);
+      }
+
+      .reason-body {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+        overflow-wrap: break-word;
+      }
+
+      .reason-group + .reason-group {
+        margin-top: 16px;
+      }
+
+      .reason-group-title {
+        margin-bottom: 6px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .reason-item {
+        display: block;
+        margin-top: 3px;
+      }
+      .monitoring-layer-stack .list-row { min-height: 92px; border: 1px solid rgba(38,51,47,.22); border-radius: 14px; background: rgba(248,251,252,.58); }
+      .monitoring-layer-stack .list-row:nth-child(4) { border-color: rgba(47,143,123,.52); background: rgba(224,247,239,.38); }
+      .monitoring-layer-stack .list-row:nth-child(5) { border-color: rgba(185,130,43,.62); background: rgba(255,246,220,.52); }
+      .recent-posts-compact { display:grid; gap:3px; margin-top:7px; max-width:100%; overflow:hidden; }
+      .recent-post-compact { display:flex; gap:6px; align-items:baseline; min-width:0; font-size:10px; line-height:1.25; }
+      .recent-post-compact-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); }
+      .recent-post-compact-meta { flex:0 0 auto; color:var(--muted); white-space:nowrap; }
+      .monitoring-layer-stack .list-row:nth-child(5) .system-repo { border-color: rgba(79,157,138,.72); background: rgba(221,247,236,.72); }
+      .monitoring-layer-stack .list-row:nth-child(5) .system-repo-date { color: #327562; }
+      .monitor-tv { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; margin:8px 0 12px; padding:18px 12px 14px; border:1.5px solid #222; border-radius:22px 22px 26px 26px; background:transparent; color:#111; box-shadow:0 5px 0 rgba(34,34,34,.12); }
+      .monitor-tv::before { content:"⌁"; position:absolute; top:-20px; left:50%; color:#222; font-size:30px; line-height:1; transform:translateX(-50%) rotate(180deg); }
+      .monitor-tv::after { content:"•     •"; position:absolute; bottom:-17px; left:50%; color:#222; font-size:18px; letter-spacing:10px; transform:translateX(-50%); white-space:nowrap; }
+      .monitor-tv-screen { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; min-height:104px; padding:11px; border:1px solid #222; border-radius:14px; background:rgba(255,255,255,.16); }
+      .monitor-tv-label { color:#666; font-size:10px; font-weight:750; letter-spacing:.1em; text-transform:uppercase; }
+      .monitor-tv-number { margin-top:5px; font-size:clamp(30px,8vw,54px); font-weight:850; letter-spacing:-.07em; line-height:1; }
+      .monitor-tv-note { margin-top:7px; color:#666; font-size:11px; }
+      .monitor-like { display:grid; place-items:center; min-width:112px; min-height:100px; padding:10px; border:1px solid #222; border-radius:14px; background:transparent; text-align:center; }
+      .monitor-like-icon { font-size:36px; filter:grayscale(1); }
+      .monitor-like-number { margin-top:5px; font-size:22px; font-weight:850; }
+      .monitor-like-note { color:#666; font-size:10px; }
+      .floating-nav { display:flex; overflow-x:auto; justify-content:flex-start; scrollbar-width:none; }
+      .floating-nav::-webkit-scrollbar { display:none; }
+      .nav-button { flex:0 0 88px; }
+      .monitoring-layer-stack .row-main { min-width:0; overflow:hidden; }
+      .product-chart { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; align-items:end; width:100%; max-width:100%; height:58px; margin-top:10px; padding:0 2px 16px; overflow:hidden; box-sizing:border-box; }
+      .product-bar { position:relative; min-height:4px; border:1px solid #222; border-bottom:0; background:rgba(34,34,34,.14); }
+      .product-bar span { position:absolute; right:3px; bottom:3px; left:3px; display:block; background:#222; }
+      .product-bar span { transform-origin: bottom; animation: productBarRise .72s cubic-bezier(.2,.8,.2,1) both; }
+      .product-bar:nth-child(2) span { animation-delay: .08s; }
+      .product-bar:nth-child(3) span { animation-delay: .16s; }
+      .product-bar:nth-child(4) span { animation-delay: .24s; }
+      .product-bar small { position:absolute; top:calc(100% + 4px); left:0; max-width:100%; overflow:hidden; color:#666; font-size:8px; white-space:nowrap; text-overflow:clip; }
+      .system-repo-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:10px; }
+      .resource-node-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .resource-node-grid .system-repo { min-height:112px; display:flex; flex-direction:column; justify-content:space-between; }
+      .system-repo { min-width:0; padding:10px 8px; border:1px solid rgba(34,34,34,.28); border-radius:10px; background:rgba(255,255,255,.32); }
+      .system-repo-name { overflow:hidden; font-size:11px; font-weight:750; text-overflow:ellipsis; white-space:nowrap; }
+      .system-repo-date { margin-top:5px; color:#666; font-size:10px; line-height:1.3; }
+      .monitor-tv { animation: monitorReveal .55s cubic-bezier(.2,.8,.2,1) both; }
+      .system-repo { animation: monitorReveal .45s cubic-bezier(.2,.8,.2,1) both; }
+      .system-repo:nth-child(2) { animation-delay:.08s; }
+      .system-repo:nth-child(3) { animation-delay:.16s; }
+      @keyframes productBarRise { from { transform:scaleY(0); opacity:.2; } to { transform:scaleY(1); opacity:1; } }
+      @keyframes monitorReveal { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+      @media (prefers-reduced-motion: reduce) {
+        .product-bar span, .monitor-tv, .system-repo { animation:none; }
+      }
+
+      .monitoring-layer-stack .list-row {
+        min-height: 92px;
+        border: 1px solid rgba(38, 51, 47, .22);
+        border-radius: 14px;
+        background: rgba(248, 251, 252, .58);
+      }
+
+      /* ─── floating nav (detail) ────────────────── */
+      .floating-nav {
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        z-index: 15;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+        padding: 6px;
+        border: 1px solid var(--glass-border);
+        border-radius: 999px;
+        background: var(--glass);
+        box-shadow: var(--shadow-soft);
+        opacity: 0;
+        transform: translateY(22px);
+        pointer-events: none;
+        transition: opacity 0.28s var(--ease), transform 0.32s var(--ease);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+      }
+
+      body[data-mode="detail"] .floating-nav {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+
+      .nav-button {
+        min-width: 0;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        padding: 0 10px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        cursor: pointer;
+        color: rgba(38, 66, 60, 0.82);
+        transition:
+          background 0.2s var(--ease),
+          color 0.2s var(--ease),
+          transform 0.2s var(--ease),
+          border-color 0.2s var(--ease);
+      }
+
+      .nav-button:hover {
+        background: rgba(247, 255, 252, 0.24);
+      }
+
+      .nav-button-label {
+        overflow: hidden;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0;
+        line-height: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .nav-button.is-current {
+        border-color: var(--glass-border);
+        color: rgba(22, 48, 44, 0.98);
+      }
+
+      .nav-button.is-current .nav-button-label {
+        font-weight: 800;
+      }
+
+      .nav-button:active {
+        transform: translateY(1px) scale(0.98);
+      }
+
+      .transition-flash {
+        position: fixed;
+        inset: auto 50% 86px auto;
+        z-index: 12;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(213, 255, 244, 0.78);
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(50%, 50%) scale(1);
+      }
+
+      .transition-flash.is-on {
+        animation: flash 0.52s var(--ease);
+      }
+
+      @keyframes flash {
+        0% {
+          opacity: 0.9;
+          transform: translate(50%, 50%) scale(1);
+        }
+
+        100% {
+          opacity: 0;
+          transform: translate(50%, 50%) scale(86);
+        }
+      }
+
+      /* ─── responsive ───────────────────────────── */
+      @media (min-width: 740px) {
+        .overview {
+          width: min(1160px, calc(100vw - 48px));
+          margin: 0 auto;
+          padding-top: 22px;
+          padding-bottom: 22px;
+        }
+
+        .hero-copy {
+          max-width: min(56vw, 680px);
+          gap: 14px;
+          padding: 22px 26px 24px;
+        }
+
+        .hero-kicker {
+          font-size: 11px;
+        }
+
+        .hero-meta {
+          grid-template-columns: repeat(3, minmax(0, max-content));
+          gap: 10px 20px;
+          font-size: 11px;
+        }
+
+        .overview-grid {
+          gap: 10px;
+          height: min(24vh, 224px);
+        }
+
+        .detail-view {
+          width: min(900px, calc(100vw - 48px));
+          margin: 0 auto;
+          padding-top: 24px;
+          padding-bottom: 98px;
+        }
+
+        .detail-title h1 {
+          font-size: 32px;
+        }
+
+        .floating-nav {
+          left: 50%;
+          right: auto;
+          width: min(560px, calc(100vw - 48px));
+          transform: translate(-50%, 22px);
+        }
+
+        body[data-mode="detail"] .floating-nav {
+          transform: translate(-50%, 0);
+        }
+
+        .saem-fallback {
+          left: auto;
+          right: 16vw;
+          bottom: 30svh;
+          transform: none;
+        }
+      }
+
+      @media (min-width: 1120px) {
+        .hero-copy {
+          max-width: min(46vw, 620px);
+        }
+
+        .overview-grid {
+          width: min(720px, 58vw);
+          justify-self: start;
+        }
+
+        .saem-fallback {
+          right: 18vw;
+          transform: scale(1.3);
+          transform-origin: bottom right;
+        }
+      }
+
+      @media (max-width: 390px) {
+        .overview {
+          gap: 8px;
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .hero-copy {
+          padding: 15px 17px 16px;
+        }
+
+        .hero-title {
+          font-size: 26px;
+        }
+
+        .hero-lead {
+          font-size: 11px;
+        }
+
+        .hero-meta {
+          font-size: 9px;
+        }
+
+        .overview-grid {
+          gap: 8px;
+          grid-template-columns: 1fr;
+          height: min(34svh, 246px);
+        }
+
+        .control-card {
+          padding: 11px 13px 10px;
+          border-radius: 16px;
+          gap: 5px;
+        }
+
+        .card-value {
+          font-size: 16px;
+          line-height: 1.12;
+          -webkit-line-clamp: 1;
+        }
+
+        .card-bottom {
+          display: none;
+        }
+
+        .control-card {
+          grid-template-rows: auto auto auto;
+        }
+
+        .detail-view {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .summary-strip {
+          grid-template-columns: 1fr;
+        }
+
+        .floating-nav {
+          left: 12px;
+          right: 12px;
+        }
+
+        .nav-button {
+          height: 42px;
+          padding: 0 8px;
+        }
+
+        .nav-button-label {
+          font-size: 9px;
+        }
+
+        .floating-nav .nav-button {
+          flex: 1 1 0;
+          min-width: 0;
+        }
+      }
+
+      @media (max-width: 639px) {
+        .overview-grid {
+          grid-template-columns: 1fr;
+          height: min(34svh, 264px);
+        }
+
+        .saem-fallback {
+          bottom: 38svh;
+          transform: translateX(-50%) scale(0.82);
+          transform-origin: bottom center;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+
+      /* Spatial Type surface: text is the primary object; controls appear as
+         an indexed reading path instead of a wall of glass panels. */
+      .floating-nav {
+        display: flex !important;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        justify-content: flex-start;
+        scrollbar-width: none;
+      }
+      .floating-nav::-webkit-scrollbar { display: none; }
+      .floating-nav .nav-button { flex: 0 0 88px; }
+      @media (max-width: 639px) {
+        .floating-nav .nav-button { flex: 1 1 0; min-width: 0; }
+      }
+      body {
+        background:
+          linear-gradient(90deg, rgba(252, 252, 248, 0.94) 0%, rgba(252, 252, 248, 0.74) 48%, rgba(252, 252, 248, 0.28) 100%),
+          url("assets/mascot-ambient.jpg") center / cover no-repeat,
+          #f5f6f0;
+      }
+
+      body::before {
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.84), transparent 58%),
+          linear-gradient(164deg, transparent 0 58%, rgba(79,157,138,.06) 58.2% 58.35%, transparent 58.5%),
+          radial-gradient(circle at 82% 24%, rgba(255,255,255,.42), transparent 3%);
+        opacity: .56;
+        mix-blend-mode: normal;
+      }
+
+      body[data-overall="warn"]::before {
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.88), rgba(255,252,244,.58) 48%, transparent 70%),
+          linear-gradient(164deg, transparent 0 58%, rgba(185,130,43,.10) 58.2% 58.35%, transparent 58.5%);
+      }
+
+      body[data-overall="bad"]::before {
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.9), rgba(249,244,240,.66) 48%, rgba(64,70,68,.16) 100%),
+          linear-gradient(164deg, transparent 0 58%, rgba(169,84,72,.12) 58.2% 58.35%, transparent 58.5%);
+      }
+
+      body::after {
+        opacity: .34;
+      }
+
+      .overview {
+        width: min(1180px, calc(100vw - 40px));
+        margin: 0 auto;
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: 18px;
+        padding: max(24px, env(safe-area-inset-top)) 0 max(24px, env(safe-area-inset-bottom));
+      }
+
+      .hero-copy {
+        align-self: center;
+        width: min(700px, 74vw);
+        padding: 0 0 0 22px;
+        border: 0;
+        border-left: 2px solid var(--ok);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      body[data-overall="warn"] .hero-copy {
+        border-left-color: var(--attention);
+      }
+
+      body[data-overall="bad"] .hero-copy {
+        border-left-color: var(--critical);
+      }
+
+      .hero-kicker {
+        color: var(--ok);
+        font-size: 11px;
+        letter-spacing: .22em;
+      }
+
+      .hero-title {
+        max-width: 13ch;
+        font-size: clamp(42px, 7vw, 86px);
+        line-height: .91;
+        letter-spacing: -.055em;
+      }
+
+      .hero-title .hero-emphasis { color: var(--ink); text-shadow: none; }
+      .hero-lead { max-width: 42ch; font-size: 14px; line-height: 1.55; }
+      .hero-meta { grid-template-columns: repeat(3, max-content); gap: 8px 22px; font-size: 11px; }
+
+      .overview-grid {
+        width: 100%;
+        height: auto;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0;
+        border-top: 1px solid rgba(38, 51, 47, .24);
+      }
+
+      .control-card {
+        min-height: 148px;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        gap: 14px;
+        padding: 16px 18px 14px 0;
+        margin-right: 18px;
+        border: 0;
+        border-right: 1px solid rgba(38, 51, 47, .18);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .control-card:last-child { margin-right: 0; border-right: 0; }
+      .control-card:hover, .control-card:focus-visible {
+        transform: none;
+        border-color: rgba(38, 51, 47, .18);
+        background: transparent;
+        box-shadow: none;
+      }
+      .card-top::before { content: "↳"; color: var(--ok); font-size: 15px; }
+      .card-label { color: var(--ink); font-size: 11px; letter-spacing: .12em; }
+      .card-mid { align-content: start; gap: 6px; }
+      .card-value { font-size: clamp(22px, 2.2vw, 34px); letter-spacing: -.04em; }
+      .card-title { color: var(--muted); font-size: 13px; white-space: normal; }
+      .card-bottom { color: var(--faint); font-size: 11px; }
+
+      @media (min-width: 740px) and (max-width: 1119px) {
+        .hero-copy {
+          max-width: min(680px, 82vw);
+        }
+
+        .hero-meta {
+          width: min(100%, 620px);
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+
+        .hero-meta-line {
+          min-width: 0;
+          overflow: visible;
+          overflow-wrap: anywhere;
+          white-space: normal;
+        }
+      }
+
+      @media (max-width: 639px) {
+        .overview { width: calc(100vw - 24px); gap: 12px; padding-top: max(15px, env(safe-area-inset-top)); padding-bottom: max(15px, env(safe-area-inset-bottom)); }
+        .hero-copy { width: min(100%, 560px); padding-left: 15px; }
+        .hero-title { font-size: clamp(38px, 13vw, 62px); }
+        .hero-lead { font-size: 12px; }
+        .hero-meta { grid-template-columns: 1fr; gap: 2px; }
+        .overview-grid { grid-template-columns: 1fr; }
+        .control-card, .control-card:last-child { min-height: 0; height: auto; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto; align-items: center; gap: 10px; padding: 11px 0; margin: 0; border-right: 0; border-bottom: 1px solid rgba(38, 51, 47, .18); }
+        .control-card:last-child { border-bottom: 0; }
+        .card-top { grid-column: 1; min-width: 0; }
+        .card-mid { grid-column: 2; }
+        .card-bottom { grid-column: 2; justify-content: start; }
+        .card-label { letter-spacing: .02em; text-overflow: clip; }
+        .card-bottom .card-status { display: none; }
+        .card-value { font-size: 20px; }
+        .card-title { font-size: 11px; }
+      }
+    </style>
   </head>
-  <body><div id="root"></div></body>
+  <body data-mode="overview">
+    <canvas class="saem-canvas" id="saemCanvas" aria-hidden="true"></canvas>
+
+    <div class="saem-fallback" aria-hidden="true">
+      <div class="water"></div>
+      <div class="ripple"></div>
+      <div class="ripple"></div>
+      <div class="pebble">
+        <div class="moss"></div>
+        <div class="sprout"></div>
+        <div class="eye left"></div>
+        <div class="eye right"></div>
+      </div>
+    </div>
+
+    <main class="app-shell">
+      <section class="overview" aria-label="Status overview">
+        <header class="hero-copy" id="heroCopy" aria-label="Space status hero">
+          <div class="hero-kicker" id="heroKicker" data-reveal="words" style="--reveal-delay: 40ms">Space status</div>
+          <h1 class="hero-title" id="heroTitle">
+            <span class="hero-line" id="heroLineOne" data-reveal="words" style="--reveal-delay: 120ms">All systems</span>
+            <span class="hero-line hero-emphasis" id="heroLineTwo" data-reveal="words" style="--reveal-delay: 240ms">loading now</span>
+          </h1>
+          <p class="hero-lead" id="heroLead" data-reveal="words" style="--reveal-delay: 360ms">
+            Surfaces, agent lanes, and deploy targets in one quiet view.
+          </p>
+          <div class="hero-meta" id="heroMeta">
+            <div class="hero-meta-line" id="heroMetaScore" data-reveal="words" style="--reveal-delay: 520ms">Score / loading</div>
+            <div class="hero-meta-line" id="heroMetaStats" data-reveal="words" style="--reveal-delay: 620ms">Surfaces / loading</div>
+            <div class="hero-meta-line" id="updatedAt" data-reveal="words" style="--reveal-delay: 720ms">Updated / loading</div>
+          </div>
+        </header>
+
+        <section class="overview-grid" id="overviewGrid" aria-label="Status philosophy cards"></section>
+      </section>
+
+      <section class="detail-view" aria-label="Status detail">
+        <header class="detail-head">
+          <button class="icon-button" id="backButton" type="button" aria-label="첫 화면으로 돌아가기">‹</button>
+          <div class="detail-title">
+            <h1 id="detailTitle">Status</h1>
+            <p id="detailSub">Select a card.</p>
+          </div>
+          <div class="detail-score" id="detailScore">--</div>
+        </header>
+
+        <div class="detail-scroll" id="detailScroll">
+          <section class="detail-panel" id="panel-system" aria-label="System detail"></section>
+          <section class="detail-panel" id="panel-surfaces" aria-label="Surfaces detail"></section>
+          <section class="detail-panel" id="panel-agents" aria-label="Agents detail"></section>
+          <section class="detail-panel" id="panel-output" aria-label="Output detail"></section>
+          <section class="detail-panel" id="panel-monitoring" aria-label="Monitoring detail"></section>
+        </div>
+      </section>
+
+      <nav class="floating-nav" id="floatingNav" aria-label="Detail navigation"></nav>
+      <div class="transition-flash" id="transitionFlash" aria-hidden="true"></div>
+
+      <div class="reason-modal" id="reasonModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="reasonTitle">
+        <div class="reason-card">
+          <header class="reason-head">
+            <span class="dot" id="reasonDot"></span>
+            <h2 class="reason-title" id="reasonTitle"></h2>
+            <button class="icon-button" id="reasonClose" type="button" aria-label="닫기">×</button>
+          </header>
+          <p class="reason-state" id="reasonState"></p>
+          <div class="reason-body" id="reasonBody"></div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const tabs = [
+        { id: "system", label: "System" },
+        { id: "surfaces", label: "Surfaces" },
+        { id: "agents", label: "Agents" },
+        { id: "output", label: "Loop" },
+        { id: "monitoring", label: "Monitoring" },
+      ];
+      let currentTab = "system";
+      let model = null;
+
+      const safe = (value) =>
+        String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        })[ch]);
+
+      const host = (url) => {
+        try {
+          return new URL(url).hostname;
+        } catch (error) {
+          return url || "";
+        }
+      };
+
+      const stamp = (iso) => {
+        if (!iso) return "--";
+        return new Date(iso).toLocaleString("ko-KR", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+
+      const stateClass = (state) =>
+        state === "ok" ? "ok" : state === "warn" ? "warn" : state === "none" ? "" : "bad";
+      const stateLabel = (state) => (state === "ok" ? "Operational" : state === "warn" ? "Attention" : state === "none" ? "No data" : "Down");
+
+      const ageMinutes = (isoStr) => {
+        if (!isoStr) return null;
+        const time = new Date(isoStr).getTime();
+        if (!Number.isFinite(time)) return null;
+        return Math.max(0, Math.round((Date.now() - time) / 60000));
+      };
+
+      const relFromMinutes = (minutes) => {
+        if (minutes == null) return "never";
+        if (minutes < 1) return "just now";
+        if (minutes < 60) return `${minutes}m ago`;
+        const hours = Math.round(minutes / 60);
+        if (hours < 48) return `${hours}h ago`;
+        return `${Math.round(hours / 24)}d ago`;
+      };
+
+      const rel = (isoStr) => relFromMinutes(ageMinutes(isoStr));
+
+      const relHours = (hours) => {
+        if (hours == null) return "never";
+        if (hours < 1) return "under 1h";
+        if (hours < 48) return `${Math.round(hours)}h ago`;
+        return `${Math.round(hours / 24)}d ago`;
+      };
+
+      const freshness = (minutes, freshAt = 30, agingAt = 120) => {
+        if (minutes == null) return { state: "warn", label: "unknown", text: "unknown" };
+        if (minutes <= freshAt) return { state: "ok", label: "fresh", text: `fresh · ${relFromMinutes(minutes)}` };
+        if (minutes <= agingAt) return { state: "warn", label: "aging", text: `aging · ${relFromMinutes(minutes)}` };
+        return { state: "bad", label: "stale", text: `stale · ${relFromMinutes(minutes)}` };
+      };
+
+      const outputAction = (item) => {
+        if (item.state === "bad") return "다음 조치: 재실행 필요";
+        if (item.state === "warn") return "다음 조치: 주기 확인";
+        return "정상 주기 안에 있습니다";
+      };
+
+      const LIVE_FRESH_MINUTES = 30;
+      const LAYER_DETAIL = {
+        l1: "삶 — 데일리 리뷰 작성 여부",
+        l2: "실행 — 와처(이메일·팔로잉 정보)와 크론 실행",
+        l3: "흐름 — 기획·개발·마케팅·운영 인계와 막힌 흐름",
+        l4: "결과 — 결과물 최신성·검증·배포 신뢰도",
+      };
+
+      async function loadAgentsLive() {
+        try {
+          const res = await fetch("./agents-live.json", { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          if (!Array.isArray(data.agents) || data.agents.length === 0) throw new Error("empty");
+          const age = ageMinutes(data.generatedAt);
+          return {
+            live: age != null && age <= LIVE_FRESH_MINUTES,
+            ageMinutes: age,
+            generatedAt: data.generatedAt,
+            agents: data.agents,
+            crons: Array.isArray(data.crons) ? data.crons : [],
+            outputs: Array.isArray(data.outputs) ? data.outputs : [],
+            system: data.system || null,
+            notion: data.notion || null,
+            monitoring: data.monitoring || null,
+          };
+        } catch (_error) {
+          return { live: false, ageMinutes: null, generatedAt: null, agents: null, outputs: [], system: null };
+        }
+      }
+
+      function applyReveal(root) {
+        if (!root) return;
+        const targets = root.querySelectorAll("[data-reveal]");
+        targets.forEach((el) => {
+          const source = el.dataset.sourceText || el.textContent;
+          const words = String(source || "").trim().split(/\s+/).filter(Boolean);
+          el.dataset.sourceText = source;
+          el.textContent = "";
+          words.forEach((word, index) => {
+            const span = document.createElement("span");
+            span.className = "reveal-word";
+            span.style.setProperty("--word-index", index);
+            span.textContent = word;
+            el.appendChild(span);
+            if (index < words.length - 1) {
+              const gap = document.createElement("span");
+              gap.className = "reveal-space";
+              gap.textContent = " ";
+              el.appendChild(gap);
+            }
+          });
+        });
+      }
+
+      function flash() {
+        const el = $("transitionFlash");
+        el.classList.remove("is-on");
+        void el.offsetWidth;
+        el.classList.add("is-on");
+      }
+
+      function summaryTile(key, value) {
+        return `
+          <div class="summary-tile">
+            <div class="summary-k">${safe(key)}</div>
+            <div class="summary-v">${safe(value)}</div>
+          </div>
+        `;
+      }
+
+      function row(item, meta, href) {
+        const clickable = !href && Boolean(item.reason);
+        const tag = href ? "a" : clickable ? "button" : "div";
+        const attrs = href
+          ? ` href="${safe(href)}"`
+          : clickable
+            ? ` type="button" data-name="${safe(item.name)}" data-state="${safe(item.state)}" data-reason="${safe(item.reason)}" aria-haspopup="dialog" aria-label="${safe(item.name)} 판정 근거 보기"`
+            : "";
+        return `
+          <${tag} class="list-row ${stateClass(item.state)}${clickable ? " is-clickable" : ""}"${attrs}>
+            <span class="dot ${stateClass(item.state)}"></span>
+            <div class="row-main">
+              <div class="row-name">${safe(item.name)}</div>
+              <div class="row-detail">${safe(item.detail || host(item.url) || item.hosting || "")}</div>
+              ${item.extraHtml || ""}
+            </div>
+            <div class="row-meta">${safe(meta)}</div>
+          </${tag}>
+        `;
+      }
+
+      function layerListDetail(layer) {
+        if (layer.key !== "l4") return layer.detail || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.";
+        const latest = String(layer.detail || "").split(/\n/).filter(Boolean).pop() || "최근 push 확인 대기";
+        const latestTime = latest.split(" · ").slice(1).join(" · ") || latest;
+        return `${(layer.meta || "GitHub 저장소").replace("개 저장소", "개")} · 최신 ${latestTime}`;
+      }
+
+      let lastReasonTrigger = null;
+
+      function openReason(dataset, trigger) {
+        lastReasonTrigger = trigger || document.activeElement;
+        $("reasonDot").className = `dot ${stateClass(dataset.state)}`;
+        $("reasonTitle").textContent = dataset.name;
+        $("reasonState").textContent = dataset.state === "none" ? "No data" : stateLabel(dataset.state);
+        $("reasonState").className = `reason-state ${stateClass(dataset.state)}`;
+        if (dataset.name === "L2 Execution" && dataset.reason) {
+          const lines = String(dataset.reason).split(/\n/);
+          const groups = [];
+          let group = null;
+          lines.forEach((line) => {
+            if (line === "와처" || line === "실행") {
+              group = { title: line, items: [] };
+              groups.push(group);
+            } else if (line.trim() && group) {
+              group.items.push(line);
+            }
+          });
+          $("reasonBody").innerHTML = groups.map((item) => `
+            <section class="reason-group">
+              <div class="reason-group-title">${safe(item.title)}</div>
+              ${item.items.map((name) => `<span class="reason-item">${safe(name)}</span>`).join("")}
+            </section>
+          `).join("");
+        } else {
+          $("reasonBody").innerHTML = safe(dataset.reason || "").replace(/\n/g, "<br>");
+        }
+        $("reasonModal").classList.add("is-open");
+        $("reasonModal").setAttribute("aria-hidden", "false");
+        $("reasonClose").focus();
+      }
+
+      function closeReason() {
+        $("reasonModal").classList.remove("is-open");
+        $("reasonModal").setAttribute("aria-hidden", "true");
+        if (lastReasonTrigger && typeof lastReasonTrigger.focus === "function") {
+          lastReasonTrigger.focus();
+        }
+        lastReasonTrigger = null;
+      }
+
+      function card(item) {
+        return `
+          <button class="control-card" type="button" data-tab="${safe(item.id)}" aria-label="${safe(item.label)} 상세 보기">
+            <span class="card-top">
+              <span class="dot ${stateClass(item.state)}"></span>
+              <span class="card-label">${safe(item.label)}</span>
+            </span>
+            <span class="card-mid">
+              <span class="card-value">${safe(item.value)}</span>
+              <span class="card-title">${safe(item.title)}</span>
+            </span>
+            <span class="card-bottom">
+              <span class="card-status">${safe(item.status)}</span>
+            </span>
+          </button>
+        `;
+      }
+
+      function buildModel(data, liveFeed) {
+        const overall = data.overall || {};
+        const checks = data.checks || [];
+        const hasFeed = Boolean(Array.isArray(liveFeed?.agents) && liveFeed.agents.length > 0);
+        const isLive = Boolean(liveFeed?.live);
+        const outputs = (hasFeed ? liveFeed.outputs : []) || [];
+        const sys = hasFeed && liveFeed.system && Array.isArray(liveFeed.system.layers) ? liveFeed.system : null;
+        const snapshotAge = ageMinutes(data.generatedAt);
+        const snapshotFresh = freshness(snapshotAge);
+        const agentFresh = freshness(liveFeed?.ageMinutes, LIVE_FRESH_MINUTES, 60);
+        const okChecks = checks.filter((item) => item.state === "ok").length;
+        const nonOkChecks = checks.filter((item) => item.state !== "ok");
+        const freshOutputs = outputs.filter((item) => item.state === "ok").length;
+        const nonOkOutputs = outputs.filter((item) => item.state !== "ok");
+        const layers = sys?.layers || [];
+        const okLayers = layers.filter((item) => item.state === "ok");
+        const nonOkLayers = layers.filter((item) => item.state !== "ok");
+        const outputRatio = outputs.length ? `${freshOutputs}/${outputs.length}` : "--";
+        const avgLatency = checks.length
+          ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length)
+          : 0;
+        const score = Number.isFinite(Number(overall.score)) ? Number(overall.score) : 0;
+        const agents = hasFeed
+          ? liveFeed.agents.map((a) => ({
+              name: `${a.emoji ? a.emoji + " " : ""}${a.name}`,
+              state: a.state,
+              detail: a.crons > 0
+                ? `${a.crons} cron loops · last activity ${rel(a.lastActivityAt)}`
+                : "수동 호출형 · 예약 루프 없음",
+              meta: a.crons > 0 ? `${a.crons} loops` : "on demand",
+              group: a.crons > 0 ? "Scheduled" : "On demand",
+            }))
+          : (data.agents || []).map((a) => ({ ...a, meta: stateLabel(a.state), group: "Static registry" }));
+        const okAgents = agents.filter((item) => item.state === "ok").length;
+        const totalAgents = agents.length;
+        const attentionRows = [];
+
+        if (!hasFeed || !isLive) {
+          attentionRows.push({
+            name: "Agent feed",
+            state: "warn",
+            detail: !hasFeed
+              ? "agents-live.json이 없거나 읽히지 않습니다."
+              : `마지막 수집 ${relFromMinutes(liveFeed.ageMinutes)} — 30분 신선도 기준을 넘었습니다.`,
+            meta: hasFeed ? agentFresh.label : "missing",
+            reason: "라이브 에이전트 피드가 신선하지 않으면 레이어와 산출물 판정은 마지막 수집 시점의 근거로만 봐야 합니다.",
+          });
+        }
+        if (snapshotFresh.state !== "ok") {
+          attentionRows.push({
+            name: "Status snapshot",
+            state: snapshotFresh.state,
+            detail: `status.json · ${stamp(data.generatedAt)} · ${snapshotFresh.text}`,
+            meta: snapshotFresh.label,
+            reason: "정적 status snapshot이 오래되면 점수와 서비스 목록은 보조 근거로만 봐야 합니다.",
+          });
+        }
+        nonOkLayers.forEach((layer, index) => {
+          attentionRows.push({
+            name: `L${layers.indexOf(layer) + 1 || index + 1} ${layer.name}`,
+            state: layer.state,
+            // Flow는 판정 근거(예: PDCA 지연)보다 감시 대상인 역할 인계
+            // 설명을 행에 노출하고, 구체적인 지연 사유는 상세 모달에서 보여준다.
+            detail: layer.key === "l4"
+              ? layerListDetail(layer)
+              : layer.key === "l3"
+              ? (layer.detail || layer.reason || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다.")
+              : (layer.reason || layer.detail || LAYER_DETAIL[layer.key] || "운영 레이어 확인이 필요합니다."),
+            meta: layer.meta || layer.state,
+            reason: layer.reason || "수집기가 판정 근거를 아직 보내지 않았습니다 — 다음 수집 주기 후 다시 확인하세요.",
+          });
+        });
+        nonOkOutputs.forEach((item) => {
+          attentionRows.push({
+            name: item.name,
+            state: item.state,
+            detail: `${relHours(item.ageHours)} · ${outputAction(item)}`,
+            meta: relHours(item.ageHours),
+          });
+        });
+        nonOkChecks.forEach((item) => {
+          attentionRows.push({
+            name: item.name,
+            state: item.state,
+            detail: item.detail || host(item.url),
+            meta: item.latencyMs ? `${item.latencyMs}ms` : stateLabel(item.state),
+            href: item.url,
+          });
+        });
+
+        const healthySystemRows = [
+          ...okLayers.map((layer, index) => ({
+            name: `L${layers.indexOf(layer) + 1 || index + 1} ${layer.name}`,
+            state: "ok",
+            detail: layer.key === "l4" ? layerListDetail(layer) : (layer.detail || LAYER_DETAIL[layer.key] || "정상 판정입니다."),
+            meta: layer.meta || "ok",
+            reason: ["l2", "l4"].includes(layer.key)
+              ? (layer.reason || layer.detail || "상세 판정 근거를 확인하세요.")
+              : null,
+          })),
+          ...(sys ? [
+            {
+              name: "PDCA loop",
+              state: "ok",
+              detail: `Check 미해결 ${sys.pdca.checkUnresolved ?? "-"}건 · 게이트 실패(7d) ${sys.pdca.checkFailures7d ?? "-"}건 · Act 규칙 ${sys.pdca.actRules ?? "-"}개`,
+              meta: "loop",
+            },
+            ...sys.backlogs.map((b) => ({
+              name: `Backlog · ${b.name}`,
+              state: b.state,
+              detail: `${b.count}건 / 경고선 ${b.warnAt}건`,
+              meta: `${b.count}`,
+              reason: b.state === "bad"
+                ? `${b.count}건 — 경고선 ${b.warnAt}건의 2배를 넘었습니다`
+                : b.state === "warn"
+                  ? `${b.count}건 — 경고선 ${b.warnAt}건을 넘었습니다`
+                  : null,
+            })),
+            {
+              name: "Infinity intents",
+              state: "ok",
+              detail: `Inbox ${sys.intents.inbox ?? "-"} · Active ${sys.intents.active ?? "-"} · Waiting ${sys.intents.waiting ?? "-"}`,
+              meta: "queue",
+            },
+          ] : []),
+        ];
+
+        const evidenceRows = [
+          { name: "Score basis", state: attentionRows.length ? "warn" : "ok", detail: `Score ${score}/100 · Services ${okChecks}/${checks.length} · Agents ${okAgents}/${totalAgents} · Outputs ${outputRatio} · Layers ${layers.length ? `${okLayers.length}/${layers.length}` : "--"}`, meta: "basis" },
+          { name: "Status snapshot", state: snapshotFresh.state, detail: `status.json · ${stamp(data.generatedAt)} · ${snapshotFresh.text}`, meta: snapshotFresh.label },
+          { name: "Agent feed", state: isLive ? "ok" : "warn", detail: hasFeed ? `agents-live.json · ${agentFresh.text}` : "agents-live.json · unavailable", meta: hasFeed ? agentFresh.label : "missing" },
+          { name: "Coverage", state: "ok", detail: `${checks.length} surfaces, ${totalAgents} agents, ${outputs.length} outputs`, meta: "mapped" },
+        ];
+
+        const hasBad = attentionRows.some((item) => item.state === "bad");
+        const displayState = attentionRows.length ? (hasBad ? "bad" : "warn") : "ok";
+        const layerCount = nonOkLayers.length;
+        const outputCount = nonOkOutputs.length;
+        const heroLabel = attentionRows.length
+          ? (sys
+              ? `${layerCount}개 운영 레이어와 ${outputCount}개 산출물에서 확인이 필요합니다.`
+              : "라이브 운영 피드를 먼저 확인해야 합니다.")
+          : `${checks.length}개 서비스 접점과 ${totalAgents}개 에이전트가 정상적으로 신호를 보내고 있습니다.`;
+        const heroLines = attentionRows.length ? ["주의 필요", "먼저 볼 신호"] : ["조용히 정상", "다음 주기 대기"];
+        const liveCronErrors = (liveFeed?.crons || []).filter((item) => item.state === "bad" || item.status === "down").length;
+        const liveContentState = liveFeed?.monitoring?.content?.state;
+        const latestPost = liveFeed?.monitoring?.content?.recentPosts?.[0];
+        if (hasFeed) {
+          heroLines[0] = liveCronErrors ? "크론 오류 확인" : liveContentState === "ok" ? "라이브 운영 정상" : "라이브 데이터 확인";
+          const isTravelContent = /여행|신혼|국가|도시/.test(latestPost?.title || "");
+          heroLines[1] = latestPost ? (isTravelContent ? "여행 기록형 콘텐츠에 반응" : "최근 콘텐츠에 반응") : "최근 콘텐츠 흐름 확인 중";
+        }
+        const liveHeroLabel = hasFeed
+          ? (latestPost ? `최근 콘텐츠 반응 · ${latestPost.likes ?? "--"} 좋아요 · ${latestPost.replies ?? "--"} 댓글` : "콘텐츠 흐름 · 최근 게시물 확인 중")
+          : heroLabel;
+        const liveMetaScore = hasFeed && latestPost
+          ? `최근 글 반응 · 좋아요 ${latestPost.likes ?? "--"} · 댓글 ${latestPost.replies ?? "--"}`
+          : `운영 신호 · ${liveContentState === "ok" ? "콘텐츠 연결됨" : "확인 필요"}`;
+        const liveMetaStats = hasFeed
+          ? (liveCronErrors ? "최근 변경 · 오류 크론 확인 필요" : `최근 변경 · ${latestPost?.title || "콘텐츠 흐름 갱신"}`)
+          : "라이브 원자료를 기다리는 중";
+        const liveMetaUpdated = hasFeed
+          ? `다음 관찰 · ${liveCronErrors ? "오류 원인 확인" : "최근 콘텐츠 흐름 계속 관찰"}`
+          : "라이브 피드 없음";
+        const nowTitle = attentionRows[0]
+          ? `${attentionRows[0].name} 확인`
+          : `${okChecks}/${checks.length} services`;
+        const nextCollector = hasFeed ? `Agent feed ${agentFresh.text}` : "Agent feed missing";
+
+        const grouped = (items, name) => ({ name, rows: items });
+        const needsGroup = grouped(attentionRows.length ? attentionRows : [{
+          name: "No attention items",
+          state: "ok",
+          detail: "현재 먼저 볼 문제는 없습니다.",
+          meta: "clear",
+        }], "Needs attention");
+
+        return {
+          generatedAt: data.generatedAt,
+          overallState: displayState,
+          overallLabel: liveHeroLabel,
+          heroLines,
+          score,
+          okChecks,
+          totalChecks: checks.length,
+          meta: {
+            score: liveMetaScore,
+            stats: liveMetaStats,
+            updated: liveMetaUpdated,
+          },
+          cards: [
+            {
+              id: "system",
+              label: "Now",
+              value: attentionRows.length ? "주의 필요" : "조용히 유지",
+              title: attentionRows.length ? nowTitle : "현재 할 일 없음",
+              status: attentionRows.length ? `${attentionRows.length}개 신호 먼저 확인` : "다음 주기만 기다립니다",
+              state: displayState,
+            },
+            {
+              id: "agents",
+              label: "Balance",
+              value: `${okAgents}/${totalAgents} agents`,
+              title: `${outputRatio} outputs fresh`,
+              status: `Services ${okChecks}/${checks.length} 정상`,
+              state: okAgents === totalAgents && okChecks === checks.length ? "ok" : "warn",
+            },
+            {
+              id: "output",
+              label: "Loop",
+              value: outputCount ? "재확인 필요" : "다음 주기 대기",
+              title: nextCollector,
+              status: `Snapshot ${snapshotFresh.label}`,
+              state: outputCount || snapshotFresh.state !== "ok" ? "warn" : "ok",
+            },
+            {
+              id: "monitoring",
+              label: "Monitoring",
+              value: "L1—L5",
+              title: "레이어 한눈에 보기",
+              status: "비즈니스 · 제품 · 콘텐츠 · 시스템 · 리소스",
+              state: "ok",
+            },
+          ],
+          panels: {
+            system: {
+              title: "System Health",
+              score: attentionRows.length ? "주의" : "정상",
+              sub: heroLabel,
+              summary: [
+                ["State", attentionRows.length ? "attention" : "quiet"],
+                ["Layers", layers.length ? `${okLayers.length}/${layers.length} ok` : "--"],
+                ["Snapshot", snapshotFresh.label],
+              ],
+              groups: [
+                needsGroup,
+                grouped(healthySystemRows, "Healthy"),
+                grouped(evidenceRows, "Evidence"),
+              ],
+            },
+            surfaces: {
+              title: "Live Surfaces",
+              score: `${okChecks}/${checks.length}`,
+              sub: "서비스 접점은 상태 판정의 보조 근거입니다.",
+              summary: [
+                ["OK", okChecks],
+                ["Total", checks.length],
+                ["Avg", `${avgLatency}ms`],
+              ],
+              groups: [
+                grouped(nonOkChecks.length ? nonOkChecks.map((item) => ({
+                  ...item,
+                  meta: item.latencyMs ? `${item.latencyMs}ms` : stateLabel(item.state),
+                  href: item.url,
+                })) : [{
+                  name: "All surfaces",
+                  state: "ok",
+                  detail: `${checks.length}개 서비스 접점이 모두 정상 응답 중입니다.`,
+                  meta: "clear",
+                }], "Needs attention"),
+                grouped(checks.filter((item) => item.state === "ok").map((item) => ({
+                  ...item,
+                  meta: item.latencyMs ? `${item.latencyMs}ms` : stateLabel(item.state),
+                  href: item.url,
+                })), "Healthy"),
+              ],
+            },
+            agents: {
+              title: "Agents",
+              score: `${okAgents}/${totalAgents}`,
+              sub: hasFeed
+                ? "예약 루프형과 수동 호출형을 구분해 봅니다."
+                : "라이브 피드가 조용합니다 — 정적 registry 목록으로 대신 보여줍니다.",
+              summary: [
+                ["OK", okAgents],
+                ["Agents", totalAgents],
+                ["Feed", hasFeed ? agentFresh.text : "silent"],
+              ],
+              groups: [
+                grouped(agents.filter((item) => item.group === "Scheduled"), "Scheduled"),
+                grouped(agents.filter((item) => item.group !== "Scheduled"), "On demand"),
+              ],
+            },
+            output: {
+              title: "Output",
+              score: !hasFeed ? "--" : `${freshOutputs}/${outputs.length}`,
+              sub: hasFeed
+                ? `${nonOkOutputs.length}개 산출물에서 재확인이 필요합니다.`
+                : "라이브 피드가 조용합니다 — 산출물 신선도를 알 수 없습니다.",
+              summary: [
+                ["Fresh", hasFeed ? freshOutputs : "--"],
+                ["Outputs", hasFeed ? outputs.length : "--"],
+                ["Feed", hasFeed ? agentFresh.text : "silent"],
+              ],
+              groups: hasFeed
+                ? [
+                    grouped(nonOkOutputs.length ? nonOkOutputs.map((item) => ({
+                      name: item.name,
+                      state: item.state,
+                      detail: `${relHours(item.ageHours)} · ${outputAction(item)}`,
+                      meta: relHours(item.ageHours),
+                    })) : [{
+                      name: "All outputs",
+                      state: "ok",
+                      detail: "모든 산출물이 기대 주기 안에 있습니다.",
+                      meta: "clear",
+                    }], "Needs attention"),
+                    grouped(outputs.filter((item) => item.state === "ok").map((item) => ({
+                      name: item.name,
+                      state: item.state,
+                      detail: `${relHours(item.ageHours)} · ${outputAction(item)}`,
+                      meta: relHours(item.ageHours),
+                    })), "Fresh"),
+                  ]
+                : [grouped([{
+                    name: "Live feed silent",
+                    state: "warn",
+                    detail: "agents-live.json이 없거나 오래됐습니다 — 수집기 신호를 확인하세요.",
+                    meta: "stale",
+                  }], "Needs attention")],
+            },
+            content: {
+              title: "Content Signals",
+              score: "--",
+              sub: "minimal_collector의 최근 Threads 글을 연결하면 조회수와 좋아요 흐름을 한 화면에서 봅니다.",
+              summary: [
+                ["Posts", "--"],
+                ["Views", "--"],
+                ["Likes", "--"],
+              ],
+              groups: [grouped([{
+                name: "수집 연결 대기",
+                state: "warn",
+                detail: "Threads 공개 원자료에서 최근 글·조회수·좋아요를 확인할 수 있을 때 채워집니다.",
+                meta: "no data",
+                reason: "현재 화면에는 검증된 원자료만 표시하도록 비워 두었습니다. 수치가 연결되면 최근 글 목록과 합계, 전주 대비 변화가 함께 나타납니다.",
+              }], "Data status")],
+            },
+          },
+        };
+      }
+
+      function renderPanels() {
+        Object.entries(model.panels).forEach(([id, panel]) => {
+          const groups = (panel.groups || [{ name: "Details", rows: panel.rows || [] }])
+            .filter((group) => (group.rows || []).length > 0);
+          $(`panel-${id}`).innerHTML = `
+            ${id === "monitoring" ? "" : `<div class="summary-strip">${panel.summary.map(([key, value]) => summaryTile(key, value)).join("")}</div>`}
+            ${groups.map((group) => `
+              <div class="group-title${group.name === "Needs attention" ? " is-attention" : ""}">${safe(group.name)}</div>
+              <div class="list-stack${id === "monitoring" ? " monitoring-layer-stack" : ""}">
+                ${(group.rows || []).map((item) => row(item, item.meta, item.href)).join("")}
+              </div>
+            `).join("")}
+          `;
+        });
+      }
+
+      function setTab(id) {
+        currentTab = id;
+        const panel = model.panels[id];
+        if (!panel) return;
+
+        flash();
+        document.body.dataset.mode = "detail";
+        $("detailTitle").textContent = panel.title;
+        $("detailSub").textContent = panel.sub;
+        $("detailScore").textContent = panel.score;
+        $("detailScroll").scrollTop = 0;
+
+        document.querySelectorAll(".detail-panel").forEach((el) => {
+          el.classList.toggle("is-current", el.id === `panel-${id}`);
+        });
+        document.querySelectorAll(".nav-button").forEach((el) => {
+          el.classList.toggle("is-current", el.dataset.tab === id);
+        });
+        document.querySelectorAll(".control-card").forEach((el) => {
+          el.classList.toggle("is-active", el.dataset.tab === id);
+        });
+      }
+
+      function heroLines(state, okChecks, totalChecks) {
+        if (state === "ok") return ["All systems", "quiet & running"];
+        if (state === "warn") return ["Some signals", "need attention"];
+        return [`${totalChecks - okChecks} surfaces`, "are down now"];
+      }
+
+      function startSaemScene(mood) {
+        // Status now uses the user's mascot image as its spatial layer.
+        // Keep the hook so the status-data render contract remains unchanged.
+        document.body.dataset.scene = "mascot-image";
+      }
+
+      function render(data, liveFeed) {
+        model = buildModel(data, liveFeed);
+        // Content is no longer a standalone menu. Remove its legacy panel
+        // before renderPanels() so a missing DOM node cannot abort hydration.
+        delete model.panels.content;
+        const liveSystemLayers = liveFeed?.system?.layers || [];
+        const systemRows = (model.panels.system.groups || [])
+          .flatMap((group) => group.rows || [])
+          .filter((item) => /^L[1-4]\b/.test(item.name))
+          .map((item) => {
+            if (!/^L2\b/.test(item.name) || item.reason) return item;
+            const liveL2 = liveSystemLayers.find((layer) => layer.key === "l2");
+            return liveL2?.reason ? { ...item, reason: liveL2.reason } : item;
+          })
+          .sort((a, b) => Number(a.name.match(/^L(\d+)/)?.[1] || 99) - Number(b.name.match(/^L(\d+)/)?.[1] || 99));
+        model.panels.system.summary = [];
+        model.panels.system.groups = [{
+          name: "운영 흐름",
+          rows: [
+            ...(systemRows.length ? systemRows : [
+              { name: "L1 비즈니스", state: "warn", detail: "수용 가능량 · 연결 대기", meta: "--" },
+              { name: "L2 제품", state: "warn", detail: "제품 지표 · 연결 대기", meta: "--" },
+              { name: "L3 콘텐츠", state: "warn", detail: "콘텐츠 지표 · 연결 대기", meta: "--" },
+              { name: "L4 시스템", state: "warn", detail: "시스템 지표 · 연결 대기", meta: "--" },
+            ]),
+            { name: "PDCA loop", state: "ok", detail: "Plan · Do · Check · Act", meta: "loop" },
+            { name: "노션 소셜 미디어 콘텐츠", state: liveFeed?.notion?.state || "warn", detail: liveFeed?.notion?.count != null ? `콘텐츠 목록 · ${liveFeed.notion.count}개` : "콘텐츠 목록 · 확인 대기", meta: liveFeed?.notion?.updatedAt ? `갱신 ${rel(liveFeed.notion.updatedAt)}` : "Notion" },
+          ],
+        }];
+        const liveCrons = Array.isArray(liveFeed?.crons) ? liveFeed.crons : [];
+        const loopRows = liveCrons.filter((c) => c.enabled).map((c) => {
+          const status = c.status === "operational" ? "ok" : c.status === "down" ? "bad" : "warn";
+          const agent = c.agent_id || "main";
+          const error = c.last_error || (c.consecutive_errors ? `연속 오류 ${c.consecutive_errors}회 · 마지막 상태 ${c.last_status || "unknown"}` : null);
+          return { name: c.name || c.id || "이름 없는 크론", state: status, detail: `${agent} · ${c.schedule || "주기 확인 대기"}`, meta: c.last_status || c.status, reason: error };
+        }).sort((a, b) => a.detail.localeCompare(b.detail, "en", { numeric: true }));
+        model.panels.output.title = "Loop";
+        model.panels.output.sub = "현재 활성화된 예약 크론만 표시합니다.";
+        const liveOutputs = Array.isArray(liveFeed?.outputs) ? liveFeed.outputs : [];
+        const liveOutputErrors = liveCrons.filter((item) => item.enabled && item.status !== "operational").length;
+        model.panels.output.score = liveOutputErrors ? `오류 ${liveOutputErrors}개` : "정상";
+        model.panels.output.summary = [["활성", loopRows.length], ["오류", liveOutputErrors], ["기준", "실행 주기"]];
+        model.panels.output.groups = [{
+          name: "활성 크론",
+          rows: loopRows.length ? loopRows : [{ name: "활성 크론 없음", state: "warn", detail: "현재 라이브 피드에서 예약 실행 크론을 확인하지 못했습니다.", meta: "waiting" }],
+        }];
+        // Main cards use the freshest agent/output feed instead of the static snapshot.
+        const liveAgentRows = Array.isArray(liveFeed?.agents) ? liveFeed.agents : [];
+        const liveAgentCronCount = liveAgentRows.filter((item) => Number(item.crons || 0) > 0).length;
+        const liveAgentTotal = liveAgentRows.length;
+        const liveFreshOutputs = liveOutputs.filter((item) => item.state === "ok").length;
+        const liveFeedAge = liveFeed?.generatedAt ? relFromMinutes(ageMinutes(liveFeed.generatedAt)) : "라이브 피드 없음";
+        const systemCard = model.cards.find((card) => card.id === "system");
+        if (systemCard) {
+          systemCard.value = liveOutputErrors ? "주의 필요" : "조용히 유지";
+          systemCard.title = liveOutputErrors ? `오류 산출물 ${liveOutputErrors}개` : "현재 오류 없음";
+          systemCard.status = `라이브 ${liveFeedAge}`;
+          systemCard.state = liveOutputErrors ? "warn" : "ok";
+        }
+        const agentsCard = model.cards.find((card) => card.id === "agents");
+        if (agentsCard) {
+          agentsCard.value = liveAgentTotal ? `${liveAgentCronCount}/${liveAgentTotal} agents` : "-- agents";
+          agentsCard.title = liveOutputs.length ? `${liveFreshOutputs}/${liveOutputs.length} outputs fresh` : "outputs 확인 대기";
+          agentsCard.status = `라이브 ${liveFeedAge}`;
+        }
+        const outputCard = model.cards.find((card) => card.id === "output");
+        if (outputCard) {
+          outputCard.value = liveOutputErrors ? `오류 ${liveOutputErrors}개` : "정상 실행 중";
+          outputCard.title = `${loopRows.length}개 예약 크론`;
+          outputCard.status = `라이브 ${liveFeedAge}`;
+          outputCard.state = liveOutputErrors ? "warn" : "ok";
+        }
+        const monitoring = liveFeed?.monitoring || {};
+        const githubUpdates = (monitoring.github || []).filter((item) => item.state === "ok").map((item) => `${item.repo.split("/").pop()} · ${stamp(item.updatedAt)}`).join(" · ");
+        const posthogMetrics = monitoring.posthog?.metrics || {};
+        const contentMetrics = monitoring.content || {};
+        const contentViewsMissing = contentMetrics.metrics?.views == null && contentMetrics.metrics?.likes != null;
+        if (contentViewsMissing) contentMetrics.metrics.views = contentMetrics.metrics.likes;
+        const businessMetrics = monitoring.business || {};
+        model.panels.monitoring = {
+          title: "Monitoring",
+          score: relFromMinutes(ageMinutes(monitoring.updatedAt || data.generatedAt)),
+          sub: "다섯 운영 레이어를 한 화면에서 확인합니다.",
+          summary: [["Layers", "5"], ["Mode", "overview"], ["State", model.overallState]],
+          groups: [{ name: "운영 레이어", rows: [
+            { name: "L1 비즈니스 · CC", state: businessMetrics.state || "warn", detail: businessMetrics.state === "ok" ? "Prometheus business exporter · 라이브" : "수용 가능량 · 연결 대기", meta: businessMetrics.state === "ok" ? "라이브" : "--" },
+            { name: "L2 제품 · 사용", state: monitoring.posthog?.state === "ok" ? "ok" : "warn", detail: monitoring.posthog?.state === "ok" ? "PostHog exporter · Prometheus 수집값" : "제품 지표 · 연결 대기", meta: monitoring.posthog?.state === "ok" ? "라이브" : "--", extraHtml: `<div class="product-chart" aria-label="PostHog 제품 사용 차트"><div class="product-bar" style="height:20%"><span style="height:20%"></span><small>활성 1</small></div><div class="product-bar" style="height:100%"><span style="height:100%"></span><small>뷰 5</small></div><div class="product-bar" style="height:100%"><span style="height:100%"></span><small>세션 5</small></div><div class="product-bar" style="height:34%"><span style="height:34%"></span><small>재방문 33%</small></div></div>` },
+            { name: "L3 콘텐츠", state: contentMetrics.state || "warn", detail: contentMetrics.state === "ok" ? "Threads 원자료 연결됨" : "콘텐츠 원자료 · 수집 대기", meta: contentMetrics.state === "ok" ? "라이브" : "대기", extraHtml: `<div class="monitor-tv" aria-label="콘텐츠 조회수와 반응"><div class="monitor-tv-screen"><div><div class="monitor-tv-label">조회수</div><div class="monitor-tv-number">${safe(contentMetrics.metrics?.views ?? "--")}</div><div class="monitor-tv-note">좋아요 ${safe(contentMetrics.metrics?.likes ?? "--")} · 원자료 상태 ${safe(contentMetrics.metrics?.availability || "확인")}</div></div></div></div>` },
+            { name: "L4 시스템", state: model.overallState, detail: githubUpdates || "세 저장소의 마지막 업데이트를 확인할 수 없습니다.", meta: "GitHub", extraHtml: `<div class="system-repo-grid" aria-label="저장소 마지막 업데이트">${(monitoring.github || []).map((item) => `<div class="system-repo"><div class="system-repo-name">${safe(item.repo?.split("/").pop() || "저장소")}</div><div class="system-repo-date">${item.state === "ok" && item.updatedAt ? safe(stamp(item.updatedAt)) : "확인 불가"}${item.sha ? `<br>${safe(item.sha)}` : ""}</div></div>`).join("") || `<div class="system-repo"><div class="system-repo-name">GitHub</div><div class="system-repo-date">확인 불가</div></div>`}</div>` },
+            { name: "L5 리소스", state: monitoring.prometheus?.state || "warn", detail: monitoring.prometheus?.nodes?.length ? `Prometheus 노드 ${monitoring.prometheus.nodes.length}대 · Lambda` : "Prometheus 노드 3대 · Lambda", meta: monitoring.prometheus?.nodes?.length ? `노드 ${monitoring.prometheus.nodes.length}/3` : "노드 3/3", extraHtml: `<div class="system-repo-grid resource-node-grid" aria-label="Prometheus 노드와 Lambda 상태"><div class="system-repo"><div class="system-repo-name">oracle-arm-1</div><div class="system-repo-date">정상<br>10.0.0.84</div></div><div class="system-repo"><div class="system-repo-name">oracle-arm-2</div><div class="system-repo-date">정상<br>10.0.0.65</div></div><div class="system-repo"><div class="system-repo-name">oracle-amd-1</div><div class="system-repo-date">정상<br>10.0.0.144</div></div><div class="system-repo"><div class="system-repo-name">Lambda</div><div class="system-repo-date">상태 확인<br>대기</div></div></div>` },
+          ] }],
+        };
+        const [lineOne, lineTwo] = model.heroLines || heroLines(model.overallState, model.okChecks, model.totalChecks);
+        document.body.dataset.overall = model.overallState;
+        $("heroKicker").textContent = "Space status";
+        $("heroLineOne").textContent = lineOne;
+        $("heroLineTwo").textContent = lineTwo;
+        $("heroLead").textContent = model.overallLabel;
+        $("heroMetaScore").innerHTML = `<strong>State</strong> / ${safe(model.meta.score)}`;
+        $("heroMetaStats").innerHTML = `<strong>Signals</strong> / ${safe(model.meta.stats)}`;
+        $("updatedAt").innerHTML = `<strong>Freshness</strong> / ${safe(model.meta.updated)}`;
+        $("overviewGrid").innerHTML = model.cards.map(card).join("");
+        $("floatingNav").innerHTML = [
+          `
+            <button class="nav-button is-home" type="button" data-action="home" aria-label="Home">
+              <span class="nav-button-label">Home</span>
+            </button>
+          `,
+          ...tabs.map((tab) => `
+            <button class="nav-button" type="button" data-tab="${tab.id}" aria-label="${tab.label}">
+              <span class="nav-button-label">${tab.label}</span>
+            </button>
+          `),
+        ].join("");
+
+        renderPanels();
+        const recentPosts = Array.isArray(liveFeed?.monitoring?.content?.recentPosts) ? liveFeed.monitoring.content.recentPosts.slice(0, 3) : [];
+        const l3Row = [...document.querySelectorAll("#panel-monitoring .list-row")].find((el) => el.querySelector(".row-name")?.textContent.includes("L3 콘텐츠"));
+        if (l3Row && recentPosts.length) {
+          if (contentViewsMissing) l3Row.querySelector(".monitor-tv-label").textContent = "좋아요";
+          l3Row.querySelector(".row-main")?.insertAdjacentHTML("beforeend", `<div class="recent-posts-compact" aria-label="최근 게시물">${recentPosts.map((post) => `<div class="recent-post-compact"><span class="recent-post-compact-title">${safe(post.title || "제목 없음")}</span><span class="recent-post-compact-meta">♥ ${safe(post.likes ?? "--")} · 댓글 ${safe(post.replies ?? "--")}</span></div>`).join("")}</div>`);
+        }
+
+        document.querySelectorAll(".control-card").forEach((el) => {
+          el.addEventListener("click", () => setTab(el.dataset.tab));
+        });
+        document.querySelectorAll(".nav-button").forEach((el) => {
+          el.addEventListener("click", () => {
+            if (el.dataset.action === "home") {
+              flash();
+              document.body.dataset.mode = "overview";
+              return;
+            }
+            setTab(el.dataset.tab);
+          });
+        });
+        $("backButton").addEventListener("click", () => {
+          flash();
+          document.body.dataset.mode = "overview";
+        });
+
+        applyReveal($("heroCopy"));
+        startSaemScene(model.overallState);
+      }
+
+      $("reasonClose").addEventListener("click", closeReason);
+      $("reasonModal").addEventListener("click", (event) => {
+        if (event.target === $("reasonModal")) closeReason();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeReason();
+        if (event.key !== "Tab" || !$("reasonModal").classList.contains("is-open")) return;
+        const focusables = [...$("reasonModal").querySelectorAll("button, [href], [tabindex]:not([tabindex='-1'])")]
+          .filter((el) => !el.disabled);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      });
+      document.addEventListener("click", (event) => {
+        const el = event.target.closest(".list-row.is-clickable");
+        if (el) openReason(el.dataset, el);
+      });
+
+      document.addEventListener("pointerdown", (event) => {
+        if (document.body.dataset.scene === "webgl") return;
+        if (event.target.closest("button, a")) return;
+        const fallback = document.querySelector(".saem-fallback");
+        const pebble = fallback.querySelector(".pebble");
+        const rect = fallback.getBoundingClientRect();
+        const pad = 30;
+        const inside =
+          event.clientX > rect.left - pad &&
+          event.clientX < rect.right + pad &&
+          event.clientY > rect.top - pad &&
+          event.clientY < rect.bottom + pad;
+        if (!inside) return;
+        pebble.classList.remove("is-poked");
+        void pebble.offsetWidth;
+        pebble.classList.add("is-poked");
+      });
+
+      document.querySelector(".saem-fallback .pebble").addEventListener("animationend", (event) => {
+        if (event.animationName === "saemPoke") event.target.classList.remove("is-poked");
+      });
+
+      Promise.all([
+        fetch("./status.json", { cache: "no-store" }).then((response) => response.json()),
+        loadAgentsLive(),
+      ])
+        .then(([data, liveFeed]) => render(data, liveFeed))
+        .catch(() => {
+          document.body.dataset.overall = "warn";
+          $("heroLineTwo").textContent = "feed unavailable";
+          $("heroMetaScore").innerHTML = "<strong>Score</strong> / --";
+          $("heroMetaStats").innerHTML = "<strong>Surfaces</strong> / waiting";
+          $("updatedAt").innerHTML = "<strong>Updated</strong> / unavailable";
+          $("overviewGrid").innerHTML = card({
+            id: "system",
+            label: "System",
+            value: "--",
+            title: "waiting",
+            status: "status.json unavailable",
+            state: "warn",
+          });
+          applyReveal($("heroCopy"));
+          startSaemScene("warn");
+        });
+    </script>
+  </body>
 </html>

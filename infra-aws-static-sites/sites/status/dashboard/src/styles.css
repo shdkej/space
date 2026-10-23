@@ -1,21 +1,21 @@
 :root {
   font-family: "Pretendard", ui-sans-serif, system-ui, sans-serif;
   color: #29281f;
-  background: #fffdf2;
+  background: #ffffff;
   font-synthesis: none;
   --ink: #29281f;
   --muted: #766f56;
   --faint: #aaa27e;
-  --line: rgba(120, 104, 35, 0.18);
-  --surface: rgba(255, 255, 255, 0.62);
-  --surface-strong: rgba(255, 255, 255, 0.82);
-  --lemon-100: #fcf9b7;
+  --line: rgba(41, 40, 31, 0.14);
+  --surface: #ffffff;
+  --surface-strong: #ffffff;
+  --lemon-100: #fff9c7;
   --lemon-200: #fff1a8;
   --lemon-300: #f9df55;
-  --lemon-accent: #d7aa16;
-  --accent: #d7aa16;
-  --violet: #8b7620;
-  --warn: #c28d16;
+  --lemon-accent: #b88900;
+  --accent: #b88900;
+  --violet: #9a7200;
+  --warn: #a87500;
   --bad: #b85a42;
   --shadow: 0 18px 50px rgba(105, 91, 31, 0.12);
 }
@@ -27,11 +27,11 @@ body {
   min-width: 320px;
   background:
     radial-gradient(
-      circle at 78% 8%,
-      rgba(252, 249, 183, 0.82),
-      transparent 30%
+      circle at 88% 4%,
+      rgba(255, 249, 199, 0.34),
+      transparent 18%
     ),
-    linear-gradient(140deg, #fffdf2 0%, #fff8d8 52%, #f5edbd 100%);
+    #ffffff;
   min-height: 100vh;
 }
 button,
@@ -84,7 +84,7 @@ a {
   place-items: center;
   border: 1px solid var(--line);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.45);
+  background: #ffffff;
   transition: 0.2s;
 }
 .icon-button:hover {
@@ -180,7 +180,7 @@ a {
   padding: 20px 22px;
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: rgba(255, 255, 252, 0.56);
+  background: #ffffff;
   transition: 0.2s;
 }
 .metric-card svg {
@@ -205,21 +205,16 @@ a {
 .metric-card:hover,
 .metric-card.selected {
   background: var(--surface-strong);
-  border-color: rgba(215, 170, 22, 0.42);
+  border-color: rgba(184, 137, 0, 0.42);
   box-shadow: var(--shadow);
   transform: translateY(-2px);
 }
 .focus-surface {
   padding: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--line);
   border-radius: 24px;
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 252, 0.78),
-    rgba(255, 241, 168, 0.42)
-  );
+  background: #ffffff;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(14px);
   margin-bottom: 82px;
 }
 .section-heading {
@@ -289,7 +284,7 @@ a {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #fffbe0;
+  background: #fffdf0;
 }
 .layer-key {
   font-size: 11px;
@@ -326,7 +321,7 @@ a {
   text-align: left;
   border: 1px solid var(--line);
   border-radius: 17px;
-  background: rgba(255, 255, 252, 0.5);
+  background: #ffffff;
   transition: 0.2s;
 }
 .surface-card:hover {
@@ -360,7 +355,7 @@ a {
   padding: 28px;
   border: 1px solid var(--line);
   border-radius: 24px;
-  background: rgba(255, 255, 252, 0.48);
+  background: #ffffff;
   margin-bottom: 64px;
 }
 .tabs-list {
@@ -451,7 +446,7 @@ footer {
   padding: 27px;
   border: 1px solid rgba(255, 255, 255, 0.88);
   border-radius: 20px;
-  background: rgba(255, 255, 252, 0.92);
+  background: #ffffff;
   box-shadow: 0 30px 90px rgba(35, 55, 47, 0.25);
 }
 .dialog-title {
@@ -494,7 +489,7 @@ footer {
   border-radius: 50%;
 }
 .dialog-close:hover {
-  background: #fffbe0;
+  background: #fffdf0;
 }
 .tooltip {
   z-index: 10;
@@ -593,9 +588,10 @@ footer {
     flex: 1 1 0;
     justify-content: center;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     padding: 8px 2px;
-    font-size: 9px;
+    font-size: 8px;
+    letter-spacing: -0.03em;
   }
 }
 .app-shell {
@@ -624,7 +620,7 @@ footer {
   gap: 5px;
   padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
-  background: rgba(255, 253, 242, 0.86);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(18px);
 }
 .bottom-nav-item {
@@ -638,7 +634,7 @@ footer {
   white-space: nowrap;
 }
 .bottom-nav-item:hover {
-  background: rgba(255, 255, 255, 0.72);
+  background: #fffdf0;
   color: var(--ink);
 }
 .bottom-nav-item.active {
@@ -664,11 +660,13 @@ footer {
 }
 @media (max-width: 800px) {
   .bottom-nav {
-    justify-content: flex-start;
-    overflow-x: auto;
+    justify-content: center;
+    overflow-x: hidden;
   }
   .bottom-nav-item {
-    padding: 10px 11px;
+    min-width: 0;
+    flex: 1 1 0;
+    padding: 10px 4px;
   }
   .detail-screen {
     margin-top: 36px;

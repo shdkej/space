@@ -15,7 +15,8 @@
   --radius: 14px;
 }
 
-html, body { min-height: 100%; overflow: auto; }
+html { min-height: 100%; overflow-x: hidden; overflow-y: auto; }
+body { min-height: 100%; overflow: visible; }
 body {
   color: var(--ink) !important;
   background:

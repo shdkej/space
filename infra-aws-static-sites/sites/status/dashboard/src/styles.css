@@ -646,6 +646,13 @@ footer {
   color: var(--ink);
   font-weight: 750;
 }
+@media (max-width: 460px) {
+  .bottom-nav {
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+}
 .detail-screen {
   max-width: 920px;
   margin: 32px auto 0;

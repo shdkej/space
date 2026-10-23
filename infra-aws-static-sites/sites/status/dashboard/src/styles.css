@@ -584,6 +584,19 @@ footer {
     gap: 10px;
     flex-direction: column;
   }
+  .bottom-nav {
+    gap: 0;
+    overflow-x: visible;
+  }
+  .bottom-nav-item {
+    min-width: 0;
+    flex: 1 1 0;
+    justify-content: center;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 2px;
+    font-size: 9px;
+  }
 }
 .app-shell {
   min-height: 100svh;

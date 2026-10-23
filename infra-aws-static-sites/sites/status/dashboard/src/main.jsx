@@ -32,6 +32,11 @@ const ago = (iso) => {
   if (mins < 1440) return `${Math.round(mins / 60)}시간 전`;
   return `${Math.round(mins / 1440)}일 전`;
 };
+const metricValue = (series, period) => {
+  const item = (series || []).find((entry) => entry?.metric?.period === period) || series?.[0];
+  return item?.value?.[1] ?? "—";
+};
+const monitoringState = (value, fallback = "none") => value || fallback;
 
 function StatusDot({ state }) { return <span className={clsx("status-dot", stateClass(state))} aria-label={stateText[state] || stateText.none} />; }
 
@@ -72,9 +77,19 @@ function App() {
   React.useEffect(() => { load(); }, [load]);
   const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt);
   const layers = live?.system?.layers?.length ? live.system.layers.map((x, i) => [`L${i + 1}`, x.name || x.key || "운영 레이어", x.detail || x.reason || "라이브 상태 확인", x.state || "warn"]) : fallbackLayers;
-  const agents = live?.agents || []; const crons = live?.crons || []; const outputs = live?.outputs || [];
+  const agents = live?.agents || []; const crons = live?.crons || []; const outputs = live?.outputs || []; const monitoring = live?.monitoring || {};
+  const monitoringRows = [
+    { name: "서비스 접점", state: checks.length && checks.every((item) => item.state === "ok") ? "ok" : "warn", detail: `${checks.filter((item) => item.state === "ok").length}/${checks.length || 0}개 응답 정상 · 평균 지연 ${checks.length ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length) : "—"}ms` },
+    { name: "PostHog 제품 지표", state: monitoringState(monitoring.posthog?.state), detail: `활성 사용자 1일 ${metricValue(monitoring.posthog?.metrics?.product_active_users, "1d")}명 · 7일 조회 ${metricValue(monitoring.posthog?.metrics?.product_page_views, "7d")}회 · 전환 ${metricValue(monitoring.posthog?.metrics?.product_conversion_rate)}%` },
+    { name: "비즈니스 지표", state: monitoringState(monitoring.business?.state), detail: monitoring.business?.metrics && Object.values(monitoring.business.metrics).some((items) => items?.length) ? "DAU·가입·매출 수집 중" : "DAU·가입·매출 데이터 없음" },
+    { name: "콘텐츠 지표", state: monitoringState(monitoring.content?.state), detail: monitoring.content?.availability === "missing" ? "연결된 콘텐츠 원천 없음" : "콘텐츠 원천 연결됨" },
+    { name: "인프라 노드", state: monitoringState(monitoring.prometheus?.state), detail: `${(monitoring.prometheus?.nodes || []).filter((node) => node.status === "정상").length}/${(monitoring.prometheus?.nodes || []).length || 0}개 노드 정상` },
+    { name: "GitHub 저장소", state: (monitoring.github || []).length && monitoring.github.every((repo) => repo.state === "ok") ? "ok" : "warn", detail: `${monitoring.github?.length || 0}개 저장소 · 최신 커밋 상태 확인` },
+    { name: "Notion 콘텐츠", state: monitoringState(monitoring.notion?.state), detail: `${monitoring.notion?.count || 0}개 항목 · ${monitoring.notion?.updatedAt ? ago(monitoring.notion.updatedAt) : "갱신 시각 확인 대기"}` },
+    { name: "에이전트 피드", state: live?.generatedAt && (Date.now() - new Date(live.generatedAt).getTime()) < 30 * 60 * 1000 ? "ok" : "warn", detail: `마지막 수집 ${ago(live?.generatedAt)}` },
+  ];
   const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: `${agents.length || "--"} agents`, note: "현재 실행 인계", icon: Activity }, { id: "output", label: "Loop", value: `${crons.length || "--"}개 주기`, note: `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신`, icon: RefreshCw }];
-  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: `${x.crons || 0}개 크론` })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기" })) : view === "monitoring" ? layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail })) : layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail }));
+  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: `${x.crons || 0}개 크론` })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기" })) : view === "monitoring" ? monitoringRows : layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail }));
   const navigate = (next) => { setView(next); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
   return <Tooltip.Provider delayDuration={250}><div className="app-shell">
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>

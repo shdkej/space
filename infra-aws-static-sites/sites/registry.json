@@ -81,6 +81,16 @@
       "spa_fallback": true
     },
     {
+      "app": "image-annotator",
+      "name": "Image Archive",
+      "domain_name": "images.aws.shdkej.com",
+      "kind": "archive",
+      "detail": "R2-backed image archive with topic classification and annotations",
+      "deployment_name": "image archive",
+      "hosting": "kubernetes ingress",
+      "spa_fallback": false
+    },
+    {
       "app": "infinity",
       "name": "Infinity",
       "domain_name": "infinity.aws.shdkej.com",

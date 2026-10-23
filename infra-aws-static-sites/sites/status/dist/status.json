@@ -1,83 +1,127 @@
 {
-  "generatedAt": "2026-08-11T13:43:05Z",
+  "generatedAt": "2026-10-23T11:55:48Z",
   "overall": {
     "state": "ok",
-    "label": "Instagram Maker, Status, Travel Ops, Schengen Calculator, Card News Library, Infinity, Virtue, Control Center CMS, and Reel Room are the active surfaces",
+    "label": "Agent Adapt, Instagram Maker, Status, Travel Ops, Night Ledger / Safety Map, Safety Map Experiment 03, Schengen Calculator, Card News Library, Image Archive, Infinity, Virtue, Launch Timeline, Control Center CMS, and Reel Room are the active surfaces",
     "score": 98
   },
   "checks": [
     {
+      "name": "Agent Adapt",
+      "url": "https://agent-adapt.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 382,
+      "detail": "A site agent that understands, represents, and acts for an existing website"
+    },
+    {
       "name": "Instagram Maker",
       "url": "https://instagram-maker.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 577,
+      "latencyMs": 308,
       "detail": "Local-first 9:16 scene editor for Instagram story and reel-cover exports"
     },
     {
       "name": "Status",
       "url": "https://status.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 561,
+      "latencyMs": 350,
       "detail": "Static dashboard deployed through its own S3 + CloudFront slot"
     },
     {
       "name": "Travel Ops",
       "url": "https://travel.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 519,
+      "latencyMs": 574,
       "detail": "World travel planning board deployed as a separate static app"
+    },
+    {
+      "name": "Night Ledger / Safety Map",
+      "url": "https://safety-map.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 323,
+      "detail": "Static, no-live-data travel context map with local-only input handling"
+    },
+    {
+      "name": "Safety Map Experiment 03",
+      "url": "https://safety-map-experiment-03.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 365,
+      "detail": "Interactive global place map with an explicit no-safety-data boundary"
     },
     {
       "name": "Schengen Calculator",
       "url": "https://schengen.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 282,
+      "latencyMs": 276,
       "detail": "90/180 day Schengen travel calculator for long-term route planning"
     },
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 528,
+      "latencyMs": 310,
       "detail": "Growing public archive for photo insight card-news sets"
+    },
+    {
+      "name": "Image Archive",
+      "url": "https://images.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 316,
+      "detail": "R2-backed image archive with topic classification and annotations"
     },
     {
       "name": "Infinity",
       "url": "https://infinity.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 512,
+      "latencyMs": 357,
       "detail": "Intent dashboard for Infinity work queue and archive state"
     },
     {
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "state": "ok",
-      "latencyMs": 522,
+      "latencyMs": 354,
       "detail": "Static Virtue Rebirth web app connected directly to Lambda scoring"
+    },
+    {
+      "name": "Launch Timeline",
+      "url": "https://launch-timeline.aws.shdkej.com",
+      "state": "ok",
+      "latencyMs": 285,
+      "detail": "실제 공개 SNS 원문을 수집해 앱 출시 홍보 흐름을 날짜순으로 보여주는 벤치마킹 도구"
     },
     {
       "name": "Control Center CMS",
       "url": "https://cms.oracle.shdkej.com",
       "state": "ok",
-      "latencyMs": 31,
+      "latencyMs": 38,
       "detail": "shadcn/ui operations CMS for Status composition and surface registry management"
     },
     {
       "name": "Reel Room",
       "url": "https://reel.oracle.shdkej.com",
       "state": "ok",
-      "latencyMs": 28,
+      "latencyMs": 22,
       "detail": "Video automation web UI for reel production (basic auth)"
     }
   ],
   "deployments": [
+    {
+      "name": "agent adapt",
+      "url": "https://agent-adapt.aws.shdkej.com",
+      "bucket": "static-agent-adapt-aws-shdkej-com",
+      "distribution": "E1BU6OGDFOZ2N7",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-10-23T11:55:44Z",
+      "state": "ok"
+    },
     {
       "name": "instagram maker",
       "url": "https://instagram-maker.aws.shdkej.com",
       "bucket": "static-instagram-maker-aws-shdkej-com",
       "distribution": "E24YJWUBW703ES",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-08-11T13:42:59Z",
+      "updatedAt": "2026-10-23T11:55:44Z",
       "state": "ok"
     },
     {
@@ -86,7 +130,7 @@
       "bucket": "static-status-aws-shdkej-com",
       "distribution": "E9GKZBY9S3VTW",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-08-11T13:42:59Z",
+      "updatedAt": "2026-10-23T11:55:45Z",
       "state": "ok"
     },
     {
@@ -95,7 +139,25 @@
       "bucket": "static-travel-aws-shdkej-com",
       "distribution": "E1RZMVOTKJUBLQ",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-08-11T13:43:00Z",
+      "updatedAt": "2026-10-23T11:55:45Z",
+      "state": "ok"
+    },
+    {
+      "name": "safety map",
+      "url": "https://safety-map.aws.shdkej.com",
+      "bucket": "static-safety-map-aws-shdkej-com",
+      "distribution": "E17JBS3Q0EH0DQ",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-10-23T11:55:46Z",
+      "state": "ok"
+    },
+    {
+      "name": "safety map experiment 03",
+      "url": "https://safety-map-experiment-03.aws.shdkej.com",
+      "bucket": "static-safety-map-experiment-03-aws-shdkej-com",
+      "distribution": "E262PVT2G0HDJY",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-10-23T11:55:46Z",
       "state": "ok"
     },
     {
@@ -104,7 +166,7 @@
       "bucket": "static-schengen-aws-shdkej-com",
       "distribution": "E3PPXUUNA9KRGS",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-08-11T13:43:00Z",
+      "updatedAt": "2026-10-23T11:55:46Z",
       "state": "ok"
     },
     {
@@ -113,7 +175,16 @@
       "bucket": "static-library-aws-shdkej-com",
       "distribution": "E3H9I5GVQBIEUL",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-08-11T13:43:01Z",
+      "updatedAt": "2026-10-23T11:55:47Z",
+      "state": "ok"
+    },
+    {
+      "name": "image archive",
+      "url": "https://images.aws.shdkej.com",
+      "bucket": "static-images-aws-shdkej-com",
+      "distribution": "EVB80JECQAFNB",
+      "hosting": "kubernetes ingress",
+      "updatedAt": "2026-10-23T11:55:47Z",
       "state": "ok"
     },
     {
@@ -122,7 +193,7 @@
       "bucket": "static-infinity-aws-shdkej-com",
       "distribution": "E3JYGTLQKF0AXX",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-08-11T13:43:01Z",
+      "updatedAt": "2026-10-23T11:55:47Z",
       "state": "ok"
     },
     {
@@ -131,7 +202,16 @@
       "bucket": "static-virtue-aws-shdkej-com",
       "distribution": "EVCIL59LC6WJ6",
       "hosting": "s3 cloudfront",
-      "updatedAt": "2026-08-11T13:43:02Z",
+      "updatedAt": "2026-10-23T11:55:48Z",
+      "state": "ok"
+    },
+    {
+      "name": "launch timeline",
+      "url": "https://launch-timeline.aws.shdkej.com",
+      "bucket": "static-launch-timeline-aws-shdkej-com",
+      "distribution": "E20HFPIFSKEM8S",
+      "hosting": "s3 cloudfront",
+      "updatedAt": "2026-10-23T11:55:48Z",
       "state": "ok"
     },
     {
@@ -140,7 +220,7 @@
       "bucket": "",
       "distribution": "",
       "hosting": "kubernetes ingress",
-      "updatedAt": "2026-08-11T13:43:03Z",
+      "updatedAt": "2026-10-23T11:55:48Z",
       "state": "ok"
     },
     {
@@ -149,7 +229,7 @@
       "bucket": "",
       "distribution": "",
       "hosting": "kubernetes ingress",
-      "updatedAt": "2026-08-11T13:43:05Z",
+      "updatedAt": "2026-10-23T11:55:48Z",
       "state": "ok"
     }
   ],
@@ -187,6 +267,11 @@
   ],
   "apps": [
     {
+      "name": "Agent Adapt",
+      "url": "https://agent-adapt.aws.shdkej.com",
+      "kind": "landing"
+    },
+    {
       "name": "Instagram Maker",
       "url": "https://instagram-maker.aws.shdkej.com",
       "kind": "tool"
@@ -202,6 +287,16 @@
       "kind": "dashboard"
     },
     {
+      "name": "Night Ledger / Safety Map",
+      "url": "https://safety-map.aws.shdkej.com",
+      "kind": "tool"
+    },
+    {
+      "name": "Safety Map Experiment 03",
+      "url": "https://safety-map-experiment-03.aws.shdkej.com",
+      "kind": "tool"
+    },
+    {
       "name": "Schengen Calculator",
       "url": "https://schengen.aws.shdkej.com",
       "kind": "tool"
@@ -209,6 +304,11 @@
     {
       "name": "Card News Library",
       "url": "https://library.aws.shdkej.com",
+      "kind": "archive"
+    },
+    {
+      "name": "Image Archive",
+      "url": "https://images.aws.shdkej.com",
       "kind": "archive"
     },
     {
@@ -220,6 +320,11 @@
       "name": "Virtue",
       "url": "https://virtue.aws.shdkej.com",
       "kind": "app"
+    },
+    {
+      "name": "Launch Timeline",
+      "url": "https://launch-timeline.aws.shdkej.com",
+      "kind": "tool"
     },
     {
       "name": "Control Center CMS",

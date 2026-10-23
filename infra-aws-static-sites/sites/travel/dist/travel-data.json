@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-17T14:40:04.805101+00:00",
+  "generatedAt": "2026-10-23T14:40:03.403166+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -8,43 +8,43 @@
   "budget": {
     "targetMinKrw": 30000000,
     "targetMaxKrw": 40000000,
-    "loggedKrw": 31997569,
-    "travelLoggedKrw": 31997569,
+    "loggedKrw": 33639615,
+    "travelLoggedKrw": 33639615,
     "remainingMinKrw": 0,
-    "remainingMaxKrw": 8002431,
-    "reservedPctMin": 106.7,
+    "remainingMaxKrw": 6360385,
+    "reservedPctMin": 112.1,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 197516,
+    "reserveBurnKrw": 205120,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-18",
+    "date": "2026-10-20",
     "location": "London",
     "mapQuery": "London, United Kingdom"
   },
   "categoryTotals": {
-    "other": 15885223,
-    "stay": 11444568,
+    "other": 16581452,
+    "stay": 12155316,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
     "visa": 535302,
+    "groceries": 353796,
     "food": 209250,
-    "groceries": 118727,
     "cafe": 86938
   },
   "travelCategoryTotals": {
-    "other": 15885223,
-    "stay": 11444568,
+    "other": 16581452,
+    "stay": 12155316,
     "transport": 1591212,
     "gear": 1446349,
     "medical": 680000,
     "visa": 535302,
+    "groceries": 353796,
     "food": 209250,
-    "groceries": 118727,
     "cafe": 86938
   },
   "countryCategoryTotals": [
@@ -121,6 +121,15 @@
       }
     },
     {
+      "country": "France",
+      "total": 1815858,
+      "categories": {
+        "other": 1514198,
+        "groceries": 235069,
+        "visa": 66591
+      }
+    },
+    {
       "country": "Germany",
       "total": 1363285,
       "categories": {
@@ -141,11 +150,11 @@
       }
     },
     {
-      "country": "France",
-      "total": 1126037,
+      "country": "United Kingdom",
+      "total": 952225,
       "categories": {
-        "other": 1059446,
-        "visa": 66591
+        "stay": 710748,
+        "other": 241477
       }
     },
     {
@@ -594,7 +603,15 @@
     },
     {
       "date": "2026-10-18",
-      "amount": 41008
+      "amount": 734716
+    },
+    {
+      "date": "2026-10-19",
+      "amount": 895175
+    },
+    {
+      "date": "2026-10-20",
+      "amount": 57050
     }
   ],
   "bookedCosts": [
@@ -1009,6 +1026,150 @@
     }
   ],
   "travelExpenses": [
+    {
+      "id": "_65230di274okcb9h70rk2b9k8l1k8b9p64q3iba26cr3ic2660q46c2284",
+      "date": "2026-10-20",
+      "time": "06:54",
+      "amount": 6310,
+      "merchant": "Tate Commerce",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74o3ce9n712jaba371146b9k8cqk6b9p70qjeb9m6t33achg6cqk8chp6g",
+      "date": "2026-10-20",
+      "time": "02:46",
+      "amount": 50740,
+      "merchant": "Where The Pancakes Are -",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_61344d268coj6b9i84s3cb9k74q42ba26gs46ba4711jedi588p44c9j88",
+      "date": "2026-10-19",
+      "time": "18:23",
+      "amount": 3155,
+      "merchant": "TfL Travel Charge",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_652kch1g6l14cb9n60pjcb9k6cs3aba16crkab9g6h0jeci16t1j2chk88",
+      "date": "2026-10-19",
+      "time": "13:03",
+      "amount": 710748,
+      "merchant": "AIRBNB * HM9ZPZF3X2",
+      "category": "stay",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8kr3icho6kr38ba16cs44b9k60ojgb9o8p1jeb9l85138c9g70pj2chp88",
+      "date": "2026-10-19",
+      "time": "12:52",
+      "amount": 1544,
+      "merchant": "TESCO-STORES 4474",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cpk8ci48os36b9g8osk4b9k8gs48b9o6kq3eb9m6gs32d9k8l2jee1k6s",
+      "date": "2026-10-19",
+      "time": "11:47",
+      "amount": 94117,
+      "merchant": "White Hart",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64s46cpn60sj2b9i6cs38b9k8l234b9p64ok6ba288o42hhl74q42e218c",
+      "date": "2026-10-19",
+      "time": "04:22",
+      "amount": 85611,
+      "merchant": "Dishoom King's Cross",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6p2kagph8or3ib9p64r44b9k68o44ba2692jeb9o74ok8h1k8h33cci374",
+      "date": "2026-10-18",
+      "time": "23:15",
+      "amount": 3887,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_88pjghi664r34ba56sr36b9k892kcba164r38b9p89136c1p8h338ca58o",
+      "date": "2026-10-18",
+      "time": "12:09",
+      "amount": 235069,
+      "merchant": "LA CUISINE DU 46",
+      "category": "groceries",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8coj6gi384qjgb9o6ssjcb9k70qj2ba18kr3ab9o8gpk4e1m88r3ec236g",
+      "date": "2026-10-18",
+      "time": "09:54",
+      "amount": 85449,
+      "merchant": "DECATHLON BORDEA",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8l1jggi4612jcb9g8p33gb9k8kp32b9o8kp44b9h8ksj6h258h1k8chm8c",
+      "date": "2026-10-18",
+      "time": "09:46",
+      "amount": 45480,
+      "merchant": "PHARMACIE  SLAKM",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6os3ie9m6d338b9m60s42b9k88rj2b9o691jaba36t34ch1g84sj4c1n8k",
+      "date": "2026-10-18",
+      "time": "09:32",
+      "amount": 319936,
+      "merchant": "Uniqlo Montparnasse",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6ko3aga368p3eba36p2jeb9k852jeb9o88q4cba17524aga1890k4dhp88",
       "date": "2026-10-18",
@@ -6371,6 +6532,150 @@
     }
   ],
   "expenses": [
+    {
+      "id": "_65230di274okcb9h70rk2b9k8l1k8b9p64q3iba26cr3ic2660q46c2284",
+      "date": "2026-10-20",
+      "time": "06:54",
+      "amount": 6310,
+      "merchant": "Tate Commerce",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_74o3ce9n712jaba371146b9k8cqk6b9p70qjeb9m6t33achg6cqk8chp6g",
+      "date": "2026-10-20",
+      "time": "02:46",
+      "amount": 50740,
+      "merchant": "Where The Pancakes Are -",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_61344d268coj6b9i84s3cb9k74q42ba26gs46ba4711jedi588p44c9j88",
+      "date": "2026-10-19",
+      "time": "18:23",
+      "amount": 3155,
+      "merchant": "TfL Travel Charge",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_652kch1g6l14cb9n60pjcb9k6cs3aba16crkab9g6h0jeci16t1j2chk88",
+      "date": "2026-10-19",
+      "time": "13:03",
+      "amount": 710748,
+      "merchant": "AIRBNB * HM9ZPZF3X2",
+      "category": "stay",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8kr3icho6kr38ba16cs44b9k60ojgb9o8p1jeb9l85138c9g70pj2chp88",
+      "date": "2026-10-19",
+      "time": "12:52",
+      "amount": 1544,
+      "merchant": "TESCO-STORES 4474",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8cpk8ci48os36b9g8osk4b9k8gs48b9o6kq3eb9m6gs32d9k8l2jee1k6s",
+      "date": "2026-10-19",
+      "time": "11:47",
+      "amount": 94117,
+      "merchant": "White Hart",
+      "category": "other",
+      "location": "Tate Modern, 25 Sumner Street",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_64s46cpn60sj2b9i6cs38b9k8l234b9p64ok6ba288o42hhl74q42e218c",
+      "date": "2026-10-19",
+      "time": "04:22",
+      "amount": 85611,
+      "merchant": "Dishoom King's Cross",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6p2kagph8or3ib9p64r44b9k68o44ba2692jeb9o74ok8h1k8h33cci374",
+      "date": "2026-10-18",
+      "time": "23:15",
+      "amount": 3887,
+      "merchant": "RATP",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_88pjghi664r34ba56sr36b9k892kcba164r38b9p89136c1p8h338ca58o",
+      "date": "2026-10-18",
+      "time": "12:09",
+      "amount": 235069,
+      "merchant": "LA CUISINE DU 46",
+      "category": "groceries",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8coj6gi384qjgb9o6ssjcb9k70qj2ba18kr3ab9o8gpk4e1m88r3ec236g",
+      "date": "2026-10-18",
+      "time": "09:54",
+      "amount": 85449,
+      "merchant": "DECATHLON BORDEA",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_8l1jggi4612jcb9g8p33gb9k8kp32b9o8kp44b9h8ksj6h258h1k8chm8c",
+      "date": "2026-10-18",
+      "time": "09:46",
+      "amount": 45480,
+      "merchant": "PHARMACIE  SLAKM",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
+    {
+      "id": "_6os3ie9m6d338b9m60s42b9k88rj2b9o691jaba36t34ch1g84sj4c1n8k",
+      "date": "2026-10-18",
+      "time": "09:32",
+      "amount": 319936,
+      "merchant": "Uniqlo Montparnasse",
+      "category": "other",
+      "location": "96 Euston Road, London",
+      "travel": true,
+      "country": null,
+      "note": null
+    },
     {
       "id": "_6ko3aga368p3eba36p2jeb9k852jeb9o88q4cba17524aga1890k4dhp88",
       "date": "2026-10-18",
@@ -12385,6 +12690,15 @@
       "checkOut": null,
       "amount": 112290,
       "note": "Calendar payment record; add dates later when booking details are logged"
+    },
+    {
+      "name": "AIRBNB * HM9ZPZF3X2",
+      "city": "Tate Modern, 25 Sumner Street",
+      "status": "paid",
+      "checkIn": null,
+      "checkOut": null,
+      "amount": 710748,
+      "note": "Calendar payment record; add dates later when booking details are logged"
     }
   ],
   "plannedAccommodations": [
@@ -13251,7 +13565,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-18",
+    "asOf": "2026-10-20",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -13343,18 +13657,6 @@
   },
   "sleep": [
     {
-      "date": "2026-09-25",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
-      "date": "2026-09-27",
-      "sleepHours": 0.0,
-      "recharge": 0.0,
-      "balance": "4.04"
-    },
-    {
       "date": "2026-09-29",
       "sleepHours": 0.0,
       "recharge": 0.0,
@@ -13425,19 +13727,21 @@
       "sleepHours": 0.0,
       "recharge": 0.0,
       "balance": "4.04"
+    },
+    {
+      "date": "2026-10-18",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
+    },
+    {
+      "date": "2026-10-19",
+      "sleepHours": 0.0,
+      "recharge": 0.0,
+      "balance": "4.04"
     }
   ],
   "reflections": [
-    {
-      "id": "h3vnm2300b6vo06udj4qglaq90",
-      "date": "2026-09-08",
-      "title": "내일 의도 / 최신 연구자료로 여백과 정돈의 기준 적기",
-      "intent": "미니멀을 취향의 단어가 아니라 장면을 판단할 수 있는 기준으로 남기기\\n첫 손잡이: 최신 연구자료 1건을 가져와 기준을 한 줄로 적기\\n변경 허용 조건: 자료가 현재 질문에 닿지 않으면 다른 분야의 최신 연구 1건으로 바꾸기",
-      "did": null,
-      "why": null,
-      "carry": null,
-      "drop": null
-    },
     {
       "id": "mnsciq8e911frqlc3qbdi6g15s",
       "date": "2026-09-10",
@@ -13546,6 +13850,16 @@
       "did": null,
       "why": null,
       "carry": null,
+      "drop": null
+    },
+    {
+      "id": "e83tjiia0ev5m75cdvulc5urc8",
+      "date": "2026-10-18",
+      "title": "내일 의도 / 모델 학습용 사례 10개를 세 칸 형식으로 기록하기",
+      "intent": "모델에 맞는 데이터 형식을 작게 검증한다.",
+      "did": null,
+      "why": null,
+      "carry": "사례 10개를 상황·원하는 판단·좋은 답의 기준으로 기록한다.",
       "drop": null
     }
   ]

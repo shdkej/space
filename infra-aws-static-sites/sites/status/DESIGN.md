@@ -41,6 +41,7 @@
 - 토큰: `--glass: rgba(247,255,252,0.30)` / `--glass-strong: 0.44` / `--glass-border: rgba(170,226,211,0.58)` / `--glass-blur: none` — backdrop-blur는 밀키한 불투명감을 만들어 뺐다. 다만 dense data 영역에서는 투명 장식보다 읽기 안정성을 우선한다.
 - 히어로·reading rows·상세 타일·리스트 행·하단 내비·아이콘 버튼은 같은 토큰을 계승하되, 경고 상태에서는 상태 영역의 대비를 올린다.
 - 첫 화면 행은 판단을 보여준다: 상태 dot + label + 운영 문장 + 보조 메타. `Now`는 가장 먼저 볼 문제, `Balance`는 Services/Agents/Outputs의 관계, `Loop`는 snapshot·agent feed 신선도와 다음 확인을 담당한다. 상세 탭은 System / Surfaces / Agents / Output 구조를 유지하되 `Needs attention / Healthy / Evidence` 순서로 묶는다.
+- 홈 모드는 `100svh`와 `overflow: hidden`으로 브라우저 스크롤을 잠근다. 상세 메뉴에서만 본문 스크롤을 허용한다.
 - 전환: 카드·내비·홈·뒤로가기 모두 화면 전체로 퍼지는 transition-flash를 쓴다(사용자가 가장 좋아하는 이펙트 — 빼지 말 것). 패널 전환은 transform만 애니메이션(opacity 금지).
 - 샘 인터랙션: 탭/클릭 → 스쿼시 움찔 + 눈 깜빡 + 물결 1회. 휠/터치 스크롤 → 속도 비례 갸웃(rotation.x/z) 후 스프링 복귀. reduced-motion에서는 모두 끔.
 

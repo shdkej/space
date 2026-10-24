@@ -641,6 +641,19 @@ footer {
   flex-direction: column;
   overflow: visible;
 }
+.app-shell.home-mode {
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+}
+.home-mode .screen-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+.home-mode .metric-strip {
+  margin-bottom: 0;
+}
 .topbar {
   flex: 0 0 auto;
 }

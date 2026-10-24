@@ -71,6 +71,12 @@ function DetailDialog({ item, onClose }) {
   </Dialog.Content></Dialog.Portal></Dialog.Root>;
 }
 
+function DetailRow({ row, index, onOpen }) {
+  const content = <><StatusDot state={row.state} /><span><strong>{row.name}</strong><small>{row.detail}</small></span><span className="row-state">{stateText[row.state] || "확인 대기"}</span>{row.url ? <ExternalLink size={16} /> : <ChevronRight size={16} />}</>;
+  if (row.url) return <a className="detail-row" href={row.url} target="_blank" rel="noreferrer" key={`${row.name}-${index}`}>{content}</a>;
+  return <button className="detail-row" key={`${row.name}-${index}`} onClick={() => onOpen(row)}>{content}</button>;
+}
+
 function App() {
   const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [view, setView] = React.useState("home"); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
   const load = React.useCallback(async () => { setLoading(true); const [a, b] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json())]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setLoading(false); }, []);
@@ -93,11 +99,9 @@ function App() {
   const navigate = (next) => { setView(next); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
   return <Tooltip.Provider delayDuration={250}><div className="app-shell">
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
-    <main className="screen-area">{view === "home" ? <><section className="hero"><div className="hero-copy"><span className="eyebrow">Space status / 운영 화면</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p>{overall.label}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
+    <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p>{overall.label}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
-      <LayerRail layers={layers} onOpen={setSelected} />
-      <section className="surfaces-section"><div className="section-heading"><div><span className="eyebrow">접점</span><h2>운영 중인 표면</h2></div><a href="https://status.aws.shdkej.com" target="_blank" rel="noreferrer">라이브 열기 <ExternalLink size={14} /></a></div><div className="surface-grid">{checks.slice(0, 9).map((item) => <SurfaceCard item={item} key={item.name} onOpen={setSelected} />)}</div></section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><span>{detailRows.length}개 항목</span></div><div className="detail-list">{detailRows.map((row, i) => <button className="detail-row" key={`${row.name}-${i}`} onClick={() => setSelected(row)}><StatusDot state={row.state} /><span><strong>{row.name}</strong><small>{row.detail}</small></span><span className="row-state">{stateText[row.state] || "확인 대기"}</span><ChevronRight size={16} /></button>)}</div></section>}
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><span>{detailRows.length}개 항목</span></div><div className="detail-list">{detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} />)}</div></section>}
     </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav></div><DetailDialog item={selected} onClose={() => setSelected(null)} /></Tooltip.Provider>;
 }
 

@@ -202,6 +202,9 @@ a {
   color: var(--muted);
   font-size: 12px;
 }
+.home-hero {
+  min-height: 330px;
+}
 .metric-card:hover,
 .metric-card.selected {
   background: var(--surface-strong);
@@ -408,6 +411,12 @@ a {
   text-align: left;
   border-bottom: 1px solid var(--line);
 }
+.detail-row[href] {
+  text-decoration: none;
+}
+.detail-row[href]:hover {
+  color: var(--accent);
+}
 .detail-row:hover {
   color: var(--accent);
 }
@@ -520,7 +529,7 @@ footer {
   }
   .metric-strip,
   .surface-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .focus-surface,
   .detail-section {
@@ -555,6 +564,38 @@ footer {
   }
   .hero h1 {
     font-size: 46px;
+  }
+  .home-hero {
+    min-height: 0;
+    padding: 38px 0 28px;
+  }
+  .metric-strip {
+    gap: 7px;
+    margin-bottom: 28px;
+  }
+  .metric-card {
+    display: flex;
+    min-width: 0;
+    min-height: 104px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 13px 11px;
+    border-radius: 14px;
+  }
+  .metric-card svg {
+    margin: 0 0 3px;
+  }
+  .metric-card span,
+  .metric-card small {
+    overflow: hidden;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .metric-card strong {
+    font-size: 15px;
+    white-space: nowrap;
   }
   .layer-row {
     grid-template-columns: 30px 33px 1fr 16px;

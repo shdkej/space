@@ -51,6 +51,8 @@
 | `status.json` | `scripts/build-status-json.py` (배포 시) | 배포마다 | surfaces·deployments·정적 agents(폴백용) |
 | `agents-live.json` | `~/workspace/system-dashboard/collector` (systemd timer) | 10분 | `agents`(에이전트 로스터 롤업) + `outputs`(산출물 신선도) + `system`(4레이어 판정 + PDCA·백로그·인텐트 카운트 — CMS system-panel 판정 로직과 동일 유지). 레이어가 ok가 아니면 `reason`(판정 근거 한 줄, 크론 이름 등 비공개 상세는 제외)을 함께 낸다. 내용·이름·UUID 등 상세는 CMS (스펙: `2026-07-05-status-agents-live-design.md`) |
 
+첫 화면의 상단 메시지는 정적 안내문이 아니다. 브라우저가 두 피드를 60초마다 다시 읽고, `bad 레이어 → warn 레이어 → 오래된 산출물 → 접점 장애 → 라이브 피드 정체 → 다음 크론 → 정상` 순서로 가장 유익한 한 문장을 선택한다. 피드가 갱신될 때마다 문장도 다음 확인 행동을 반영한다.
+
 Agents 패널은 `agents-live.json`이 30분 이내면 라이브 렌더, 아니면 정적 agents + "Live feed silent" 경고 행. **S3 sync 시 `--exclude "agents-live.json"`을 반드시 유지** — 수집기가 올린 파일을 배포가 지우면 안 된다.
 
 ## 검증 기준

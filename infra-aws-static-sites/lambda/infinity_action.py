@@ -22,9 +22,12 @@ ALLOWED_ORIGINS = {
 ALLOWED_ACTIONS = {
     "resolve_waiting",
     "archive_request",
+    "backlog_promote",
+    "backlog_reject",
     "refresh_dashboard",
     "knowledge_research",
 }
+ALLOWED_SCOPES = {"간단히 처리", "중간", "고도처리", "장기작업"}
 ACTION_TOKEN_SHA256 = os.environ.get("ACTION_TOKEN_SHA256", "").strip().lower()
 INTENT_ID_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)+$")
 # Agent Wiki loop IDs identify a log event, not an Infinity task. They have a
@@ -121,6 +124,7 @@ def handler(event, context):
     page = _clean_text(payload.get("page") or payload.get("path"), 400)
     title = _clean_text(payload.get("title"), 240)
     note = _clean_text(payload.get("note"), 1000)
+    processing_scope = _clean_text(payload.get("processing_scope"), 40)
     user_agent = _clean_text((event.get("headers") or {}).get("user-agent"), 600)
 
     # Wiki loop events are stable IDs; each event has its own dedupe boundary.
@@ -129,6 +133,8 @@ def handler(event, context):
         return _response(400, {"error": "invalid_intent_id"}, origin)
     if not ACTION_RE.match(action) or action not in ALLOWED_ACTIONS:
         return _response(400, {"error": "unsupported_action"}, origin)
+    if action == "backlog_promote" and processing_scope not in ALLOWED_SCOPES:
+        return _response(400, {"error": "invalid_processing_scope"}, origin)
     if is_knowledge_research and not KNOWLEDGE_LOOP_ID_RE.match(intent_id):
         return _response(400, {"error": "invalid_knowledge_loop"}, origin)
 
@@ -150,6 +156,7 @@ def handler(event, context):
         "page": page,
         "title": title,
         "note": note,
+        "processing_scope": processing_scope,
         "safety": {
             "public_action": False,
             "external_mutation": False,

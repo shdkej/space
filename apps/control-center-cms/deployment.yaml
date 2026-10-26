@@ -60,7 +60,7 @@ spec:
               apk add --no-cache git
               corepack enable
               rm -rf /app
-              git clone --depth=1 --branch master https://github.com/shdkej/space.git /repo
+              git clone --depth=1 --branch main https://github.com/shdkej/space.git /repo
               cp -R /repo/apps/control-center-cms /app
               cd /app
               pnpm install --frozen-lockfile=false

@@ -18,6 +18,7 @@
       --muted: #94a3b8;
       --accent: #38bdf8;
       --inbox: #f59e0b;
+      --backlog: #06b6d4;
       --active: #22c55e;
       --waiting: #a855f7;
       --done: #64748b;
@@ -54,7 +55,7 @@
     button:hover { background: #334155; }
     main {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
+      grid-template-columns: repeat(5, minmax(0,1fr));
       gap: 14px;
       padding: 14px;
     }
@@ -80,6 +81,7 @@
     .column-title { font-weight: 600; font-size: 14px; display: flex; gap: 8px; align-items: center; }
     .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
     .dot.inbox { background: var(--inbox); }
+    .dot.backlog { background: var(--backlog); }
     .dot.active { background: var(--active); }
     .dot.waiting { background: var(--waiting); }
     .dot.done { background: var(--done); }
@@ -210,6 +212,7 @@
     .summary-item.open { background: #1e3a8a; border-color: #1d4ed8; color: #dbeafe; }
     .summary-item.open .summary-value { color: #ffffff; }
     .summary-item.lane-inbox { border-color: #b45309; }
+    .summary-item.lane-backlog { border-color: #0e7490; }
     .summary-item.lane-active { border-color: #15803d; }
     .summary-item.lane-waiting { border-color: #7c3aed; }
     .summary-item.lane-done { border-color: #475569; }
@@ -712,6 +715,9 @@
       padding: 7px 12px;
     }
     .action-button:hover { background: #065f46; border-color: #4ade80; }
+    .action-button.danger { background: #450a0a; border-color: #991b1b; color: #fecaca; }
+    .action-button.danger:hover { background: #7f1d1d; border-color: #f87171; }
+    .backlog-scope { min-width: 128px; color: #e2e8f0; background: #0f172a; border: 1px solid #0e7490; border-radius: 6px; padding: 7px 8px; }
     .action-button:disabled {
       cursor: wait;
       opacity: 0.68;
@@ -862,6 +868,13 @@
   </section>
   </div>
   <main>
+    <section class="column" data-key="backlog">
+      <div class="column-head">
+        <div class="column-title"><span class="dot backlog"></span>Backlog</div>
+        <div class="count" data-count></div>
+      </div>
+      <div class="cards" data-cards></div>
+    </section>
     <section class="column" data-key="inbox">
       <div class="column-head">
         <div class="column-title"><span class="dot inbox"></span>Inbox</div>
@@ -1440,8 +1453,8 @@
       block.appendChild(host);
     }
 
-    function actionSummary(item, sourceLabel, action) {
-      return {
+    function actionSummary(item, sourceLabel, action, extra) {
+      return Object.assign({
         intent_id: item.id || "",
         action: action || "resolve_waiting",
         source: "dashboard",
@@ -1449,7 +1462,7 @@
         lane: sourceLabel || item.source || "",
         page: window.location.href,
         requested_from: "infinity-dashboard",
-      };
+      }, extra || {});
     }
 
     let actionKeyCache = "";
@@ -1527,8 +1540,8 @@
       return key;
     }
 
-    async function submitDashboardAction(button, statusEl, item, sourceLabel, action) {
-      const payload = actionSummary(item, sourceLabel, action);
+    async function submitDashboardAction(button, statusEl, item, sourceLabel, action, extra) {
+      const payload = actionSummary(item, sourceLabel, action, extra);
       const actionKey = getActionKey();
       if (!actionKey) {
         statusEl.classList.add("error");
@@ -1588,6 +1601,7 @@
       const st = String(item.meta && item.meta.status || "").toLowerCase();
       const canResolveWaiting = source === "waiting" || st === "waiting";
       const canRequestArchive = source === "active" || source === "waiting" || st === "active" || st === "waiting";
+      const isBacklog = source === "backlog" || st === "backlog";
       const approvalRequired = String(item.meta && item.meta.approval_required || "").toLowerCase() === "true"
         || String(item.meta && item.meta.permission_level || "").toLowerCase() === "approval_required"
         || String(item.meta && item.meta.waiting_reason || "").includes("승인")
@@ -1602,6 +1616,7 @@
       note.className = "action-note";
       note.textContent = canResolveWaiting || canRequestArchive
         ? "SAM이 확인 가능한 범위에서 대기 사유 해소를 시작합니다. 공개 게시, 결제, 권한 변경, 계정 생성 완료 전에는 멈춥니다."
+        : isBacklog ? "와처가 만든 후보입니다. 범위를 정해 Inbox로 옮기거나 거절하면 이 Backlog 카드가 사라집니다."
         : "이 Intent는 완료되어 추가 대시보드 액션이 없습니다.";
 
       const row = document.createElement("div");
@@ -1611,6 +1626,26 @@
       }
       if (canRequestArchive) {
         addActionButton(row, item, sourceLabel, "archive_request", approvalRequired ? "보류" : "Archive 요청", approvalRequired ? "보류 선택" : "확인 후 처리");
+      }
+      if (isBacklog) {
+        const scope = document.createElement("select");
+        scope.className = "backlog-scope";
+        scope.setAttribute("aria-label", "작업범위 선택");
+        scope.innerHTML = '<option value="">작업범위 선택</option><option>간단히 처리</option><option>중간</option><option>고도처리</option><option>장기작업</option>';
+        const promote = document.createElement("button");
+        promote.type = "button"; promote.className = "action-button"; promote.textContent = "Inbox로 옮기기";
+        const promoteStatus = document.createElement("span"); promoteStatus.className = "action-status"; promoteStatus.textContent = "범위 선택 필요";
+        promote.addEventListener("click", () => {
+          if (!scope.value) { promoteStatus.classList.add("error"); promoteStatus.textContent = "작업범위를 먼저 선택하세요"; return; }
+          submitDashboardAction(promote, promoteStatus, item, sourceLabel, "backlog_promote", { processing_scope: scope.value });
+        });
+        const reject = document.createElement("button");
+        reject.type = "button"; reject.className = "action-button danger"; reject.textContent = "거절하고 삭제";
+        const rejectStatus = document.createElement("span"); rejectStatus.className = "action-status";
+        reject.addEventListener("click", () => submitDashboardAction(reject, rejectStatus, item, sourceLabel, "backlog_reject"));
+        const group = document.createElement("div"); group.className = "action-button-group"; group.append(promote, promoteStatus);
+        const rejectGroup = document.createElement("div"); rejectGroup.className = "action-button-group"; rejectGroup.append(reject, rejectStatus);
+        row.append(scope, group, rejectGroup);
       }
       panel.appendChild(note);
       if (row.childElementCount) panel.appendChild(row);
@@ -3140,7 +3175,7 @@
     // 레인별 개수는 컬럼 헤더가 이미 보여주므로, 요약 밴드는 흐름(이번 주 완료·최장 체류)만 담는다.
     function renderSummary(counts, flow) {
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
-      set("sum-open", counts.inbox + counts.active + counts.waiting);
+      set("sum-open", (counts.backlog || 0) + counts.inbox + counts.active + counts.waiting);
       set("sum-week-done", flow.weekDone);
       const staleWrap = document.getElementById("sum-stale-wrap");
       if (staleWrap) {
@@ -3389,6 +3424,7 @@
       try { registry = parseYamlDocument(intentsText); }
       catch (e) { showError("INTENTS.yaml 파싱 실패: " + e.message); }
       const lanes = registry && registry.lanes && typeof registry.lanes === "object" ? registry.lanes : {};
+      const backlogItems = (Array.isArray(lanes.backlog) ? lanes.backlog : []).map(x => yamlItemToCard(x, "backlog", "INTENTS.yaml"));
       const inboxItems = (Array.isArray(lanes.inbox) ? lanes.inbox : []).map(x => yamlItemToCard(x, "inbox", "INTENTS.yaml"));
       const activeItems = (Array.isArray(lanes.active) ? lanes.active : []).map(x => yamlItemToCard(x, "active", "INTENTS.yaml"));
       const waitingItems = (Array.isArray(lanes.waiting) ? lanes.waiting : []).map(x => yamlItemToCard(x, "waiting", "INTENTS.yaml"));
@@ -3410,7 +3446,9 @@
       const visibleInboxItems = removeArchived(inboxItems);
       const visibleActiveItems = removeArchived(activeItems);
       const visibleWaitingItems = removeArchived(waitingItems);
+      const visibleBacklogItems = removeArchived(backlogItems);
 
+      renderColumn("backlog", visibleBacklogItems, "INTENTS.yaml");
       renderColumn("inbox",   visibleInboxItems,   "INTENTS.yaml");
       renderColumn("active",  visibleActiveItems,  "INTENTS.yaml");
       renderColumn("waiting", visibleWaitingItems, "INTENTS.yaml");
@@ -3428,6 +3466,7 @@
         if (!stale || days > stale.days) stale = { id: it.id || "?", days };
       }
       renderSummary({
+        backlog: visibleBacklogItems.length,
         inbox: visibleInboxItems.length,
         active: visibleActiveItems.length,
         waiting: visibleWaitingItems.length,

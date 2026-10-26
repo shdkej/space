@@ -34,8 +34,10 @@ Shows the live Infinity intent registry and its execution evidence at
   output without changing the content order.
 - The first board column is **Backlog**. Watcher-created candidates expose a
   scope selector (`간단히 처리 / 중간 / 고도처리 / 장기작업`), an Inbox promotion
-  button, and an explicit reject-and-delete button. Actions are queued through
-  the existing signed Lambda request path and applied by the dispatcher.
+  button, and an explicit reject-and-delete button. Backlog cards also show the
+  watcher decision in `등록 이유` (`registration_reason`, with documented
+  fallbacks) and the executable `다음 행동` (`next_action`). Actions are queued
+  through the existing signed Lambda request path and applied by the dispatcher.
 - The intent detail closes through a persistent, bottom-centered circular
   control. Its 44px touch target stays above the mobile safe area so a long
   detail can be dismissed without returning to the top of the page.

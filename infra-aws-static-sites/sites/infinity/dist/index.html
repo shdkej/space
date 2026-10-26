@@ -151,6 +151,17 @@
       padding: 0 5px; line-height: 1.7; white-space: nowrap;
     }
     .field-row.key .field-label { border-color: #0e7490; color: #a5f3fc; }
+    .field-rows.registration-fields {
+      padding: 7px 8px;
+      border: 1px solid rgba(20, 184, 166, .35);
+      border-radius: 7px;
+      background: rgba(13, 148, 136, .08);
+    }
+    .field-rows.registration-fields .field-row.key .field-label {
+      border-color: #0f766e;
+      color: #99f6e4;
+      background: #123b3b;
+    }
     .field-value {
       color: #cbd5e1; word-break: break-word;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -1126,6 +1137,8 @@
       const id = String(meta.id || "").trim();
       const title = cleanDisplayTitle(meta.task_name || meta.title || meta.name, id);
       meta.status = meta.status || String(lane || "").toLowerCase();
+      meta.registration_reason = meta.registration_reason || meta.user_intent || meta.why_now || meta.desired_outcome || "";
+      meta.next_action = meta.next_action || meta.next || "";
       delete meta.title; delete meta.task_name; delete meta.name;
       return { id, title, bodyLines: [], meta, source };
     }
@@ -1921,6 +1934,8 @@
       return [
         { label: "상태", value: metaValue(item, ["status", "decision"]), key: true },
         { label: "출처", value: item.source || sourceLabel || "" },
+        { label: "등록 이유", value: metaValue(item, ["registration_reason", "user_intent", "why_now", "desired_outcome"]), key: true },
+        { label: "다음 행동", value: metaValue(item, ["next_action", "next"]), key: true },
         { label: "목표", value: metaValue(item, ["goal"]) },
         { label: "완료 기준", value: metaValue(item, ["success_criteria", "expected_artifact"]) },
         { label: "지표 질문", value: metaValue(item, ["metric_question"]), key: true },
@@ -2926,7 +2941,10 @@
         }
       } else {
         // 핵심 필드가 구조화돼 있으면 "무엇을 하고 뭐가 바뀌는지"를 라벨로 보여준다.
-        const fieldsEl = buildKeyFields(it, (opts && opts.lane) === "waiting" ? WAITING_FIELD_ROWS : KEY_FIELD_ROWS);
+        const lane = (opts && opts.lane) || "";
+        const registrationEl = lane === "backlog" ? buildKeyFields(it, REGISTRATION_FIELD_ROWS) : null;
+        if (registrationEl) card.appendChild(registrationEl);
+        const fieldsEl = buildKeyFields(it, lane === "waiting" ? WAITING_FIELD_ROWS : KEY_FIELD_ROWS);
         if (fieldsEl) {
           card.appendChild(fieldsEl);
         } else {
@@ -2962,12 +2980,18 @@
       ["blocker", "막힘", false],
       ["next_retry_condition", "조건", false],
     ];
+    const REGISTRATION_FIELD_ROWS = [
+      ["registration_reason", "등록 이유", true],
+      ["next_action", "다음 행동", true],
+    ];
     function buildKeyFields(it, rowDefs) {
       const defs = rowDefs || KEY_FIELD_ROWS;
       const rows = defs.filter(([key]) => it.meta && it.meta[key]);
       if (!rows.length) return null;
       const host = document.createElement("div");
-      host.className = "field-rows" + (defs === WAITING_FIELD_ROWS ? " waiting-fields" : "");
+      host.className = "field-rows"
+        + (defs === WAITING_FIELD_ROWS ? " waiting-fields" : "")
+        + (defs === REGISTRATION_FIELD_ROWS ? " registration-fields" : "");
       for (const [key, label, emphasized] of rows) {
         const row = document.createElement("div");
         row.className = "field-row" + (emphasized ? " key" : "");

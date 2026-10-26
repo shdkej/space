@@ -143,10 +143,22 @@ function traceLine(it) {
   return parts.join(" → ");
 }
 
+function intentReason(it) {
+  return it.registration_reason || it.user_intent || it.why_now || it.desired_outcome || null;
+}
+
+function intentEvidence(it) {
+  return Array.isArray(it.evidence_paths) && it.evidence_paths.length
+    ? `${it.evidence_paths.length}개 근거 경로`
+    : null;
+}
+
 const NOTIFIED_RULE_SINCE = "2026-07-16"; // notified 마커 규약 시행일 — 이전 완료분은 미통보로 따지지 않는다
 
 function IntentCard({ it, done }) {
   const ruled = done && it.date >= NOTIFIED_RULE_SINCE;
+  const reason = intentReason(it);
+  const evidence = intentEvidence(it);
   return (
     <div className="rounded-md border px-2.5 py-2">
       <div className="flex items-center gap-2">
@@ -154,6 +166,19 @@ function IntentCard({ it, done }) {
         {ruled && <Dot status={it.notified ? "operational" : "maintenance"} />}
       </div>
       <p className="mt-1 text-xs leading-snug">{it.title || it.summary}</p>
+      {!done && reason && (
+        <p className="mt-1 text-[11px] leading-snug text-muted-foreground">
+          <span className="font-medium text-foreground">등록 이유:</span> {reason}
+        </p>
+      )}
+      {!done && it.next_action && (
+        <p className="mt-1 text-[11px] leading-snug text-muted-foreground">
+          <span className="font-medium text-foreground">다음 행동:</span> {it.next_action}
+        </p>
+      )}
+      {!done && evidence && (
+        <p className="mt-1 text-[10px] text-muted-foreground/80">근거 {evidence}</p>
+      )}
       {!done && traceLine(it) && (
         <p className="mt-1 text-[11px] text-muted-foreground">{traceLine(it)}</p>
       )}
@@ -174,6 +199,7 @@ function PipelineBoard({ intents }) {
   const otherWaiting = waiting.filter((it) => !needsUserApproval(it));
   const completed = (intents?.completed || []).slice(0, 6);
   const columns = [
+    { key: "backlog", label: "검토 대기", list: items.backlog || [] },
     { key: "inbox", label: "접수", list: items.inbox || [] },
     { key: "active", label: "실행중", list: items.active || [] },
     { key: "waiting", label: "대기 (외부·에이전트)", list: otherWaiting },
@@ -211,7 +237,7 @@ function PipelineBoard({ intents }) {
           </div>
         </div>
       )}
-      <div className="grid gap-3 md:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         {columns.map((col) => (
           <div key={col.key} className="rounded-md border bg-muted/30 p-2">
             <p className="px-1 pb-2 text-xs font-medium text-muted-foreground">

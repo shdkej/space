@@ -28,3 +28,8 @@ infra-aws-static-sites/sites/travel/data/*.json
 # browser-visible, domain-restricted Mapbox public token and must never be committed.
 infra-aws-static-sites/sites/safety-map/dist/runtime-map-config.js
 infra-aws-static-sites/sites/safety-map-experiment-03/dist/runtime-map-config.js
+
+# Next.js source workspace for the status agent room
+infra-aws-static-sites/sites/status/agent-dashboard/.next/
+infra-aws-static-sites/sites/status/agent-dashboard/node_modules/
+infra-aws-static-sites/sites/status/agent-dashboard/out/

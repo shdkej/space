@@ -74,7 +74,7 @@ function App() {
 
   React.useEffect(() => { load(); const timer = window.setInterval(load, 60_000); return () => window.clearInterval(timer); }, [load]);
 
-  const agents = data.agents || [];
+  const agents = [...(data.agents || []), ...(data.roleWatchers || [])];
   const selectedRole = roles.find((role) => role.id === selected) || roles[0];
   const selectedAgent = agents.find((agent) => (agent.id || '').toLowerCase() === selectedRole.id) || agents.find((agent) => (agent.name || '').toLowerCase().includes(selectedRole.english.toLowerCase()));
   const latestOutputs = (data.outputs || []).filter((item) => item.state !== 'none').slice(0, 4);

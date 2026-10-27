@@ -7,6 +7,7 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 ## 경로
 
 - 운영 화면: `dist/index.html`
+- 실시간 에이전트 상황실: `dist/agents/index.html` → `https://status.aws.shdkej.com/agents/`
 - UI 재질 테스트: `dist/ui-material-test.html`
 - 배포 도메인: `https://status.aws.shdkej.com`
 
@@ -33,6 +34,15 @@ cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status
 python3 -m http.server 8080 --directory dist
 ```
 
+에이전트 상황실을 다시 빌드하려면:
+
+```bash
+cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status
+scripts/build-agent-dashboard.sh
+```
+
+상황실은 Next.js static export, React, Framer Motion, Radix Tooltip, Lucide React를 사용하며 `dist/agents/`에 정적 결과를 생성합니다. 브라우저에서 `agents-live.json`을 60초마다 읽어 5개 역할 카드·최근 결과·메인 에이전트로의 전달 흐름을 갱신합니다. 피드가 없거나 오래된 경우 마지막 안전 상태와 수집 대기 문구를 유지합니다.
+
 소스를 수정하고 번들하려면:
 
 ```bash
@@ -56,8 +66,11 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 - 화면은 브라우저 본문 흐름을 사용하며, 내용이 실제로 화면을 넘을 때만 세로 스크롤이 생깁니다. 불필요한 내부 스크롤 컨테이너는 사용하지 않습니다.
 - 홈 화면은 `100svh` 높이와 `overflow: hidden`으로 고정해 브라우저 스크롤을 허용하지 않습니다. 상세 메뉴로 들어가면 상세 화면만 일반 본문 흐름으로 돌아갑니다.
 - 기본 테마는 흰색 캔버스를 사용하고, 레몬색은 로고·포커스·상태 표시 같은 강조점에만 제한적으로 사용합니다.
+- `/agents/`는 기획·개발·마케팅·디자인·운영 5개 역할을 별도 상황실로 표시합니다. 메인 에이전트는 상단 오케스트레이터로, 각 역할은 하단 카드와 최근 관찰·전달 흐름으로 표시합니다.
 - 첫 화면 상단 메시지는 `status.json`의 접점 상태와 10분 주기 `agents-live.json`의 레이어·산출물·수집기 신호를 우선순위로 조합합니다. 브라우저는 60초마다 두 피드를 다시 읽어 새로고침 없이 문구를 갱신하고, 이상 신호가 있으면 가장 먼저 확인할 대상을 보여줍니다.
 
 ## 알려진 한계
 
 이 화면은 실제 제품의 의존성을 판별하는 것이 아니라, 스크린샷에서 관찰한 재질·아이콘·단계 표현을 비교하기 위한 시각 테스트입니다. Radix는 동작 primitive를 제공하고, 글래스 재질·단계선·인덴트의 시각 스타일은 제품에 맞춘 CSS입니다.
+
+에이전트 상황실의 공개 피드는 `agents-live.json`이 제공하는 에이전트 롤업·크론·산출물 범위에 한정됩니다. 에이전트 간 대화 원문이나 비공개 태스크 상세는 공개하지 않으며, 현재 전달선은 실제 공개 가능한 역할 흐름을 표현하는 읽기 전용 시각화입니다.

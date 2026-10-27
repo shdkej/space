@@ -74,11 +74,16 @@ function App() {
 
   React.useEffect(() => { load(); const timer = window.setInterval(load, 60_000); return () => window.clearInterval(timer); }, [load]);
 
-  const agents = [...(data.agents || []), ...(data.roleWatchers || [])];
+  const agents = data.agents || [];
+  const roleAgents = roles.map((role) => (
+    (data.roleWatchers || []).find((agent) => agent.id === role.id)
+    || agents.find((agent) => (agent.id || '').toLowerCase() === role.id)
+    || null
+  ));
   const selectedRole = roles.find((role) => role.id === selected) || roles[0];
-  const selectedAgent = agents.find((agent) => (agent.id || '').toLowerCase() === selectedRole.id) || agents.find((agent) => (agent.name || '').toLowerCase().includes(selectedRole.english.toLowerCase()));
+  const selectedAgent = roleAgents.find((agent) => agent?.id === selectedRole.id);
   const latestOutputs = (data.outputs || []).filter((item) => item.state !== 'none').slice(0, 4);
-  const healthy = agents.filter((item) => item.state === 'ok').length;
+  const healthy = roleAgents.filter((item) => item?.state === 'ok').length;
   const recent = data.generatedAt ? fmtAge(data.generatedAt) : '연결 대기';
 
   return <Tooltip.Provider delayDuration={180}><main className="agent-room">
@@ -93,7 +98,7 @@ function App() {
       <div className="deck-grid"><div className="pulse-visual"><div className="pulse-ring ring-a" /><div className="pulse-ring ring-b" /><div className="core"><Activity size={21} /><span>MAIN</span></div><span className="pulse-caption">작업을 묶고<br />다음 행동을 고릅니다</span></div><div className="deck-copy"><p>각 역할은 자기 신호를 읽고, 필요한 일만 Infinity Backlog에 건넵니다. 아래 카드를 누르면 최근 관찰과 다음 전달 방향을 볼 수 있습니다.</p><div className="deck-meta"><span><Database size={14} /> live feed</span><span><Clock3 size={14} /> {fmtAge(lastRefresh || data.generatedAt)}</span></div></div></div>
     </section>
 
-    <section className="agents-section"><div className="section-line"><div><span className="overline">ROLE NETWORK / 05</span><h2>역할별 작업면</h2></div><span className="section-note">카드를 선택하면 흐름이 열립니다</span></div><div className="agent-grid">{roles.map((role) => <AgentCard key={role.id} role={role} agent={agents.find((item) => (item.id || '').toLowerCase() === role.id)} selected={selected === role.id} onSelect={setSelected} />)}</div></section>
+    <section className="agents-section"><div className="section-line"><div><span className="overline">ROLE NETWORK / 05</span><h2>역할별 작업면</h2></div><span className="section-note">카드를 선택하면 흐름이 열립니다</span></div><div className="agent-grid">{roles.map((role, index) => <AgentCard key={role.id} role={role} agent={roleAgents[index]} selected={selected === role.id} onSelect={setSelected} />)}</div></section>
 
     <AnimatePresence mode="wait"><motion.section key={selectedRole.id} className="detail-grid" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .25 }}>
       <div className="detail-panel observation"><div className="panel-heading"><div><span className="overline">RECENT OBSERVATION</span><h3>{selectedRole.name} 에이전트의 최근 관찰</h3></div><StateDot state={selectedAgent?.state || 'none'} /></div><div className="observation-main"><div className={cnx('large-icon', `tone-${selectedRole.tone}`)}>{React.createElement(selectedRole.icon, { size: 24 })}</div><div><strong>{selectedAgent?.detail || selectedRole.focus}</strong><p>{selectedAgent ? `${selectedAgent.crons || 0}개 와처가 ${fmtAge(selectedAgent.lastActivityAt)} 신호를 확인했습니다.` : '라이브 피드에 이 역할의 상세 결과가 아직 도착하지 않았습니다.'}</p></div></div><div className="evidence-row"><span>현재 판정</span><b>{stateLabel[selectedAgent?.state] || '수집 대기'}</b><span>최근 확인</span><b>{fmtAge(selectedAgent?.lastActivityAt || data.generatedAt)}</b></div></div>

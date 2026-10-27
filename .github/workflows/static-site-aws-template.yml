@@ -215,6 +215,30 @@ jobs:
               --cache-control "public,max-age=60"
           done
 
+      - name: Upload nested directory index routes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # S3 REST origins do not resolve /section/ to /section/index.html.
+          # Publish an exact trailing-slash object so nested static exports
+          # remain reachable without changing the CloudFront distribution.
+          while IFS= read -r file; do
+            relative="${file#${{ matrix.build_dir }}/}"
+            directory="${relative%/index.html}"
+            if [ "$directory" = "$relative" ] || [ "$directory" = "." ]; then
+              continue
+            fi
+
+            aws s3api put-object \
+              --bucket "${{ steps.target.outputs.bucket }}" \
+              --key "${directory}/" \
+              --body "$file" \
+              --content-type "text/html" \
+              --cache-control "public,max-age=60" \
+              >/dev/null
+          done < <(find "${{ matrix.build_dir }}" -type f -name index.html -print)
+
       - name: Invalidate CloudFront
         run: |
           invalidation_id="$(

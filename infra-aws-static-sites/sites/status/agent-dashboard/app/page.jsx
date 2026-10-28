@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Activity, ArrowDownLeft, ArrowUpRight, Bot, CheckCircle2, Clock3, Database, GitBranch, Layers3, RefreshCw, Search, Sparkles, Wrench, XCircle, Zap } from 'lucide-react';
+import { Activity, ArrowDownLeft, ArrowUpRight, Bot, Clock3, Database, GitBranch, RefreshCw, Search, Sparkles, Wrench, Zap } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 const roles = [
@@ -23,7 +23,6 @@ const fallback = {
 };
 
 const stateLabel = { ok: '정상', warn: '확인 필요', bad: '중단', none: '대기' };
-const runLabel = { ok: '성공', error: '실패', skipped: '건너뜀', unknown: '확인 대기' };
 const fmtAge = (iso) => {
   if (!iso) return '수집 대기';
   const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
@@ -50,7 +49,7 @@ function AgentCard({ role, agent, selected, onSelect }) {
     <div className="card-orbit" />
     <div className="agent-card-top"><span className="agent-icon"><Icon size={17} /></span><span className="agent-role">{role.english}</span><StateDot state={state} /></div>
     <div className="agent-card-title"><strong>{role.name}</strong><span>{role.focus}</span></div>
-    <div className="agent-card-bottom"><span>{agent?.crons ?? 0}개 감시</span><span>{fmtAge(agent?.lastActivityAt)}</span></div>
+    <div className="agent-card-bottom"><span>{agent?.evidenceCount ?? 0}개 근거</span><span>{fmtAge(agent?.lastActivityAt)}</span></div>
   </motion.button>;
 }
 
@@ -83,9 +82,6 @@ function App() {
   ));
   const selectedRole = roles.find((role) => role.id === selected) || roles[0];
   const selectedAgent = roleAgents.find((agent) => agent?.id === selectedRole.id);
-  const latestOutputs = (data.outputs || []).filter((item) => item.state !== 'none').slice(0, 4);
-  const auditSections = (data.audit?.sections || []).slice().sort((a, b) => new Date(b.startedAt || 0) - new Date(a.startedAt || 0));
-  const visibleCrons = (data.crons || []).filter((cron) => cron.enabled !== false).slice().sort((a, b) => (b.last_run_at_ms || 0) - (a.last_run_at_ms || 0)).slice(0, 8);
   const healthy = roleAgents.filter((item) => item?.state === 'ok').length;
   const recent = data.generatedAt ? fmtAge(data.generatedAt) : '연결 대기';
 
@@ -104,12 +100,10 @@ function App() {
     <section className="agents-section"><div className="section-line"><div><span className="overline">ROLE NETWORK / 05</span><h2>역할별 작업면</h2></div><span className="section-note">카드를 선택하면 흐름이 열립니다</span></div><div className="agent-grid">{roles.map((role, index) => <AgentCard key={role.id} role={role} agent={roleAgents[index]} selected={selected === role.id} onSelect={setSelected} />)}</div></section>
 
     <AnimatePresence mode="wait"><motion.section key={selectedRole.id} className="detail-grid" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .25 }}>
-      <div className="detail-panel observation"><div className="panel-heading"><div><span className="overline">RECENT OBSERVATION</span><h3>{selectedRole.name} 에이전트의 최근 관찰</h3></div><StateDot state={selectedAgent?.state || 'none'} /></div><div className="observation-main"><div className={cnx('large-icon', `tone-${selectedRole.tone}`)}>{React.createElement(selectedRole.icon, { size: 24 })}</div><div><strong>{selectedAgent?.detail || selectedRole.focus}</strong><p>{selectedAgent ? `${selectedAgent.crons || 0}개 와처가 ${fmtAge(selectedAgent.lastActivityAt)} 신호를 확인했습니다.` : '라이브 피드에 이 역할의 상세 결과가 아직 도착하지 않았습니다.'}</p></div></div><div className="evidence-row"><span>현재 판정</span><b>{stateLabel[selectedAgent?.state] || '수집 대기'}</b><span>최근 확인</span><b>{fmtAge(selectedAgent?.lastActivityAt || data.generatedAt)}</b></div></div>
-      <div className="detail-panel delivery"><div className="panel-heading"><div><span className="overline">HANDOFF / NEXT</span><h3>다음으로 전달하는 방향</h3></div><ArrowDownLeft size={18} /></div><div className="handoff"><div className="handoff-node node-active"><StateDot state="ok" /><span>{selectedRole.name}</span></div><FlowLine from={selectedRole.id} to="main" label="근거 있는 후보" /><div className="handoff-node"><StateDot state="ok" /><span>MAIN / Genie</span></div></div><p className="handoff-note">구체적인 변화가 있을 때만 후보를 만들고, 메인이 중복을 묶어 다음 태스크로 승격합니다.</p></div>
+      <div className="detail-panel observation"><div className="panel-heading"><div><span className="overline">RECENT WORK</span><h3>{selectedRole.name} 에이전트가 한 일</h3></div><StateDot state={selectedAgent?.state || 'none'} /></div><div className="observation-main"><div className={cnx('large-icon', `tone-${selectedRole.tone}`)}>{React.createElement(selectedRole.icon, { size: 24 })}</div><div><strong>{selectedAgent?.activity?.summary || selectedAgent?.detail || selectedRole.focus}</strong><p>{selectedAgent ? `${fmtAge(selectedAgent.lastActivityAt)}에 실제 근거를 확인했습니다.` : '라이브 피드에 이 역할의 활동이 아직 도착하지 않았습니다.'}</p></div></div><div className="evidence-block"><span className="evidence-label">확인한 근거</span>{selectedAgent?.activity?.checked?.length ? <div className="evidence-chips">{selectedAgent.activity.checked.map((item) => <span key={item}>{item}</span>)}</div> : <p>확인한 근거가 아직 없습니다.</p>}</div><div className="evidence-row"><span>현재 판정</span><b>{stateLabel[selectedAgent?.state] || '수집 대기'}</b><span>최근 확인</span><b>{fmtAge(selectedAgent?.lastActivityAt || data.generatedAt)}</b></div></div>
+      <div className="detail-panel delivery"><div className="panel-heading"><div><span className="overline">NEXT HANDOFF</span><h3>다음으로 넘기는 일</h3></div><ArrowDownLeft size={18} /></div><div className="handoff"><div className="handoff-node node-active"><StateDot state="ok" /><span>{selectedRole.name}</span></div><FlowLine from={selectedRole.id} to="main" label="활동 요약" /><div className="handoff-node"><StateDot state="ok" /><span>MAIN / Genie</span></div></div><p className="handoff-note">{selectedAgent?.activity?.next || '새 활동이 확인되면 다음 전달 방향을 정리합니다.'}</p></div>
     </motion.section></AnimatePresence>
 
-    <section className="results-section"><div className="section-line"><div><span className="overline">OUTPUT / TRACE</span><h2>최근 만들어진 결과</h2></div><span className="section-note">{latestOutputs.length ? `${latestOutputs.length}개 표시 중` : '새 결과를 기다리는 중'}</span></div><div className="result-list">{latestOutputs.length ? latestOutputs.map((item, index) => <div className="result-row" key={`${item.name || 'output'}-${index}`}><span className="result-index">0{index + 1}</span><CheckCircle2 size={16} /><div><strong>{item.name || '운영 결과'}</strong><span>{item.detail || item.reason || '결과 상세를 수집 중입니다.'}</span></div><span className="result-age">{fmtAge(item.updatedAt || item.lastActivityAt)}</span></div>) : <div className="empty-row"><Sparkles size={16} /> 와처가 다음 유의미한 신호를 기다리고 있습니다.</div>}</div></section>
-    <section className="audit-section"><div className="section-line"><div><span className="overline">CRON / CHECK LOG</span><h2>크론이 실제로 확인한 것</h2></div><span className="section-note">{data.audit?.errorCount ? `${data.audit.errorCount}개 단계 오류` : '수집기 점검 완료'}</span></div><div className="audit-layout"><div className="audit-list">{auditSections.length ? auditSections.map((item) => <div className="audit-row" key={item.name}><StateDot state={item.state === 'ok' ? 'ok' : 'bad'} /><div><strong>{item.name}</strong><span>{item.detail}</span></div><time>{item.durationMs ?? '—'}ms</time></div>) : <div className="empty-row">아직 상세 점검 로그가 없습니다.</div>}</div><div className="cron-history">{visibleCrons.length ? visibleCrons.map((cron) => { const latestRun = cron.recentRuns?.[0]; return <div className="cron-row" key={cron.id || cron.name}><div className="cron-row-head"><strong>{cron.name || '이름 없는 크론'}</strong><StateDot state={cron.status === 'operational' ? 'ok' : cron.status === 'down' ? 'bad' : 'warn'} /></div><span>{cron.checkPlan?.description || cron.description || '실행 상태와 결과를 확인합니다.'}</span><small>{latestRun ? `최근 실행 ${runLabel[latestRun.status] || latestRun.status} · ${latestRun.summary || '상세 요약 없음'}` : `마지막 실행 ${fmtAge(cron.last_run_at_ms ? new Date(cron.last_run_at_ms).toISOString() : null)}`}</small></div>; }) : <div className="empty-row">실행 이력을 기다리는 중입니다.</div>}</div></div></section>
     <footer><a href="/">← Space status 홈</a><span>읽기 전용 라이브 뷰 · source: agents-live.json</span></footer>
   </main></Tooltip.Provider>;
 }

@@ -41,7 +41,7 @@ cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status
 scripts/build-agent-dashboard.sh
 ```
 
-상황실은 Next.js static export, React, Framer Motion, Radix Tooltip, Lucide React를 사용하며 `dist/agents/`에 정적 결과를 생성합니다. 브라우저에서 `agents-live.json`을 60초마다 읽어 5개 역할 카드·최근 결과·메인 에이전트로의 전달 흐름을 갱신합니다. 공개 피드의 `roleWatchers`에는 기획·개발·마케팅·디자인·운영 와처의 상태·최근 확인 시각·관찰 요약·근거 개수가 들어갑니다. `audit.sections`에는 수집기 주기마다 실제로 확인한 영역과 소요 시간이, 각 `crons[].checkPlan`·`recentRuns`에는 크론별 확인 계획과 최근 실행 이력이 들어가 상황실 하단에 표시됩니다. 피드가 없거나 오래된 경우 마지막 안전 상태와 수집 대기 문구를 유지합니다.
+상황실은 Next.js static export, React, Framer Motion, Radix Tooltip, Lucide React를 사용하며 `dist/agents/`에 정적 결과를 생성합니다. 브라우저에서 `agents-live.json`을 60초마다 읽어 5개 역할 카드와 선택한 에이전트의 최근 활동·확인한 근거·다음 전달 방향을 갱신합니다. 공개 피드의 `roleWatchers`에는 기획·개발·마케팅·디자인·운영 와처의 상태·최근 확인 시각·활동 요약·확인한 근거가 들어갑니다. 수집기 감사 로그와 크론 실행 이력은 피드에 남지만 상황실에는 직접 노출하지 않습니다. 피드가 없거나 오래된 경우 마지막 안전 상태와 수집 대기 문구를 유지합니다.
 
 소스를 수정하고 번들하려면:
 

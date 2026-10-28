@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import SystemPanel from "@/components/system-panel";
+import FlowPanel from "@/components/flow-panel";
 import {
   STATUS_META,
   STATUS_ORDER,
@@ -396,6 +397,9 @@ export default function Page() {
             <TabsTrigger value="system">
               <Gauge className="h-3.5 w-3.5" /> 시스템
             </TabsTrigger>
+            <TabsTrigger value="flow">
+              <Activity className="h-3.5 w-3.5" /> Flow
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="composition">
@@ -452,6 +456,10 @@ export default function Page() {
 
           <TabsContent value="system">
             <SystemPanel />
+          </TabsContent>
+
+          <TabsContent value="flow">
+            <FlowPanel />
           </TabsContent>
         </Tabs>
       </main>

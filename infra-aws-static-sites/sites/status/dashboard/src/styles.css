@@ -500,6 +500,61 @@ footer {
   font-size: 14px;
   line-height: 1.65;
 }
+.cron-dialog {
+  width: min(680px, calc(100% - 28px));
+  max-height: min(760px, calc(100svh - 28px));
+  overflow: auto;
+}
+.cron-detail {
+  display: grid;
+  gap: 18px;
+}
+.cron-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.cron-meta > div {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffdf0;
+}
+.cron-meta span,
+.cron-block > span,
+.cron-footnote {
+  color: var(--muted);
+  font-size: 11px;
+}
+.cron-meta strong {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.cron-description {
+  margin: 0 !important;
+}
+.cron-block {
+  display: grid;
+  gap: 7px;
+}
+.cron-block pre {
+  margin: 0;
+  padding: 12px;
+  max-height: 190px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #faf9f1;
+  color: var(--ink);
+  font: 11px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.cron-footnote {
+  overflow-wrap: anywhere;
+}
 .dialog-close {
   position: absolute;
   right: 15px;
@@ -632,6 +687,12 @@ footer {
   footer {
     gap: 10px;
     flex-direction: column;
+  }
+  .cron-dialog {
+    padding: 20px;
+  }
+  .cron-meta {
+    grid-template-columns: 1fr;
   }
   .bottom-nav {
     gap: 0;

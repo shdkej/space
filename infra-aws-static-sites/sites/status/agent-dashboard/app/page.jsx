@@ -50,7 +50,7 @@ function AgentCard({ role, agent, selected, onSelect }) {
     <div className="card-orbit" />
     <div className="agent-card-top"><span className="agent-icon"><Icon size={17} /></span><span className="agent-role">{role.english}</span><StateDot state={state} /></div>
     <div className="agent-card-title"><strong>{role.name}</strong><span>{role.focus}</span></div>
-    <div className="agent-card-bottom"><span>{agent?.evidenceCount ?? 0}개 근거</span><span>{fmtAge(agent?.lastActivityAt)}</span></div>
+    <div className="agent-card-bottom"><span>{agent?.executionLogs?.length ?? 0}회 실행</span><span>{fmtAge(agent?.executionLogs?.[0]?.completedAt || agent?.lastActivityAt)}</span></div>
   </motion.button>;
 }
 

@@ -82,6 +82,7 @@ function App() {
   ));
   const selectedRole = roles.find((role) => role.id === selected) || roles[0];
   const selectedAgent = roleAgents.find((agent) => agent?.id === selectedRole.id);
+  const synthesis = data.mainSynthesis || { summary: '각 역할의 관찰과 근거를 모아 다음 작업 후보로 정리합니다.', method: '역할별 관찰 → 근거 확인 → 다음 액션 후보', contributors: [] };
   const healthy = roleAgents.filter((item) => item?.state === 'ok').length;
   const recent = data.generatedAt ? fmtAge(data.generatedAt) : '연결 대기';
 
@@ -94,7 +95,7 @@ function App() {
 
     <section className="command-deck">
       <div className="deck-heading"><div><span className="overline">ORCHESTRATOR / MAIN</span><h2>지금 에이전트들이<br /><em>무엇을 움직이고 있나.</em></h2></div><div className="deck-score"><span>ONLINE</span><strong>{healthy || '—'}<small> / {roles.length}</small></strong><span>에이전트 연결</span></div></div>
-      <div className="deck-grid"><div className="pulse-visual"><div className="pulse-ring ring-a" /><div className="pulse-ring ring-b" /><div className="core"><Activity size={21} /><span>MAIN</span></div><span className="pulse-caption">작업을 묶고<br />다음 행동을 고릅니다</span></div><div className="deck-copy"><p>각 역할은 자기 신호를 읽고, 필요한 일만 Infinity Backlog에 건넵니다. 아래 카드를 누르면 최근 관찰과 다음 전달 방향을 볼 수 있습니다.</p><div className="deck-meta"><span><Database size={14} /> live feed</span><span><Clock3 size={14} /> {fmtAge(lastRefresh || data.generatedAt)}</span></div></div></div>
+      <div className="deck-grid"><div className="pulse-visual"><div className="pulse-ring ring-a" /><div className="pulse-ring ring-b" /><div className="core"><Activity size={21} /><span>MAIN</span></div><span className="pulse-caption">관찰을 모아<br />다음 행동을 고릅니다</span></div><div className="deck-copy"><p>{synthesis.summary}</p><div className="synthesis-steps">{synthesis.method}</div><div className="deck-meta"><span><Database size={14} /> {synthesis.contributors?.length || 0}개 역할 취합</span><span><Clock3 size={14} /> {fmtAge(lastRefresh || data.generatedAt)}</span></div></div></div>
     </section>
 
     <section className="agents-section"><div className="section-line"><div><span className="overline">ROLE NETWORK / 05</span><h2>역할별 작업면</h2></div><span className="section-note">카드를 선택하면 흐름이 열립니다</span></div><div className="agent-grid">{roles.map((role, index) => <AgentCard key={role.id} role={role} agent={roleAgents[index]} selected={selected === role.id} onSelect={setSelected} />)}</div></section>

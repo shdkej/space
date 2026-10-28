@@ -242,6 +242,19 @@ a {
   align-items: center;
   gap: 6px;
 }
+.detail-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.detail-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 750;
+}
 .layer-rail {
   position: relative;
   padding: 5px 0;

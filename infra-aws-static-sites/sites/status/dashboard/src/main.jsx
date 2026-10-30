@@ -100,7 +100,8 @@ function DetailDialog({ item, onClose }) {
       <div className="cron-block"><span>실행 명령</span><pre>{cron.checkPlan?.command || "명령어 원문 없음 · 에이전트 실행 방식"}</pre></div>
       <div className="cron-footnote">작업 디렉터리: {cron.checkPlan?.cwd || "지정되지 않음"}{cron.checkPlan?.timeoutSeconds ? ` · 제한 ${cron.checkPlan.timeoutSeconds}초` : ""}</div>
     </div> : <><div className="dialog-state"><span>상태</span><strong>{stateText[item?.state] || "확인 대기"}</strong></div><p>{item?.detail || "추가 근거가 아직 수집되지 않았습니다."}</p></>}
-  </Dialog.Content><Dialog.Close asChild><button className="dialog-close" aria-label="닫기"><X size={18} /></button></Dialog.Close></Dialog.Portal></Dialog.Root>;
+    <Dialog.Close asChild><button className="dialog-close" aria-label="닫기"><X size={20} /></button></Dialog.Close>
+  </Dialog.Content></Dialog.Portal></Dialog.Root>;
 }
 
 function DetailRow({ row, index, onOpen }) {

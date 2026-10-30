@@ -46,7 +46,7 @@ scripts/build-agent-dashboard.sh
 소스를 수정하고 번들하려면:
 
 ```bash
-cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/ui-material-test
+cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/dashboard
 npm install
 npm run build
 ```

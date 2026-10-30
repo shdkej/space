@@ -51,6 +51,8 @@ npm install
 npm run build
 ```
 
+라이브 피드의 `agents`·`crons`가 일시적으로 비어 있어도 `roleWatchers`의 역할별 관찰·최근 실행을 Agents와 Loop 메뉴에 표시한다. 따라서 크론 CLI 수집이 실패한 순간에도 메뉴가 빈 화면으로 무너지지 않으며, 실제 크론 목록이 복구되면 자동으로 크론 상세 표시로 돌아간다.
+
 브라우저에서 `http://localhost:8080/ui-material-test.html`을 열고 390px 모바일과 데스크톱 폭을 확인합니다.
 
 ## 검증

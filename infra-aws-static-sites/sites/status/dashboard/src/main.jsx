@@ -116,7 +116,34 @@ function App() {
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
   const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks });
   const layers = live?.system?.layers?.length ? live.system.layers.map((x, i) => [`L${i + 1}`, x.name || x.key || "운영 레이어", x.detail || x.reason || "라이브 상태 확인", x.state || "warn"]) : fallbackLayers;
-  const agents = live?.agents || []; const crons = live?.crons || []; const outputs = live?.outputs || []; const monitoring = live?.monitoring || {};
+  const roleWatchers = live?.roleWatchers || [];
+  const liveAgents = live?.agents || [];
+  const staticAgents = data?.agents || [];
+  // The collector can publish role watcher activity even when the OpenClaw
+  // cron CLI is temporarily unavailable. Keep the menus useful in that state.
+  const agents = liveAgents.length ? liveAgents : roleWatchers.length ? roleWatchers.map((watcher) => ({
+    id: watcher.id,
+    name: watcher.name || watcher.id,
+    state: watcher.state || "none",
+    crons: watcher.executionLogs?.length || 0,
+    lastActivityAt: watcher.lastActivityAt,
+    detail: watcher.detail,
+    activity: watcher.activity,
+    executionLogs: watcher.executionLogs || [],
+  })) : staticAgents;
+  const crons = live?.crons || [];
+  const watcherLoops = roleWatchers.map((watcher) => {
+    const latest = watcher.executionLogs?.[0];
+    return {
+      name: `${watcher.name || watcher.id || "역할"} 와처`,
+      state: latest?.status === "success" || watcher.state === "ok" ? "ok" : watcher.state || "warn",
+      detail: latest?.summary || watcher.activity?.summary || watcher.detail || "최근 관찰 기록을 확인하세요.",
+      watcher: true,
+      lastRunAt: latest?.completedAt || watcher.lastActivityAt,
+      executionCount: watcher.executionLogs?.length || 0,
+    };
+  });
+  const outputs = live?.outputs || []; const monitoring = live?.monitoring || {};
   const monitoringRows = [
     { name: "서비스 접점", state: checks.length && checks.every((item) => item.state === "ok") ? "ok" : "warn", detail: `${checks.filter((item) => item.state === "ok").length}/${checks.length || 0}개 응답 정상 · 평균 지연 ${checks.length ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length) : "—"}ms` },
     { name: "PostHog 제품 지표", state: monitoringState(monitoring.posthog?.state), detail: `활성 사용자 1일 ${metricValue(monitoring.posthog?.metrics?.product_active_users, "1d")}명 · 7일 조회 ${metricValue(monitoring.posthog?.metrics?.product_page_views, "7d")}회 · 전환 ${metricValue(monitoring.posthog?.metrics?.product_conversion_rate)}%` },
@@ -125,8 +152,9 @@ function App() {
     { name: "인프라 노드", state: monitoringState(monitoring.prometheus?.state), detail: `${(monitoring.prometheus?.nodes || []).filter((node) => node.status === "정상").length}/${(monitoring.prometheus?.nodes || []).length || 0}개 노드 정상` },
     { name: "GitHub 저장소", state: (monitoring.github || []).length && monitoring.github.every((repo) => repo.state === "ok") ? "ok" : "warn", detail: `${monitoring.github?.length || 0}개 저장소 · 최신 커밋 상태 확인` },
   ];
-  const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: `${agents.length || "--"} agents`, note: "현재 실행 인계", icon: Activity }, { id: "output", label: "Loop", value: `${crons.length || "--"}개 주기`, note: `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신`, icon: RefreshCw }];
-  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: `${x.crons || 0}개 크론` })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : view === "monitoring" ? monitoringRows : layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail }));
+  const loopLabel = crons.length ? `${crons.length}개 주기` : watcherLoops.length ? `${watcherLoops.length}개 와처` : "수집 대기";
+  const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: `${agents.length || "--"} agents`, note: roleWatchers.length ? "역할별 관찰 연결" : "현재 실행 인계", icon: Activity }, { id: "output", label: "Loop", value: loopLabel, note: crons.length ? `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신` : watcherLoops.length ? "최근 와처 실행 표시" : "수집 대기", icon: RefreshCw }];
+  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: x.detail || `${x.crons || x.executionLogs?.length || 0}개 실행 기록` })) : view === "output" ? (crons.length ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : watcherLoops) : view === "monitoring" ? monitoringRows : layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail }));
   const navigate = (next) => { setView(next); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
   return <Tooltip.Provider delayDuration={250}><div className={clsx("app-shell", view === "home" && "home-mode")}>
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>

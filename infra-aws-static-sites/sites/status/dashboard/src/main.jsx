@@ -120,7 +120,8 @@ function App() {
   const liveAgents = live?.agents || [];
   const staticAgents = data?.agents || [];
   // The collector can publish role watcher activity even when the OpenClaw
-  // cron CLI is temporarily unavailable. Keep the menus useful in that state.
+  // cron CLI is temporarily unavailable. Use it for the Agents roster only;
+  // Loop remains the cron schedule view.
   const agents = liveAgents.length ? liveAgents : roleWatchers.length ? roleWatchers.map((watcher) => ({
     id: watcher.id,
     name: watcher.name || watcher.id,
@@ -132,17 +133,8 @@ function App() {
     executionLogs: watcher.executionLogs || [],
   })) : staticAgents;
   const crons = live?.crons || [];
-  const watcherLoops = roleWatchers.map((watcher) => {
-    const latest = watcher.executionLogs?.[0];
-    return {
-      name: `${watcher.name || watcher.id || "역할"} 와처`,
-      state: latest?.status === "success" || watcher.state === "ok" ? "ok" : watcher.state || "warn",
-      detail: latest?.summary || watcher.activity?.summary || watcher.detail || "최근 관찰 기록을 확인하세요.",
-      watcher: true,
-      lastRunAt: latest?.completedAt || watcher.lastActivityAt,
-      executionCount: watcher.executionLogs?.length || 0,
-    };
-  });
+  const cronAudit = live?.audit?.sections?.find((section) => section.name === "crons");
+  const cronCollectionFailed = cronAudit?.state === "error";
   const outputs = live?.outputs || []; const monitoring = live?.monitoring || {};
   const monitoringRows = [
     { name: "서비스 접점", state: checks.length && checks.every((item) => item.state === "ok") ? "ok" : "warn", detail: `${checks.filter((item) => item.state === "ok").length}/${checks.length || 0}개 응답 정상 · 평균 지연 ${checks.length ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length) : "—"}ms` },
@@ -152,15 +144,18 @@ function App() {
     { name: "인프라 노드", state: monitoringState(monitoring.prometheus?.state), detail: `${(monitoring.prometheus?.nodes || []).filter((node) => node.status === "정상").length}/${(monitoring.prometheus?.nodes || []).length || 0}개 노드 정상` },
     { name: "GitHub 저장소", state: (monitoring.github || []).length && monitoring.github.every((repo) => repo.state === "ok") ? "ok" : "warn", detail: `${monitoring.github?.length || 0}개 저장소 · 최신 커밋 상태 확인` },
   ];
-  const loopLabel = crons.length ? `${crons.length}개 주기` : watcherLoops.length ? `${watcherLoops.length}개 와처` : "수집 대기";
-  const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: `${agents.length || "--"} agents`, note: roleWatchers.length ? "역할별 관찰 연결" : "현재 실행 인계", icon: Activity }, { id: "output", label: "Loop", value: loopLabel, note: crons.length ? `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신` : watcherLoops.length ? "최근 와처 실행 표시" : "수집 대기", icon: RefreshCw }];
-  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: x.detail || `${x.crons || x.executionLogs?.length || 0}개 실행 기록` })) : view === "output" ? (crons.length ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : watcherLoops) : view === "monitoring" ? monitoringRows : layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail }));
+  const loopLabel = crons.length ? `${crons.length}개 주기` : cronCollectionFailed ? "확인 필요" : live ? "0개 주기" : "수집 대기";
+  const loopNote = crons.length ? `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신` : cronCollectionFailed ? "크론 목록 수집 오류" : live ? "등록된 크론 없음" : "라이브 피드 확인 대기";
+  const loopEmptyMessage = cronCollectionFailed ? "크론 목록을 가져오지 못했습니다. 수집기 상태를 확인하고 있습니다." : live ? "등록된 크론이 없습니다." : "크론 정보를 불러오는 중입니다.";
+  const detailCountLabel = view === "output" ? (crons.length ? `${crons.length}개 크론` : cronCollectionFailed ? "목록 확인 필요" : live ? "등록된 크론 없음" : "수집 대기") : null;
+  const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: `${agents.length || "--"} agents`, note: roleWatchers.length ? "역할별 관찰 연결" : "현재 실행 인계", icon: Activity }, { id: "output", label: "Loop", value: loopLabel, note: loopNote, icon: RefreshCw }];
+  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: x.detail || `${x.crons || x.executionLogs?.length || 0}개 실행 기록` })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : view === "monitoring" ? monitoringRows : layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail }));
   const navigate = (next) => { setView(next); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
   return <Tooltip.Provider delayDuration={250}><div className={clsx("app-shell", view === "home" && "home-mode")}>
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
     <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions"><span>{detailRows.length}개 항목</span>{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div><div className="detail-list">{detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div><div className="detail-list">{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

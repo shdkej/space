@@ -564,17 +564,25 @@ footer {
   overflow-wrap: anywhere;
 }
 .dialog-close {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  width: 36px;
-  height: 36px;
+  position: fixed;
+  left: 50%;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 2;
+  width: 48px;
+  height: 48px;
   display: grid;
   place-items: center;
   border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(35, 55, 47, 0.16);
 }
 .dialog-close:hover {
   background: #fffdf0;
+}
+body:has(.dialog-content) .bottom-nav {
+  visibility: hidden;
 }
 .tooltip {
   z-index: 10;
@@ -718,14 +726,17 @@ footer {
   }
 }
 .app-shell {
-  min-height: 100svh;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow: hidden;
 }
 .app-shell.home-mode {
-  height: 100svh;
-  min-height: 100svh;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
   overflow: hidden;
 }
 .home-mode .screen-area {
@@ -741,9 +752,10 @@ footer {
 }
 .screen-area {
   min-height: 0;
-  flex: 0 0 auto;
-  overflow: visible;
-  overscroll-behavior: auto;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   padding-bottom: 42px;
 }
 .bottom-nav {

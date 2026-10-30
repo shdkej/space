@@ -41,7 +41,8 @@
 - 토큰: `--glass: rgba(247,255,252,0.30)` / `--glass-strong: 0.44` / `--glass-border: rgba(170,226,211,0.58)` / `--glass-blur: none` — backdrop-blur는 밀키한 불투명감을 만들어 뺐다. 다만 dense data 영역에서는 투명 장식보다 읽기 안정성을 우선한다.
 - 히어로·reading rows·상세 타일·리스트 행·하단 내비·아이콘 버튼은 같은 토큰을 계승하되, 경고 상태에서는 상태 영역의 대비를 올린다.
 - 첫 화면 행은 판단을 보여준다: 상태 dot + label + 운영 문장 + 보조 메타. `Now`는 가장 먼저 볼 문제, `Balance`는 Services/Agents/Outputs의 관계, `Loop`는 snapshot·agent feed 신선도와 다음 확인을 담당한다. 상세 탭은 System / Surfaces / Agents / Output 구조를 유지하되 `Needs attention / Healthy / Evidence` 순서로 묶는다.
-- 홈 모드는 `100svh`와 `overflow: hidden`으로 브라우저 스크롤을 잠근다. 상세 메뉴에서만 본문 스크롤을 허용한다.
+- 앱은 `100dvh`로 화면 높이를 고정하고 브라우저 본문 스크롤을 잠근다. 홈은 고정 화면이며 상세 메뉴의 목록만 `.screen-area` 내부에서 스크롤한다.
+- 상세 모달의 닫기는 화면 하단 중앙의 48×48 원형 버튼으로 제공한다. 하단 내비가 버튼을 가리지 않도록 모달이 열린 동안 내비를 숨기고 safe-area 여백을 유지한다.
 - 전환: 카드·내비·홈·뒤로가기 모두 화면 전체로 퍼지는 transition-flash를 쓴다(사용자가 가장 좋아하는 이펙트 — 빼지 말 것). 패널 전환은 transform만 애니메이션(opacity 금지).
 - 샘 인터랙션: 탭/클릭 → 스쿼시 움찔 + 눈 깜빡 + 물결 1회. 휠/터치 스크롤 → 속도 비례 갸웃(rotation.x/z) 후 스프링 복귀. reduced-motion에서는 모두 끔.
 
@@ -51,6 +52,8 @@
 |------|--------|----------|------|
 | `status.json` | `scripts/build-status-json.py` (배포 시) | 배포마다 | surfaces·deployments·정적 agents(폴백용) |
 | `agents-live.json` | `~/workspace/system-dashboard/collector` (systemd timer) | 10분 | `agents`(에이전트 로스터 롤업) + `outputs`(산출물 신선도) + `system`(4레이어 판정 + PDCA·백로그·인텐트 카운트 — CMS system-panel 판정 로직과 동일 유지). 레이어가 ok가 아니면 `reason`(판정 근거 한 줄, 크론 이름 등 비공개 상세는 제외)을 함께 낸다. 내용·이름·UUID 등 상세는 CMS (스펙: `2026-07-05-status-agents-live-design.md`) |
+
+공개 System 상세에는 운영 레이어 상태와 역할 관찰 수만 집계한다. CMS System·Flow 원본 스냅샷, 개별 실행 내용, 프롬프트, 인텐트 상세는 공개 화면으로 복사하지 않는다. CMS는 구성·콘텐츠 관리에 집중하고 운영 요약 진입점은 Status 대시보드로 통일한다.
 
 첫 화면의 상단 메시지는 정적 안내문이 아니다. 브라우저가 두 피드를 60초마다 다시 읽고, `bad 레이어 → warn 레이어 → 오래된 산출물 → 접점 장애 → 라이브 피드 정체 → 다음 크론 → 정상` 순서로 가장 유익한 한 문장을 선택한다. 피드가 갱신될 때마다 문장도 다음 확인 행동을 반영한다.
 

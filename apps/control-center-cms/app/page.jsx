@@ -9,7 +9,6 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
-  Gauge,
   Image,
   Layers,
   Link2,
@@ -48,8 +47,6 @@ import {
   SheetFooter
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import SystemPanel from "@/components/system-panel";
-import FlowPanel from "@/components/flow-panel";
 import {
   STATUS_META,
   STATUS_ORDER,
@@ -394,12 +391,6 @@ export default function Page() {
             <TabsTrigger value="activity">
               <Activity className="h-3.5 w-3.5" /> Activity
             </TabsTrigger>
-            <TabsTrigger value="system">
-              <Gauge className="h-3.5 w-3.5" /> 시스템
-            </TabsTrigger>
-            <TabsTrigger value="flow">
-              <Activity className="h-3.5 w-3.5" /> Flow
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="composition">
@@ -454,13 +445,6 @@ export default function Page() {
             <ActivityFeed activity={activity} />
           </TabsContent>
 
-          <TabsContent value="system">
-            <SystemPanel />
-          </TabsContent>
-
-          <TabsContent value="flow">
-            <FlowPanel />
-          </TabsContent>
         </Tabs>
       </main>
 
@@ -641,6 +625,11 @@ function Header({ stats, dark, onToggleDark, onRefresh, onNewSurface, busy }) {
             </Button>
             <Button variant="outline" size="icon" onClick={onRefresh} disabled={busy} aria-label="새로고침">
               <RefreshCw className={cn("h-4 w-4", busy && "animate-spin")} />
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <a href="https://status.aws.shdkej.com" target="_blank" rel="noreferrer">
+                Status <ExternalLink className="h-3.5 w-3.5" />
+              </a>
             </Button>
             <Button size="sm" onClick={onNewSurface}>
               <Plus className="h-4 w-4" /> Surface

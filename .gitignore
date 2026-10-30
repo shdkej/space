@@ -33,3 +33,12 @@ infra-aws-static-sites/sites/safety-map-experiment-03/dist/runtime-map-config.js
 infra-aws-static-sites/sites/status/agent-dashboard/.next/
 infra-aws-static-sites/sites/status/agent-dashboard/node_modules/
 infra-aws-static-sites/sites/status/agent-dashboard/out/
+
+# Local review artifacts and obsolete Status build leftovers
+reports/video-inspection/
+infra-aws-static-sites/sites/status/dist/content-live.json
+infra-aws-static-sites/sites/status/dist/assets/index-DnVSWylU.js
+infra-aws-static-sites/sites/status/dist/assets/index-lVa3F-vm.js
+infra-aws-static-sites/sites/status/dist/.chrome-review/
+infra-aws-static-sites/sites/status/dist/status-mobile-review.png
+infra-aws-static-sites/sites/status/dist/status-detail-mobile.png

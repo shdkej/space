@@ -8,7 +8,13 @@ BUCKET="${TRAVEL_S3_BUCKET:-static-travel-aws-shdkej-com}"
 DIST_ID="${TRAVEL_CLOUDFRONT_DISTRIBUTION_ID:-E1RZMVOTKJUBLQ}"
 OPENCLAW_ENV="${OPENCLAW_ENV:-/home/ubuntu/.config/systemd/user/openclaw-gateway.service.d/override.conf}"
 
-export PATH="/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin:${PATH:-}"
+NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  # Cron is non-interactive; keep Node-based helpers on the NVM default.
+  . "$NVM_DIR/nvm.sh"
+  nvm use --silent default >/dev/null
+fi
+export PATH="${NVM_BIN:-}:/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 
 load_systemd_env() {
   local key="$1"

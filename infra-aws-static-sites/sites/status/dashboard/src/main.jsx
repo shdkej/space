@@ -24,6 +24,67 @@ const fallbackLayers = [
   ["L5", "리소스", "노드와 실행 환경", "ok"],
 ];
 
+const grafanaBase = "https://grafana.oracle.shdkej.com/d";
+const monitoringCatalog = [
+  {
+    layer: "비즈니스 · 사업 성과", uid: "layer-business", metrics: [
+      ["북극성 지표", "입력 필요 · 앱별 핵심 가치와 이벤트 정의"],
+      ["순매출", "입력 필요 · 결제/회계 원천, 통화, 기간"],
+      ["매출 성장률", "입력 필요 · 기간별 순매출 데이터"],
+      ["유료 고객 수", "입력 필요 · 결제 완료 이벤트/API"],
+      ["유료 전환율", "입력 필요 · 적격 사용자 분모와 결제 완료 정의"],
+      ["고객당 매출 (ARPPU)", "입력 필요 · 순매출과 유료 고객 데이터"],
+      ["환불률", "입력 필요 · 결제·환불 원천"],
+      ["고객 획득 비용 (CAC)", "입력 필요 · 광고비와 채널별 유료 전환 연결"],
+    ],
+  },
+  {
+    layer: "고객 · 마케팅", uid: "layer-customer", metrics: [
+      ["신규 사용자 수", "부분 연결 · GA4 blog 확인, afzma 시계열 확인 필요", "warn"],
+      ["세션 수", "연결 확인 · GA4 blog·afzma", "ok"],
+      ["채널별 유입", "연결 확인 · GA4 blog·afzma", "ok"],
+      ["캠페인 전환율", "조건부 · 전환 이벤트와 GA4 key event 정의 필요", "warn"],
+      ["핵심 퍼널 이탈률", "부분 연결 · virtue 판정 시도→저장, 시작자 없으면 N/A", "warn"],
+      ["7일 재방문율", "연결됨 · PostHog virtue", "ok"],
+      ["CTA 클릭률 (CTR)", "입력 필요 · CTA 노출·클릭 이벤트", "none"],
+      ["고객 문의 수", "입력 필요 · 지원 메일 범위와 스레드/메시지 집계 기준", "none"],
+    ],
+  },
+  {
+    layer: "제품 · 사용 품질", uid: "layer-product", metrics: [
+      ["화면 로딩 p95", "입력 필요 · CloudWatch RUM 시계열 없음", "none"],
+      ["화면 로딩 p99", "입력 필요 · CloudWatch RUM 시계열 없음", "none"],
+      ["프론트엔드 예외", "연결됨 · PostHog virtue, blog·afzma는 N/A", "warn"],
+      ["Core Web Vitals", "부분 연결 · virtue LCP·INP 있음, CLS 시계열 없음", "warn"],
+      ["로그인 성공률", "입력 필요 · 로그인 시도·성공 이벤트", "none"],
+      ["결제 성공률", "입력 필요 · 결제 시도·성공·실패 이벤트", "none"],
+      ["제품 세션 수", "연결됨 · PostHog virtue", "ok"],
+      ["핵심 작업 완료율", "부분 연결 · virtue 퍼널만 구성, 앱별 핵심 이벤트 정의 필요", "warn"],
+    ],
+  },
+  {
+    layer: "시스템 · 인프라", uid: "layer-system", metrics: [
+      ["CPU 사용률", "연결됨 · node-exporter", "ok"],
+      ["메모리 사용률", "연결됨 · node-exporter", "ok"],
+      ["디스크 사용률", "연결됨 · node-exporter", "ok"],
+      ["네트워크 트래픽", "연결됨 · node-exporter", "ok"],
+      ["네트워크 지연", "입력 필요 · black-box probe 또는 CloudWatch 지표", "none"],
+      ["노드 헬스체크", "연결됨 · Prometheus 대상 상태", "ok"],
+      ["자동 확장 여유", "입력 필요 · 대상 HPA/ASG 및 최대 용량", "none"],
+      ["AWS 처리량·오류", "부분 연결 · YACE는 scrape 중, 유효 Lambda/DynamoDB 값 확인 필요", "warn"],
+    ],
+  },
+].flatMap((group) => group.metrics.map(([name, detail, state = "none"], index) => ({
+  name,
+  detail,
+  state,
+  readiness: state === "ok" ? "연결됨" : state === "warn" ? (detail.startsWith("조건부") ? "조건부" : "부분 연결") : "입력 필요",
+  layer: index === 0 ? group.layer : null,
+  groupStart: index === 0,
+  url: `${grafanaBase}/${group.uid}`,
+})));
+
+
 const stateText = { ok: "정상", warn: "확인 필요", bad: "중단", none: "데이터 없음" };
 const stateClass = (state) => state === "ok" || state === "warn" || state === "bad" ? state : "none";
 const ago = (iso) => {
@@ -34,11 +95,6 @@ const ago = (iso) => {
   if (mins < 1440) return `${Math.round(mins / 60)}시간 전`;
   return `${Math.round(mins / 1440)}일 전`;
 };
-const metricValue = (series, period) => {
-  const item = (series || []).find((entry) => entry?.metric?.period === period) || series?.[0];
-  return item?.value?.[1] ?? "—";
-};
-const monitoringState = (value, fallback = "none") => value || fallback;
 const ageHours = (item) => Number.isFinite(item?.ageHours) ? item.ageHours : Infinity;
 const humanAge = (hours) => {
   if (!Number.isFinite(hours)) return "확인 시각 없음";
@@ -107,9 +163,9 @@ function DetailDialog({ item, onClose }) {
 }
 
 function DetailRow({ row, index, onOpen }) {
-  const content = <><StatusDot state={row.state} /><span><strong>{row.name}</strong><small>{row.detail}</small></span><span className="row-state">{stateText[row.state] || "확인 대기"}</span>{row.url ? <ExternalLink size={16} /> : <ChevronRight size={16} />}</>;
-  if (row.url) return <a className="detail-row" href={row.url} target="_blank" rel="noreferrer" key={`${row.name}-${index}`}>{content}</a>;
-  return <button className="detail-row" key={`${row.name}-${index}`} onClick={() => onOpen(row)}>{content}</button>;
+  const content = <><StatusDot state={row.state} /><span>{row.layer && <small className="row-group">{row.layer}</small>}<strong>{row.name}</strong><small>{row.detail}</small></span><span className="row-state">{row.readiness || stateText[row.state] || "확인 대기"}</span>{row.url ? <ExternalLink size={16} /> : <ChevronRight size={16} />}</>;
+  if (row.url) return <a className={clsx("detail-row", row.groupStart && "group-start")} href={row.url} target="_blank" rel="noreferrer" key={`${row.name}-${index}`}>{content}</a>;
+  return <button className={clsx("detail-row", row.groupStart && "group-start")} key={`${row.name}-${index}`} onClick={() => onOpen(row)}>{content}</button>;
 }
 
 function App() {
@@ -137,15 +193,8 @@ function App() {
   const crons = live?.crons || [];
   const cronAudit = live?.audit?.sections?.find((section) => section.name === "crons");
   const cronCollectionFailed = cronAudit?.state === "error";
-  const outputs = live?.outputs || []; const monitoring = live?.monitoring || {};
-  const monitoringRows = [
-    { name: "서비스 접점", state: checks.length && checks.every((item) => item.state === "ok") ? "ok" : "warn", detail: `${checks.filter((item) => item.state === "ok").length}/${checks.length || 0}개 응답 정상 · 평균 지연 ${checks.length ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length) : "—"}ms` },
-    { name: "PostHog 제품 지표", state: monitoringState(monitoring.posthog?.state), detail: `활성 사용자 1일 ${metricValue(monitoring.posthog?.metrics?.product_active_users, "1d")}명 · 7일 조회 ${metricValue(monitoring.posthog?.metrics?.product_page_views, "7d")}회 · 전환 ${metricValue(monitoring.posthog?.metrics?.product_conversion_rate)}%` },
-    { name: "비즈니스 지표", state: monitoringState(monitoring.business?.state), detail: monitoring.business?.metrics && Object.values(monitoring.business.metrics).some((items) => items?.length) ? "DAU·가입·매출 수집 중" : "DAU·가입·매출 데이터 없음" },
-    { name: "콘텐츠 지표", state: monitoringState(monitoring.content?.state), detail: monitoring.content?.availability === "missing" ? "연결된 콘텐츠 원천 없음" : "콘텐츠 원천 연결됨" },
-    { name: "인프라 노드", state: monitoringState(monitoring.prometheus?.state), detail: `${(monitoring.prometheus?.nodes || []).filter((node) => node.status === "정상").length}/${(monitoring.prometheus?.nodes || []).length || 0}개 노드 정상` },
-    { name: "GitHub 저장소", state: (monitoring.github || []).length && monitoring.github.every((repo) => repo.state === "ok") ? "ok" : "warn", detail: `${monitoring.github?.length || 0}개 저장소 · 최신 커밋 상태 확인` },
-  ];
+  const outputs = live?.outputs || [];
+  const monitoringRows = monitoringCatalog;
   const loopLabel = crons.length ? `${crons.length}개 주기` : cronCollectionFailed ? "확인 필요" : live ? "0개 주기" : "수집 대기";
   const loopNote = crons.length ? `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신` : cronCollectionFailed ? "크론 목록 수집 오류" : live ? "등록된 크론 없음" : "라이브 피드 확인 대기";
   const loopEmptyMessage = cronCollectionFailed ? "크론 목록을 가져오지 못했습니다. 수집기 상태를 확인하고 있습니다." : live ? "등록된 크론이 없습니다." : "크론 정보를 불러오는 중입니다.";
@@ -164,7 +213,7 @@ function App() {
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
     <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><GlassCard className="hero-glass" intensity={8} thickness={2} tint="rgba(255, 249, 199, .14)" padding="0" radius="30px"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></GlassCard></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <GlassCard className="metric-glass" key={id} intensity={7} thickness={1.6} tint="rgba(255, 249, 199, .1)" padding="0" radius="20px"><button className="metric-card" onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button></GlassCard>)}</section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div><div className="detail-list">{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{view === "monitoring" && <p className="monitoring-note">4개 레이어의 지표 32개입니다. N/A는 미연결·미정의 상태이며, 항목을 누르면 Grafana 상세 화면으로 이동합니다.</p>}<div className="detail-list">{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

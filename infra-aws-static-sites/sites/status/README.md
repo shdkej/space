@@ -14,10 +14,10 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 
 ## Status 홈 재질
 
-운영 Status 홈은 React 18/Vite 화면이며 `@zakisheriff/liquid-glass`의 `GlassCard`를 첫 상태 패널과 세 핵심 경로 카드에 사용합니다. 넓은 저속 배경광을 유리 뒤에 두어 카드 가장자리의 굴절이 보이게 하고, 운영 문구·상태값은 어두운 표면 위 고대비 텍스트로 유지합니다. 기존 `backdrop-filter`만으로 구현한 약한 유리는 더 이상 홈의 주 표면에 사용하지 않습니다.
+운영 Status 홈은 React 18/Vite 화면이며 `@zakisheriff/liquid-glass`의 `GlassCard`를 첫 상태 패널과 세 핵심 경로 카드에 사용합니다. 재질은 유지하되 브랜드 톤은 웜화이트(`#fffdf2`), 레몬(`#FCF9B7`·`#f9df55`), 옅은 하늘색 주변광으로 맞춥니다. 넓은 배경광과 유리의 하이라이트·굴절은 공간감을 보태고, 텍스트와 운영 신호는 짙은 잉크색으로 읽기 쉽게 유지합니다.
 
 - 라이브러리는 작은 수의 큰 패널에만 적용합니다. 상세 목록은 읽기 성능·대비를 위해 일반 CSS 표면을 유지합니다.
-- `prefers-reduced-transparency: reduce`에서는 불투명한 차콜 표면으로 대체하고, `prefers-reduced-motion: reduce`에서는 배경광 움직임을 끕니다.
+- `prefers-reduced-transparency: reduce`에서는 불투명한 웜화이트 표면으로 대체하고, `prefers-reduced-motion: reduce`에서는 배경광 움직임을 끕니다.
 - dependency·소스 위치: `dashboard/package.json`, `dashboard/src/main.jsx`, `dashboard/src/styles.css`; 정적 배포물은 `dist/`입니다.
 
 ## 상태 수집기 운영

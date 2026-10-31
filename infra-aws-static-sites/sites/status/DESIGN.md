@@ -3,6 +3,15 @@
 `https://status.aws.shdkej.com` 의 디자인 의사결정 기록. 구현은 `dist/index.html` + `dist/assets/mascot-ambient.jpg`.
 스펙: `docs/superpowers/specs/2026-07-05-status-saem-3d-redesign-design.md`
 
+## 2026-10-31 — Liquid glass 홈
+
+Status 홈의 유리 재질은 CSS 블러에만 의존하지 않고 `@zakisheriff/liquid-glass`의 `GlassCard`를 큰 상태 패널과 세 경로 카드에 적용한다. 차콜 배경 위에 낮은 채도의 하늘·모래·세이지 광원을 넓게 깔아, 실제 배경이 카드 안에서 굴절되는 깊이를 만든다. 레몬색은 포커스와 정상 상태 강조에 제한한다.
+
+- 배경광은 저속으로 움직이며 `prefers-reduced-motion`에서 정지한다.
+- 유리 표면은 홈의 주요 패널에만 쓰고 상세 행·본문에는 반복하지 않는다.
+- `prefers-reduced-transparency`에서는 불투명 차콜로 대체한다.
+- 데스크톱과 320px 이상 모바일에서 텍스트·점수·버튼의 겹침 및 잘림을 확인한다.
+
 ## 디자인 원칙
 
 - **미니멀 · 균형 · 순환**: status의 첫 화면은 운영 목록이나 점수판이 아니라 `현재 판정 / 신호 균형 / 다음 루프`를 먼저 보여준다.

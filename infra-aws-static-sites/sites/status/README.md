@@ -12,6 +12,14 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 - 상태 수집기: `system-dashboard/collector/` (10분마다 `agents-live.json` 갱신)
 - 배포 도메인: `https://status.aws.shdkej.com`
 
+## Status 홈 재질
+
+운영 Status 홈은 React 18/Vite 화면이며 `@zakisheriff/liquid-glass`의 `GlassCard`를 첫 상태 패널과 세 핵심 경로 카드에 사용합니다. 넓은 저속 배경광을 유리 뒤에 두어 카드 가장자리의 굴절이 보이게 하고, 운영 문구·상태값은 어두운 표면 위 고대비 텍스트로 유지합니다. 기존 `backdrop-filter`만으로 구현한 약한 유리는 더 이상 홈의 주 표면에 사용하지 않습니다.
+
+- 라이브러리는 작은 수의 큰 패널에만 적용합니다. 상세 목록은 읽기 성능·대비를 위해 일반 CSS 표면을 유지합니다.
+- `prefers-reduced-transparency: reduce`에서는 불투명한 차콜 표면으로 대체하고, `prefers-reduced-motion: reduce`에서는 배경광 움직임을 끕니다.
+- dependency·소스 위치: `dashboard/package.json`, `dashboard/src/main.jsx`, `dashboard/src/styles.css`; 정적 배포물은 `dist/`입니다.
+
 ## 상태 수집기 운영
 
 실제 수집기 작업 경로는 `/home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/system-dashboard/collector/`입니다. 10분 주기의 `Status dashboard collector`와 기획·개발·마케팅·디자인·운영 역할별 `Role watcher` 5개가 OpenClaw cron에서 이 경로를 사용합니다. 작업 경로를 바꿀 때는 다섯 watcher 모두의 `cwd`와 실행 인자를 함께 갱신하고, 각 작업을 수동 실행해 최근 상태가 `ok`인지 확인합니다. 비밀값이 든 `.env`는 저장소에 추가하지 않습니다.
@@ -55,6 +63,8 @@ cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/dashboard
 npm install
 npm run build
 ```
+
+`dashboard` 번들은 `npm run build`로 `../dist/`를 갱신합니다. Vite 빌드 뒤 실제 데스크톱·모바일 브라우저 렌더와 라이브 Status 도메인 반영을 확인합니다.
 
 라이브 피드의 `agents`가 비어 있어도 `roleWatchers`의 역할별 관찰을 Agents 메뉴에 표시한다. Loop 메뉴는 `crons` 목록만 표시한다. 크론 수집이 실패하면 카드와 빈 화면에 `확인 필요`·수집기 확인 안내를, 정상적으로 0개면 `등록된 크론 없음`을 보여 구분한다. 크론 목록이 복구되면 각 크론의 설정 상세를 연다.
 

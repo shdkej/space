@@ -1,0 +1,3 @@
+[submodule "infra-aws-static-sites/sites/status/system-dashboard"]
+	path = infra-aws-static-sites/sites/status/system-dashboard
+	url = https://github.com/shdkej/system-dashboard.git

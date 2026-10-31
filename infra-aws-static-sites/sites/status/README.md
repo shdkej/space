@@ -9,6 +9,7 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 - 운영 화면: `dist/index.html`
 - 실시간 에이전트 상황실: `dist/agents/index.html` → `https://status.aws.shdkej.com/agents/`
 - UI 재질 테스트: `dist/ui-material-test.html`
+- 상태 수집기: `system-dashboard/collector/` (10분마다 `agents-live.json` 갱신)
 - 배포 도메인: `https://status.aws.shdkej.com`
 
 배포 후 테스트 화면은 `https://status.aws.shdkej.com/ui-material-test.html`에서 확인합니다.

@@ -12,6 +12,10 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 - 상태 수집기: `system-dashboard/collector/` (10분마다 `agents-live.json` 갱신)
 - 배포 도메인: `https://status.aws.shdkej.com`
 
+## 상태 수집기 운영
+
+실제 수집기 작업 경로는 `/home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/system-dashboard/collector/`입니다. 10분 주기의 `Status dashboard collector`와 기획·개발·마케팅·디자인·운영 역할별 `Role watcher` 5개가 OpenClaw cron에서 이 경로를 사용합니다. 작업 경로를 바꿀 때는 다섯 watcher 모두의 `cwd`와 실행 인자를 함께 갱신하고, 각 작업을 수동 실행해 최근 상태가 `ok`인지 확인합니다. 비밀값이 든 `.env`는 저장소에 추가하지 않습니다.
+
 배포 후 테스트 화면은 `https://status.aws.shdkej.com/ui-material-test.html`에서 확인합니다.
 
 ## UI 재질 테스트 범위

@@ -51,7 +51,7 @@
 | 파일 | 생산자 | 케이던스 | 내용 |
 |------|--------|----------|------|
 | `status.json` | `scripts/build-status-json.py` (배포 시) | 배포마다 | surfaces·deployments·정적 agents(폴백용) |
-| `agents-live.json` | `~/workspace/system-dashboard/collector` (systemd timer) | 10분 | `agents`(에이전트 로스터 롤업) + `outputs`(산출물 신선도) + `system`(4레이어 판정 + PDCA·백로그·인텐트 카운트 — CMS system-panel 판정 로직과 동일 유지). 레이어가 ok가 아니면 `reason`(판정 근거 한 줄, 크론 이름 등 비공개 상세는 제외)을 함께 낸다. 내용·이름·UUID 등 상세는 CMS (스펙: `2026-07-05-status-agents-live-design.md`) |
+| `agents-live.json` | `/home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/system-dashboard/collector` (OpenClaw cron, 10분) | 10분 | `agents`(에이전트 로스터 롤업) + `outputs`(산출물 신선도) + `system`(4레이어 판정 + PDCA·백로그·인텐트 카운트 — CMS system-panel 판정 로직과 동일 유지). 레이어가 ok가 아니면 `reason`(판정 근거 한 줄, 크론 이름 등 비공개 상세는 제외)을 함께 낸다. 내용·이름·UUID 등 상세는 CMS (스펙: `2026-07-05-status-agents-live-design.md`) |
 
 공개 System 상세에는 운영 레이어 상태와 역할 관찰 수만 집계한다. CMS System·Flow 원본 스냅샷, 개별 실행 내용, 프롬프트, 인텐트 상세는 공개 화면으로 복사하지 않는다. CMS는 구성·콘텐츠 관리에 집중하고 운영 요약 진입점은 Status 대시보드로 통일한다.
 

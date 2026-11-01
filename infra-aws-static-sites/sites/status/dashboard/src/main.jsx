@@ -5,7 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { GlassCard } from "@zakisheriff/liquid-glass";
 import "@zakisheriff/liquid-glass/styles.css";
-import { Activity, ArrowUpRight, Check, ChevronRight, CircleAlert, Clock3, ExternalLink, Gauge, Layers3, RefreshCw, Server, Sparkles, X } from "lucide-react";
+import { Activity, ArrowUpRight, Check, ChevronDown, ChevronRight, CircleAlert, Clock3, ExternalLink, Gauge, Layers3, RefreshCw, Server, Sparkles, X } from "lucide-react";
 import { clsx } from "clsx";
 import "./styles.css";
 
@@ -74,15 +74,17 @@ const monitoringCatalog = [
       ["AWS 처리량·오류", "부분 연결 · YACE는 scrape 중, 유효 Lambda/DynamoDB 값 확인 필요", "warn"],
     ],
   },
-].flatMap((group) => group.metrics.map(([name, detail, state = "none"], index) => ({
-  name,
-  detail,
-  state,
-  readiness: state === "ok" ? "연결됨" : state === "warn" ? (detail.startsWith("조건부") ? "조건부" : "부분 연결") : "입력 필요",
-  layer: index === 0 ? group.layer : null,
-  groupStart: index === 0,
-  url: `${grafanaBase}/${group.uid}`,
-})));
+];
+const monitoringGroups = monitoringCatalog.map((group) => ({
+  ...group,
+  rows: group.metrics.map(([name, detail, state = "none"]) => ({
+    name,
+    detail,
+    state,
+    readiness: state === "ok" ? "연결됨" : state === "warn" ? (detail.startsWith("조건부") ? "조건부" : "부분 연결") : "입력 필요",
+    url: `${grafanaBase}/${group.uid}`,
+  })),
+}));
 
 
 const stateText = { ok: "정상", warn: "확인 필요", bad: "중단", none: "데이터 없음" };
@@ -194,7 +196,7 @@ function App() {
   const cronAudit = live?.audit?.sections?.find((section) => section.name === "crons");
   const cronCollectionFailed = cronAudit?.state === "error";
   const outputs = live?.outputs || [];
-  const monitoringRows = monitoringCatalog;
+  const monitoringRows = monitoringGroups.flatMap((group) => group.rows);
   const loopLabel = crons.length ? `${crons.length}개 주기` : cronCollectionFailed ? "확인 필요" : live ? "0개 주기" : "수집 대기";
   const loopNote = crons.length ? `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신` : cronCollectionFailed ? "크론 목록 수집 오류" : live ? "등록된 크론 없음" : "라이브 피드 확인 대기";
   const loopEmptyMessage = cronCollectionFailed ? "크론 목록을 가져오지 못했습니다. 수집기 상태를 확인하고 있습니다." : live ? "등록된 크론이 없습니다." : "크론 정보를 불러오는 중입니다.";
@@ -213,7 +215,7 @@ function App() {
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
     <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><GlassCard className="hero-glass" intensity={8} thickness={2} tint="rgba(255, 249, 199, .14)" padding="0" radius="30px"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></GlassCard></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <GlassCard className="metric-glass" key={id} intensity={7} thickness={1.6} tint="rgba(255, 249, 199, .1)" padding="0" radius="20px"><button className="metric-card" onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button></GlassCard>)}</section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{view === "monitoring" && <p className="monitoring-note">4개 레이어의 지표 32개입니다. N/A는 미연결·미정의 상태이며, 항목을 누르면 Grafana 상세 화면으로 이동합니다.</p>}<div className="detail-list">{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{view === "monitoring" && <p className="monitoring-note">4개 레이어에 지표가 8개씩 있습니다. 레이어를 열어 데이터 준비 상태를 확인하고, 항목을 누르면 Grafana 상세 화면으로 이동합니다.</p>}<div className={clsx("detail-list", view === "monitoring" && "monitoring-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => <DetailRow row={row} index={groupIndex * 8 + index} onOpen={setSelected} key={`${group.uid}-${row.name}`} />)}</div></details>) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

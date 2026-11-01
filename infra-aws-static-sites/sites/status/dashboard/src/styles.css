@@ -1527,6 +1527,7 @@ body {
 .history-item-copy small { color: var(--muted); font-size: 11px; line-height: 1.45; }
 .history-item-summary .row-state { flex: 0 0 auto; white-space: nowrap; text-align: right; }
 .history-item-chevron { flex: 0 0 16px; margin-left: auto; color: var(--muted); transform: rotate(-90deg); transition: transform 160ms ease; }
+.monitoring-group .history-item-summary { display: flex; }
 .history-item[open] .history-item-chevron { transform: rotate(0); }
 .history-item-body {
   margin: 0 0 16px 26px;

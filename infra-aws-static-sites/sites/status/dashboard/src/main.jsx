@@ -196,6 +196,11 @@ function HistoryChart({ metric, row, range }) {
   let min = metric?.kind === "state" ? 0 : Math.min(...values), max = metric?.kind === "state" ? 2 : Math.max(...values);
   if (min === max) { const padding = Math.abs(min) * 0.08 || 1; min -= padding; max += padding; }
   const minTime = cutoff, maxTime = Date.now() / 1000;
+  const earliestPoint = Math.min(...points.map(([time]) => time));
+  const latestPoint = Math.max(...points.map(([time]) => time));
+  const observedDays = (latestPoint - earliestPoint) / 86400;
+  const observedLabel = observedDays >= 1 ? `${observedDays.toFixed(1)}일 구간` : "1일 미만 구간";
+  const sampleCount = new Set(points.map(([time]) => time)).size;
   const x = (time) => left + ((time - minTime) / Math.max(1, maxTime - minTime)) * (width - left - right);
   const y = (value) => top + ((max - Number(value)) / (max - min)) * (height - top - bottom);
   const palette = ["#9a7b18", "#318277", "#b85c44", "#6670a8"];
@@ -218,11 +223,11 @@ function HistoryChart({ metric, row, range }) {
         const value = metric?.kind === "state" ? step : max - ((max - min) * step / (steps.length - 1));
         return <g key={step}><line x1={left} x2={width - right} y1={y(value)} y2={y(value)} className="history-gridline" /><text x={left - 8} y={y(value) + 4} textAnchor="end" className="history-axis-label">{metric?.kind === "state" ? stateLabel(value) : value.toLocaleString("ko-KR", { maximumFractionDigits: 1 })}</text></g>;
       })}
-      {series.map((entry, index) => <path key={entry.name} d={pathFor(entry.points)} fill="none" stroke={palette[index % palette.length]} strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}
+      {series.map((entry, index) => <g key={entry.name}><path d={pathFor(entry.points)} fill="none" stroke={palette[index % palette.length]} strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />{entry.points.length < 48 && entry.points.filter(([, value]) => value !== null).map(([time, value]) => <circle key={time} cx={x(time)} cy={y(value)} r="3" fill={palette[index % palette.length]} stroke="#fffdf2" strokeWidth="1.2" />)}</g>)}
       <text x={left} y={height - 6} className="history-axis-label">{chartDate(cutoff)}</text><text x={width - right} y={height - 6} textAnchor="end" className="history-axis-label">지금</text>
     </svg>
     <div className="history-legend">{series.map((entry, index) => { const latest = lastPoint(entry); return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{latest ? displayValue(latest[1], metric?.unit, metric?.kind) : "—"}</strong></span>; })}</div>
-    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · 최근 값 기준으로 표시합니다</small>
+    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · 실제 기록 {chartDate(earliestPoint)}~{chartDate(latestPoint)} · {observedLabel} · {sampleCount.toLocaleString("ko-KR")}개 시점</small>
   </div>;
 }
 

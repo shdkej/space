@@ -28,56 +28,57 @@ const grafanaBase = "https://grafana.oracle.shdkej.com/d";
 const monitoringCatalog = [
   {
     layer: "비즈니스 · 사업 성과", uid: "layer-business", metrics: [
-      ["북극성 지표", "입력 필요 · 앱별 핵심 가치와 이벤트 정의"],
-      ["순매출", "입력 필요 · 결제/회계 원천, 통화, 기간"],
-      ["매출 성장률", "입력 필요 · 기간별 순매출 데이터"],
-      ["유료 고객 수", "입력 필요 · 결제 완료 이벤트/API"],
-      ["유료 전환율", "입력 필요 · 적격 사용자 분모와 결제 완료 정의"],
-      ["고객당 매출 (ARPPU)", "입력 필요 · 순매출과 유료 고객 데이터"],
-      ["환불률", "입력 필요 · 결제·환불 원천"],
-      ["고객 획득 비용 (CAC)", "입력 필요 · 광고비와 채널별 유료 전환 연결"],
+      ["business.north_star", "북극성 지표", "입력 필요 · 앱별 핵심 가치와 이벤트 정의"],
+      ["business.revenue", "순매출", "입력 필요 · 결제/회계 원천, 통화, 기간"],
+      ["business.revenue_growth", "매출 성장률", "입력 필요 · 기간별 순매출 데이터"],
+      ["business.paid_customers", "유료 고객 수", "입력 필요 · 결제 완료 이벤트/API"],
+      ["business.paid_conversion", "유료 전환율", "입력 필요 · 적격 사용자 분모와 결제 완료 정의"],
+      ["business.arppu", "고객당 매출 (ARPPU)", "입력 필요 · 순매출과 유료 고객 데이터"],
+      ["business.refunds", "환불률", "입력 필요 · 결제·환불 원천"],
+      ["business.cac", "고객 획득 비용 (CAC)", "입력 필요 · 광고비와 채널별 유료 전환 연결"],
     ],
   },
   {
     layer: "고객 · 마케팅", uid: "layer-customer", metrics: [
-      ["신규 사용자 수", "부분 연결 · GA4 blog 확인, afzma 시계열 확인 필요", "warn"],
-      ["세션 수", "연결 확인 · GA4 blog·afzma", "ok"],
-      ["채널별 유입", "연결 확인 · GA4 blog·afzma", "ok"],
-      ["캠페인 전환율", "조건부 · 전환 이벤트와 GA4 key event 정의 필요", "warn"],
-      ["핵심 퍼널 이탈률", "부분 연결 · virtue 판정 시도→저장, 시작자 없으면 N/A", "warn"],
-      ["7일 재방문율", "연결됨 · PostHog virtue", "ok"],
-      ["CTA 클릭률 (CTR)", "입력 필요 · CTA 노출·클릭 이벤트", "none"],
-      ["고객 문의 수", "입력 필요 · 지원 메일 범위와 스레드/메시지 집계 기준", "none"],
+      ["customer.new_users", "신규 사용자 수", "부분 연결 · GA4 blog 확인, afzma 시계열 확인 필요", "warn"],
+      ["customer.sessions", "세션 수", "연결 확인 · PostHog virtue", "ok"],
+      ["customer.channels", "채널별 유입", "부분 연결 · GA4 채널 차원 필요", "warn"],
+      ["customer.campaign_conversion", "캠페인 전환율", "조건부 · 전환 이벤트와 GA4 key event 정의 필요", "warn"],
+      ["customer.funnel_dropoff", "핵심 퍼널 이탈률", "부분 연결 · virtue 판정 시도→저장, 시작자 없으면 N/A", "warn"],
+      ["customer.retention", "7일 재방문율", "연결됨 · PostHog virtue", "ok"],
+      ["customer.ctr", "CTA 클릭률 (CTR)", "입력 필요 · CTA 노출·클릭 이벤트", "none"],
+      ["customer.support", "고객 문의 수", "입력 필요 · 지원 메일 범위와 스레드/메시지 집계 기준", "none"],
     ],
   },
   {
     layer: "제품 · 사용 품질", uid: "layer-product", metrics: [
-      ["화면 로딩 p95", "입력 필요 · CloudWatch RUM 시계열 없음", "none"],
-      ["화면 로딩 p99", "입력 필요 · CloudWatch RUM 시계열 없음", "none"],
-      ["프론트엔드 예외", "연결됨 · PostHog virtue, blog·afzma는 N/A", "warn"],
-      ["Core Web Vitals", "부분 연결 · virtue LCP·INP 있음, CLS 시계열 없음", "warn"],
-      ["로그인 성공률", "입력 필요 · 로그인 시도·성공 이벤트", "none"],
-      ["결제 성공률", "입력 필요 · 결제 시도·성공·실패 이벤트", "none"],
-      ["제품 세션 수", "연결됨 · PostHog virtue", "ok"],
-      ["핵심 작업 완료율", "부분 연결 · virtue 퍼널만 구성, 앱별 핵심 이벤트 정의 필요", "warn"],
+      ["product.load_p95", "화면 로딩 p95", "입력 필요 · CloudWatch RUM 시계열 없음", "none"],
+      ["product.load_p99", "화면 로딩 p99", "입력 필요 · CloudWatch RUM 시계열 없음", "none"],
+      ["product.frontend_errors", "프론트엔드 예외", "연결됨 · PostHog virtue, blog·afzma는 N/A", "warn"],
+      ["product.web_vitals", "Core Web Vitals", "부분 연결 · virtue LCP·INP 있음, CLS 시계열 없음", "warn"],
+      ["product.login_success", "로그인 성공률", "입력 필요 · 로그인 시도·성공 이벤트", "none"],
+      ["product.payment_success", "결제 성공률", "입력 필요 · 결제 시도·성공·실패 이벤트", "none"],
+      ["product.sessions", "제품 세션 수", "연결됨 · PostHog virtue", "ok"],
+      ["product.task_completion", "핵심 작업 완료율", "부분 연결 · virtue 퍼널만 구성, 앱별 핵심 이벤트 정의 필요", "warn"],
     ],
   },
   {
     layer: "시스템 · 인프라", uid: "layer-system", metrics: [
-      ["CPU 사용률", "연결됨 · node-exporter", "ok"],
-      ["메모리 사용률", "연결됨 · node-exporter", "ok"],
-      ["디스크 사용률", "연결됨 · node-exporter", "ok"],
-      ["네트워크 트래픽", "연결됨 · node-exporter", "ok"],
-      ["네트워크 지연", "입력 필요 · black-box probe 또는 CloudWatch 지표", "none"],
-      ["노드 헬스체크", "연결됨 · Prometheus 대상 상태", "ok"],
-      ["자동 확장 여유", "입력 필요 · 대상 HPA/ASG 및 최대 용량", "none"],
-      ["AWS 처리량·오류", "부분 연결 · YACE는 scrape 중, 유효 Lambda/DynamoDB 값 확인 필요", "warn"],
+      ["system.cpu", "CPU 사용률", "연결됨 · node-exporter", "ok"],
+      ["system.memory", "메모리 사용률", "연결됨 · node-exporter", "ok"],
+      ["system.disk", "디스크 사용률", "연결됨 · node-exporter", "ok"],
+      ["system.network", "네트워크 트래픽", "연결됨 · node-exporter", "ok"],
+      ["system.latency", "네트워크 지연", "부분 연결 · Prometheus prober의 p95 응답 시간", "warn"],
+      ["system.node_health", "노드 헬스체크", "연결됨 · Prometheus 대상 상태", "ok"],
+      ["system.autoscale", "자동 확장 여유", "입력 필요 · 대상 HPA/ASG 및 최대 용량", "none"],
+      ["system.aws", "AWS 처리량·오류", "부분 연결 · Lambda 처리량 시계열", "warn"],
     ],
   },
 ];
 const monitoringGroups = monitoringCatalog.map((group) => ({
   ...group,
-  rows: group.metrics.map(([name, detail, state = "none"]) => ({
+  rows: group.metrics.map(([metricId, name, detail, state = "none"]) => ({
+    metricId,
     name,
     detail,
     state,
@@ -170,9 +171,71 @@ function DetailRow({ row, index, onOpen }) {
   return <button className={clsx("detail-row", row.groupStart && "group-start")} key={`${row.name}-${index}`} onClick={() => onOpen(row)}>{content}</button>;
 }
 
+const timeRanges = [
+  { id: "day", label: "일간", hours: 24 },
+  { id: "week", label: "주간", hours: 24 * 7 },
+  { id: "month", label: "월간", hours: 24 * 30 },
+];
+const stateLabel = (value) => value >= 1.5 ? "정상" : value >= 0.5 ? "주의" : "중단";
+const chartDate = (epoch) => new Date(epoch * 1000).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+const displayValue = (value, unit, kind) => kind === "state" ? stateLabel(value) : `${Number(value).toLocaleString("ko-KR", { maximumFractionDigits: 2 })} ${unit || ""}`.trim();
+
+function HistoryChart({ metric, row, range }) {
+  const selectedRange = timeRanges.find((item) => item.id === range) || timeRanges[0];
+  const cutoff = Date.now() / 1000 - selectedRange.hours * 3600;
+  const sourceSeries = (metric?.series || []).filter((series) => !row?.seriesName || series.name === row.seriesName);
+  const series = sourceSeries.map((entry) => ({ ...entry, points: (entry.points || []).filter(([time]) => time >= cutoff) })).filter((entry) => entry.points.length);
+  const points = series.flatMap((entry) => entry.points).filter((point) => point[1] !== null && Number.isFinite(Number(point[1])));
+  if (!points.length) {
+    const hasAnyPoint = (metric?.series || []).some((entry) => (entry.points || []).length);
+    const headline = hasAnyPoint ? "선택한 기간에 표시할 측정값이 없습니다." : metric?.source === "Prometheus" ? "Prometheus에서 현재 시계열을 받지 못했습니다." : row?.detail?.startsWith("입력 필요") ? "이 지표의 데이터 원천을 연결해야 그래프가 시작됩니다." : "수집기가 첫 시계열을 발행하면 그래프가 나타납니다.";
+    return <div className="history-empty">{headline}<small>{metric?.source === "Prometheus" ? "Prometheus 쿼리 결과가 비어 있습니다. exporter·이벤트 설정을 확인하세요." : row?.detail || "수집기가 10분마다 상태를 기록합니다."}</small></div>;
+  }
+  const width = 680, height = 174, left = 42, right = 12, top = 12, bottom = 28;
+  const values = points.map((point) => Number(point[1]));
+  let min = metric?.kind === "state" ? 0 : Math.min(...values), max = metric?.kind === "state" ? 2 : Math.max(...values);
+  if (min === max) { const padding = Math.abs(min) * 0.08 || 1; min -= padding; max += padding; }
+  const minTime = cutoff, maxTime = Date.now() / 1000;
+  const x = (time) => left + ((time - minTime) / Math.max(1, maxTime - minTime)) * (width - left - right);
+  const y = (value) => top + ((max - Number(value)) / (max - min)) * (height - top - bottom);
+  const palette = ["#9a7b18", "#318277", "#b85c44", "#6670a8"];
+  const pathFor = (values) => {
+    let previous = null, path = "";
+    for (const [time, value] of values) {
+      if (value === null || !Number.isFinite(Number(value))) { previous = null; continue; }
+      const px = x(time).toFixed(1), py = y(value).toFixed(1);
+      if (!previous) path += `M${px},${py}`;
+      else if (metric?.kind === "state") path += `H${px}V${py}`;
+      else path += `L${px},${py}`;
+      previous = [px, py];
+    }
+    return path;
+  };
+  const lastPoint = (entry) => [...entry.points].reverse().find((point) => point[1] !== null);
+  return <div className="history-chart-wrap">
+    <svg className="history-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${selectedRange.label} 시계열 그래프`}>
+      {(metric?.kind === "state" ? [0, 1, 2] : [0, 1, 2, 3]).map((step, index, steps) => {
+        const value = metric?.kind === "state" ? step : max - ((max - min) * step / (steps.length - 1));
+        return <g key={step}><line x1={left} x2={width - right} y1={y(value)} y2={y(value)} className="history-gridline" /><text x={left - 8} y={y(value) + 4} textAnchor="end" className="history-axis-label">{metric?.kind === "state" ? stateLabel(value) : value.toLocaleString("ko-KR", { maximumFractionDigits: 1 })}</text></g>;
+      })}
+      {series.map((entry, index) => <path key={entry.name} d={pathFor(entry.points)} fill="none" stroke={palette[index % palette.length]} strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}
+      <text x={left} y={height - 6} className="history-axis-label">{chartDate(cutoff)}</text><text x={width - right} y={height - 6} textAnchor="end" className="history-axis-label">지금</text>
+    </svg>
+    <div className="history-legend">{series.map((entry, index) => { const latest = lastPoint(entry); return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{latest ? displayValue(latest[1], metric?.unit, metric?.kind) : "—"}</strong></span>; })}</div>
+    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · 최근 값 기준으로 표시합니다</small>
+  </div>;
+}
+
+function HistoryItem({ row, metric, range, index }) {
+  return <details className="history-item" key={`${row.metricId || row.name}-${index}`}>
+    <summary className="history-item-summary"><StatusDot state={row.state} /><span className="history-item-copy"><strong>{row.name}</strong><small>{row.detail || "실시간 상태 변화"}</small></span><span className="row-state">{row.readiness || stateText[row.state] || "확인 대기"}</span><ChevronDown className="history-item-chevron" size={16} aria-hidden="true" /></summary>
+    <div className="history-item-body"><HistoryChart metric={metric} row={row} range={range} />{row.url && <a className="history-grafana-link" href={row.url} target="_blank" rel="noreferrer">Grafana에서 원본 보기 <ExternalLink size={14} /></a>}</div>
+  </details>;
+}
+
 function App() {
-  const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [view, setView] = React.useState("home"); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
-  const load = React.useCallback(async () => { setLoading(true); const [a, b] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json())]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setLoading(false); }, []);
+  const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [history, setHistory] = React.useState(null); const [range, setRange] = React.useState("day"); const [view, setView] = React.useState("home"); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
+  const load = React.useCallback(async () => { setLoading(true); const [a, b, c] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json()), fetch("./metrics-history.json", { cache: "no-store" }).then((r) => r.ok ? r.json() : null)]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setHistory(c.status === "fulfilled" ? c.value : null); setLoading(false); }, []);
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
   const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks });
   const layers = live?.system?.layers?.length ? live.system.layers.map((x, i) => [`L${i + 1}`, x.name || x.key || "운영 레이어", x.detail || x.reason || "라이브 상태 확인", x.state || "warn"]) : fallbackLayers;
@@ -209,13 +272,20 @@ function App() {
     state: flowRoleCount > 0 && flowActiveCount === flowRoleCount ? "ok" : flowRoleCount > 0 ? "warn" : "none",
     detail: flowRoleCount ? `${flowActiveCount}/${flowRoleCount}개 역할 관찰 중 · 개별 실행 내용은 공개하지 않습니다.` : "역할별 실행 요약을 기다리고 있습니다."
   };
-  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: x.detail || `${x.crons || x.executionLogs?.length || 0}개 실행 기록` })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : view === "monitoring" ? monitoringRows : [...layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail })), flowSummary];
+  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: x.detail || `${x.crons || x.executionLogs?.length || 0}개 실행 기록`, metricId: "agents.status", seriesName: x.name || x.id })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : view === "monitoring" ? monitoringRows : [...layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail, metricId: `system.layer.${key}` })), { ...flowSummary, metricId: "system.flow" }];
+  const hasHistoryView = ["system", "agents", "monitoring"].includes(view);
+  const chartMetric = (row) => history?.metrics?.[row.metricId] || null;
   const navigate = (next) => { setView(next); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
   return <Tooltip.Provider delayDuration={250}><div className={clsx("app-shell", view === "home" && "home-mode")}>
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
     <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><GlassCard className="hero-glass" intensity={8} thickness={2} tint="rgba(255, 249, 199, .14)" padding="0" radius="30px"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></GlassCard></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <GlassCard className="metric-glass" key={id} intensity={7} thickness={1.6} tint="rgba(255, 249, 199, .1)" padding="0" radius="20px"><button className="metric-card" onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button></GlassCard>)}</section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{view === "monitoring" && <p className="monitoring-note">4개 레이어에 지표가 8개씩 있습니다. 레이어를 열어 데이터 준비 상태를 확인하고, 항목을 누르면 해당 레이어의 Grafana 대시보드로 이동합니다.</p>}<div className={clsx("detail-list", view === "monitoring" && "monitoring-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => <DetailRow row={row} index={groupIndex * 8 + index} onOpen={setSelected} key={`${group.uid}-${row.name}`} />)}</div></details>) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>
+      {hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `시계열 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong><small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small></button>)}</div></div>}
+      {view === "monitoring" && <p className="monitoring-note">레이어를 펼친 뒤 지표를 누르면 아래 그래프를 볼 수 있습니다. 측정값이 없는 항목은 실제 원천이 연결될 때까지 비워둡니다.</p>}
+      <div className={clsx("detail-list", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>
+        {view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => <HistoryItem row={{ ...row, readiness: row.readiness, url: `${grafanaBase}/${group.uid}` }} metric={chartMetric(row)} range={range} index={groupIndex * 8 + index} key={`${group.uid}-${row.name}`} />)}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={`${row.metricId}-${row.seriesName || row.name}-${i}`} />) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}
+      </div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

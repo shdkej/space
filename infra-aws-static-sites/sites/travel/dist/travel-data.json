@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T14:40:03.877656+00:00",
+  "generatedAt": "2026-11-07T14:40:04.441100+00:00",
   "calendar": {
     "id": "d4c72556bafa6b2d7dce0b7391b88c2d2279bfba155da4616f59d13b1246eb4c@group.calendar.google.com",
     "name": "회고"
@@ -15,15 +15,15 @@
     "reservedPctMin": 112.1,
     "dailyBudgetMinKrw": 82192,
     "dailyBudgetMaxKrw": 109589,
-    "reserveBurnKrw": 205120,
+    "reserveBurnKrw": 185854,
     "firstTravelExpenseDate": "2026-05-10",
     "planningDays": 365,
     "mode": "travel"
   },
   "current": {
-    "date": "2026-10-20",
-    "location": "London",
-    "mapQuery": "London, United Kingdom"
+    "date": "2026-11-06",
+    "location": "Peru",
+    "mapQuery": "Peru, Peru"
   },
   "categoryTotals": {
     "other": 16581452,
@@ -13565,7 +13565,7 @@
   ],
   "schengen": {
     "entryDate": "2026-07-08",
-    "asOf": "2026-10-20",
+    "asOf": "2026-11-06",
     "limitDays": 90,
     "usedDays": 90,
     "remainingDays": 0,
@@ -13743,16 +13743,6 @@
   ],
   "reflections": [
     {
-      "id": "mnsciq8e911frqlc3qbdi6g15s",
-      "date": "2026-09-10",
-      "title": "내일 의도 / 건물과 배경이 함께 남을 조건 한 가지를 적기",
-      "intent": "건물이 놓일 자리의 배경을 먼저 봅니다.\\n첫 손잡이: 건물과 배경이 함께 남을 조건 한 가지를 적습니다.",
-      "did": null,
-      "why": null,
-      "carry": null,
-      "drop": null
-    },
-    {
       "id": "o32kqn2upagihl0d3a58m1ie2s",
       "date": "2026-09-15",
       "title": "실제 흐름 / 폼페이를 직접 지나오다",
@@ -13860,6 +13850,16 @@
       "did": null,
       "why": null,
       "carry": "사례 10개를 상황·원하는 판단·좋은 답의 기준으로 기록한다.",
+      "drop": null
+    },
+    {
+      "id": "6r400erp0m6q1tdckrcqaec5po",
+      "date": "2026-11-06",
+      "title": "내일 의도 / 사진 한 장에 레퍼런스의 쓰임 붙이기",
+      "intent": "사진을 다시 볼 때 기억할 인사이트와 레퍼런스의 쓰임을 구분한다. 첫 손잡이: 사진 한 장을 ‘기억할 인사이트 / 직접 써볼 레퍼런스 / 참고용 레퍼런스’ 중 하나로 표시해 본다. 변경 조건: 이 분류로도 다시 찾기 어렵다면 항목을 늘리기보다 이름을 고쳐 본다.",
+      "did": null,
+      "why": null,
+      "carry": null,
       "drop": null
     }
   ]

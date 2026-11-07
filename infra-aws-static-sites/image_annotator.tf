@@ -84,11 +84,11 @@ resource "aws_lambda_permission" "image_annotator_function_url" {
 }
 
 resource "aws_lambda_permission" "image_annotator_invoke" {
-  statement_id           = "AllowPublicFunctionUrlInvokeFunction"
-  action                 = "lambda:InvokeFunction"
-  function_name          = aws_lambda_function.image_annotator.function_name
-  principal              = "*"
-  function_url_auth_type = "NONE"
+  statement_id             = "AllowPublicFunctionUrlInvokeFunction"
+  action                   = "lambda:InvokeFunction"
+  function_name            = aws_lambda_function.image_annotator.function_name
+  principal                = "*"
+  invoked_via_function_url = true
 }
 
 output "image_annotator" {

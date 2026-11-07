@@ -28,6 +28,12 @@ module "app_static_sites" {
     domain_name  = trimsuffix(replace(aws_lambda_function_url.timeline.function_url, "https://", ""), "/")
     path_pattern = "/api/*"
     origin_path  = ""
+    }]) : each.key == "image-annotator" ? concat(try(each.value.api_origins, []), [{
+    origin_id    = "image-annotator-api"
+    domain_name  = trimsuffix(replace(aws_lambda_function_url.image_annotator.function_url, "https://", ""), "/")
+    path_pattern = "/api/*"
+    origin_path  = ""
+    read_timeout = 60
   }]) : try(each.value.api_origins, [])
   spa_fallback = try(each.value.spa_fallback, true)
   tags = merge(

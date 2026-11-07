@@ -118,6 +118,7 @@ resource "aws_cloudfront_distribution" "site" {
         https_port             = 443
         origin_protocol_policy = "https-only"
         origin_ssl_protocols   = ["TLSv1.2"]
+        origin_read_timeout    = try(origin.value.read_timeout, 30)
       }
     }
   }

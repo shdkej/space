@@ -43,6 +43,23 @@ variable "delete_api_token" {
   sensitive   = true
 }
 
+variable "archive_proxy_token" {
+  description = "Secret used only between the Cloudflare upload Worker and the image archive API."
+  type        = string
+  sensitive   = true
+}
+
+variable "archive_owner_email" {
+  description = "The single identity allowed to use the browser upload endpoint."
+  type        = string
+}
+
+variable "archive_api_url" {
+  description = "Image archive classification API URL."
+  type        = string
+  default     = "https://images.aws.shdkej.com/api/classify"
+}
+
 variable "max_width" {
   description = "리사이즈 최대 가로 픽셀 (이보다 크면 축소, 작으면 원본 유지)"
   type        = number

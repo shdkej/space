@@ -13,6 +13,7 @@ OpenClaw가 사진이나 짧은 mp4 영상을 보내면 Cloudflare Worker가 R2�
 - **리사이즈**: Worker의 `IMAGES` 바인딩 사용. wasm을 Worker CPU에서 돌리는 게 아니라 Cloudflare 인프라가 변환을 처리해 안정적이다. **업로드 시 1회만** 변환하므로 변환 과금이 미미하고, 조회는 R2 정적 서빙이라 변환 비용 0.
 - **mp4**: `video/mp4`는 변환하지 않고 그대로 R2에 저장한다. 기본 최대 용량은 25MB이며, 실제 길이 제한은 OpenClaw/SAM 업로드 전에 `ffprobe`로 5초 내외인지 확인한다. Worker는 `Content-Length`가 있는 raw body mp4만 받는다.
 - **인증**: 업로드는 `Authorization: Bearer <UPLOAD_TOKEN>`. 소프트 삭제는 별도 `Authorization: Bearer <DELETE_TOKEN>`. 조회는 공개.
+- **이미지 아카이브 브라우저 업로드·재분류**: `/browser-upload`와 `/browser-reclassify` 경로만 Cloudflare Access로 보호하고 한 개의 소유자 이메일을 허용한다. Access 통과 후 Worker도 이메일을 다시 확인하며, R2 저장 뒤 서버 간 비밀 토큰으로 이미지 아카이브 API를 호출한다. 기존 OpenClaw Bearer 업로드·공개 조회 경로는 유지한다.
 - **공개**: R2 커스텀 도메인으로 CDN 캐싱.
 
 ## 사전 준비
@@ -28,7 +29,8 @@ OpenClaw가 사진이나 짧은 mp4 영상을 보내면 Cloudflare Worker가 R2�
 cd infra-cloudflare-images
 
 cp terraform.tfvars.example terraform.tfvars
-# terraform.tfvars 편집: account_id, zone_id, public_domain, upload_route, upload_api_token
+# terraform.tfvars 편집: account_id, zone_id, public_domain, upload_route,
+# upload_api_token, archive_owner_email, archive_proxy_token
 
 export CLOUDFLARE_API_TOKEN=<발급한_토큰>   # 또는 tfvars의 cloudflare_api_token
 

@@ -20,6 +20,13 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (url.pathname === "/browser-upload") {
+      return browserUpload(request, env);
+    }
+    if (url.pathname === "/browser-reclassify") {
+      return browserReclassify(request, env);
+    }
+
     // 조회 엔드포인트(공개): 저장된 이미지 목록 / 랜덤 1장
     if (request.method === "GET" && url.pathname === "/list") {
       return listImages(request, env);
@@ -65,6 +72,108 @@ export default {
 function isAuthorized(request, env) {
   const header = request.headers.get("Authorization") || "";
   return header === `Bearer ${env.UPLOAD_TOKEN}`;
+}
+
+async function browserUpload(request, env) {
+  const origin = request.headers.get("origin") || "";
+  const cors = origin ? browserCors(origin) : {};
+  if (origin && !cors) return json({ error: "origin_not_allowed" }, 403);
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: cors });
+  }
+
+  const email = (request.headers.get("cf-access-authenticated-user-email") || "").trim().toLowerCase();
+  const ownerEmail = (env.ARCHIVE_OWNER_EMAIL || "").trim().toLowerCase();
+  if (!ownerEmail || !email || email !== ownerEmail) {
+    return json({ error: "owner_login_required" }, 403, cors);
+  }
+  if (request.method === "GET") {
+    return new Response("<!doctype html><meta charset=\"utf-8\"><title>인증 완료</title><p>본인 확인이 끝났습니다. 이 탭을 닫고 이미지 보관함에서 업로드해 주세요.</p>", {
+      status: 200,
+      headers: { "content-type": "text/html; charset=utf-8", ...cors },
+    });
+  }
+  if (request.method !== "POST") {
+    return json({ error: "method_not_allowed" }, 405, cors);
+  }
+
+  const form = await request.formData();
+  const file = form.get("file");
+  if (!file || typeof file === "string" || !file.type?.startsWith("image/")) {
+    return json({ error: "image_required" }, 400, cors);
+  }
+  const maxBytes = Math.min(Number.parseInt(env.MAX_IMAGE_BYTES || "20971520", 10) || 0, 25 * 1024 * 1024);
+  if (file.size <= 0 || file.size > maxBytes) {
+    return json({ error: "image_size_invalid", maxBytes }, 413, cors);
+  }
+
+  const media = await resizeImage(file.stream(), env);
+  if (!media) return json({ error: "media_too_large" }, 413, cors);
+  const key = buildObjectKey(file.name || "upload", media.extension, "original", "image");
+  await storeToR2(env, key, media);
+  const result = { key, url: `${env.PUBLIC_BASE_URL}/${key}`, classification: null };
+
+  try {
+    result.classification = await classifyArchiveImage(env, key);
+  } catch (error) {
+    console.error("archive_classification_failed", error instanceof Error ? error.message : "unknown");
+    result.classificationError = "uploaded_but_classification_failed";
+  }
+  return json(result, 201, cors);
+}
+
+async function browserReclassify(request, env) {
+  const origin = request.headers.get("origin") || "";
+  const cors = origin ? browserCors(origin) : {};
+  if (origin && !cors) return json({ error: "origin_not_allowed" }, 403);
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+
+  const email = (request.headers.get("cf-access-authenticated-user-email") || "").trim().toLowerCase();
+  const ownerEmail = (env.ARCHIVE_OWNER_EMAIL || "").trim().toLowerCase();
+  if (!ownerEmail || !email || email !== ownerEmail) return json({ error: "owner_login_required" }, 403, cors);
+  if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405, cors);
+
+  const body = await request.json();
+  const key = typeof body.image_key === "string" ? body.image_key.trim() : "";
+  if (!key.startsWith("original/") || key.includes("..") || key.length > 500) {
+    return json({ error: "image_key_invalid" }, 400, cors);
+  }
+  try {
+    const classification = await classifyArchiveImage(env, key);
+    return json({ key, classification }, 200, cors);
+  } catch (error) {
+    console.error("archive_reclassification_failed", error instanceof Error ? error.message : "unknown");
+    return json({ error: "classification_failed" }, 502, cors);
+  }
+}
+
+async function classifyArchiveImage(env, key) {
+  if (!env.ARCHIVE_API_URL || !env.ARCHIVE_PROXY_TOKEN) {
+    throw new Error("classification_not_configured");
+  }
+  const response = await fetch(env.ARCHIVE_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Archive-Proxy-Token": env.ARCHIVE_PROXY_TOKEN,
+    },
+    body: JSON.stringify({ image_key: key }),
+  });
+  const payload = await response.json();
+  if (!response.ok) throw new Error(payload.error || "classification_failed");
+  return payload.topic;
+}
+
+function browserCors(origin) {
+  if (origin !== "https://images.aws.shdkej.com") return null;
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "content-type",
+    "Access-Control-Max-Age": "600",
+    "Vary": "Origin",
+  };
 }
 
 function isDeleteAuthorized(request, env) {
@@ -297,9 +406,9 @@ function pad(n) {
   return String(n).padStart(2, "0");
 }
 
-function json(body, status) {
+function json(body, status, extraHeaders = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...extraHeaders },
   });
 }

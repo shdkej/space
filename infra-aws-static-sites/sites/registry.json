@@ -87,7 +87,7 @@
       "kind": "archive",
       "detail": "R2-backed image archive with topic classification and annotations",
       "deployment_name": "image archive",
-      "hosting": "kubernetes ingress",
+      "hosting": "s3 cloudfront",
       "spa_fallback": false
     },
     {

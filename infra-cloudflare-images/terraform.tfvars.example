@@ -16,6 +16,11 @@ upload_api_token = "여기에_랜덤_시크릿_토큰"
 # CMS가 이미지 소프트 삭제 시 사용할 별도 Bearer 토큰 (업로드 토큰과 다르게 생성)
 delete_api_token = "여기에_삭제_전용_랜덤_시크릿_토큰"
 
+# Image Archive browser upload: 동일한 proxy token을
+# infra-aws-static-sites의 image_annotator_proxy_token에도 설정한다.
+archive_owner_email  = "owner@example.com"
+archive_proxy_token  = "여기에_서버간_랜덤_시크릿_토큰"
+
 # 선택
 max_width     = 1600
 output_format = "image/webp"

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fffdf2" />
+    <title>Image Annotator — 이미지 보관함</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">R2 IMAGE ARCHIVE</p>
+          <h1>이미지를 다시 보고, <em>짧게 남겨두세요.</em></h1>
+          <p class="lede">저장된 이미지에 지금 필요한 맥락을 붙이고, 다음에 다시 찾을 수 있게 합니다.</p>
+        </div>
+        <div class="status" id="status" aria-live="polite">이미지를 불러오는 중</div>
+      </header>
+
+      <section class="toolbar" aria-label="이미지 필터와 보기 방식">
+        <label class="search"><span>찾기</span><input id="search" type="search" placeholder="파일 경로 또는 주석으로 찾기" /></label>
+        <div class="toolbar-actions">
+          <p class="interaction-hint">한 번 누르면 복사 · 두 번 누르면 편집</p>
+          <div class="view-switcher" role="tablist" aria-label="보기 방식">
+            <button class="view-button is-active" type="button" role="tab" aria-selected="true" data-view="gallery">목록</button>
+            <button class="view-button" type="button" role="tab" aria-selected="false" data-view="map">지도</button>
+          </div>
+          <button class="quiet-button" id="refresh" type="button">새로고침</button>
+        </div>
+      </section>
+
+      <section class="upload-line" aria-labelledby="upload-title">
+        <div class="upload-intro">
+          <p class="upload-label" id="upload-title">보관함에 추가</p>
+          <p class="upload-copy">업로드한 사진은 R2에 저장하고, Decisions가 주제와 판단 태그를 붙입니다.</p>
+        </div>
+        <form class="upload-form" id="upload-form">
+          <label class="upload-file" for="upload-files"><span id="upload-file-label">사진 선택</span><input id="upload-files" type="file" accept="image/*" multiple /></label>
+          <button class="upload-submit" id="upload-submit" type="submit" disabled>업로드하고 분류</button>
+        </form>
+        <div class="upload-status" id="upload-status" aria-live="polite">
+          <a class="upload-login" href="https://upload.shdkej.com/browser-upload" target="_blank" rel="noreferrer">본인 계정으로 로그인</a>
+          <span>본인 계정만 업로드할 수 있습니다. 사진 한 장마다 Decisions가 한 번 호출됩니다.</span>
+          <button class="quiet-button upload-retry" id="upload-retry" type="button" hidden>분류 다시 시도</button>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <div class="gallery" id="gallery" aria-live="polite"></div>
+        <div class="map-view" id="map-view" aria-live="polite" hidden></div>
+      </section>
+    </main>
+    <dialog class="note-dialog" id="note-dialog" aria-labelledby="note-title">
+      <form class="note-form" id="note-form" method="dialog">
+        <div class="dialog-head"><div><p class="dialog-kicker">IMAGE NOTE</p><h2 id="note-title">주석 수정</h2><p class="dialog-description">이 사진에 남겨둘 맥락을 짧게 적어두세요.</p></div><button class="dialog-close" id="dialog-close" type="button" aria-label="주석 창 닫기">×</button></div>
+        <img class="dialog-image" id="note-image" alt="" />
+        <label class="note-label" for="note-input">주석</label>
+        <textarea class="note-input" id="note-input" maxlength="10000" placeholder="왜 남겼는지, 어디에 쓸지, 다음에 기억할 것을 적어보세요."></textarea>
+        <div class="save-row"><span class="save-message" id="note-save-message" aria-live="polite"></span><button class="save-button" type="submit">주석 저장</button></div>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>

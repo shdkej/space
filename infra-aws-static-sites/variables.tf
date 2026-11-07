@@ -59,3 +59,42 @@ variable "launch_timeline_x_bearer_token" {
   sensitive   = true
   default     = ""
 }
+
+variable "image_annotator_image_list_url" {
+  type    = string
+  default = "https://upload.shdkej.com/list"
+}
+
+variable "image_annotator_image_admin_token" {
+  type      = string
+  sensitive = true
+  default   = ""
+}
+
+variable "image_annotator_supabase_url" {
+  type      = string
+  sensitive = true
+  default   = ""
+}
+
+variable "image_annotator_supabase_service_role_key" {
+  type      = string
+  sensitive = true
+  default   = ""
+}
+
+variable "image_annotator_proxy_token" {
+  description = "Server-to-server token accepted by the image classification endpoint."
+  type        = string
+  sensitive   = true
+}
+
+variable "image_annotator_public_image_base_url" {
+  type    = string
+  default = "https://img.shdkej.com"
+}
+
+variable "image_annotator_allowed_origins" {
+  type    = list(string)
+  default = ["https://images.aws.shdkej.com", "http://localhost:8080"]
+}

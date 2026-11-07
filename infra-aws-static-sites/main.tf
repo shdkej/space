@@ -7,7 +7,7 @@ locals {
       api_origins  = try(site.api_origins, [])
       spa_fallback = try(site.spa_fallback, true)
       tags         = try(site.tags, {})
-    } if try(site.hosting, "aws-static-site") == "aws-static-site"
+    } if contains(["aws-static-site", "s3 cloudfront"], try(site.hosting, "aws-static-site"))
   }
 }
 

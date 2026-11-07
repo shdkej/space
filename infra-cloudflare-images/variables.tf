@@ -49,11 +49,6 @@ variable "archive_proxy_token" {
   sensitive   = true
 }
 
-variable "archive_owner_email" {
-  description = "The single identity allowed to use the browser upload endpoint."
-  type        = string
-}
-
 variable "archive_api_url" {
   description = "Image archive classification API URL."
   type        = string

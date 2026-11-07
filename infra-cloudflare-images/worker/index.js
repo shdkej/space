@@ -82,13 +82,8 @@ async function browserUpload(request, env) {
     return new Response(null, { status: 204, headers: cors });
   }
 
-  const email = (request.headers.get("cf-access-authenticated-user-email") || "").trim().toLowerCase();
-  const ownerEmail = (env.ARCHIVE_OWNER_EMAIL || "").trim().toLowerCase();
-  if (!ownerEmail || !email || email !== ownerEmail) {
-    return json({ error: "owner_login_required" }, 403, cors);
-  }
   if (request.method === "GET") {
-    return new Response("<!doctype html><meta charset=\"utf-8\"><title>인증 완료</title><p>본인 확인이 끝났습니다. 이 탭을 닫고 이미지 보관함에서 업로드해 주세요.</p>", {
+    return new Response("<!doctype html><meta charset=\"utf-8\"><title>이미지 보관함</title><p>이미지 보관함 업로드 API입니다.</p>", {
       status: 200,
       headers: { "content-type": "text/html; charset=utf-8", ...cors },
     });
@@ -128,9 +123,6 @@ async function browserReclassify(request, env) {
   if (origin && !cors) return json({ error: "origin_not_allowed" }, 403);
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
-  const email = (request.headers.get("cf-access-authenticated-user-email") || "").trim().toLowerCase();
-  const ownerEmail = (env.ARCHIVE_OWNER_EMAIL || "").trim().toLowerCase();
-  if (!ownerEmail || !email || email !== ownerEmail) return json({ error: "owner_login_required" }, 403, cors);
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405, cors);
 
   const body = await request.json();
@@ -168,7 +160,6 @@ function browserCors(origin) {
   if (origin !== "https://images.aws.shdkej.com") return null;
   return {
     "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Credentials": "true",
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
     "Access-Control-Allow-Headers": "content-type",
     "Access-Control-Max-Age": "600",

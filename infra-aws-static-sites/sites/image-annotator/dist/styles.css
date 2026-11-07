@@ -19,11 +19,9 @@ h1 em { color:#a57b00; font-style:normal; }
 .upload-file { position:relative; overflow:hidden; }
 .upload-file input { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
 .upload-submit { border-color:#5f5117; color:#fffdf2; background:#5f5117; }
-.upload-file:focus-within, .upload-submit:focus-visible, .upload-login:focus-visible { outline:3px solid rgba(215,170,22,.45); outline-offset:2px; }
+.upload-file:focus-within, .upload-submit:focus-visible { outline:3px solid rgba(215,170,22,.45); outline-offset:2px; }
 .upload-submit:disabled { border-color:var(--line); color:#9b9475; background:#f3efd8; cursor:not-allowed; }
 .upload-status { grid-column:1/-1; display:flex; align-items:center; gap:10px; min-height:18px; color:#817642; font-size:11px; line-height:1.45; }
-.upload-login { color:#67591d; font-weight:700; text-decoration-thickness:1px; text-underline-offset:3px; white-space:nowrap; }
-.upload-login[hidden] { display:none; }
 .upload-retry[hidden] { display:none; }
 .view-switcher { display:flex; align-items:center; gap:3px; padding:3px; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.55); }
 .view-button { border:0; border-radius:999px; padding:7px 11px; color:#817642; background:transparent; cursor:pointer; font-size:12px; }

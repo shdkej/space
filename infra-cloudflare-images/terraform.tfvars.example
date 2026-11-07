@@ -18,7 +18,6 @@ delete_api_token = "여기에_삭제_전용_랜덤_시크릿_토큰"
 
 # Image Archive browser upload: 동일한 proxy token을
 # infra-aws-static-sites의 image_annotator_proxy_token에도 설정한다.
-archive_owner_email  = "owner@example.com"
 archive_proxy_token  = "여기에_서버간_랜덤_시크릿_토큰"
 
 # 선택

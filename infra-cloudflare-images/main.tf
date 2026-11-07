@@ -55,11 +55,6 @@ resource "cloudflare_workers_script" "uploader" {
       text = var.archive_proxy_token
     },
     {
-      name = "ARCHIVE_OWNER_EMAIL"
-      type = "plain_text"
-      text = var.archive_owner_email
-    },
-    {
       name = "ARCHIVE_API_URL"
       type = "plain_text"
       text = var.archive_api_url
@@ -112,46 +107,4 @@ resource "cloudflare_workers_route" "uploader" {
   zone_id = var.zone_id
   pattern = var.upload_route
   script  = cloudflare_workers_script.uploader.script_name
-}
-
-resource "cloudflare_zero_trust_access_application" "archive_browser_upload" {
-  account_id                = var.account_id
-  name                      = "Image Archive Owner Upload"
-  domain                    = "upload.shdkej.com/browser-upload"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  options_preflight_bypass  = true
-  auto_redirect_to_identity = false
-
-  policies = [{
-    decision   = "allow"
-    name       = "Owner only"
-    precedence = 1
-    include = [{
-      email = {
-        email = var.archive_owner_email
-      }
-    }]
-  }]
-}
-
-resource "cloudflare_zero_trust_access_application" "archive_browser_reclassify" {
-  account_id                = var.account_id
-  name                      = "Image Archive Owner Reclassification"
-  domain                    = "upload.shdkej.com/browser-reclassify"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  options_preflight_bypass  = true
-  auto_redirect_to_identity = false
-
-  policies = [{
-    decision   = "allow"
-    name       = "Owner only"
-    precedence = 1
-    include = [{
-      email = {
-        email = var.archive_owner_email
-      }
-    }]
-  }]
 }

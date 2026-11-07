@@ -14,11 +14,11 @@ R2 이미지 보관함에 사진을 추가하고, 사진별 분류와 주석을 
 
 ## 동작
 
-1. 보관함의 업로드는 Cloudflare Access로 보호하고, 허용된 이메일만 업로드할 수 있습니다. 일반 열람은 계속 공개입니다.
+1. 개인 테스트용으로 보관함 열람·업로드를 로그인 없이 공개합니다.
 2. 업로드 Worker가 사진을 최대 1600px WebP로 변환해 R2의 `original/`에 저장합니다. 브라우저에는 업로드·분류 토큰이 없습니다.
 3. Worker가 비공개 서버 토큰으로 Lambda를 호출합니다. Lambda는 R2 공개 이미지 URL을 Decisions API(`gpt-6-luna`)에 보내고, 한 번의 요청에서 주제·복수 내용 태그·복수 판단 태그를 분류합니다.
 4. Lambda는 주제와 `subject_tags`·`judgment_tags`를 Supabase `image_topics`에 upsert합니다. 내용 태그·판단 태그는 서로 다른 축으로 보관합니다.
-5. Decisions 분류가 실패해도 업로드된 이미지는 유지합니다. 화면에서 같은 사진의 분류를 다시 시도할 수 있고, 재시도 API도 소유자 Access로 보호합니다.
+5. Decisions 분류가 실패해도 업로드된 이미지는 유지합니다. 화면에서 같은 사진의 분류를 다시 시도할 수 있습니다.
 6. 정적 페이지가 이미지 키를 기준으로 Supabase 주석·주제·태그를 조회합니다. 사용자가 주석을 저장하면 Lambda가 `image_annotations`를 upsert합니다.
 4. 이미지는 원본 비율로 표시하며, 업로드 날짜는 사진 하단에 작은 오버레이로 표시합니다. 주석이 없으면 사진 아래 주석 영역 자체를 만들지 않습니다.
 5. 사진과 텍스트만 남기는 무장식 갤러리로 표시하고, 모바일에서는 사진을 화면 너비에 맞춰 여백 없이 보여줍니다. 링크 복사 결과는 토스트로 알립니다.
@@ -31,16 +31,16 @@ R2 이미지 보관함에 사진을 추가하고, 사진별 분류와 주석을 
 ## 주제 분류 연결
 
 - `supabase/image_annotations.sql`의 `image_topics` 테이블에 이미지별 주제, 내용 태그, 판단 태그, 신뢰도, 분류 출처를 저장합니다.
-- Cloudflare Worker의 `/browser-upload`와 `/browser-reclassify`는 Access 인증 후 Lambda `/api/classify`를 서버 간 토큰으로 호출합니다. 브라우저에서 Lambda 분류 endpoint를 직접 호출할 수 없습니다.
+- Cloudflare Worker의 `/browser-upload`와 `/browser-reclassify`는 로그인 없는 공개 경로이며 Lambda `/api/classify`는 서버 간 토큰으로 호출합니다. 브라우저에서 Lambda 분류 endpoint를 직접 호출할 수 없습니다.
 - `image-annotator/openai-api-key`는 AWS Secrets Manager에서 보관합니다. Lambda 역할에는 이 secret의 읽기 권한만 부여합니다.
 - 기존 이미지의 주제는 자동 추정으로 덮어쓰지 않고 `분류 대기`로 남깁니다. 실제 이미지를 확인한 분류 결과만 저장합니다.
 
 ## 배포 및 설정
 
 1. `supabase/image_annotations.sql`의 추가 태그 열 migration을 Supabase에 적용합니다.
-2. Cloudflare Terraform 변수에 단일 소유자 이메일과 서버 간 `archive_proxy_token`을 설정합니다. 같은 토큰을 AWS Terraform의 `image_annotator_proxy_token`에 설정합니다.
+2. Cloudflare Terraform 변수에 서버 간 `archive_proxy_token`을 설정합니다. 같은 토큰을 AWS Terraform의 `image_annotator_proxy_token`에 설정합니다.
 3. OpenAI API 키는 AWS Secrets Manager의 `image-annotator/openai-api-key`에 저장합니다. 키는 코드, 정적 페이지, Terraform 변수·상태에 넣지 않습니다.
-4. `infra-cloudflare-images`에서 Terraform plan/apply를 실행해 두 Access 정책과 Worker를 반영합니다. 업로드·재분류 권한은 단일 이메일만 허용합니다.
+4. `infra-cloudflare-images`에서 Terraform plan/apply를 실행해 공개 브라우저 업로드 Worker를 반영합니다.
 5. `infra-aws-static-sites`에서 Terraform plan/apply를 실행해 Lambda·IAM·CloudFront API origin을 반영합니다.
 6. `sites/image-annotator/dist/` 변경을 Space의 static-site 배포 workflow로 배포하고 라이브 업로드를 확인합니다.
 
@@ -54,4 +54,4 @@ terraform -chdir=../.. fmt -check
 terraform -chdir=../.. validate
 ```
 
-코드 검증과 인프라 검증만으로 배포 완료 처리하지 않습니다. Supabase migration, 단일 이메일 Access 허용, 업로드→R2→Decisions→태그 저장, 비로그인 업로드 차단을 라이브에서 확인해야 합니다. 시크릿은 Git에 저장하지 않습니다.
+코드 검증과 인프라 검증만으로 배포 완료 처리하지 않습니다. Supabase migration, 로그인 없는 업로드→R2→Decisions→태그 저장을 라이브에서 확인해야 합니다. 시크릿은 Git에 저장하지 않습니다.

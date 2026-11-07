@@ -17,7 +17,6 @@ const uploadFiles = document.querySelector("#upload-files");
 const uploadFileLabel = document.querySelector("#upload-file-label");
 const uploadSubmit = document.querySelector("#upload-submit");
 const uploadStatus = document.querySelector("#upload-status");
-const uploadLogin = uploadStatus.querySelector(".upload-login");
 const uploadRetry = document.querySelector("#upload-retry");
 let toastTimer;
 let failedClassificationKeys = [];
@@ -48,7 +47,6 @@ async function uploadSelectedImages(event) {
 
   uploadSubmit.disabled = true;
   uploadFiles.disabled = true;
-  uploadLogin.hidden = true;
   let completed = 0;
   for (const file of files) {
     uploadStatus.querySelector("span").textContent = `${escapeHTML(file.name)} 업로드 및 Decisions 분류 중…`;
@@ -58,12 +56,8 @@ async function uploadSelectedImages(event) {
       const response = await fetch("https://upload.shdkej.com/browser-upload", {
         method: "POST",
         body: formData,
-        credentials: "include",
       });
       const payload = await response.json();
-      if (response.status === 401 || response.status === 403) {
-        throw new Error("owner_login_required");
-      }
       if (!response.ok) throw new Error(payload.error || "upload_failed");
       completed += 1;
       const category = payload.classification?.topic;
@@ -78,12 +72,7 @@ async function uploadSelectedImages(event) {
         uploadStatus.querySelector("span").textContent = `${completed}/${files.length}장 저장·분류 완료${details ? ` · ${escapeHTML(details)}` : ""}`;
       }
     } catch (error) {
-      uploadLogin.hidden = false;
-      if (error.message === "owner_login_required") {
-        uploadStatus.querySelector("span").textContent = "본인 계정 로그인이 필요합니다. 로그인한 뒤 다시 업로드해 주세요.";
-      } else {
-        uploadStatus.querySelector("span").textContent = `${completed}장 저장 완료 · ${escapeHTML(file.name)} 업로드에 실패했습니다. 로그인 상태와 네트워크를 확인해 주세요.`;
-      }
+      uploadStatus.querySelector("span").textContent = `${completed}장 저장 완료 · ${escapeHTML(file.name)} 업로드에 실패했습니다. 네트워크를 확인해 주세요.`;
       break;
     }
   }
@@ -102,7 +91,6 @@ async function retryFailedClassifications() {
     try {
       const response = await fetch("https://upload.shdkej.com/browser-reclassify", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image_key: key }),
       });
@@ -110,8 +98,7 @@ async function retryFailedClassifications() {
       if (!response.ok) throw new Error(payload.error || "classification_failed");
       failedClassificationKeys = failedClassificationKeys.filter((item) => item !== key);
     } catch (error) {
-      uploadLogin.hidden = false;
-      uploadStatus.querySelector("span").textContent = "재분류에 실패했습니다. 로그인 상태를 확인하고 다시 시도해 주세요.";
+      uploadStatus.querySelector("span").textContent = "재분류에 실패했습니다. 잠시 뒤 다시 시도해 주세요.";
     }
   }
   uploadRetry.disabled = false;

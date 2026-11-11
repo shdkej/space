@@ -1,8 +1,43 @@
+// Coordinates are percentages of each full 1536 × 1024 floor image.
 export const FLOORS = [
-  { id: 4, name: '대표실', english: 'THE OWNER', leader: '사용자', description: '다음 방향을 결정하는 곳', board: '결정 대기', short: 'Decide' },
-  { id: 3, name: '비즈니스실', english: 'BUSINESS', leader: '샘 · SAM', description: '할 일보다, 해야 할 이유를 선명하게', board: '전략 · 가치 · 가설', short: 'Think' },
-  { id: 2, name: '고객실', english: 'CUSTOMER', leader: '세스고딘 · CMO', description: '만드는 것과 필요한 것 사이', board: '고객의 여정', short: 'Listen' },
-  { id: 1, name: '제품실', english: 'PRODUCT', leader: '지니', description: '생각을 제품으로, 제품을 일상으로', board: '세 시스템의 오늘', short: 'Make' },
+  {
+    id: 4, name: '대표실', english: 'THE OWNER', leader: '사용자', description: '다음 방향을 결정하는 곳', board: '결정 대기', short: 'Decide',
+    visual: {
+      asset: 'floor-owner.png', alt: '독립 집무 책상, 서재와 식물이 있는 대표실 정원 라운지', accent: '#66765c', space: '집무실 · 정원 라운지',
+      board: [24.1, 28.85, 17.65, 14.45, -16.8], plaque: [44, 44.3], entrance: [14, 66],
+      // The three bench seats below belong exclusively to the question queue.
+      seats: [[55,49],[29,70],[86,58]],
+      queue: [[63,70],[67,68],[71,66],[60,75],[65,77],[70,79],[55,78],[59,82]], ticket: [56,72],
+      zones: [{ label: 'PRIVATE OFFICE', x: 49, y: 57, angle: -18 }, { label: 'GARDEN LOUNGE', x: 79, y: 65, angle: 18 }],
+    },
+  },
+  {
+    id: 3, name: '비즈니스실', english: 'BUSINESS', leader: '샘 · SAM', description: '할 일보다, 해야 할 이유를 선명하게', board: '전략 · 가치 · 가설', short: 'Think',
+    visual: {
+      asset: 'floor-business.png', alt: '긴 월넛 회의 테이블과 전략 자료 벽을 갖춘 비즈니스실', accent: '#7c6150', space: '전략 회의실 · 자료 아카이브',
+      board: [24.1, 28.85, 17.65, 14.45, -16.8], plaque: [44, 44.3], entrance: [14, 66],
+      seats: [[29,60],[39,54],[51,49],[39.5,71],[51,67],[61,61],[80,55],[88,57]],
+      zones: [{ label: 'STRATEGY TABLE', x: 35, y: 73, angle: -18 }, { label: 'RESEARCH ARCHIVE', x: 79, y: 63, angle: 18 }],
+    },
+  },
+  {
+    id: 2, name: '고객실', english: 'CUSTOMER', leader: '세스고딘 · CMO', description: '만드는 것과 필요한 것 사이', board: '고객의 여정', short: 'Listen',
+    visual: {
+      asset: 'floor-customer.png', alt: '원형 고객 인터뷰 라운지, 여정 전시와 워크숍 테이블이 있는 고객실', accent: '#a4563d', space: '고객 인터뷰 · 리서치 스튜디오',
+      board: [24.1, 28.85, 17.65, 14.45, -16.8], plaque: [44, 44.3], entrance: [14, 66],
+      seats: [[38,52],[51,51],[36,61],[52,62],[56,75],[67,75],[74,71],[82,58],[92,59],[34,77],[42,80],[60,63]],
+      zones: [{ label: 'CUSTOMER INTERVIEW', x: 37, y: 68, angle: 18 }, { label: 'JOURNEY WORKSHOP', x: 55, y: 81, angle: 18 }, { label: 'RESEARCH BOOTH', x: 79, y: 65, angle: 18 }],
+    },
+  },
+  {
+    id: 1, name: '제품실', english: 'PRODUCT', leader: '지니', description: '생각을 제품으로, 제품을 일상으로', board: '세 시스템의 오늘', short: 'Make',
+    visual: {
+      asset: 'floor-product.png', alt: '세 개발 워크벤치, 서버 관제와 참고 자료 라이브러리를 갖춘 제품실', accent: '#597183', space: '개발 랩 · 세 시스템 워크벤치',
+      board: [24.1, 28.85, 17.65, 14.45, -16.8], plaque: [44, 44.3], entrance: [14, 66],
+      seats: [[33,64],[41,60],[60,55],[66,53],[48,85],[57,80],[64,76],[82,57]],
+      zones: [{ label: 'OPENCLAW', x: 26, y: 66.5, angle: 18 }, { label: 'INFINITY', x: 53.4, y: 60.5, angle: 18 }, { label: 'KNOWLEDGE LAB', x: 42, y: 86, angle: 18 }],
+    },
+  },
 ];
 export const STAGES = [
   ['acquisition', '유입', 'Acquisition'], ['activation', '활성화', 'Activation'],
@@ -118,6 +153,21 @@ export function advanceSessionEvents(queue, snapshot, now, live) {
 export function sceneSessions(sessions, queue, floor) {
   const combined = [...sessions, ...queue.map(entry => entry.session).filter(session => !sessions.some(item => item.id === session.id))];
   return combined.filter(session => session.floor === floor && (session.state !== 'ended' || queue.some(entry => entry.session.id === session.id)));
+}
+export function floorOccupancy(snapshot, eventQueue, floor) {
+  const questions = snapshot.questions || [];
+  const waiting = [];
+  const questioners = new Set();
+  for (const question of questions) {
+    const session = snapshot.sessions.find(item => item.id === question.sessionId)
+      || eventQueue.find(entry => entry.session.id === question.sessionId)?.session;
+    if (!session || questioners.has(session.id) || (session.state === 'ended' && !eventQueue.some(entry => entry.session.id === session.id))) continue;
+    questioners.add(session.id);
+    if (floor === 4) waiting.push({ session, question });
+  }
+  const seated = sceneSessions(snapshot.sessions, eventQueue, floor).filter(session => !questioners.has(session.id));
+  const sessions = [...seated, ...waiting.map(item => item.session)];
+  return { seated, waiting, sessions, count: sessions.length };
 }
 export function observationState(record, now = Date.now()) {
   if (!record || !okay(record.state)) return record?.state || 'unknown';

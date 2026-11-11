@@ -16,7 +16,7 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 
 ## LCML 사무실
 
-LCML(Less complexity, More Life)은 AI 작업을 4층 사무실로 보여줍니다. 1층 제품실은 지니, 2층 고객실은 고딘, 3층 비즈니스실은 SAM, 4층은 대표실입니다. 사무실 배경 한 장에 4×3 캐릭터 스프라이트와 실제 텍스트 화이트보드를 겹칩니다.
+LCML(Less complexity, More Life)은 AI 작업을 4층 사무실로 보여줍니다. 1층 제품실은 지니, 2층 고객실은 고딘, 3층 비즈니스실은 SAM, 4층은 대표실입니다. 층별 역할에 맞춘 서로 다른 네 사무실 배경에 4×3 캐릭터 스프라이트와 실제 텍스트 화이트보드를 겹칩니다. 첫 화면은 네 공간을 한꺼번에 보는 2×2 전체 보기이며, 공간을 눌러 해당 층에 들어갑니다. 제품실은 개발 랩, 고객실은 리서치 스튜디오, 비즈니스실은 전략 회의실, 대표실은 집무실·정원 라운지입니다.
 
 소스는 `dashboard/office/`, 빌드 설정은 `dashboard/vite.office.config.js`입니다. 기존 React/Vite를 재사용하며 Next.js 서버나 별도 인증을 추가하지 않습니다. `dashboard/`에서 `npm run build:office`를 실행하면 `dist/office/`만 갱신합니다. 기본 Status 화면은 `npm run build`로 별도 빌드합니다.
 

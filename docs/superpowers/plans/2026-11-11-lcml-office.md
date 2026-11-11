@@ -1,5 +1,7 @@
 # LCML Office Implementation Plan
 
+후속 사용자 수정: 단일 배경과 텍스트 전체 보기는 [층별 공간·전체 보기 계획](2026-11-11-lcml-floor-visuals.md)으로 대체되었습니다. 수집·신선도 계약은 이 문서를 유지합니다.
+
 > For agentic workers: use superpowers:subagent-driven-development or superpowers:executing-plans. Owner integrates and verifies deployment.
 
 **Goal:** Ship LCML at Status /office/ using actual ten-minute operational snapshots.

@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowDown, ArrowUpRight, Check, ChevronRight, CircleHelp, Coffee, GitBranch, Layers, RefreshCw } from 'lucide-react';
-import { FLOORS, STAGES, normalizeSnapshot, freshness, advanceSnapshot, sessionVisual, waitingVisual, roomIsClosed, metricDisplay, safeLink, elapsed, clockTime, sourceLabel, timestamp, enqueueSessionEvents, advanceSessionEvents, sceneSessions, knownSource, observationState, metricObservation, nextRoomLighting } from './model.js';
+import { FLOORS, STAGES, normalizeSnapshot, freshness, advanceSnapshot, sessionVisual, waitingVisual, roomIsClosed, metricDisplay, safeLink, elapsed, clockTime, sourceLabel, timestamp, enqueueSessionEvents, advanceSessionEvents, floorOccupancy, knownSource, observationState, metricObservation, nextRoomLighting } from './model.js';
 import './styles.css';
 
 const ASSET = `${import.meta.env.BASE_URL}assets/`;
 const EMPTY = { sessions: [], events: [], questions: [], repositories: [], projects: [], strategy: {}, tasks: [], day: {}, activity: [], sources: {} };
-const POSITIONS = [[34.4, 59.5], [41.3, 55.8], [58.2, 59.2], [65.3, 55.4], [47.4, 72.5], [54.3, 68.7], [79, 55], [86, 58], [47, 39], [52, 40], [59, 83], [40, 81]];
 function useFeed() {
   const [data, setData] = useState(null);
   const [connection, setConnection] = useState('loading');
@@ -64,25 +63,30 @@ function BoardContent({ floor, data, project, now }) {
   if (floor === 3) return <><span className="board-kicker">BUSINESS / 03</span><strong>Less, but meaningful.</strong><div className="board-lines">{[['strategy', '전략'], ['values', '가치'], ['hypotheses', '가설']].map(([key, label]) => <span key={key}><i>↗</i>{label}<b>{data.strategy[key]?.length || '—'}</b></span>)}</div><BoardTasks data={data} floor={floor} /></>;
   return <><span className="board-kicker">THE OWNER / 04</span><strong>Room for a decision.</strong><div className="board-owner"><b>{knownSource(data, 'tasks', now) ? data.questions.length : '—'}</b><span>결정 대기</span></div><small>한 번에, 한 가지씩.</small><BoardTasks data={data} floor={floor} /></>;
 }
-function Actor({ session, question, index, data, now, tick, live, event, selected, onSelect, thresholds }) {
+function Actor({ session, question, index, data, now, tick, live, event, selected, onSelect, thresholds, layout, interactive = true }) {
   const canMove = live && freshness(data, now, session).live && (!question || knownSource(data, 'tasks', now));
   const visualRef = useRef(null);
   if (canMove || !visualRef.current) visualRef.current = question && !event ? waitingVisual(question, now, thresholds) : sessionVisual(session, now, tick, event);
   const visual = visualRef.current;
-  const pos = question ? [73 + (index % 4) * 5, 66 + Math.floor(index / 4) * 8] : POSITIONS[index % POSITIONS.length];
+  const positions = question && layout.queue ? layout.queue : layout.seats;
+  const pos = positions[index % positions.length];
+  const ActorTag = interactive ? 'button' : 'div';
   const direction = event?.type === 'arrived' ? 'arriving' : event?.type === 'departed' ? 'departing' : '';
-  return <button className={`actor ${direction} ${selected ? 'selected' : ''} ${!canMove ? 'is-frozen' : ''}`} style={{ left: `${pos[0]}%`, top: `${pos[1]}%`, '--travel-x': `${14 - pos[0]}cqw`, '--travel-y': `${(66 - pos[1]) * 2 / 3}cqw`, '--actor-accent': ['#a4563d', '#60745b', '#7d6a95', '#557c89'][index % 4] }} onClick={() => onSelect(session.id)} aria-label={`${session.name || session.agentId || '세션'}, ${canMove ? visual.label : '확인 중'}`}>
+  return <ActorTag className={`actor ${direction} ${selected ? 'selected' : ''} ${!canMove ? 'is-frozen' : ''}`} style={{ left: `${pos[0]}%`, top: `${pos[1]}%`, '--travel-x': `${layout.entrance[0] - pos[0]}cqw`, '--travel-y': `${(layout.entrance[1] - pos[1]) * 2 / 3}cqw`, '--actor-accent': ['#a4563d', '#60745b', '#7d6a95', '#557c89'][index % 4] }} onClick={interactive ? () => onSelect(session.id) : undefined} aria-label={`${session.name || session.agentId || '세션'}, ${canMove ? visual.label : '확인 중'}`}>
     <span className="sprite" style={{ backgroundPosition: `${visual.col * 100 / 3}% ${visual.row * 50}%` }} />
     {visual.sweat && <span className="sweat" aria-label="오래 진행 중">◦</span>}
     {visual.stars && <span key={event?.id} className="stars" aria-label="새 결과 보고">✦ <i>✧</i></span>}
     <span className="actor-label"><Dot live={canMove} />{session.name || session.agentId || '실행 세션'}</span>
     {event && <span className="speech">{visual.label}</span>}
     {!canMove && <span className="actor-unknown">확인 중</span>}
-  </button>;
+  </ActorTag>;
 }
-function OfficeScene({ floor, data, now, tick, live, eventQueue, selected, select, project, direction, thresholds }) {
+function OfficeScene({ floor, data, now, tick, live, eventQueue = [], selected, select, project, direction = '', thresholds, interactive = true }) {
   const [failed, setFailed] = useState(false);
   const current = FLOORS.find(f => f.id === floor);
+  const layout = current.visual;
+  const BoardTag = interactive ? 'button' : 'div';
+  useEffect(() => setFailed(false), [layout.asset]);
   const light = useRef({});
   const previousFloor = useRef(floor);
   const [, redrawLighting] = useState(0);
@@ -91,26 +95,27 @@ function OfficeScene({ floor, data, now, tick, live, eventQueue, selected, selec
   previousFloor.current = floor;
   if (live) light.current[floor] = nextRoomLighting(light.current[floor], roomIsClosed(data, floor, now), true);
   const lighting = light.current[floor] || { closed: false, sequence: false };
-  const visible = sceneSessions(data.sessions, eventQueue, floor);
+  const occupancy = floorOccupancy(data, eventQueue, floor);
+  const visible = occupancy.seated;
+  const waiting = occupancy.waiting;
   const activeEvents = new Map(eventQueue.map(entry => [entry.session.id, entry.events[0]]));
-  const questionIds = floor === 4 ? new Set(data.questions.map(q => q.sessionId)) : new Set();
-  const waiting = data.questions.map(q => ({ question: q, session: data.sessions.find(s => s.id === q.sessionId) })).filter(q => q.session && (q.session.state !== 'ended' || eventQueue.some(entry => entry.session.id === q.session.id))).filter((q, i, all) => all.findIndex(x => x.session.id === q.session.id) === i);
-  return <div className={`scene-wrapper ${live ? '' : 'is-frozen'}`}>
+
+  return <div className={`scene-wrapper ${interactive ? '' : 'scene-miniature'} ${live ? '' : 'is-frozen'}`} style={{ '--floor-accent': layout.accent }}>
     <div className={`office-scene ${direction} ${lighting.closed ? 'lights-off' : ''} ${lighting.sequence ? 'lights-sequence' : ''} ${failed ? 'image-failed' : ''}`} key={floor}>
-      <img className="office-background" src={`${ASSET}office.png`} alt="큰 창과 나무 책상, 엘리베이터가 있는 LCML 사무실" onError={() => setFailed(true)} />
-      {failed && <div className="image-error">공간 이미지를 불러오지 못했어요. 오른쪽에서 현황을 확인할 수 있어요.</div>}
-      <button className="wall-board" onClick={() => select(null)} aria-label={`${current.name} 화이트보드 상세 보기`}><BoardContent floor={floor} data={data} project={project} now={now} /></button>
-      <div className="leader-plaque"><span>{current.leader}</span><small>{current.name}</small></div>
-      <span className="elevator-marker">{floor}<small>F</small></span>
-      {floor === 1 && <div className="desk-labels"><span>OPENCLAW</span><span>INFINITY</span><span>KNOWLEDGE LAB</span></div>}
-      {visible.filter(s => !questionIds.has(s.id)).slice(0, 12).map((s, i) => <Actor key={s.id} session={s} index={i} data={data} now={now} tick={tick} live={live} event={activeEvents.get(s.id)} selected={selected === s.id} onSelect={select} />)}
-      {floor === 4 && waiting.slice(0, 8).map(({ session, question }, i) => <Actor key={`queue-${session.id}`} session={session} question={question} event={activeEvents.get(session.id)} index={i} data={data} now={now} tick={tick} live={live} selected={selected === session.id} onSelect={select} thresholds={thresholds} />)}
-      {floor === 4 && data.questions.some(q => !data.sessions.some(s => s.id === q.sessionId)) && <button className="queue-tickets" onClick={() => select(null)} aria-label="결정 대기 질문 보기"><span>?</span><b>{data.questions.filter(q => !data.sessions.some(s => s.id === q.sessionId)).length}</b><small>결정 대기</small></button>}
-      {[0, 1, 2, 3].map(zone => <div key={zone} aria-hidden="true" className={`light-overlay light-zone-${zone}`} style={{ '--light-delay': `${zone * 450}ms` }} onAnimationEnd={() => {
+      <img className="office-background" src={`${ASSET}${layout.asset}`} alt={layout.alt} onError={() => setFailed(true)} />
+      {failed && <div className="image-error">공간 이미지를 불러오지 못했어요.</div>}
+      <BoardTag className="wall-board" style={{ left: `${layout.board[0]}%`, top: `${layout.board[1]}%`, width: `${layout.board[2]}%`, height: `${layout.board[3]}%`, transform: `skewY(${layout.board[4]}deg)` }} onClick={interactive ? () => select(null) : undefined} aria-label={`${current.name} 화이트보드${interactive ? ' 상세 보기' : ''}`}><BoardContent floor={floor} data={data} project={project} now={now} /></BoardTag>
+      <div className="leader-plaque" style={{ left: `${layout.plaque[0]}%`, top: `${layout.plaque[1]}%` }}><span>{current.leader}</span><small>{current.name}</small></div>
+      <span className="elevator-marker" style={{ left: `${layout.entrance[0] - 2.2}%`, top: `${layout.entrance[1] - 10.7}%` }}>{floor}<small>F</small></span>
+      <div className="desk-labels">{layout.zones.map(zone => <span key={zone.label} style={{ left: `${zone.x}%`, top: `${zone.y}%`, transform: `skewY(${zone.angle}deg)` }}>{zone.label}</span>)}</div>
+      {visible.slice(0, layout.seats.length).map((s, i) => <Actor key={s.id} session={s} index={i} data={data} now={now} tick={tick} live={live} event={activeEvents.get(s.id)} selected={selected === s.id} onSelect={select} layout={layout} interactive={interactive} />)}
+      {floor === 4 && waiting.slice(0, 8).map(({ session, question }, i) => <Actor key={`queue-${session.id}`} session={session} question={question} event={activeEvents.get(session.id)} index={i} data={data} now={now} tick={tick} live={live} selected={selected === session.id} onSelect={select} thresholds={thresholds} layout={layout} interactive={interactive} />)}
+      {floor === 4 && data.questions.some(q => !data.sessions.some(s => s.id === q.sessionId)) && <BoardTag className="queue-tickets" style={layout.ticket ? { left: `${layout.ticket[0]}%`, top: `${layout.ticket[1]}%` } : undefined} onClick={interactive ? () => select(null) : undefined} aria-label="결정 대기 질문 보기"><span>?</span><b>{data.questions.filter(q => !data.sessions.some(s => s.id === q.sessionId)).length}</b><small>결정 대기</small></BoardTag>}
+      <div className="light-layers" aria-hidden="true">{[0, 1, 2, 3].map(zone => <div key={zone} aria-hidden="true" className={`light-overlay light-zone-${zone}`} style={{ '--light-delay': `${zone * 450}ms` }} onAnimationEnd={() => {
         if (zone === 3) { light.current[floor] = { ...light.current[floor], sequence: false }; redrawLighting(value => value + 1); }
-      }} />)}
+      }} />)}</div>
     </div>
-    <div className="scene-caption"><span className="caption-line" /><span>{visible.length ? `${visible.length}개 세션이 관측됐어요` : live ? '지금 관측된 실행 세션이 없어요' : '새로운 세션 관측을 기다리고 있어요'}</span><span className="caption-line" /></div>
+    {interactive && <div className="scene-caption"><span className="caption-line" /><span>{occupancy.count ? `${occupancy.count}개 세션이 관측됐어요` : live ? '지금 관측된 실행 세션이 없어요' : '새로운 세션 관측을 기다리고 있어요'}</span><span className="caption-line" /></div>}
   </div>;
 }
 function Repositories({ data, now }) {
@@ -170,13 +175,23 @@ function SessionDetail({ session, data, now, live, close }) {
   const parent = data.sessions.find(s => s.id === session.parentId);
   return <><button className="back-to-board" onClick={close}><ArrowDown size={14} /> 화이트보드로</button><div className="panel-heading"><span className="eyebrow">OBSERVED SESSION</span><h2>{session.name || session.agentId}</h2><p><Dot live={fresh} />{fresh ? visual.label : '확인 중'}</p></div><p className="session-task">{session.taskLabel || '공개된 작업 요약이 없어요.'}</p><dl className="session-facts"><div><dt>실행 시간</dt><dd>{elapsed(session.startedAt, now)}</dd></div><div><dt>마지막 관측</dt><dd>{clockTime(session.observedAt, data.day.timeZone)}</dd></div><div><dt>담당 공간</dt><dd>{session.floor}F · {FLOORS.find(f => f.id === session.floor)?.name}</dd></div>{parent && <div><dt>상위 세션</dt><dd>{parent.name || parent.agentId}</dd></div>}</dl>{!fresh && <p className="source-footnote">새 증거를 받을 때까지 마지막 동작을 멈춥니다.</p>}</>;
 }
-function SessionList({ data, floor, select, now, live }) {
-  const sessions = data.sessions.filter(session => session.floor === floor && session.state !== 'ended');
+function SessionList({ data, floor, select, now, live, eventQueue = [] }) {
+  const sessions = floorOccupancy(data, eventQueue, floor).sessions;
   if (!sessions.length) return null;
   return <details className="session-directory"><summary>관측된 세션 <span>{sessions.length}</span></summary>{sessions.map(session => <button key={session.id} onClick={() => select(session.id)}><span>{session.name || session.agentId || '실행 세션'}</span><small>{live && freshness(data, now, session).live ? sessionVisual(session, now).label : '확인 중'}</small><ChevronRight size={12} /></button>)}</details>;
 }
-function Overview({ data, live, go }) {
-  return <div className="overview"><div className="overview-heading"><span className="eyebrow">ONE COMPANY, FOUR ROOMS</span><h2>각자의 자리에서,<br />같은 방향으로.</h2></div><div className="floor-stack">{FLOORS.map(f => <button key={f.id} onClick={() => go(f.id)}><span className="stack-number">0{f.id}<small>F</small></span><span><b>{f.name}</b><small>{f.leader}</small></span><span className="stack-status">{live ? `${data.sessions.filter(s => s.floor === f.id && s.state !== 'ended').length}개 세션` : '관측 대기'}<ArrowUpRight size={18} /></span></button>)}</div></div>;
+function Overview({ data, live, go, now, tick, eventQueue = [], thresholds, project }) {
+  return <div className="overview" aria-label="네 층 사무실 전체 전경">
+    <div className="floor-grid">{FLOORS.map(floor => {
+      const occupancy = floorOccupancy(data, eventQueue, floor.id);
+      return <article className="floor-preview" key={floor.id} style={{ '--floor-accent': floor.visual.accent }}>
+        <div className="preview-heading"><span className="preview-floor">0{floor.id}<small>F</small></span><div><h2>{floor.name}</h2><p>{floor.leader}</p></div><ArrowUpRight className="preview-arrow" size={18} /></div>
+        <OfficeScene floor={floor.id} data={data} now={now} tick={tick} live={live} eventQueue={eventQueue} project={project} thresholds={thresholds} interactive={false} />
+        <div className="preview-footer"><span className="preview-purpose">{floor.visual.space}</span><span className="preview-status"><Dot live={live} />{live ? `${occupancy.count}개 세션 관측` : '확인 중'}</span></div>
+        <button className="preview-enter" aria-label={`${floor.id}층 ${floor.name} 들어가기`} onClick={() => go(floor.id)} />
+      </article>;
+    })}</div>
+  </div>;
 }
 function App() {
   const { data: feed, connection, error, eventBatch, refresh } = useFeed();
@@ -184,7 +199,7 @@ function App() {
   const [floor, setFloor] = useState(1);
   const [direction, setDirection] = useState('');
   const [selected, setSelected] = useState(null);
-  const [overview, setOverview] = useState(false);
+  const [overview, setOverview] = useState(true);
   const [projectId, setProject] = useState('');
   const [now, setNow] = useState(Date.now());
   const [tick, setTick] = useState(0);
@@ -203,19 +218,20 @@ function App() {
   useEffect(() => { setEventQueue(previous => advanceSessionEvents(previous, data, now, live)); }, [tick]);
   const go = useCallback(next => { setFloor(previous => { setDirection(next > previous ? 'going-up' : next < previous ? 'going-down' : ''); return next; }); setOverview(false); setSelected(null); }, []);
   function railKey(event) { if (['ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) { event.preventDefault(); const next = event.key === 'Home' ? 4 : event.key === 'End' ? 1 : Math.min(4, Math.max(1, floor + (event.key === 'ArrowUp' ? 1 : -1))); go(next); document.getElementById(`floor-${next}`)?.focus(); } }
-  return <div className="app-shell">
+  return <div className={`app-shell ${overview ? 'has-overview' : ''}`}>
     <header className="topbar"><a className="brand" href="/office/" aria-label="LCML 홈"><span className="brand-mark"><i /><i /><i /><i /></span><span>LCML</span></a><p className="brand-tagline">Less complexity,<br /><b>More Life.</b></p><div className="collection-state"><span><Dot live={live} />{connection === 'loading' ? '첫 관측을 불러오는 중' : live ? '10분마다, 지금을 기록해요' : '확인 중 · 새 관측을 기다려요'}</span><small>마지막 수집 {clockTime(feed?.observedAt, data.day.timeZone)} <i>·</i> 10분 주기</small></div><a className="status-home" href="/" aria-label="Status로 돌아가기">Status <ArrowUpRight size={15} /></a></header>
-    <div className="workspace">
-      <nav className="floor-rail" aria-label="엘리베이터 층 선택" onKeyDown={railKey}><span className="rail-label">FLOORS</span><div className="floor-buttons">{FLOORS.map(f => <button id={`floor-${f.id}`} key={f.id} className={floor === f.id && !overview ? 'active' : ''} aria-pressed={floor === f.id && !overview} aria-label={`${f.id}층 ${f.name}`} onClick={() => go(f.id)}><span>0{f.id}</span><small>{f.name}</small><i /></button>)}</div><button className={`overview-button ${overview ? 'active' : ''}`} onClick={() => { setOverview(v => !v); setSelected(null); }} aria-pressed={overview} aria-label="전체 보기"><Layers size={18} /><small>전체 보기</small></button><span className="rail-bottom">L / M</span></nav>
-      <main className="main-room"><div className="room-heading"><div className="room-title"><span className="floor-number">0{floor}<small>F</small></span><div><span className="eyebrow">{overview ? 'THE WHOLE PICTURE' : current.english}</span><h1>{overview ? '우리의 작은 회사' : current.name}</h1><p>{overview ? '복잡함은 줄이고, 중요한 것에 집중해요.' : current.description}</p></div></div><div className="room-lead"><span>ROOM LEAD</span><strong>{current.leader}</strong><small>역할 이름표</small></div></div>
+    <div className={`workspace ${overview ? 'is-overview' : ''}`}>
+      <nav className="floor-rail" aria-label="엘리베이터 층 선택" onKeyDown={railKey}><span className="rail-label">FLOORS</span><div className="floor-buttons">{FLOORS.map(f => <button id={`floor-${f.id}`} key={f.id} className={floor === f.id && !overview ? 'active' : ''} aria-pressed={floor === f.id && !overview} aria-label={`${f.id}층 ${f.name}`} onClick={() => go(f.id)}><span>0{f.id}</span><small>{f.name}</small><i /></button>)}</div><button className={`overview-button ${overview ? 'active' : ''}`} onClick={() => { setOverview(true); setSelected(null); }} aria-pressed={overview} aria-label="전체 보기"><Layers size={18} /><small>전체 보기</small></button><span className="rail-bottom">L / M</span></nav>
+      <main className="main-room">
+        {overview ? <div className="overview-room-heading"><div><span className="eyebrow">ONE COMPANY, FOUR ROOMS</span><h1>각자의 자리에서, 같은 방향으로.</h1></div><p>공간을 눌러 오늘의 일을 살펴보세요.<span>04 FLOORS / LCML</span></p></div> : <div className="room-heading"><div className="room-title"><span className="floor-number">0{floor}<small>F</small></span><div><span className="eyebrow">{current.english}</span><h1>{current.name}</h1><p>{current.description}</p></div></div><div className="room-lead"><span>ROOM LEAD</span><strong>{current.leader}</strong><small>{current.visual.space}</small></div></div>}
         {error && <div className="feed-message" role="status"><CircleHelp size={15} /><span>{error} {feed ? '마지막 관측을 표시합니다.' : '수집되면 자동으로 나타나요.'}</span><button onClick={refresh} aria-label="스냅샷 다시 확인"><RefreshCw size={14} />다시 확인</button></div>}
-        {overview ? <Overview data={data} live={live} go={go} /> : <OfficeScene floor={floor} data={data} now={now} tick={reducedMotion ? 0 : tick} live={live} eventQueue={eventQueue} selected={selected} select={setSelected} project={project} direction={direction} thresholds={thresholds} />}
-        <div className="room-bottom"><div><Dot live={live} /><span>{live ? '관측된 상태' : '확인 중'} <em>·</em> {live ? `${data.sessions.filter(s => s.floor === floor && s.state !== 'ended').length}개 세션` : '세션 미확인'}</span></div><button onClick={() => document.getElementById('insight-panel')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' })}>화이트보드 자세히 <ArrowUpRight size={14} /></button></div>
+        {overview ? <Overview data={data} live={live} go={go} now={now} tick={reducedMotion ? 0 : tick} eventQueue={eventQueue} thresholds={thresholds} project={project} /> : <OfficeScene floor={floor} data={data} now={now} tick={reducedMotion ? 0 : tick} live={live} eventQueue={eventQueue} selected={selected} select={setSelected} project={project} direction={direction} thresholds={thresholds} />}
+        {!overview && <div className="room-bottom"><div><Dot live={live} /><span>{live ? '관측된 상태' : '확인 중'} <em>·</em> {live ? `${floorOccupancy(data, eventQueue, floor).count}개 세션` : '세션 미확인'}</span></div><button onClick={() => document.getElementById('insight-panel')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' })}>화이트보드 자세히 <ArrowUpRight size={14} /></button></div>}
       </main>
-      <aside className="insight-panel" id="insight-panel" aria-label="화이트보드 상세"><div className="panel-top"><span>THE WHITEBOARD</span><span>0{floor} / 04</span></div>{session ? <SessionDetail session={session} data={data} now={now} live={live} close={() => setSelected(null)} /> : floor === 1 ? <Repositories data={data} now={now} /> : floor === 2 ? <Metrics data={data} project={project} setProject={setProject} now={now} /> : floor === 3 ? <Strategy data={data} /> : <Owner data={data} now={now} thresholds={thresholds} setThresholds={setThresholds} />}<SessionList data={data} floor={floor} select={setSelected} now={now} live={live} /><div className="insight-footer"><Coffee size={15} strokeWidth={1.3} /><span>여유가 생기는 쪽으로.</span></div></aside>
+      {!overview && <aside className="insight-panel" id="insight-panel" aria-label="화이트보드 상세"><div className="panel-top"><span>THE WHITEBOARD</span><span>0{floor} / 04</span></div>{session ? <SessionDetail session={session} data={data} now={now} live={live} close={() => setSelected(null)} /> : floor === 1 ? <Repositories data={data} now={now} /> : floor === 2 ? <Metrics data={data} project={project} setProject={setProject} now={now} /> : floor === 3 ? <Strategy data={data} /> : <Owner data={data} now={now} thresholds={thresholds} setThresholds={setThresholds} />}<SessionList data={data} floor={floor} select={setSelected} now={now} live={live} eventQueue={eventQueue} /><div className="insight-footer"><Coffee size={15} strokeWidth={1.3} /><span>여유가 생기는 쪽으로.</span></div></aside>}
     </div>
     <footer className="page-footer"><span>LCML OFFICE <i>—</i> A SMALL COMPANY, A FULLER LIFE.</span><span>관측 {feed?.observedAt ? `${elapsed(feed.observedAt, now)} 전` : '대기 중'}<i>·</i> 시간대 {data.day.timeZone || 'Asia/Seoul'}</span></footer>
   </div>;
 }
-export { Metrics, Strategy, Owner, OfficeScene, Repositories };
+export { Metrics, Strategy, Owner, OfficeScene, Repositories, Overview };
 if (typeof document !== 'undefined') createRoot(document.getElementById('root')).render(<App />);

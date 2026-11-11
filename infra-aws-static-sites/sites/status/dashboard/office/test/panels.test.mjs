@@ -49,3 +49,59 @@ test('old git observations are labeled stale while retaining the last observed c
   assert.doesNotMatch(html, />연결됨</);
   assert.match(html, /<b>3<\/b>/);
 });
+
+test('overview contains four distinct actual office scenes and four accessible floor entrances', () => {
+  const html = renderToStaticMarkup(createElement(components.Overview, { data: data({ repositories: [] }), now, tick: 0, live: false, eventQueue: [], thresholds: {}, go() {} }));
+  for (const asset of ['floor-owner.png', 'floor-business.png', 'floor-customer.png', 'floor-product.png']) assert.ok(html.includes(asset), `missing ${asset}`);
+  assert.equal((html.match(/class="office-background"/g) || []).length, 4);
+  assert.equal((html.match(/<button\b/g) || []).length, 4);
+  assert.match(html, /aria-label="4층 대표실 들어가기"/);
+  assert.match(html, /aria-label="1층 제품실 들어가기"/);
+  assert.ok(html.indexOf('floor-owner.png') < html.indexOf('floor-business.png'));
+  assert.ok(html.indexOf('floor-business.png') < html.indexOf('floor-customer.png'));
+  assert.ok(html.indexOf('floor-customer.png') < html.indexOf('floor-product.png'));
+});
+
+test('overview keeps observed session sprites and actual boards without nested interactive controls', () => {
+  const session = { id: 'one', name: '관측 세션', state: 'working', floor: 1, observedAt: at(0), startedAt: at(-60) };
+  const html = renderToStaticMarkup(createElement(components.Overview, { data: data({ repositories: [], sessions: [session], sources: { sessions: { state: 'ok', observedAt: at(0) } }, tasks: [{ id: 'task', title: '실제 제품 태스크', floor: 1 }] }), now, tick: 0, live: true, eventQueue: [], thresholds: {}, go() {} }));
+  assert.match(html, /관측 세션/);
+  assert.match(html, /실제 제품 태스크/);
+  assert.equal((html.match(/<button\b/g) || []).length, 4);
+  assert.equal((html.match(/class="wall-board"/g) || []).length, 4);
+});
+
+test('owner floor gives ordinary sessions and a waiting question distinct physical positions', () => {
+  const sessions = [1, 2, 3, 4].map(index => ({ id: `owner-${index}`, name: `대표실 세션 ${index}`, floor: 4, state: index === 4 ? 'waiting' : 'working', observedAt: at(0), startedAt: at(-60) }));
+  const fixture = data({ repositories: [], sessions, questions: [{ id: 'question', sessionId: 'owner-4', askedAt: at(-30), title: '결정 대기' }], sources: { sessions: { state: 'ok', observedAt: at(0) }, tasks: { state: 'ok', observedAt: at(0) } } });
+  const html = renderToStaticMarkup(createElement(components.OfficeScene, { floor: 4, data: fixture, now, tick: 0, live: true, eventQueue: [], thresholds: {}, select() {} }));
+  const positions = [...html.matchAll(/class="actor[^\"]*" style="left:([^;]+);top:([^;]+)/g)].map(match => `${match[1]},${match[2]}`);
+  assert.equal(positions.length, 4, 'all three ordinary sessions and the waiting session remain visible');
+  assert.equal(new Set(positions).size, 4, 'no waiting session shares an occupied ordinary seat');
+});
+
+test('overview moves a question-linked session to the owner queue without cloning it on its source floor', () => {
+  const sessions = [1, 2, 3].map(index => ({ id: `owner-${index}`, name: `일반 대표실 ${index}`, floor: 4, state: 'working', observedAt: at(0), startedAt: at(-60) }));
+  sessions.push({ id: 'product-question', name: '제품실 질문자', floor: 1, state: 'waiting', observedAt: at(0), startedAt: at(-60) });
+  const fixture = data({ repositories: [], sessions, questions: [{ id: 'question', sessionId: 'product-question', askedAt: at(-30), title: '결정 대기' }], sources: { sessions: { state: 'ok', observedAt: at(0) }, tasks: { state: 'ok', observedAt: at(0) } } });
+  const html = renderToStaticMarkup(createElement(components.Overview, { data: fixture, now, tick: 0, live: true, eventQueue: [], thresholds: {}, go() {} }));
+  const actors = [...html.matchAll(/class="actor[^\"]*" style="left:([^;]+);top:([^;]+)[^\"]*"[^>]*aria-label="([^\"]+)"/g)];
+  assert.equal(actors.length, 4, 'three ordinary owner sessions and one questioner are shown once');
+  assert.equal(new Set(actors.map(actor => actor[3])).size, 4, 'no session has a duplicate actor in another floor');
+  assert.equal(new Set(actors.map(actor => `${actor[1]},${actor[2]}`)).size, 4, 'owner seats and queue do not overlap');
+  assert.equal(sessions[3].floor, 1, 'moving the display position does not rewrite the source floor');
+});
+
+test('overview counts the space a questioner occupies while preserving source-floor membership', () => {
+  const sessions = [1, 2, 3].flatMap(index => [
+    { id: `owner-${index}`, name: `대표실 ${index}`, floor: 4, state: 'working', observedAt: at(0) },
+    { id: `product-${index}`, name: `제품실 ${index}`, floor: 1, state: index === 3 ? 'waiting' : 'working', observedAt: at(0) },
+  ]);
+  const fixture = data({ repositories: [], sessions, questions: [{ id: 'q', sessionId: 'product-3', askedAt: at(-20) }], sources: { sessions: { state: 'ok', observedAt: at(0) }, tasks: { state: 'ok', observedAt: at(0) } } });
+  const html = renderToStaticMarkup(createElement(components.Overview, { data: fixture, now, tick: 0, live: true, eventQueue: [], thresholds: {}, go() {} }));
+  const counts = [...html.matchAll(/class="preview-status">[\s\S]*?(\d+)개 세션 관측/g)].map(match => Number(match[1]));
+  assert.deepEqual(counts, [4, 0, 0, 2]);
+  const product = renderToStaticMarkup(createElement(components.OfficeScene, { floor: 1, data: fixture, now, tick: 0, live: true, eventQueue: [], thresholds: {}, select() {} }));
+  assert.match(product, /2개 세션이 관측됐어요/);
+  assert.equal(sessions.find(session => session.id === 'product-3').floor, 1);
+});

@@ -189,11 +189,13 @@ jobs:
 
       - name: Sync S3
         run: |
-          # agents-live.json은 수집기(system-dashboard collector)가 올리는 파일 — 배포가 지우면 안 된다
+          # 수집기가 관리하는 피드는 정적 화면 배포가 지우면 안 된다.
           aws s3 sync "${{ matrix.build_dir }}/" \
             "s3://${{ steps.target.outputs.bucket }}" \
             --delete \
             --exclude "agents-live.json" \
+            --exclude "office-live.json" \
+            --exclude "metrics-history.json" \
             --exclude "runtime-map-config.js" \
             --cache-control "public,max-age=60"
 

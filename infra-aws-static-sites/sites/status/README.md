@@ -6,11 +6,42 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 
 ## 경로
 
+- LCML 사무실: `dist/office/index.html` → `https://status.aws.shdkej.com/office/`
+- LCML 상태: `office-live.json` — 기존 10분 컬렉터가 같은 버킷에 발행
 - 운영 화면: `dist/index.html`
 - 실시간 에이전트 상황실: `dist/agents/index.html` → `https://status.aws.shdkej.com/agents/`
 - UI 재질 테스트: `dist/ui-material-test.html`
 - 상태 수집기: `system-dashboard/collector/` (10분마다 `agents-live.json` 갱신)
 - 배포 도메인: `https://status.aws.shdkej.com`
+
+## LCML 사무실
+
+LCML(Less complexity, More Life)은 AI 작업을 4층 사무실로 보여줍니다. 1층 제품실은 지니, 2층 고객실은 고딘, 3층 비즈니스실은 SAM, 4층은 대표실입니다. 사무실 배경 한 장에 4×3 캐릭터 스프라이트와 실제 텍스트 화이트보드를 겹칩니다.
+
+소스는 `dashboard/office/`, 빌드 설정은 `dashboard/vite.office.config.js`입니다. 기존 React/Vite를 재사용하며 Next.js 서버나 별도 인증을 추가하지 않습니다. `dashboard/`에서 `npm run build:office`를 실행하면 `dist/office/`만 갱신합니다. 기본 Status 화면은 `npm run build`로 별도 빌드합니다.
+
+컬렉터의 `office.py`는 OpenClaw 실행 메타데이터, Infinity 원장, 세 저장소 Git 상태와 프로젝트별 PostHog 지표를 읽습니다. 세션 상태와 관측 시각은 분리하며, 기록에 없는 세션·완료 이벤트·고객 지표는 만들지 않습니다. 비밀값·원문 대화·로컬 절대 경로는 공개 JSON에 넣지 않습니다. 세부 수집 설정·명령·테스트는 `system-dashboard/README.md`를 따릅니다.
+
+화면은 30초마다 JSON을 확인하고, 데이터는 10분마다 갱신됩니다. 마지막 관측이 12분을 넘거나 세션 수집이 실패하면 캐릭터와 상태 연출을 멈추고 ‘확인 중’으로 표시합니다. Git·고객 지표의 관측 시각은 따로 표시합니다. AARRR에서 정의·연결되지 않은 단계는 0 대신 미연결 상태를 유지합니다.
+
+배포는 기존 S3/CloudFront 경로를 사용합니다. S3 REST 원점에서 `/office/`가 열리도록 `office/index.html`과 `office/` 키에 같은 HTML을 올립니다. 정적 배포의 삭제 대상에서 `office-live.json`, `agents-live.json`, `metrics-history.json`을 제외해야 합니다. 화면 롤백은 `office/` 정적 자산만 이전 버전으로 복원하며 기존 운영 피드를 삭제하지 않습니다.
+
+실제 렌더 검증은 데스크톱·모바일과 `prefers-reduced-motion`에서 실시합니다. 상태별 동작은 테스트 입력으로 검증하되 배포본에는 가상 사람이나 실측처럼 보이는 샘플 값을 넣지 않습니다.
+
+### 컬렉터 소스 복구
+
+2026-11-11 기준 하위 모듈의 기존 GitHub 원격은 404여서 직접 push하지 못했습니다. 실행 호스트의 컬렉터 소스는 `cb8bc02`로 커밋되어 있으며, 상위 저장소의 gitlink는 원격에서 받을 수 없는 새 커밋으로 바꾸지 않습니다. `patches/lcml-office-collector.patch`에 현재 gitlink `1043559` 이후의 두 커밋을 보존합니다. 첫 커밋 `312c38c`는 이번 작업 전부터 실행 중이던 시계열 수집 변경이고, 두 번째가 LCML입니다.
+
+깨끗한 하위 모듈 checkout에서 현재 배포본을 복구할 때만 다음을 실행합니다. 이미 적용된 실행 호스트에 중복 적용하지 않습니다.
+
+```sh
+cd system-dashboard
+git switch -c restore/lcml-office 1043559
+git am ../patches/lcml-office-collector.patch
+PYTHONPATH=collector python3 -m unittest discover -s collector/tests -p test_office.py
+```
+
+원격이 복구되면 하위 모듈 소스를 정상 push하고 gitlink를 갱신한 뒤 이 복구 패치를 제거합니다. 전체 수집기 테스트에는 기존 `test_system_rollup`의 날짜 고정 fixture 실패 1건이 있으며 수정 전에도 재현됩니다.
 
 ## 상태 수집기 운영
 

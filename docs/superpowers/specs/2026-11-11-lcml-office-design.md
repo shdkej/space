@@ -1,6 +1,6 @@
 # LCML — Less complexity, More Life
 
-상태: 사용자 승인 및 2026-11-11 보정 반영. 기존 Status /office/, 10분 수집, 인증 없음. React/Vite 재사용. 구현 중.
+상태: 사용자 승인 및 2026-11-11 보정 반영. 기존 Status /office/, 10분 수집, 인증 없음. React/Vite 재사용. 구현·검토·라이브 배포 검증 완료.
 
 ## 목적과 화면
 
@@ -37,7 +37,7 @@
 - 화면: `infra-aws-static-sites/sites/status/dashboard/` — React 18, Vite 6. 현재 빌드는 `../dist`로 출력한다.
 - 수집기: `infra-aws-static-sites/sites/status/system-dashboard/collector/collector.py`. 이 디렉터리는 Git 하위 모듈이며 현재 gitlink보다 앞선 기존 배포 커밋이 있다. 기존 변경을 보존하고 복구 가능한 패치를 상위 저장소에 기록한다.
 - 기존 공개 피드: 에이전트 종류·크론 롤업이며 개별 세션 원장이 아니다. 기존 Status는 공개 요약만 허용한다.
-- 실행 원장: OpenClaw SQLite의 `subagent_runs`, `worker_session_placements`, `acp_replay_sessions` 등 존재를 확인했다. 실제 세션 상태 어댑터는 현재 런타임의 필드·종료 의미를 검증한 뒤 구현한다. 기록이 오래됐다는 이유만으로 작업 중·완료를 추정하지 않는다.
+- 실행 원장: OpenClaw SQLite의 `task_runs`·`subagent_runs`와 에이전트별 `session_nodes`·`session_windows`를 읽는다. NULL 상태·오래된 활동은 미확인으로 유지하며 시작·종료 이벤트의 실제 시각을 보존한다.
 - Infinity: `/home/ubuntu/workspace/infinity/INTENTS.yaml`과 월별 archive가 현재 상태 정본이다.
 - PostHog: `/home/ubuntu/workspace/monitoring_personal/posthog-exporter/index.js`는 프로젝트별 수집을 지원한다. 현재 코드에는 세션·전환·재방문 지표가 있지만 AARRR 전체가 정의·연결됐다는 증거는 없다.
 

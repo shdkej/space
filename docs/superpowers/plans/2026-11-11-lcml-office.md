@@ -40,4 +40,16 @@ Session states: working, blocked, waiting, reporting, ended, unknown. Event type
 ### Task 3: Integration and publication
 - [x] Integrate generated assets and validate browser desktop/mobile, frozen state, floor changes, source failures.
 - [x] Review actual diff and fix material findings. Update spec/readme/results.
-- [ ] Commit scoped changes in submodule/Space, push appropriate branches, deploy via existing AWS pathway and verify live asset/feed URLs.
+- [x] Commit scoped changes in submodule/Space, push Space branch, preserve inaccessible collector remote changes as a verified recovery patch, deploy via existing AWS pathway and verify live asset/feed URLs.
+
+## Delivery evidence — 2026-11-11
+
+- Live: https://status.aws.shdkej.com/office/ (HTTP 200, no authentication). Existing Status home links to the office.
+- UI source commit: `f2ebdd9` on Space `codex/lcml-office`. Existing nine commits on the starting branch were preserved; this task did not merge them into main. Deployment was scoped to Office assets/HTML plus the Status home entry.
+- Collector source commit: `cb8bc02`; deployed Python process uses this checkout. Its pre-existing remote returns 404. Parent gitlink remains unchanged; `patches/lcml-office-collector.patch` includes prerequisite `312c38c` and LCML, and was applied to a clean `1043559` checkout. The resulting tree exactly matched `13950ac3e3d0c90959176c9888c9bfdd2c4939e2`.
+- Deployed UI revision: `index-BZCH3TZ_.js` / `index-C6y8pAMa.css`. Eight live HTML/JS/CSS/image responses were HTTP 200 and SHA-256 matched local build bytes. CloudFront invalidation: `I733S8QI74V5RCFALSRPNY40P5`.
+- Frontend tests: 22/22; Office collector tests: 21/21. Existing collector suite: 71/72; `test_system_rollup` has a pre-existing fixed-date fixture failure reproduced on the original code. No assertion of a fully green legacy suite.
+- Chrome verified desktop 1440px/mobile 390px, all floors and rapid navigation, project selection, hypothesis details, reduced motion, image-load fallback and no page errors. Controlled browser inputs verified arrival→report→departure with actor removal/no replay, stale owner count `—`, and four staggered lighting zones. Test inputs were never published.
+- Actual systemd timer produced successive public observations at 19:31 and 19:40 UTC; service exited successfully. Live feed uses `Cache-Control: no-store`, cadence 600 seconds, stale boundary 720 seconds. Existing feeds remain protected from static sync deletion.
+- KL service registry updated and published in `2ea04cc`: source location, four-layer roles, ten-minute cadence and no authentication. Technical operations and collector recovery instructions are in Status README.
+- Remaining data boundaries: AARRR stages without definitions remain unavailable; exporter does not expose PostHog's last successful upstream collection time. Git compares local tracking refs without a remote fetch. No invented sessions or customer values.

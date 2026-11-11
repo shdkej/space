@@ -33,7 +33,7 @@
 - [x] 층별 시각 메타데이터와 공간 전체 보기를 구현한다. 기존 `OfficeScene` 상태 처리를 재사용하되 클릭 타깃을 중첩하지 않는다.
 - [x] 기존 상태 회귀 테스트, 네 층 이미지 선택과 전체 보기 렌더, 모바일·데스크톱·키보드를 검증한다.
 - [x] 실제 이미지 위 화이트보드·세션 위치를 눈으로 확인한다. README/설계 기준을 갱신하고 기존 브랜치에 commit/push한다.
-- [ ] 기존 `/office/`에 배포하고 라이브 자산·네 층 동시 표시·개별 진입을 확인한다.
+- [x] 기존 `/office/`에 배포하고 라이브 자산·네 층 동시 표시·개별 진입을 확인한다.
 
 Context: 사용자 피드백, `/home/ubuntu/AGENTS.md`, Prompt Archive LLM/TASTE/디자인 정본, 기존 LCML 설계·README·실제 배포 구현. 기존 단일 배경 규칙은 이번 사용자 보정으로 교체한다.
 
@@ -45,3 +45,12 @@ Context: 사용자 피드백, `/home/ubuntu/AGENTS.md`, Prompt Archive LLM/TASTE
 - 테스트 입력으로 네 층의 12개 세션, 질문자 대표실 이동·인원 일치, 좌석 충돌 없음, 키보드 진입, 오래된 원천의 정지, 출근→보고→퇴근 순서와 재생 중복 없음 확인. 테스트 입력은 배포 데이터에 쓰지 않음.
 - 독립 검토의 대표실 좌석 충돌 및 추가로 발견한 전체 보기 질문자 중복을 수정하고 재검토에서 Critical/Important 잔여 없음.
 - 네 배경은 imagegen 내장 도구로 제작했으며 원본 파일은 프로젝트 `office/public/assets/`, 전체 프롬프트는 `office/ASSET_PROMPTS.md`에 저장.
+
+## 배포 결과
+
+- URL: https://status.aws.shdkej.com/office/ — 2026-11-11 라이브 확인 완료.
+- 화면 소스: Space `codex/lcml-office`, `e81b3b6`. 기존 브랜치와 무관한 커밋은 보존하고 이번 `/office/` 경로만 배포했다. 컬렉터·데이터 계약은 변경하지 않았다.
+- 배포 자산: `index-C_xw4b_8.js`, `index-DJ1UNlKr.css`, `floor-product.png`, `floor-customer.png`, `floor-business.png`, `floor-owner.png`.
+- 8개 HTML/JS/CSS/PNG 라이브 응답이 HTTP 200이며 로컬 빌드와 SHA-256 일치. CloudFront `I6ZF5ZMCB7KG47KQ3CJ7SR1JN0` 완료.
+- 실제 HTTPS 화면에서 1440×900·390×844 네 공간 동시 표시, 개별 층 진입·전체 보기 복귀, 개별 사무실 전체 표시, JS·HTTP 오류 없음 확인.
+- 상태 피드는 실제 수집 데이터를 사용한다. 동작 검증용 세션·질문은 브라우저 요청 가로채기로만 주입했고 서버에 올리지 않았다.

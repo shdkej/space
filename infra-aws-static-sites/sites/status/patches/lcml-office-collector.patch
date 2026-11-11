@@ -1,7 +1,7 @@
 From 312c38c330842f02a5c565c82a7f231c5968d0a5 Mon Sep 17 00:00:00 2001
 From: shdkej <shdkej@gmail.com>
 Date: Sun, 1 Nov 2026 08:56:37 +0000
-Subject: [PATCH 1/2] feat(status): publish metric timeseries history
+Subject: [PATCH 1/3] feat(status): publish metric timeseries history
 
 ---
  README.md               |  12 ++
@@ -383,7 +383,7 @@ index 3f48e7d..73fa4cc 100644
 From cb8bc028349be4dfa4d87d8f996841d334367fc0 Mon Sep 17 00:00:00 2001
 From: shdkej <shdkej@gmail.com>
 Date: Wed, 11 Nov 2026 19:34:54 +0000
-Subject: [PATCH 2/2] feat: collect ten-minute LCML office snapshots
+Subject: [PATCH 2/3] feat: collect ten-minute LCML office snapshots
 
 ---
  README.md                      |  42 ++++
@@ -1323,6 +1323,410 @@ index 0000000..dfffa99
 +
 +
 +if __name__ == '__main__': unittest.main()
+-- 
+2.43.0
+
+
+From 1e4598d9f95100526a69a10da415c9f1035e9ef1 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Wed, 11 Nov 2026 20:36:46 +0000
+Subject: [PATCH 3/3] feat(office): collect resident agents and Codex runtime
+ metadata
+
+---
+ README.md                      |   8 ++
+ collector/manifest.yaml        |  13 +++
+ collector/office.py            | 128 ++++++++++++++++++++++++--
+ collector/tests/test_office.py | 158 +++++++++++++++++++++++++++++++++
+ 4 files changed, 302 insertions(+), 5 deletions(-)
+
+diff --git a/README.md b/README.md
+index b5959d3..e041cd1 100644
+--- a/README.md
++++ b/README.md
+@@ -47,12 +47,20 @@ GitHub 저장소 커밋 시각은 `GITHUB_TOKEN`/`GH_TOKEN`이 있으면 GitHub
+ 
+ | 영역 | 원천 | 공개 내용과 한계 |
+ | --- | --- | --- |
++| 상주 인원 | OpenClaw 설정 `agents.entries` + manifest 역할 배치 | 현재 등록된 7명과 대표 자리를 `residents`로 제공합니다. 등록은 실행·온라인 증거가 아닙니다. 남아 있는 에이전트 디렉터리만으로 인원을 만들지 않습니다. |
+ | 실행 세션 | OpenClaw `state/openclaw.sqlite`의 `task_runs`·`subagent_runs`, 에이전트별 `openclaw-agent.sqlite`의 `session_nodes`·`session_windows` | 읽기 전용 SQLite 연결에서 상태·시작·종료·활동 시각만 선택합니다. 대화·task 본문·transcript 열을 읽지 않습니다. ID는 해시로 내보내고 실행 설명은 역할명으로 제한합니다. |
++| Codex 실행 | `thread_history_1.sqlite`의 `thread_turns`·`thread_items`, `state_5.sqlite`의 `threads`·`thread_spawn_edges` | 최신 turn의 명시적 상태와 같은 turn의 item 시간 메타데이터만 읽습니다. 제목·대화·프롬프트·item JSON·로컬 작업 경로는 읽거나 공개하지 않습니다. |
+ | 태스크·판단 대기 | Infinity `INTENTS.yaml` | 정제한 실제 태스크 제목, 상태, 담당 층을 공개합니다. 질문은 `waiting_on: user`인 Active/Waiting 항목만 제공하며 `askedAt`/`asked_at` 또는 `created_at`을 사용합니다. 원문 지시·질문 본문·blocker는 내보내지 않습니다. 자격증명이 들어간 제목은 통째로 숨기고 이메일·경로도 제거합니다. |
+ | Git | OpenClaw 실행 워크스페이스, Infinity, Knowledge Lab | 현재 branch·SHA·변경 파일 수·로컬 tracking ref 대비 ahead/behind. 원격 fetch는 하지 않으며 `remoteCheckedAt: null`입니다. 파일명·커밋 메시지·작성자·원격 인증은 공개하지 않습니다. |
+ | 프로젝트 지표 | 기존 PostHog exporter → Prometheus | 설정된 프로젝트와 실제 `service` label을 함께 보여줍니다. 프로젝트에 없는 수치를 다른 프로젝트 값으로 채우지 않습니다. |
+ | 전략·가치·가설 | manifest에서 지정한 `PROJECT.md`, `BRAND.md`, 기존 리서치 문서 | 지정한 근거 문구가 실제 문서에 있을 때만 검토된 짧은 요약을 공개합니다. 문서 전체를 자동 노출하지 않습니다. 가설은 미검증 리서치라는 상태와 출처·관찰 행동을 명시합니다. |
+ 
++상주 명단은 1층 지니·레드, 2층 고딘·디자인, 3층 SAM·세미, 4층 HJ·대표 자리입니다. `kind: owner`인 대표는 사용자가 정의한 자리이며 사람의 온라인 상태가 아닙니다. 실제 활동은 별도 `sessions`로 연결합니다. 등록 조회 실패 시 이전 공개 JSON의 명단과 각 `observedAt`을 보존하고 `sources.residents.state: unknown`으로 표시합니다. 등록을 다시 확인하면 변경·삭제된 명단을 반영합니다.
++
++Codex는 스레드의 최신 turn만 사용합니다. 명시적 `inProgress`이며 **같은 turn의 item 활동이 720초 이내**일 때만 `working`입니다. 프로세스 존재, 스레드의 `active` 표시, 다른 turn의 최근 item은 실행 중 근거로 쓰지 않습니다. 완료 시각이 있는 최신 terminal turn만 종료하며, 이전 turn 종료가 새 실행을 덮지 않습니다. `provider: codex`와 `codex:` 해시 ID로 OpenClaw 세션과 구분하고 실제 부모 관계는 `parentId`로 연결합니다.
++
++`sources.openclawSessions`와 `sources.codexSessions`는 각각 조회 성공·실패를 표시합니다. `sources.sessions`는 둘의 집계이므로 한쪽 실패 시 `partial`이며, 정상 원천의 세션은 지우지 않습니다. 수집 시각과 각 세션의 실제 활동 시각은 다릅니다. 상주 인원이 남아 있더라도 실행 원천이 불명확하면 활동 상태를 확정하지 않습니다.
++
+ 세션의 `status`가 없으면 `unknown`입니다. 활동 근거가 720초보다 오래됐거나 미래 시각이면 실행 중으로 판정하지 않습니다. 실행 시작 시각은 보존하므로 40분 경과 표시는 최근 조회 시각이 아닌 실제 시작에 기초합니다. 완료 세션과 시작·종료·성공 이벤트는 최근 600초만 제공하며 이벤트 ID는 반복 수집해도 같습니다. 실패 종료에는 성공 보고 이벤트가 없습니다. 목록에서 사라진 세션의 퇴근을 만들지 않습니다.
+ 
+ AARRR의 유입 단계는 **방문 세션(유입 참고)**이며 신규 획득 고객 수가 아닙니다. 활성화는 기존 30일 핵심 행동 전환율, 재방문은 이전 7일 대비 최근 7일 코호트입니다. 코호트 분모가 없으면 재방문율도 `null`입니다. 추천·매출은 정의된 exporter 원천이 없어 `null`로 남깁니다. 표본의 실제 0은 보존합니다. `observedAt`은 Prometheus range vector의 표본 시각이며, exporter가 PostHog 마지막 성공 수집 시각을 제공하지 않아 `upstreamFreshness: unknown`을 별도로 표시합니다. 새 scrape가 API 갱신 성공을 증명하지는 않습니다.
+diff --git a/collector/manifest.yaml b/collector/manifest.yaml
+index 7d06c83..bc4cb3d 100644
+--- a/collector/manifest.yaml
++++ b/collector/manifest.yaml
+@@ -109,6 +109,19 @@ office:
+   public_key: office-live.json
+   state_db: /home/ubuntu/.openclaw/state/openclaw.sqlite
+   agents_root: /home/ubuntu/.openclaw/agents
++  openclaw_config: /home/ubuntu/.openclaw/openclaw.json
++  codex_history_db: /home/ubuntu/.codex/thread_history_1.sqlite
++  codex_state_db: /home/ubuntu/.codex/state_5.sqlite
++  # Agent seats are filtered by current agents.entries registration; owner is a defined seat.
++  residents:
++    - {agentId: genie, name: 지니, floor: 1, role: 제품실 · 프로젝트 오너, kind: agent}
++    - {agentId: red, name: 레드, floor: 1, role: 제품 검토, kind: agent}
++    - {agentId: marketing, name: 고딘, floor: 2, role: 고객실 · CMO, kind: agent}
++    - {agentId: design, name: 디자인, floor: 2, role: 디자인, kind: agent}
++    - {agentId: main, name: SAM, floor: 3, role: 비즈니스실 · 참모, kind: agent}
++    - {agentId: taxops, name: 세미, floor: 3, role: 세무, kind: agent}
++    - {agentId: hj, name: HJ, floor: 4, role: 여행 운영 · 개인 보좌, kind: agent}
++    - {agentId: owner, name: 대표, floor: 4, role: 대표 자리, kind: owner}
+   intents_path: /home/ubuntu/workspace/infinity/INTENTS.yaml
+   intents_url: https://github.com/shdkej/infinity/blob/main/INTENTS.yaml
+   kubectl: /usr/local/bin/kubectl
+diff --git a/collector/office.py b/collector/office.py
+index f337dd6..6cd00f7 100644
+--- a/collector/office.py
++++ b/collector/office.py
+@@ -21,7 +21,8 @@ STALE = 720
+ AGENTS = {
+     'main': ('SAM', 3), 'sam': ('SAM', 3), 'genie': ('지니', 1),
+     'marketing': ('고딘', 2), 'godin': ('고딘', 2), 'cmo': ('고딘', 2),
+-    'design': ('디자인', 2), 'red': ('검토', 1), 'hj': ('제품 실행', 1),
++    'design': ('디자인', 2), 'red': ('레드', 1), 'hj': ('HJ', 4),
++    'taxops': ('세미', 3),
+ }
+ SUCCESS = {'done', 'completed', 'succeeded', 'success'}
+ TERMINAL = SUCCESS | {'failed', 'cancelled', 'canceled', 'killed', 'timeout', 'timed_out', 'aborted', 'ended'}
+@@ -105,6 +106,112 @@ def source_status(successes, failures, now):
+             'failedSources': failures}
+ 
+ 
++def collect_residents(settings, now):
++    """Registration is presence, never a claim about a person's current activity."""
++    definitions = settings.get('residents') or []
++
++    def safe_resident(row, observed_at):
++        aid = str(row.get('agentId') or '')
++        kind = row.get('kind', 'agent')
++        if not re.fullmatch(r'[a-z][a-z0-9_-]{0,63}', aid) or kind not in ('agent', 'owner'):
++            return None
++        floor = row.get('floor')
++        if floor not in (1, 2, 3, 4):
++            return None
++        return {'id': 'resident:' + aid, 'agentId': aid,
++                'name': public_text(row.get('name') or AGENTS.get(aid, ('에이전트', 1))[0], 60),
++                'floor': floor, 'role': public_text(row.get('role'), 100), 'kind': kind,
++                'observedAt': iso(observed_at)}
++
++    try:
++        config = json.loads(Path(settings.get('openclaw_config', '')).expanduser().read_text())
++        entries = config.get('agents', {}).get('entries')
++        if not isinstance(entries, dict):
++            raise ValueError('agent registration unavailable')
++        residents = []
++        for definition in definitions:
++            if definition.get('kind') != 'owner' and definition.get('agentId') not in entries:
++                continue
++            resident = safe_resident(definition, now)
++            if resident:
++                residents.append(resident)
++        return residents, source_status(1, 0, now)
++    except (OSError, ValueError, AttributeError):
++        # Only the already-public roster is reusable. Never refresh its timestamps.
++        try:
++            old = json.loads(Path(settings.get('local_path', '')).expanduser().read_text())
++            residents = [safe_resident(row, row.get('observedAt')) for row in old.get('residents', []) if isinstance(row, dict)]
++            residents = [row for row in residents if row]
++        except (OSError, ValueError, AttributeError):
++            residents = []
++        existing_ids = {row['agentId'] for row in residents}
++        for definition in definitions:
++            if definition.get('kind') == 'owner' and definition.get('agentId') not in existing_ids:
++                resident = safe_resident(definition, now)
++                if resident:
++                    residents.append(resident)
++        return residents, source_status(0, 1, now)
++
++
++def collect_codex_sessions(settings, now):
++    """Use explicit latest-turn state plus same-turn item timestamps, never process presence."""
++    try:
++        rows = read_rows(settings.get('codex_history_db', ''), '''
++            WITH latest AS (
++                SELECT thread_id,turn_id,status,started_at,completed_at,
++                       ROW_NUMBER() OVER (PARTITION BY thread_id
++                           ORDER BY rollout_ordinal DESC) AS rank
++                  FROM thread_turns
++            )
++            SELECT t.thread_id,t.turn_id,t.status,t.started_at,t.completed_at,
++                   (SELECT MAX(MAX(COALESCE(i.created_at_ms,0),COALESCE(i.started_at_ms,0),
++                                       COALESCE(i.completed_at_ms,0)))
++                      FROM thread_items i
++                     WHERE i.thread_id=t.thread_id AND i.turn_id=t.turn_id) AS last_activity_at
++              FROM latest t WHERE rank=1''')
++        threads = {row['id']: row for row in read_rows(settings.get('codex_state_db', ''),
++                                                      'SELECT id,archived FROM threads')}
++        parents = {row['child_thread_id']: row['parent_thread_id'] for row in read_rows(
++            settings.get('codex_state_db', ''),
++            'SELECT parent_thread_id,child_thread_id FROM thread_spawn_edges')}
++    except (OSError, sqlite3.Error, ValueError):
++        return [], [], source_status(0, 1, now)
++    sessions, events = [], {}
++    for row in rows:
++        tid = row['thread_id']
++        if tid not in threads or threads[tid]['archived']:
++            continue
++        status = str(row['status'] or '').lower()
++        start, end, activity = timestamp(row['started_at']), timestamp(row['completed_at']), timestamp(row['last_activity_at'])
++        terminal = status in ('completed', 'failed', 'interrupted') and end is not None
++        if terminal:
++            if not 0 <= (now - end).total_seconds() <= CADENCE:
++                continue
++            state, observed = 'ended', end
++        else:
++            if status != 'inprogress' and (not activity or not 0 <= (now - activity).total_seconds() <= CADENCE):
++                continue
++            state, observed = 'unknown', activity
++            if (status == 'inprogress' and end is None and start and start <= now and activity
++                    and start <= activity and 0 <= (now - activity).total_seconds() <= STALE):
++                state = 'working'
++            end = None
++        sid = 'codex:' + opaque(tid)
++        parent = parents.get(tid)
++        sessions.append({'id': sid, 'agentId': 'codex', 'provider': 'codex',
++                         'name': 'Codex 작업자' if parent else 'Codex', 'floor': 1,
++                         'state': state, 'startedAt': iso(start), 'observedAt': iso(observed),
++                         'parentId': 'codex:' + opaque(parent) if parent and parent != tid else None,
++                         'taskLabel': '제품 작업', 'endedAt': iso(end)})
++        for kind, at in [('arrived', start), ('departed', end),
++                         ('reported', end if terminal and status == 'completed' else None)]:
++            if at and 0 <= (now - at).total_seconds() <= CADENCE:
++                eid = 'codex:' + opaque(f'{tid}:{row["turn_id"]}:{kind}:{iso(at)}')
++                events[eid] = {'id': eid, 'sessionId': sid, 'type': kind, 'occurredAt': iso(at)}
++    sessions.sort(key=lambda row: row['id'])
++    return sessions, sorted(events.values(), key=lambda row: (row['occurredAt'], row['id'])), source_status(1, 0, now)
++
++
+ def collect_sessions(settings, now):
+     """Merge run/node/window evidence by opaque session key; no transcript columns."""
+     candidates, parents = [], {}
+@@ -185,10 +292,12 @@ def collect_sessions(settings, now):
+         state = 'ended' if status in TERMINAL and end else ACTIVE.get(status, 'unknown')
+         if state != 'ended' and (not activity or not 0 <= (now - activity).total_seconds() <= STALE or (start and start > now)):
+             state = 'unknown'
+-        agent = row['agent'] if row['agent'] in AGENTS else 'agent'
++        agent = str(row['agent'] or 'agent')
++        if not re.fullmatch(r'[a-z][a-z0-9_-]{0,63}', agent):
++            agent = 'agent'
+         name, floor = AGENTS.get(agent, ('에이전트', 1))
+         sid = opaque(key)
+-        sessions.append({'id': sid, 'agentId': agent, 'name': name, 'floor': floor,
++        sessions.append({'id': sid, 'agentId': agent, 'provider': 'openclaw', 'name': name, 'floor': floor,
+                          'state': state, 'startedAt': iso(start), 'observedAt': iso(activity),
+                          'parentId': opaque(parents[key]) if parents.get(key) else None,
+                          'taskLabel': f'{name} 실행', 'endedAt': iso(end)})
+@@ -379,7 +488,16 @@ def collect_office(cfg, snapshot=None, now=None, run=run_cmd):
+     settings.setdefault('prometheus_service', (cfg.get('monitoring') or {}).get('prometheus_service'))
+     result = {'schemaVersion': 1, 'observedAt': iso(now), 'cadenceSeconds': CADENCE,
+               'staleAfterSeconds': STALE, 'sources': {}}
+-    result['sessions'], result['events'], result['sources']['sessions'] = collect_sessions(settings, now)
++    result['residents'], result['sources']['residents'] = collect_residents(settings, now)
++    result['sessions'], result['events'], result['sources']['openclawSessions'] = collect_sessions(settings, now)
++    codex_sessions, codex_events, result['sources']['codexSessions'] = collect_codex_sessions(settings, now)
++    result['sessions'] += codex_sessions
++    result['events'] += codex_events
++    result['events'].sort(key=lambda row: (row['occurredAt'], row['id']))
++    providers = [result['sources'][key] for key in ('openclawSessions', 'codexSessions')]
++    successes = sum(source['state'] in ('ok', 'partial') for source in providers)
++    failures = sum(source['state'] != 'ok' for source in providers)
++    result['sources']['sessions'] = source_status(successes, failures, now)
+     intents = (snapshot or {}).get('intents')
+     if snapshot is not None and 'intents' in snapshot and intents is None:
+         result['tasks'], result['questions'], result['sources']['tasks'] = [], [], source_status(0, 1, now)
+@@ -432,7 +550,7 @@ def main(argv=None):
+         cfg.setdefault('office', {})['local_path'] = args.output
+         publish_office(cfg, payload)
+     print(json.dumps({'schemaVersion': payload['schemaVersion'], 'observedAt': payload['observedAt'],
+-                      'sessions': len(payload['sessions']), 'questions': len(payload['questions']),
++                      'residents': len(payload['residents']), 'sessions': len(payload['sessions']), 'questions': len(payload['questions']),
+                       'sources': {key: value['state'] for key, value in payload['sources'].items()}}))
+     return 0
+ 
+diff --git a/collector/tests/test_office.py b/collector/tests/test_office.py
+index dfffa99..6539d41 100644
+--- a/collector/tests/test_office.py
++++ b/collector/tests/test_office.py
+@@ -47,6 +47,164 @@ class OfficeTest(unittest.TestCase):
+         c.commit(); c.close()
+         return p
+ 
++    def resident_registry(self, agent_ids):
++        path=self.root/'openclaw.json'
++        path.write_text(json.dumps({'agents':{'entries':{aid:{'name':'secret@example.com token=PRIVATE'} for aid in agent_ids}},'gateway':{'token':'PRIVATE'}}))
++        self.settings['openclaw_config']=str(path)
++        self.settings['residents']=[
++            {'agentId':'main','name':'SAM','floor':3,'role':'비즈니스실','kind':'agent'},
++            {'agentId':'hj','name':'HJ','floor':4,'role':'개인 보좌','kind':'agent'},
++            {'agentId':'taxops','name':'세미','floor':3,'role':'세무','kind':'agent'},
++            {'agentId':'owner','name':'대표','floor':4,'role':'대표 자리','kind':'owner'}]
++        return path
++
++    def codex_database(self, turns, items=(), parents=(), archived=()):
++        history=self.root/'codex-history.sqlite'
++        state=self.root/'codex-state.sqlite'
++        self.settings['codex_history_db']=str(history)
++        self.settings['codex_state_db']=str(state)
++        with sqlite3.connect(history) as c:
++            c.execute('create table thread_turns(thread_id text,turn_id text,rollout_ordinal integer,status text,started_at integer,completed_at integer)')
++            c.execute('create table thread_items(thread_id text,turn_id text,item_type text,created_at_ms integer,started_at_ms integer,completed_at_ms integer,item_json text)')
++            c.executemany('insert into thread_turns values(?,?,?,?,?,?)',turns)
++            for thread,turn,at in items:
++                c.execute('insert into thread_items values(?,?,?,?,?,?,?)',(thread,turn,'reasoning',at,at,at,'PRIVATE transcript password=SECRET'))
++        with sqlite3.connect(state) as c:
++            c.execute('create table threads(id text,archived integer,title text)')
++            c.execute('create table thread_spawn_edges(parent_thread_id text,child_thread_id text,status text)')
++            for thread in {r[0] for r in turns}:
++                c.execute('insert into threads values(?,?,?)',(thread,int(thread in archived),'PRIVATE title'))
++            c.executemany('insert into thread_spawn_edges values(?,?,?)',parents)
++        return history,state
++
++    def test_registered_residents_exist_without_sessions_and_exclude_unregistered_directories(self):
++        self.resident_registry(['main','hj','taxops'])
++        (self.root/'agents'/'orphan'/'agent').mkdir(parents=True)
++        residents,source=office.collect_residents(self.settings,NOW)
++        self.assertEqual({r['agentId'] for r in residents},{'main','hj','taxops','owner'})
++        self.assertEqual({r['agentId']:r['floor'] for r in residents},{'main':3,'hj':4,'taxops':3,'owner':4})
++        self.assertEqual(next(r for r in residents if r['agentId']=='main')['name'],'SAM')
++        self.assertTrue(all('state' not in r for r in residents))
++        self.assertEqual(source['state'],'ok')
++        self.assertNotIn('PRIVATE',json.dumps(residents))
++        self.assertNotIn('secret@example.com',json.dumps(residents))
++
++    def test_registry_failure_preserves_roster_original_observation_time(self):
++        path=self.resident_registry(['main'])
++        residents,_=office.collect_residents(self.settings,NOW)
++        previous=self.root/'office.json';previous.write_text(json.dumps({'residents':residents}))
++        self.settings['local_path']=str(previous)
++        path.write_text('{invalid')
++        retained,source=office.collect_residents(self.settings,NOW+dt.timedelta(minutes=20))
++        self.assertEqual(retained,residents)
++        self.assertEqual(source['state'],'unknown')
++        self.assertIsNone(source['observedAt'])
++
++    def test_successful_registry_removal_removes_resident_not_retaining_history(self):
++        self.resident_registry(['hj'])
++        residents,_=office.collect_residents(self.settings,NOW)
++        self.assertEqual({r['agentId'] for r in residents},{'hj','owner'})
++
++    def test_codex_working_requires_current_turn_activity_and_keeps_real_start(self):
++        self.codex_database([('thread-a','turn-a',1,'inProgress',ms(-50)//1000,None)], [('thread-a','turn-a',ms(-1))])
++        sessions,events,source=office.collect_codex_sessions(self.settings,NOW)
++        self.assertEqual(len(sessions),1)
++        self.assertEqual(sessions[0]['state'],'working')
++        self.assertEqual(sessions[0]['startedAt'],'2026-11-11T11:10:00Z')
++        self.assertEqual(sessions[0]['observedAt'],'2026-11-11T11:59:00Z')
++        self.assertEqual(sessions[0]['agentId'],'codex')
++        self.assertEqual(sessions[0]['provider'],'codex')
++        self.assertTrue(sessions[0]['id'].startswith('codex:'))
++        self.assertEqual(source['state'],'ok')
++        self.assertEqual(events,[])
++        for word in ['thread-a','turn-a','PRIVATE','SECRET','/home/']:
++            self.assertNotIn(word,json.dumps([sessions,events,source]))
++
++    def test_codex_stale_future_or_unobserved_turns_are_unknown(self):
++        turns=[(name,'turn',1,'inProgress',ms(-30)//1000,None) for name in ['stale','future','missing']]
++        self.codex_database(turns,[('stale','turn',ms(-13)),('future','turn',ms(1)),('missing','different-old-turn',ms())])
++        sessions,_,_=office.collect_codex_sessions(self.settings,NOW)
++        self.assertEqual(len(sessions),3)
++        self.assertTrue(all(s['state']=='unknown' for s in sessions))
++        self.assertTrue(any(s['observedAt'] is None for s in sessions))
++
++    def test_codex_latest_turn_and_explicit_end_determine_events(self):
++        self.codex_database([
++            ('root','older',1,'inProgress',ms(-50)//1000,None),
++            ('root','done',2,'completed',ms(-8)//1000,ms(-1)//1000),
++            ('child','cancelled',1,'interrupted',ms(-5)//1000,ms(-1)//1000),
++            ('old','old',1,'completed',ms(-40)//1000,ms(-30)//1000)],
++            [('root','older',ms()),('root','done',ms(-1)),('child','cancelled',ms(-1))], [('root','child','spawned')])
++        sessions,events,_=office.collect_codex_sessions(self.settings,NOW)
++        self.assertEqual(len(sessions),2)
++        self.assertTrue(all(s['state']=='ended' for s in sessions))
++        self.assertEqual(len([e for e in events if e['type']=='reported']),1)
++        child=next(s for s in sessions if s['parentId'])
++        self.assertIn(child['parentId'],[s['id'] for s in sessions])
++        _,again,_=office.collect_codex_sessions(self.settings,NOW+dt.timedelta(seconds=20))
++        self.assertEqual(events,again)
++
++    def test_new_codex_turn_is_not_overwritten_by_previous_completion(self):
++        self.codex_database([
++            ('thread','ended',1,'completed',ms(-8)//1000,ms(-5)//1000),
++            ('thread','current',2,'inProgress',ms(-2)//1000,None)],
++            [('thread','ended',ms(-1)),('thread','current',ms(-1))])
++        sessions,events,_=office.collect_codex_sessions(self.settings,NOW)
++        self.assertEqual(len(sessions),1)
++        self.assertEqual(sessions[0]['state'],'working')
++        self.assertEqual(sessions[0]['startedAt'],'2026-11-11T11:58:00Z')
++        self.assertEqual({e['type'] for e in events},{'arrived'})
++        self.assertIsNone(sessions[0]['endedAt'])
++
++    def test_latest_codex_turn_with_null_start_is_unknown_not_previous_completion(self):
++        self.codex_database([
++            ('thread','ended',1,'completed',ms(-8)//1000,ms(-5)//1000),
++            ('thread','current',2,'inProgress',None,None)],
++            [('thread','current',ms(-1))])
++        sessions,events,_=office.collect_codex_sessions(self.settings,NOW)
++        self.assertEqual(len(sessions),1)
++        self.assertEqual(sessions[0]['state'],'unknown')
++        self.assertIsNone(sessions[0]['startedAt'])
++        self.assertIsNone(sessions[0]['endedAt'])
++        self.assertEqual(sessions[0]['observedAt'],'2026-11-11T11:59:00Z')
++        self.assertEqual(events,[])
++
++    def test_codex_rollout_order_wins_when_new_turn_clock_moves_backwards(self):
++        self.codex_database([
++            ('thread','ended',1,'completed',ms(-8)//1000,ms(-5)//1000),
++            ('thread','current',2,'inProgress',ms(-10)//1000,None)],
++            [('thread','current',ms(-1))])
++        sessions,events,_=office.collect_codex_sessions(self.settings,NOW)
++        self.assertEqual(len(sessions),1)
++        self.assertEqual(sessions[0]['state'],'working')
++        self.assertEqual(sessions[0]['startedAt'],'2026-11-11T11:50:00Z')
++        self.assertIsNone(sessions[0]['endedAt'])
++        self.assertEqual({e['type'] for e in events},{'arrived'})
++
++    def test_codex_missing_db_is_unknown_and_does_not_create_file(self):
++        self.settings['codex_history_db']=str(self.root/'missing.sqlite')
++        self.settings['codex_state_db']=str(self.root/'missing-state.sqlite')
++        sessions,events,source=office.collect_codex_sessions(self.settings,NOW)
++        self.assertEqual((sessions,events),([],[]))
++        self.assertEqual(source['state'],'unknown')
++        self.assertFalse((self.root/'missing.sqlite').exists())
++
++    def test_partial_session_source_failure_remains_visible_without_dropping_other_provider(self):
++        self.codex_database([('a','t',1,'inProgress',ms(-5)//1000,None)],[('a','t',ms(-1))])
++        result=office.collect_office({'office':self.settings},now=NOW)
++        self.assertEqual(result['sources']['sessions']['state'],'partial')
++        self.assertEqual(result['sources']['openclawSessions']['state'],'unknown')
++        self.assertEqual(result['sources']['codexSessions']['state'],'ok')
++        self.assertEqual(len(result['sessions']),1)
++        self.assertEqual(result['sessions'][0]['provider'],'codex')
++
++    def test_openclaw_preserves_actual_agent_id_for_resident_matching(self):
++        self.database(tasks=[('id','run','agent:taxops:test','agent:main:test','taxops','main','running',ms(-5),ms(-5),None,ms(-1),None)])
++        sessions,_,_=office.collect_sessions(self.settings,NOW)
++        self.assertEqual(sessions[0]['agentId'],'taxops')
++        self.assertEqual(sessions[0]['floor'],3)
++        self.assertEqual(sessions[0]['provider'],'openclaw')
++
+     def test_missing_database_does_not_create_it_or_manufacture_sessions(self):
+         sessions, events, source = office.collect_sessions(self.settings, NOW)
+         self.assertEqual(sessions, [])
 -- 
 2.43.0
 

@@ -1,5 +1,7 @@
 # LCML frontend implementation — 2026-11-11
 
+현재 버전은 [한 건물 보기와 상주 인원 계획](../../../../../docs/superpowers/plans/2026-11-11-lcml-building-residents.md)을 따릅니다. 아래 2×2 및 27개 테스트 기록은 이전 수정 이력입니다. 현재 화면은 하나의 연결된 건물, 등록된 7명과 대표 자리, OpenClaw/Codex 실제 실행을 사용합니다. 최신 회귀 테스트41/41와 빌드가 통과했습니다. 과거 관측 보존과 현재 실행 집계도 구분합니다.
+
 담당 범위: `dashboard/office/`, `dashboard/vite.office.config.js`, `dashboard/package.json`의 `build:office`, 생성된 `dist/office/`. Collector·기존 대시보드 화면은 수정하지 않았습니다. 화면 구현 단계의 기록입니다. 최종 소스 커밋·배포·라이브 검증은 Space의 `docs/superpowers/plans/2026-11-11-lcml-office.md`에 기록합니다.
 
 ## 구현 결과

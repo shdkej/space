@@ -1,5 +1,19 @@
 # LCML 층별 배경 생성 프롬프트
 
+## connected-building
+
+저장: `public/assets/building.png` (1024×1536). 아래 기존 층별 4개 이미지를 스타일/인테리어 참조로 사용해, 하나의 연결된 건물 단면을 imagegen 내장 도구로 생성했습니다. 사람과 실제 작업 정보는 DOM 레이어로 표시합니다.
+
+```text
+Create one portrait 1024x1536 architectural visualization asset for LCML office web app. The four attached images are style/interior REFERENCES ONLY. Transform these four rooms into ONE REAL CONNECTED FOUR-STORY BUILDING shown as a front cutaway dollhouse, stacked VERTICALLY, fourth story directly above third directly above second directly above first. Exactly FOUR inhabitable stories, no fifth floor, no basement. This is NOT a grid, collage, separated exploded-view diagram, cards, or floating slabs. Floors physically join the same continuous structural columns, same footprint, shared solid left elevator shaft and continuous rear wall. Exterior Barcelona Disseny Hub inspired sculptural warm grey zinc/concrete museum architecture, pale limestone, oak, soft warm lighting. Premium photoreal miniature architectural render. Camera orthographic near-frontal three-quarter perspective (only slight view from right and modest above) so each of four story interiors is clearly visible through fully removed front facade. Each story has generous tall clear space for overlaying small human sprites. A flat thin roof caps the top; every floor slab aligns across the full width. Building fills almost entire portrait with small cream #f5f1e9 margins, isolated ground shadow. Main usable central scene x20%-85%; left core/elevator x9%-21%. Four floor interiors occupy four approximately equal horizontal bands, top to bottom. Elegant believable building, warm inviting inhabited furniture but NO PEOPLE.
+TOP story / owner: one walnut executive desk and forest-green chair at center, sage waiting bench and glass garden reading corner on right. Calm and spacious.
+SECOND from TOP / business: long dark walnut conference table across center, burgundy chairs, strategy card panel and bookshelves.
+THIRD from TOP / customer: orange/terracotta circular interview lounge in center, a workshop corner and five colored translucent customer-journey panels on right.
+GROUND story / product: blue-chair computer workbenches across center, server rack on left, knowledge library/workbench on right.
+Each floor has one BLANK wide cream whiteboard on rear wall in a visible area at left/center-left, no writing or marks. Keep clear floor walking lanes in front of furnishings on every story for animated characters to be added by app. Furniture should stay consistent with provided references while adapting to this connected building cutaway.
+No text, letters, numerals, icons, UI, charts with data, watermarks, signage, people or characters. Software adds all labels and people. No extra floor, no split disconnected rooms.
+```
+
 2026-11-11 사용자 요청에 따라 imagegen 내장 도구로 기존 사무실 이미지를 편집했습니다. 기준 이미지: `public/assets/office.png`. 캐릭터 스프라이트는 별도 레이어입니다.
 
 ## product

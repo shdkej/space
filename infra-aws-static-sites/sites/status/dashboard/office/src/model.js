@@ -43,41 +43,69 @@ export const STAGES = [
   ['acquisition', '유입', 'Acquisition'], ['activation', '활성화', 'Activation'],
   ['retention', '재방문', 'Retention'], ['revenue', '매출', 'Revenue'], ['referral', '추천', 'Referral'],
 ];
+// Percentages of the connected 1024 × 1536 building, independent of room art.
+export const BUILDING = {
+  4: { top: 8, bottom: 32, label: 22, entrance: [13,28], board: [25.7,13,18.7,6.6,0], seats: [[57,24],[32,28],[87,26]], queue: [[61,30],[67,30],[73,29],[79,29],[56,30.5],[84,29],[48,30.5],[42,30.5]] },
+  3: { top: 32, bottom: 53.5, label: 44, entrance: [13,49], board: [25.7,34.4,18.7,6.2,0], seats: [[36,48.5],[57,49],[82,47],[47,44],[64,44],[30,45],[73,50],[90,48]] },
+  2: { top: 53.5, bottom: 75.5, label: 66, entrance: [13,71], board: [25.7,55.2,18.7,5.1,0], seats: [[39,68.5],[68,72],[52,67],[85,68],[33,72],[58,72],[75,68],[91,69],[44,72],[60,68],[29,67],[79,72]] },
+  1: { top: 75.5, bottom: 98, label: 88, entrance: [13,93], board: [25.7,76.5,18.7,6,0], seats: [[35,90],[59,94],[81,90],[44,88],[64,88],[50,95],[72,94],[27,94]] },
+};
 export const timestamp = value => typeof value === 'string' ? Date.parse(value) : NaN;
 const list = value => Array.isArray(value) ? value.filter(item => item && typeof item === 'object') : [];
 const okay = state => ['ok', 'healthy', 'connected'].includes(state);
 export function normalizeSnapshot(value) {
   if (!value || value.schemaVersion !== 1 || !Number.isFinite(timestamp(value.observedAt))) return null;
   const result = { ...value, sources: value.sources || {}, strategy: value.strategy || {}, day: value.day || {} };
-  for (const key of ['sessions', 'events', 'questions', 'repositories', 'projects', 'tasks', 'activity']) result[key] = list(value[key]);
+  for (const key of ['residents', 'sessions', 'events', 'questions', 'repositories', 'projects', 'tasks', 'activity']) result[key] = list(value[key]);
+  const residentIds = new Set();
+  result.residents = result.residents.filter(r => {
+    if (typeof r.id !== 'string' || typeof r.agentId !== 'string' || residentIds.has(r.agentId) || ![1,2,3,4].includes(Number(r.floor)) || !['agent','owner'].includes(r.kind)) return false;
+    residentIds.add(r.agentId); return true;
+  }).map(r => ({ ...r, floor: Number(r.floor) }));
   result.sessions = result.sessions.filter(s => typeof s.id === 'string' && [1, 2, 3, 4].includes(Number(s.floor))).map(s => ({ ...s, floor: Number(s.floor) }));
   result.questions.sort((a, b) => (timestamp(a.askedAt) || Infinity) - (timestamp(b.askedAt) || Infinity));
   return result;
 }
+export function mergeSnapshot(previous, next, now = Date.now()) {
+  if (!previous) return next;
+  const sessions = [...next.sessions];
+  for (const session of previous.sessions || []) {
+    const source = session.provider === 'codex' ? 'codexSessions' : session.provider === 'openclaw' ? 'openclawSessions' : 'sessions';
+    const sourceKey = next.sources?.[source] ? source : 'sessions';
+    if (!knownSource(next, sourceKey, now) && !sessions.some(s => s.id === session.id)) sessions.push(session);
+  }
+  return { ...next, sessions, residents: !knownSource(next, 'residents', now) && !next.residents.length ? previous.residents || [] : next.residents };
+}
 export function freshness(snapshot, now = Date.now(), session) {
   if (!snapshot) return { live: false, reason: '수집 대기' };
-  const source = snapshot.sources?.sessions;
-  if (!okay(source?.state)) return { live: false, reason: '세션 확인 중' };
+  const provider = session?.provider === 'codex' ? 'codexSessions' : session?.provider === 'openclaw' || session?.resident ? 'openclawSessions' : null;
+  const source = (provider && snapshot.sources?.[provider]) || snapshot.sources?.sessions;
+  const partial = !session && source?.state === 'partial' && ['openclawSessions', 'codexSessions'].some(key => knownSource(snapshot, key, now));
+  if (!okay(source?.state) && !partial) return { live: false, reason: '세션 확인 중' };
+  if (session?.resident && (!knownSource(snapshot, 'residents', now) || observationState({ state: 'ok', observedAt: session.residentObservedAt }, now) !== 'ok')) return { live: false, reason: '명단 확인 중' };
   const times = [snapshot.observedAt, source.observedAt, ...(session ? [session.observedAt] : [])].map(timestamp);
   if (times.some(t => !Number.isFinite(t))) return { live: false, reason: '관측 시각 미확인' };
   if (times.some(t => t > now + 60_000)) return { live: false, reason: '관측 시각 확인 중' };
   if (times.some(t => now - t > 720_000)) return { live: false, reason: '새 관측 대기' };
   if (session?.state === 'unknown') return { live: false, reason: '세션 확인 중' };
-  return { live: true, reason: '최근 관측' };
+  return { live: true, partial: !!partial, reason: partial ? '일부 세션 확인 중' : '최근 관측' };
 }
 export function advanceSnapshot(previous, snapshot, now = Date.now()) {
   const time = timestamp(snapshot?.observedAt);
+  // A partially available collection can update known poses, but cannot prove
+  // an uninterrupted arrival/departure sequence across providers.
+  const continuous = okay(snapshot?.sources?.sessions?.state) && freshness(snapshot, now).live;
   if (!Number.isFinite(time) || (previous && time < previous.time)) return { ledger: previous, events: [] };
-  if (previous && time === previous.time) return { ledger: { ...previous, live: previous.live && freshness(snapshot, now).live }, events: [], reset: !previous.live && freshness(snapshot, now).live };
+  if (previous && time === previous.time) return { ledger: { ...previous, live: previous.live && continuous }, events: [], reset: !previous.live && continuous };
   const seen = new Set(previous?.seen || []);
-  const canAnimate = previous && previous.live && freshness(snapshot, now).live && now - previous.time <= 720_000;
+  const canAnimate = previous && previous.live && continuous && now - previous.time <= 720_000;
   const events = [];
   for (const event of snapshot.events || []) {
     const eventTime = timestamp(event.occurredAt);
     if (canAnimate && event.id && !seen.has(event.id) && eventTime > previous.time && eventTime <= time && ['arrived', 'departed', 'reported'].includes(event.type)) events.push(event);
     if (event.id) seen.add(event.id);
   }
-  return { ledger: { time, live: freshness(snapshot, now).live, seen: [...seen].slice(-2000) }, events, reset: !canAnimate };
+  return { ledger: { time, live: continuous, seen: [...seen].slice(-2000) }, events, reset: !canAnimate };
 }
 export function sessionVisual(session, now, tick = 0, event) {
   const pressure = session.state === 'blocked' || (session.state === 'working' && now - timestamp(session.startedAt) > 2_400_000);
@@ -86,6 +114,8 @@ export function sessionVisual(session, now, tick = 0, event) {
   if (event?.type === 'arrived' || event?.type === 'departed') return { ...base, col: tick % 2, row: 1, label: event.type === 'arrived' ? '출근합니다!' : '퇴근합니다!' };
   if (session.state === 'working' || session.state === 'blocked') return { ...base, col: tick % 4, row: 0, label: session.state === 'blocked' ? '도움 필요' : '작업 중' };
   if (session.state === 'waiting') return { ...base, col: tick % 8 < 6 ? 0 : 1, row: 2, label: '대기 중' };
+  if (session.state === 'idle') return { ...base, col: tick % 8 < 6 ? 0 : 1, row: 2, label: '쉬는 중' };
+  if (session.state === 'owner') return { ...base, label: '대표 자리' };
   if (session.state === 'reporting') return { ...base, col: 2, row: 1, label: '보고 중' };
   if (session.state === 'ended') return { ...base, label: '종료' };
   return base;
@@ -154,20 +184,60 @@ export function sceneSessions(sessions, queue, floor) {
   const combined = [...sessions, ...queue.map(entry => entry.session).filter(session => !sessions.some(item => item.id === session.id))];
   return combined.filter(session => session.floor === floor && (session.state !== 'ended' || queue.some(entry => entry.session.id === session.id)));
 }
-export function floorOccupancy(snapshot, eventQueue, floor) {
+// Membership is independent of activity: a resident keeps their place when a
+// turn ends. A real primary session animates that person; children stay separate.
+export function officeActors(snapshot, eventQueue = []) {
+  const sessions = [...(snapshot.sessions || []), ...eventQueue.map(entry => entry.session).filter(s => !(snapshot.sessions || []).some(item => item.id === s.id))];
+  const queued = new Set(eventQueue.map(entry => entry.session.id));
+  const available = sessions.filter(s => s.state !== 'ended' || queued.has(s.id));
+  const bound = new Set();
+  const rank = ['owner','hj','main','taxops','marketing','design','genie','red'];
+  const residents = [...(snapshot.residents || [])].sort((a,b) => rank.indexOf(a.agentId) - rank.indexOf(b.agentId)).map(resident => {
+    const primary = resident.kind !== 'owner' && available.filter(s => !s.parentId && s.agentId === resident.agentId && s.provider !== 'codex')
+      .sort((a,b) => Number(a.state === 'ended') - Number(b.state === 'ended') || (timestamp(b.startedAt) || 0) - (timestamp(a.startedAt) || 0))[0];
+    if (primary) bound.add(primary.id);
+    return {
+      ...primary, ...resident, resident: true, sessionId: primary?.id || null, provider: 'openclaw',
+      residentObservedAt: resident.observedAt,
+      observedAt: primary?.observedAt || snapshot.sources?.openclawSessions?.observedAt || snapshot.sources?.sessions?.observedAt,
+      state: resident.kind === 'owner' ? 'owner' : primary && primary.state !== 'ended' ? primary.state : 'idle',
+    };
+  });
+  return [...residents, ...available.filter(s => !bound.has(s.id)).map(s => ({ ...s, sessionId: s.id }))];
+}
+export function actorEvent(actor, eventQueue = []) {
+  const event = eventQueue.find(entry => entry.session.id === (actor.sessionId || actor.id))?.events[0];
+  return actor.resident && event?.type !== 'reported' ? undefined : event;
+}
+export function runtimeSessionCounts(snapshot, now, sessions = snapshot.sessions || []) {
+  const candidates = sessions.filter(s => !['idle', 'owner', 'ended'].includes(s.state));
+  const verified = candidates.filter(s => ['working', 'blocked', 'reporting', 'waiting'].includes(s.state) && freshness(snapshot, now, s).live);
+  return {
+    verifiedSessionCount: verified.length,
+    unknownSessionCount: candidates.length - verified.length,
+    workingCount: verified.filter(s => ['working', 'blocked', 'reporting'].includes(s.state)).length,
+    blockedCount: verified.filter(s => s.state === 'blocked').length,
+  };
+}
+export function floorOccupancy(snapshot, eventQueue, floor, now = Date.now()) {
+  const actors = officeActors(snapshot, eventQueue);
   const questions = snapshot.questions || [];
   const waiting = [];
   const questioners = new Set();
   for (const question of questions) {
-    const session = snapshot.sessions.find(item => item.id === question.sessionId)
-      || eventQueue.find(entry => entry.session.id === question.sessionId)?.session;
+    const session = actors.find(item => item.sessionId === question.sessionId || item.id === question.sessionId);
     if (!session || questioners.has(session.id) || (session.state === 'ended' && !eventQueue.some(entry => entry.session.id === session.id))) continue;
     questioners.add(session.id);
     if (floor === 4) waiting.push({ session, question });
   }
-  const seated = sceneSessions(snapshot.sessions, eventQueue, floor).filter(session => !questioners.has(session.id));
+  const seated = actors.filter(session => Number(session.floor) === floor && !questioners.has(session.id));
   const sessions = [...seated, ...waiting.map(item => item.session)];
-  return { seated, waiting, sessions, count: sessions.length };
+  const counts = runtimeSessionCounts(snapshot, now, sessions.filter(s => s.sessionId));
+  return { seated, waiting, sessions, count: sessions.length, ...counts,
+    residentCount: sessions.filter(s => s.resident && s.kind !== 'owner').length,
+    ownerCount: sessions.filter(s => s.kind === 'owner').length,
+    sessionCount: counts.verifiedSessionCount,
+  };
 }
 export function observationState(record, now = Date.now()) {
   if (!record || !okay(record.state)) return record?.state || 'unknown';

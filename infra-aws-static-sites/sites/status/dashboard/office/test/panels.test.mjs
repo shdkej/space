@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createServer } from 'vite';
+import { normalizeSnapshot, mergeSnapshot } from '../src/model.js';
 
 let server;
 let components;
@@ -50,16 +51,14 @@ test('old git observations are labeled stale while retaining the last observed c
   assert.match(html, /<b>3<\/b>/);
 });
 
-test('overview contains four distinct actual office scenes and four accessible floor entrances', () => {
+test('overview contains one connected building with vertically ordered floors and four accessible entrances', () => {
   const html = renderToStaticMarkup(createElement(components.Overview, { data: data({ repositories: [] }), now, tick: 0, live: false, eventQueue: [], thresholds: {}, go() {} }));
-  for (const asset of ['floor-owner.png', 'floor-business.png', 'floor-customer.png', 'floor-product.png']) assert.ok(html.includes(asset), `missing ${asset}`);
-  assert.equal((html.match(/class="office-background"/g) || []).length, 4);
+  assert.ok(html.includes('building.png'));
+  assert.equal((html.match(/class="building-background"/g) || []).length, 1);
+  assert.deepEqual([...html.matchAll(/data-floor="(\d)"/g)].map(m => Number(m[1])), [4,3,2,1]);
   assert.equal((html.match(/<button\b/g) || []).length, 4);
   assert.match(html, /aria-label="4층 대표실 들어가기"/);
   assert.match(html, /aria-label="1층 제품실 들어가기"/);
-  assert.ok(html.indexOf('floor-owner.png') < html.indexOf('floor-business.png'));
-  assert.ok(html.indexOf('floor-business.png') < html.indexOf('floor-customer.png'));
-  assert.ok(html.indexOf('floor-customer.png') < html.indexOf('floor-product.png'));
 });
 
 test('overview keeps observed session sprites and actual boards without nested interactive controls', () => {
@@ -99,9 +98,42 @@ test('overview counts the space a questioner occupies while preserving source-fl
   ]);
   const fixture = data({ repositories: [], sessions, questions: [{ id: 'q', sessionId: 'product-3', askedAt: at(-20) }], sources: { sessions: { state: 'ok', observedAt: at(0) }, tasks: { state: 'ok', observedAt: at(0) } } });
   const html = renderToStaticMarkup(createElement(components.Overview, { data: fixture, now, tick: 0, live: true, eventQueue: [], thresholds: {}, go() {} }));
-  const counts = [...html.matchAll(/class="preview-status">[\s\S]*?(\d+)개 세션 관측/g)].map(match => Number(match[1]));
+  const counts = [...html.matchAll(/class="building-session-count">[\s\S]*?(\d+)개 세션 관측/g)].map(match => Number(match[1]));
   assert.deepEqual(counts, [4, 0, 0, 2]);
   const product = renderToStaticMarkup(createElement(components.OfficeScene, { floor: 1, data: fixture, now, tick: 0, live: true, eventQueue: [], thresholds: {}, select() {} }));
   assert.match(product, /2개 세션이 관측됐어요/);
   assert.equal(sessions.find(session => session.id === 'product-3').floor, 1);
+});
+
+
+test('partial provider failure shows confirmed zero and an unknown hint in actual runtime aggregates', () => {
+  const ok = { state: 'ok', observedAt: at(0) };
+  const previous = normalizeSnapshot({ schemaVersion: 1, ...data({ sessions: [{ id: 'old', name: '이전 Codex', provider: 'codex', floor: 1, state: 'working', observedAt: at(0) }], sources: { sessions: ok, openclawSessions: ok, codexSessions: ok } }) });
+  const next = normalizeSnapshot({ schemaVersion: 1, ...data({ sources: { sessions: { ...ok, state: 'partial' }, openclawSessions: ok, codexSessions: { ...ok, state: 'unknown' } } }) });
+  const fixture = mergeSnapshot(previous, next, now);
+  const owner = renderToStaticMarkup(createElement(components.Owner, { data: fixture, now, thresholds: {}, setThresholds() {} }));
+  assert.match(owner, /<span>현재 실행<\/span><b>0<\/b>/);
+  assert.match(owner, /<span>막힌 일<\/span><b>0<\/b>/);
+  assert.match(owner, /일부 실행 원천 확인 중/);
+  assert.match(owner, /1개 세션 확인 중/);
+  const props = { data: fixture, now, tick: 0, live: true, eventQueue: [], thresholds: {}, go() {}, select() {} };
+  const overview = renderToStaticMarkup(createElement(components.Overview, props));
+  assert.doesNotMatch(overview, /1개 세션 관측/);
+  assert.match(overview, /1개 세션 확인 중/);
+  const scene = renderToStaticMarkup(createElement(components.OfficeScene, { ...props, floor: 1 }));
+  assert.match(scene, /1개 세션 확인 중/);
+  assert.doesNotMatch(scene, /1개 세션이 관측됐어요|1개 실행 세션/);
+  assert.match(scene, /이전 Codex/);
+});
+
+test('owner warns of unavailable provider even without preserved rows and keeps known working counts', () => {
+  const ok = { state: 'ok', observedAt: at(0) };
+  const fixture = data({ sessions: [{ id: 'known', provider: 'openclaw', floor: 1, state: 'blocked', observedAt: at(0) }, { id: 'unknown', provider: 'openclaw', floor: 1, state: 'unknown', observedAt: at(0) }], sources: { sessions: { ...ok, state: 'partial' }, openclawSessions: ok, codexSessions: { ...ok, state: 'unknown' } } });
+  const render = () => renderToStaticMarkup(createElement(components.Owner, { data: fixture, now, thresholds: {}, setThresholds() {} }));
+  const html = render();
+  assert.match(html, /<span>현재 실행<\/span><b>1<\/b>/);
+  assert.match(html, /<span>막힌 일<\/span><b>1<\/b>/);
+  assert.match(html, /1개 세션 확인 중/);
+  fixture.sessions = [];
+  assert.match(render(), /일부 실행 원천 확인 중/);
 });

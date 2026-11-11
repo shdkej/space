@@ -20,3 +20,5 @@ dialog{border:1px solid var(--line);padding:0;background:var(--surface);color:va
 .mobile-folder{display:none}@media(max-width:760px){.mobile-folder{display:flex;align-items:center;gap:14px;margin:20px 0}.mobile-folder label{font-size:11px;color:var(--secondary)}.mobile-folder select{min-width:0;flex:1;min-height:44px;border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px;background:var(--surface);color:var(--ink)}}
 
 .export-link{display:flex;align-items:center;gap:10px;padding:13px;font-size:12px;border-radius:4px;width:100%;text-align:left}.export-link:hover{background:var(--lemon-soft)}
+
+@media(max-width:480px){.app-header .brand{flex-shrink:0;white-space:nowrap;gap:8px}.brand-by{display:none}.header-actions{gap:8px}.dashboard-link{min-width:40px;min-height:44px;justify-content:center}.dashboard-link span{display:none}.connection-button{white-space:nowrap;min-height:44px;gap:6px}}

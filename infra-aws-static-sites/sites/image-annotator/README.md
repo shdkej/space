@@ -1,57 +1,68 @@
-# Image Annotator
+# Image Dashboard + Clef 사진정리
 
-화면의 기본 색상은 웜화이트와 레몬 옐로 `#FCF9B7`을 사용합니다. 레몬색은 배경 깊이·포커스·선택 상태에만 제한적으로 사용하고, 본문과 저장 버튼은 어두운 올리브 잉크로 대비를 확보합니다.
+기존 R2 이미지와 Supabase 태그·주석을 한곳에서 찾고 정리하는 웹앱입니다. 새 사진을 여러 장 올리거나 기존 보관함을 불러와 Cloudflare Clef로 분류합니다.
 
-R2 이미지 보관함에 사진을 추가하고, 사진별 분류와 주석을 다시 찾을 수 있게 보관하는 정적 도구입니다.
+- 이미지 대시보드: https://images.aws.shdkej.com/
+- 사진정리: https://images.aws.shdkej.com/sort/
+- 디자인: 웜화이트 바탕, 레몬 옐로 `#FCF9B7` 선택·강조, 올리브 본문 대비와 로컬 Pretendard 폰트를 사용합니다.
 
-## 구조
+## 소스와 데이터 정본
 
-- `dist/`: AWS S3 + CloudFront 정적 페이지
-- 배포 도메인: `images.aws.shdkej.com` (`sites/registry.json`에 등록된 도메인을 사용)
-- `../../lambda/image_annotator.py`: 목록·주석·태그 조회 API와 Decisions 분류 API
-- `../../supabase/image_annotations.sql`: 주석·분류 테이블 및 태그 축 스키마
-- R2 이미지: 기존 `openclaw-images` 버킷의 `img.shdkej.com`
+| 구성 | 위치·역할 |
+| --- | --- |
+| 기존 대시보드 | `dist/index.html`: 목록·지도·주석·기존 업로드 |
+| 사진정리 소스 | `sorter/`: React + TypeScript + Vite, 빌드 출력 `dist/sort/` |
+| Lambda 코드·테스트·패키징 | 독립 [image-annotator-api](https://github.com/shdkej/image-annotator-api), 로컬 `/home/ubuntu/workspace/services/image-annotator-api` |
+| AWS 배포 선언 | `../../image_annotator.tf`, `../../image_sorter.tf`, `../../releases/image-annotator.json` |
+| 업로드 Worker | Space `infra-cloudflare-images/worker/index.js` |
+| 사진·태그·작업 | 기존 R2 `original/`, Supabase `image_topics`·`image_annotations`, DynamoDB `image-annotator-sorter` |
 
-## 동작
+Space의 이전 `lambda/image_annotator.py`는 독립 서비스로 이전했습니다. 이후 서비스 코드를 그 레거시 경로에 추가하지 않습니다. 기존 `/api/images`, `/api/topics`, `/api/annotations`, `/api/classify` 계약을 유지합니다.
 
-1. 개인 테스트용으로 보관함 열람·업로드를 로그인 없이 공개합니다.
-2. 업로드 Worker가 사진을 최대 1600px WebP로 변환해 R2의 `original/`에 저장합니다. 브라우저에는 업로드·분류 토큰이 없습니다.
-3. Worker가 비공개 서버 토큰으로 Lambda를 호출합니다. Lambda는 R2 공개 이미지 URL을 Decisions API(`gpt-6-luna`)에 보내고, 한 번의 요청에서 주제·복수 내용 태그·복수 판단 태그를 분류합니다.
-4. Lambda는 주제와 `subject_tags`·`judgment_tags`를 Supabase `image_topics`에 upsert합니다. 내용 태그·판단 태그는 서로 다른 축으로 보관합니다.
-5. Decisions 분류가 실패해도 업로드된 이미지는 유지합니다. 화면에서 같은 사진의 분류를 다시 시도할 수 있습니다.
-6. 정적 페이지가 이미지 키를 기준으로 Supabase 주석·주제·태그를 조회합니다. 사용자가 주석을 저장하면 Lambda가 `image_annotations`를 upsert합니다.
-4. 이미지는 원본 비율로 표시하며, 업로드 날짜는 사진 하단에 작은 오버레이로 표시합니다. 주석이 없으면 사진 아래 주석 영역 자체를 만들지 않습니다.
-5. 사진과 텍스트만 남기는 무장식 갤러리로 표시하고, 모바일에서는 사진을 화면 너비에 맞춰 여백 없이 보여줍니다. 링크 복사 결과는 토스트로 알립니다.
-7. 이미지는 업로드 날짜 기준 최신순으로 `목록`에서 확인하고, `지도`에서는 주제별 클러스터로 자동 배치합니다. 각 사진에 내용 태그와 판단 태그를 나눠 표시하며, 지도에서 `남기기`를 누른 사진은 브라우저에 보존됩니다.
-8. 단일 클릭은 220ms 디바운스 뒤 현재 스크롤 위치를 유지한 채 공개 이미지 URL을 클립보드에 복사하고, 두 번 누르거나 키보드 Enter를 누르면 주석 편집 팝업을 엽니다. 더블클릭에서는 단일 클릭 복사가 실행되지 않습니다.
-9. 주석 저장·수정은 팝업 안에서 처리하며, 저장에 성공하면 팝업을 자동으로 닫습니다.
-10. 이미지 목록과 주석·분류는 `localStorage`에 캐시하고, 백그라운드에서 최신 API 결과로 갱신합니다.
-11. 브라우저에는 R2 토큰, 서버 간 분류 토큰, OpenAI API 키, Supabase service role key를 노출하지 않습니다.
+## 사용
 
-## 주제 분류 연결
+1. 대시보드에서 **Clef 사진정리**를 열고 파일·폴더를 선택하거나 끌어다 놓습니다. **보관함 불러오기**로 기존 이미지를 추가할 수도 있습니다. 동영상은 제외합니다.
+2. **분류하기**는 Clef로 주제·내용 태그를 판단합니다. 기존 분류 사진은 자동 덮어쓰기 없이 남기고 선택한 사진만 재분류합니다.
+3. 설정한 확신도 미만이면 **검토 필요**로 남습니다. 사진을 열어 분류를 직접 저장할 수 있습니다. 기존 내용 태그·판단 태그·요약을 보존하며 태그 동시 수정은 조건부 저장 후 재병합합니다.
+4. 태그 저장 실패는 AI를 다시 호출하지 않고 **태그 저장 재시도**로 처리합니다. 분류 상태는 새로고침 후에도 남습니다.
+5. 폴더·파일명·태그로 찾고, 현재 폴더를 ZIP·CSV로 내보냅니다. 검색어는 내보내기 범위에 적용하지 않습니다.
 
-- `supabase/image_annotations.sql`의 `image_topics` 테이블에 이미지별 주제, 내용 태그, 판단 태그, 신뢰도, 분류 출처를 저장합니다.
-- Cloudflare Worker의 `/browser-upload`와 `/browser-reclassify`는 로그인 없는 공개 경로이며 Lambda `/api/classify`는 서버 간 토큰으로 호출합니다. 브라우저에서 Lambda 분류 endpoint를 직접 호출할 수 없습니다.
-- `image-annotator/openai-api-key`는 AWS Secrets Manager에서 보관합니다. Lambda 역할에는 이 secret의 읽기 권한만 부여합니다.
-- 기존 이미지의 주제는 자동 추정으로 덮어쓰지 않고 `분류 대기`로 남깁니다. 실제 이미지를 확인한 분류 결과만 저장합니다.
+기존 대시보드의 목록·지도·주석 편집·URL 복사·로컬 캐시는 유지합니다. 기존 업로드 경로 `/browser-upload`는 Decisions 분류를 유지하고, 새 `/browser-store` 경로는 동일한 이미지 저장만 수행한 뒤 사진정리 화면이 Clef를 호출합니다.
 
-## 배포 및 설정
-
-1. `supabase/image_annotations.sql`의 추가 태그 열 migration을 Supabase에 적용합니다.
-2. Cloudflare Terraform 변수에 서버 간 `archive_proxy_token`을 설정합니다. 같은 토큰을 AWS Terraform의 `image_annotator_proxy_token`에 설정합니다.
-3. OpenAI API 키는 AWS Secrets Manager의 `image-annotator/openai-api-key`에 저장합니다. 키는 코드, 정적 페이지, Terraform 변수·상태에 넣지 않습니다.
-4. `infra-cloudflare-images`에서 Terraform plan/apply를 실행해 공개 브라우저 업로드 Worker를 반영합니다.
-5. `infra-aws-static-sites`에서 Terraform plan/apply를 실행해 Lambda·IAM·CloudFront API origin을 반영합니다.
-6. `sites/image-annotator/dist/` 변경을 Space의 static-site 배포 workflow로 배포하고 라이브 업로드를 확인합니다.
-
-이미지는 한 장당 Decision 요청 한 번이며, 업로드는 이미지 파일만 허용하고 20MB 제한을 둡니다. Decisions 분류 결과는 고정된 보관함 태그 목록 중 확률 0.7 이상인 항목만 기록합니다.
-
-## 검증
+## 개발·검증
 
 ```bash
-python3 -m py_compile ../../lambda/image_annotator.py
-terraform -chdir=../.. fmt -check
-terraform -chdir=../.. validate
+cd infra-aws-static-sites/sites/image-annotator/sorter
+npm ci
+npm test
+npm run build
+npm run dev
 ```
 
-코드 검증과 인프라 검증만으로 배포 완료 처리하지 않습니다. Supabase migration, 로그인 없는 업로드→R2→Decisions→태그 저장을 라이브에서 확인해야 합니다. 시크릿은 Git에 저장하지 않습니다.
+로컬 Vite의 `/api`는 운영 API에 연결됩니다. 실제 업로드·분류·수정은 운영 데이터에 반영됩니다. Worker 테스트는 Space 루트에서 `node --test infra-cloudflare-images/tests/browser-store.test.mjs`, 서비스 테스트는 독립 저장소 README를 따릅니다.
+
+## 배포·복구
+
+1. 서비스 테스트 후 source commit을 push하고 `scripts/package.py`로 SHA 기반 ZIP을 만듭니다. 비공개 S3 artifact 버킷에 덮어쓰기 없이 올립니다.
+2. Space release JSON을 갱신하고 AWS Terraform plan의 변경 범위를 확인해 적용합니다. Clef 토큰·계정은 `image-annotator/cloudflare-clef` Secrets Manager에만 저장합니다. 기존 OpenAI secret과 Lambda 환경 설정은 유지합니다.
+3. 업로드 Worker 변경은 `infra-cloudflare-images`의 기존 Terraform 원격 backend로 배포합니다.
+4. 프런트 빌드 후 Space branch를 push하고 아래 workflow를 실행합니다. 기존 dashboard가 main에 없는 상태이므로 현재 서비스 branch를 명시합니다.
+
+```bash
+gh workflow run static-site-aws-template.yml --repo shdkej/space \
+  --ref codex/clef-image-sorter -f app=image-annotator -f domain_name=images.aws.shdkej.com
+```
+
+workflow는 기존 S3 버킷에 `dist/`를 동기화하고 `sort/` 경로용 HTML object를 게시한 뒤 CloudFront 무효화를 기다립니다. 다른 사이트의 배포는 필요하지 않습니다.
+
+5. `/api/health`, `/api/sort/health`의 revision, 업로드·분류·태그 재조회·새로고침·모바일/데스크톱 실제 렌더를 확인합니다. 검증 기록은 [DEPLOYMENT.md](DEPLOYMENT.md)에 남깁니다.
+
+복구는 직전 release JSON/artifact, Worker commit, 정적 파일 snapshot을 재배포합니다. 첫 이전의 Lambda 코드·설정과 S3 파일 snapshot은 독립 서비스의 gitignored `outputs/`에 보관했습니다. 데이터는 코드 복구 과정에서 지우지 않습니다. AWS local Terraform state는 최신 적용 결과를 원래 Space 작업 공간에도 동기화하되, 동시 변경 여부를 먼저 확인합니다.
+
+## 공개 범위와 한계
+
+기존 개인 테스트 보관함과 같은 공개 공유 공간이며 로그인 없이 열람·업로드·분류할 수 있습니다. API 키·계정·Supabase service key는 브라우저로 보내지 않습니다.
+
+1회 1,000장, 장당 20MB, 작업 공간 5,000장입니다. 기존 업로드 API 정책에 따라 최대 1600px WebP로 저장하며 저장 URL로 열람할 수 있습니다. JPEG/PNG/WebP를 지원합니다. 열린 탭이 분류를 진행하며 중단 후 저장된 결과를 이어서 사용할 수 있습니다. ZIP은 브라우저 메모리를 사용하므로 한 번에 128MiB까지입니다.
+
+원격 업로드 응답이 유실되거나 다른 탭에서 같은 파일을 동시에 처음 올리는 경우 R2에 사본이 생길 수 있습니다. 저장 성공 응답 후 등록 실패는 같은 탭에서 재업로드 없이 복구하며, 목록은 hash로 중복을 제외합니다. 모델의 확신도는 정확도 보장이 아니므로 검토 화면과 수동 분류를 제공합니다.

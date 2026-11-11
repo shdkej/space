@@ -144,3 +144,9 @@ mp4는 짧은 여행 기록 클립 보존용이다. Worker는 `MAX_VIDEO_BYTES`�
 - `IMAGES` 바인딩의 `transform`/`output` API는 Cloudflare Images 활성화가 전제다. 만약 Images를 켜고 싶지 않으면 `worker/index.js`의 `resizeImage`를 wasm(`@cf/photon`)으로 교체할 수 있으나, 큰 이미지에서 Worker CPU 제한 이슈가 있을 수 있다(현재 구조가 이를 회피).
 - `cloudflare_workers_route` 는 DNS 레코드를 만들지 않는다. 업로드 호스트네임(`upload.*`)이 **proxied DNS 레코드**로 zone에 존재해야 Worker가 트래픽을 받는다(`main.tf` 의 `cloudflare_dns_record.upload` 더미 A 레코드). `img.*` 조회 도메인은 R2 custom domain 이 DNS 를 자동 생성한다.
 - 상태(state)는 기본 로컬 저장이며 `terraform.tfvars`/`*.tfstate`는 repo `.gitignore`로 무시된다. 팀 공유가 필요하면 `versions.tf`의 backend 블록을 활성화한다.
+
+## Clef 사진정리 업로드
+
+`POST /browser-store`는 기존 `/browser-upload`와 같은 origin·파일·크기 검증 및 최대 1600px WebP 저장을 사용하고, 저장한 `{key,url}`을 반환합니다. 이 경로는 기존 Decisions 호출을 생략합니다. `images.aws.shdkej.com/sort/`가 저장 결과를 등록하고 AWS Lambda의 `/api/sort/*`를 통해 Clef 분류·기존 Supabase 태그 저장을 실행합니다. 기존 `/browser-upload`·`/browser-reclassify`의 동작은 유지합니다.
+
+검증: `node --test tests/browser-store.test.mjs`. Worker의 기존 Terraform 원격 backend로 plan/apply하며 Cloudflare AI 토큰은 이 Worker에 추가하지 않습니다. AI 비밀은 AWS Secrets Manager에 보관합니다.

@@ -20,6 +20,9 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (url.pathname === "/browser-store") {
+      return browserUpload(request, env, false);
+    }
     if (url.pathname === "/browser-upload") {
       return browserUpload(request, env);
     }
@@ -74,7 +77,7 @@ function isAuthorized(request, env) {
   return header === `Bearer ${env.UPLOAD_TOKEN}`;
 }
 
-async function browserUpload(request, env) {
+async function browserUpload(request, env, shouldClassify = true) {
   const origin = request.headers.get("origin") || "";
   const cors = origin ? browserCors(origin) : {};
   if (origin && !cors) return json({ error: "origin_not_allowed" }, 403);
@@ -108,6 +111,7 @@ async function browserUpload(request, env) {
   await storeToR2(env, key, media);
   const result = { key, url: `${env.PUBLIC_BASE_URL}/${key}`, classification: null };
 
+  if (!shouldClassify) return json(result, 201, cors);
   try {
     result.classification = await classifyArchiveImage(env, key);
   } catch (error) {

@@ -119,3 +119,7 @@ For a custom directory or custom domain, set `build_dir` or `domain_name` in
 the workflow dispatch inputs.
 
 For Lambda/API integration, put API Gateway or Lambda Function URL behind CloudFront by adding an entry to `api_origins`.
+
+## Image Dashboard / Clef 사진정리
+
+`images.aws.shdkej.com/sort/`는 기존 image-annotator의 하위 경로입니다. 프런트는 `sites/image-annotator/sorter/`, 운영 절차는 [서비스 README](sites/image-annotator/README.md)에 있습니다. Lambda 코드는 독립 `shdkej/image-annotator-api`가 소유하며 `releases/image-annotator.json`의 immutable S3 artifact를 `image_annotator.tf`가 배포합니다. `image_sorter.tf`는 작업 상태 DynamoDB, 비공개 artifact 버킷, Clef secret 컨테이너와 IAM을 선언합니다. 레거시 `lambda/image_annotator.py`는 더 이상 배포 소스가 아닙니다.

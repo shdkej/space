@@ -1,7 +1,5 @@
-data "archive_file" "image_annotator_lambda" {
-  type        = "zip"
-  source_file = "${path.module}/lambda/image_annotator.py"
-  output_path = "${path.module}/.terraform/image-annotator-lambda.zip"
+locals {
+  image_annotator_release = jsondecode(file("${path.module}/releases/image-annotator.json"))
 }
 
 data "aws_secretsmanager_secret" "image_annotator_openai" {
@@ -44,13 +42,17 @@ resource "aws_lambda_function" "image_annotator" {
   role             = aws_iam_role.image_annotator_lambda.arn
   handler          = "image_annotator.handler"
   runtime          = "python3.12"
-  filename         = data.archive_file.image_annotator_lambda.output_path
-  source_code_hash = data.archive_file.image_annotator_lambda.output_base64sha256
+  s3_bucket        = aws_s3_bucket.lambda_artifacts.id
+  s3_key           = local.image_annotator_release.s3_key
+  source_code_hash = local.image_annotator_release.source_code_hash
   timeout          = 60
-  memory_size      = 128
+  memory_size      = 256
 
   environment {
     variables = {
+      SORTER_TABLE              = aws_dynamodb_table.image_sorter.name
+      CLEF_SECRET_ARN           = aws_secretsmanager_secret.image_annotator_clef.arn
+      SOURCE_REVISION           = local.image_annotator_release.revision
       IMAGE_LIST_URL            = var.image_annotator_image_list_url
       IMAGE_ADMIN_TOKEN         = var.image_annotator_image_admin_token
       SUPABASE_URL              = var.image_annotator_supabase_url

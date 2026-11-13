@@ -1,0 +1,31 @@
+--- a/apps/reel-room/deployment.yaml
++++ b/apps/reel-room/deployment.yaml
+@@ -24,7 +24,7 @@
+         kubernetes.io/hostname: oracle-arm-1
+       containers:
+         - name: app
+-          image: ghcr.io/shdkej/video-automation:latest
++          image: ghcr.io/shdkej/video-automation:a6c01640e17c766287a81ef888e9f58394c7c9c2
+           imagePullPolicy: Always
+           env:
+             - name: OPENAI_API_KEY
+@@ -43,6 +43,8 @@
+             - containerPort: 8000
+               name: http
+           volumeMounts:
++            - name: studio
++              mountPath: /app/web/studio-data
+             - name: jobs
+               mountPath: /app/web/jobs
+             - name: music
+@@ -73,6 +75,10 @@
+               cpu: 800m
+               memory: 3Gi
+       volumes:
++        - name: studio
++          hostPath:
++            path: /var/lib/reel-room/studio
++            type: DirectoryOrCreate
+         - name: jobs
+           emptyDir:
+             sizeLimit: 12Gi

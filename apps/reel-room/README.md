@@ -33,4 +33,8 @@
 - Argo CD는 2026-11-06부터 Space의 다른 비공개 서브모듈 `system-dashboard`를 인증하지 못해 `ComparisonError`입니다. Reel Room은 그 서브모듈을 사용하지 않습니다. 이번 배포는 같은 Git manifest의 대상 Deployment만 직접 적용하며 전역 Argo 설정·권한은 바꾸지 않습니다. Git 자동 동기화 복구는 별도 운영 과제입니다.
 - 운영 키를 사용한 OpenAI 추천·이미지·내레이션 검증은 모두 HTTP 429(사용 한도/요청 빈도)로 실패했습니다. 성공 생성물은 없으며 계정 한도 확인 전 추가 유료 검증을 반복하지 않습니다.
 - 사용자 요청으로 유료 AI 실호출 검증을 보류했습니다. 추가 생성 호출 없이 운영 배포·수동 제작·무료 참고 검색·파일 보존 검증을 마무리합니다.
-- 첫 이미지의 httpx 직접 의존성 누락은 소스 b5d8b42에서 수정했습니다. OpenAI 2.44.0/httpx 0.28.1을 명시하고 Docker import 검증을 추가했습니다. 새 이미지 빌드 성공 후 교체·최종 보존 검증을 진행하며, 실제 revision은 Infinity `reel-room-studio-20261113`에 기록합니다.
+- 첫 이미지의 httpx 직접 의존성 누락은 소스 b5d8b42에서 수정했습니다. OpenAI 2.44.0/httpx 0.28.1을 명시하고 Docker import 검증을 추가했습니다. 최종 이미지 빌드 성공: https://github.com/shdkej/video-automation/actions/runs/43421516272 .
+- 최종 배포 revision **73**, ready 1. 이미지 digest `sha256:7cce8be049cbda86880ca48940f8839b82b9d361ac8e02074439d92830c5c2b8`, source `b5d8b42e49280ff68fc45c078ada23916c8b5efa`. 임시 패키지 설치 없이 새 이미지에서 SDK·HTTP 라이브러리와 모델 설정을 확인했습니다.
+- Pod 교체 후 기존 프로젝트 JSON과 소재·출력 파일 7개의 SHA256이 동일했습니다. 새 이미지에서도 이미지 2개·녹음 6초·장면 자막을 합성해 1080×1920 MP4 영상/음성 스트림을 확인했습니다. 무료 Commons 검색은 이미지·영상 10건, 운영 브라우저 375/768/1440px 및 기존 자동 컷 화면을 확인했습니다.
+- `https://instagram-maker.aws.shdkej.com/`와 `https://infinity.aws.shdkej.com/instagram-maker/` 및 슬래시 없는 주소 모두 실제 브라우저에서 스튜디오로 이동했습니다. 외부 서비스의 기존 Basic Auth는 유지합니다.
+- 실행 증거와 유료 AI 보류 상태의 정본: Infinity `reel-room-studio-20261113`. Argo 자동 동기화 오류는 위의 별도 운영 제약으로 남아 있습니다.

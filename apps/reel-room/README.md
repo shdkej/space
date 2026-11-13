@@ -27,20 +27,22 @@
 
 문제 시 직전 검증 이미지 SHA로 되돌리고 영구 볼륨은 보존합니다. 구 버전이 스튜디오 데이터를 읽지 않아도 삭제하지 않습니다. `VIDAUTO_UI=legacy`는 이전 정적 화면 복구용이며 통합 스튜디오 운영 진입이 아닙니다. 기존 Instagram Maker 정적 코드는 전환 전까지 유지하며 새로운 기능의 정본으로 수정하지 않습니다.
 
-## 2026-11-13 운영 확인
+## 2026-11-13 최초 통합 운영 확인
 
 - 복구 기준: 배포 revision 71, 실제 이미지 `ghcr.io/shdkej/video-automation@sha256:b14727a531e797063e8677883ba09c4e10e528275f9177edb74681ec81cde44c`. 문제가 생기면 이 digest로 Deployment의 image를 되돌리고 영구 studio 볼륨을 보존합니다.
 - Argo CD는 2026-11-06부터 Space의 다른 비공개 서브모듈 `system-dashboard`를 인증하지 못해 `ComparisonError`입니다. Reel Room은 그 서브모듈을 사용하지 않습니다. 이번 배포는 같은 Git manifest의 대상 Deployment만 직접 적용하며 전역 Argo 설정·권한은 바꾸지 않습니다. Git 자동 동기화 복구는 별도 운영 과제입니다.
 - 운영 키를 사용한 OpenAI 추천·이미지·내레이션 검증은 모두 HTTP 429(사용 한도/요청 빈도)로 실패했습니다. 성공 생성물은 없으며 계정 한도 확인 전 추가 유료 검증을 반복하지 않습니다.
 - 사용자 요청으로 유료 AI 실호출 검증을 보류했습니다. 추가 생성 호출 없이 운영 배포·수동 제작·무료 참고 검색·파일 보존 검증을 마무리합니다.
 - 첫 이미지의 httpx 직접 의존성 누락은 소스 b5d8b42에서 수정했습니다. OpenAI 2.44.0/httpx 0.28.1을 명시하고 Docker import 검증을 추가했습니다. 최종 이미지 빌드 성공: https://github.com/shdkej/video-automation/actions/runs/43421516272 .
-- 최종 배포 revision **73**, ready 1. 이미지 digest `sha256:7cce8be049cbda86880ca48940f8839b82b9d361ac8e02074439d92830c5c2b8`, source `b5d8b42e49280ff68fc45c078ada23916c8b5efa`. 임시 패키지 설치 없이 새 이미지에서 SDK·HTTP 라이브러리와 모델 설정을 확인했습니다.
+- 최초 통합 최종 배포 revision **73**, ready 1. 이미지 digest `sha256:7cce8be049cbda86880ca48940f8839b82b9d361ac8e02074439d92830c5c2b8`, source `b5d8b42e49280ff68fc45c078ada23916c8b5efa`. 임시 패키지 설치 없이 새 이미지에서 SDK·HTTP 라이브러리와 모델 설정을 확인했습니다.
 - Pod 교체 후 기존 프로젝트 JSON과 소재·출력 파일 7개의 SHA256이 동일했습니다. 새 이미지에서도 이미지 2개·녹음 6초·장면 자막을 합성해 1080×1920 MP4 영상/음성 스트림을 확인했습니다. 무료 Commons 검색은 이미지·영상 10건, 운영 브라우저 375/768/1440px 및 기존 자동 컷 화면을 확인했습니다.
 - `https://instagram-maker.aws.shdkej.com/`와 `https://infinity.aws.shdkej.com/instagram-maker/` 및 슬래시 없는 주소 모두 실제 브라우저에서 스튜디오로 이동했습니다. 외부 서비스의 기존 Basic Auth는 유지합니다.
 - 실행 증거와 유료 AI 보류 상태의 정본: Infinity `reel-room-studio-20261113`. Argo 자동 동기화 오류는 위의 별도 운영 제약으로 남아 있습니다.
 
-## 후속 배포 준비: 키워드 실측·참고 검색·브라우저 AI 키
+## 현재 배포: 키워드 실측·참고 검색·브라우저 AI 키
 
 source `f8d5edef7c2d1563c6edbc65ad24adbf5af04a18`는 네이버 연관 키워드와 검색량 직접 조회, 키워드 바로 참고 검색, 출처 필터·이미지/영상 미리보기, 탭에서 입력하는 OpenAI 키를 추가합니다. UI 입력 키는 AI 요청별로만 전달하며 Secret이나 서버 환경을 변경하지 않습니다. 새로고침하면 탭 키는 사라집니다.
 
-Python 212개와 UI 빌드/실제 검색·브라우저를 확인했습니다. server dry-run 통과. 기존 승인된 배포 범위이며 유료 AI 검증 보류는 유지합니다. 이미지 빌드 https://github.com/shdkej/video-automation/actions/runs/43429546562 의 성공을 확인한 뒤 이 manifest를 적용합니다. 직전 복구 기준은 source b5d8b42·revision73·digest `sha256:7cce8be049cbda86880ca48940f8839b82b9d361ac8e02074439d92830c5c2b8`입니다. 영구 프로젝트 볼륨은 보존합니다.
+Python 212개와 UI 빌드/실제 검색·브라우저를 확인했습니다. server dry-run 통과. 기존 승인된 배포 범위이며 유료 AI 검증 보류는 유지합니다. 이미지 빌드 https://github.com/shdkej/video-automation/actions/runs/43429546562 성공 후 원격 manifest commit `35d738f7a0fcf183e5150b72e62d9740cdc654de`와 동일한 Deployment를 적용했습니다. 직전 복구 기준은 source b5d8b42·revision73·digest `sha256:7cce8be049cbda86880ca48940f8839b82b9d361ac8e02074439d92830c5c2b8`입니다. 영구 프로젝트 볼륨은 보존합니다.
+
+현재 revision **74**, ready 1, 이미지 digest `sha256:bbdcb5cdc12434be4cdd955c823d8cbb7c83258346cca3d4a3c97b61a483165e`. 서버에서 Naver·YouTube capability가 활성화됐고, 실제 브라우저 검색은 Naver 후보 45개(872개 중), YouTube 영상 6개, Commons 이미지 8개를 반환했습니다. 375/768/1440px에서 선택·저장·새로고침 복원과 탭 키의 AI 요청 한정 전달을 검증했습니다(키는 테스트용 가짜 값, AI 경로는 가로채기; 유료 호출 0회). 기존 샘플 프로젝트의 전체 파일 14개 SHA256이 교체 전후 동일했고 외부 Basic Auth 401도 유지됩니다. 실행 증거: Infinity work/keyword-deployment.json, keyword-browser-production.json.

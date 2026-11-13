@@ -9,6 +9,7 @@
 - 독립 리뷰에서 배경의 고유 높이가 데스크톱 장면을 늘리는 문제를 발견했다. `container-type:size`로 해결하고 데스크톱 높이·1층 경계 검증을 추가했다. 재검토에서 남은 중요 문제 없음. 실제 iOS Safari는 미검증이며, 기존 데스크톱 HTTP503 안내 상태는 푸터까지 세로 스크롤이 생길 수 있다.
 - 신선한 후속 스냅샷의 도착 이벤트도1440×900·390×844·375×667에서 재생했다. Codex 전용 걷기 자산과 엘리베이터 이동 X/Y 좌표가 실제 장면 폭·높이와 일치했다(`/tmp/lcml-character-motion.cjs`).
 - 배포는 Office README의 `/office/` 전용 업로드를 사용하고 전체 Status 자동 동기화는 `[skip ci]`로 피한다. 수집기·공개 피드·다른 화면은 대상이 아니다. 이전 해시 자산은 S3에 보존하며 직전 `office/index.html`과 `office/` 객체로 복구할 수 있다.
+- 원격 소스·배포 revision `e751e08`을 `main`에 반영하고 S3 `/office/`만 업로드했다. `/office/`·`/office/index.html`·참조 자산 총19개는 HTTP200 및 로컬 SHA256과 일치한다. 운영 URL Chrome375×667·390×844·844×390·1440×900에서 실제 피드·인물9종·네 층·이동/복귀를 확인했고 문서 넘침과 JavaScript 오류는 없었다. CloudFront 무효화 ID는 `I9U5OX945RSIBM9L4LF5O718IZ`다. 이번 변경 전 운영 HTML은 `/tmp/lcml-characters-rollback-index.html`에 보관했다. Knowledge Lab 검색 영수증·Context Pack은 `c4de3c3`으로 원격 반영했다.
 
 현재 버전은 [한 건물 보기와 상주 인원 계획](../../../../../docs/superpowers/plans/2026-11-11-lcml-building-residents.md)을 따릅니다. 아래 2×2 및 27개 테스트 기록은 이전 수정 이력입니다. 현재 화면은 하나의 연결된 건물, 등록된 7명과 대표 자리, OpenClaw/Codex 실제 실행을 사용합니다. 최신 회귀 테스트41/41와 빌드가 통과했습니다. 과거 관측 보존과 현재 실행 집계도 구분합니다.
 

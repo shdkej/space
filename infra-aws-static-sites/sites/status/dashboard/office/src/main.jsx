@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowDown, ArrowUpRight, Check, ChevronRight, CircleHelp, Coffee, GitBranch, Layers, RefreshCw } from 'lucide-react';
-import { FLOORS, BUILDING, STAGES, officeActors, actorEvent, normalizeSnapshot, mergeSnapshot, freshness, advanceSnapshot, sessionVisual, waitingVisual, roomIsClosed, metricDisplay, safeLink, elapsed, clockTime, sourceLabel, timestamp, enqueueSessionEvents, advanceSessionEvents, floorOccupancy, runtimeSessionCounts, knownSource, observationState, metricObservation, nextRoomLighting } from './model.js';
+import { FLOORS, BUILDING, STAGES, characterAsset, officeActors, actorEvent, normalizeSnapshot, mergeSnapshot, freshness, advanceSnapshot, sessionVisual, waitingVisual, roomIsClosed, metricDisplay, safeLink, elapsed, clockTime, sourceLabel, timestamp, enqueueSessionEvents, advanceSessionEvents, floorOccupancy, runtimeSessionCounts, knownSource, observationState, metricObservation, nextRoomLighting } from './model.js';
 import './styles.css';
 
 const ASSET = `${import.meta.env.BASE_URL}assets/`;
@@ -73,8 +73,8 @@ function Actor({ session, question, index, data, now, tick, live, event, selecte
   const pos = positions[index % positions.length];
   const ActorTag = interactive ? 'button' : 'div';
   const direction = event?.type === 'arrived' ? 'arriving' : event?.type === 'departed' ? 'departing' : '';
-  return <ActorTag className={`actor ${direction} ${selected ? 'selected' : ''} ${!canMove ? 'is-frozen' : ''}`} style={{ left: `${pos[0]}%`, top: `${pos[1]}%`, '--travel-x': `${layout.entrance[0] - pos[0]}cqw`, '--travel-y': `${(layout.entrance[1] - pos[1]) * (layout.heightRatio || 2 / 3)}cqw`, '--actor-accent': ['#a4563d', '#60745b', '#7d6a95', '#557c89'][index % 4] }} onClick={interactive ? () => onSelect(session.id) : undefined} data-actor-id={session.id} data-session-id={session.sessionId || undefined} data-resident={session.resident || undefined} aria-label={`${session.name || session.agentId || '세션'}, ${isOwner ? '대표 자리' : canMove ? visual.label : '확인 중'}`}>
-    <span className="sprite" style={{ backgroundPosition: `${visual.col * 100 / 3}% ${visual.row * 50}%` }} />
+  return <ActorTag className={`actor ${direction} ${selected ? 'selected' : ''} ${!canMove ? 'is-frozen' : ''}`} style={{ left: `${pos[0]}%`, top: `${pos[1]}%`, '--travel-x': `${layout.entrance[0] - pos[0]}cqw`, '--travel-y': layout.building ? `${layout.entrance[1] - pos[1]}cqh` : `${(layout.entrance[1] - pos[1]) * 2 / 3}cqw`, '--actor-accent': ['#a4563d', '#60745b', '#7d6a95', '#557c89'][index % 4] }} onClick={interactive ? () => onSelect(session.id) : undefined} data-actor-id={session.id} data-session-id={session.sessionId || undefined} data-resident={session.resident || undefined} aria-label={`${session.name || session.agentId || '세션'}, ${isOwner ? '대표 자리' : canMove ? visual.label : '확인 중'}`}>
+    <span className="sprite" style={{ backgroundImage: `url("${ASSET}${characterAsset(session)}")`, backgroundPosition: `${visual.col * 100 / 3}% ${visual.row * 50}%` }} />
     {visual.sweat && <span className="sweat" aria-label="오래 진행 중">◦</span>}
     {visual.stars && <span key={event?.id} className="stars" aria-label="새 결과 보고">✦ <i>✧</i></span>}
     <span className="actor-label">{!isOwner && <Dot live={canMove && session.state !== 'idle'} />}{session.name || session.agentId || '실행 세션'}</span>
@@ -188,7 +188,7 @@ function SessionList({ data, floor, select, now, live, eventQueue = [] }) {
 }
 function BuildingFloor({ floor, data, now, tick, live, eventQueue, project, thresholds, go }) {
   const occupancy = floorOccupancy(data, eventQueue, floor.id, now);
-  const layout = { ...BUILDING[floor.id], heightRatio: 1.5 };
+  const layout = { ...BUILDING[floor.id], building: true };
   const light = useRef(null);
   if (live) light.current = nextRoomLighting(light.current, roomIsClosed(data, floor.id, now), true);
   return <section className="building-floor" data-floor={floor.id} aria-label={`${floor.id}층 ${floor.name}`} style={{ '--floor-accent': floor.visual.accent }}>

@@ -43,6 +43,16 @@ export const STAGES = [
   ['acquisition', '유입', 'Acquisition'], ['activation', '활성화', 'Activation'],
   ['retention', '재방문', 'Retention'], ['revenue', '매출', 'Revenue'], ['referral', '추천', 'Referral'],
 ];
+// Identity belongs to the person, not their seat, current task or display order.
+const CHARACTER_ASSETS = new Map([
+  ['owner', 'characters.png'],
+  ...['genie', 'main', 'marketing', 'design', 'red', 'hj', 'taxops', 'codex']
+    .map(id => [id, `characters-${id}.webp`]),
+]);
+export function characterAsset(actor) {
+  return CHARACTER_ASSETS.get(actor.kind === 'owner' ? 'owner' : actor.agentId)
+    || CHARACTER_ASSETS.get('codex');
+}
 // Percentages of the connected 1024 × 1536 building, independent of room art.
 export const BUILDING = {
   4: { top: 8, bottom: 32, label: 22, entrance: [13,28], board: [25.7,13,18.7,6.6,0], seats: [[57,24],[32,28],[87,26]], queue: [[61,30],[67,30],[73,29],[79,29],[56,30.5],[84,29],[48,30.5],[42,30.5]] },

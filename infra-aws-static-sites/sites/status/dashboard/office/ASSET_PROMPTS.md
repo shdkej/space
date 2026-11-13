@@ -1,4 +1,30 @@
-# LCML 층별 배경 생성 프롬프트
+# LCML 배경·캐릭터 생성 프롬프트
+
+## 인물별 스프라이트 — 2026-11-13
+
+기존 `characters.png`를 편집 대상으로 imagegen 내장 도구로 아래 8개 시트를 생성했습니다. 대표는 기존 시트를 유지합니다. 모든 생성 원본은 1448×1086 RGBA이며, FFmpeg libwebp quality 90 / compression level 6으로 크기·좌표·알파를 유지해 WebP로 인코딩했습니다. 최종 자산은 `public/assets/characters-<id>.webp`입니다.
+
+공통 프롬프트:
+
+```text
+Use case: precise-object-edit. Asset: transparent animation sprite sheet for a miniature office web app.
+The supplied image is the EDIT TARGET. Replace the repeated person with the SAME NEW CHARACTER described below in ALL TWELVE frames. Preserve the original high quality soft handmade clay 3D illustration style, rounded proportions, friendly large head, isometric three-quarter view facing right, warm soft lighting.
+EXACT layout invariant: 4 equal columns x 3 equal rows, 12 equal SQUARE cells in a 4:3 image. All 12 characters must fit within their own cell, centered at the same relative position and scale as original, no overlaps, no clipping, no extra cells, no labels or furniture. Every cell has identical generous transparent padding.
+EXACT poses: row 1 = four slightly different seated typing poses, hands extended (no desk, no chair). Row 2 = walking step A, walking step B, standing arms-raised celebration, standing with coffee mug. Row 3 = seated holding coffee, seated sleepy with eyes closed holding coffee, crouched long-wait pose, standing neutral. Preserve original pose locations and silhouette sizes. Clothing, head, hairstyle, accessories must be consistent across all 12 poses. Actual transparent RGBA background, not a checkerboard, no background, no floor, no cast shadow extending outside a cell, no text, no borders. Treat as a production sprite sheet, not a contact sheet. Render landscape 1536x1152 or equivalent exact 4:3 with square cells.
+NEW CHARACTER: <appearance from table>
+```
+
+| id | Appearance |
+| --- | --- |
+| genie | short straight blue-black hair with a side fringe, large over-ear navy headphones, muted denim-blue chore jacket over ivory shirt, charcoal trousers, light sneakers |
+| main | neatly side-parted salt-and-pepper hair, round dark spectacles, dark olive cardigan over cream collared shirt, warm brown trousers, brown shoes |
+| marketing | bald head, small round orange glasses, burnt-orange knit sweater, dark brown trousers and beige shoes; friendly mature face, no beard |
+| design | short chin-length black bob haircut with bangs, mustard yellow beret, dusty plum loose overshirt, ivory trousers, dark shoes |
+| red | close-cropped curly black hair, neat short dark beard, brick-red work jacket over charcoal shirt, navy trousers, brown boots |
+| hj | medium-length chestnut hair tied into a high ponytail, sage green lightweight jacket over ivory shirt, tan trousers, white sneakers |
+| taxops | smooth silver-grey hair in a neat bun, narrow dark rectangular glasses, muted teal waistcoat over white shirt, dark charcoal trousers, black shoes |
+| codex | a friendly small humanoid robot assistant with matte ivory rounded head, a dark rectangular face panel with two tiny warm amber eyes, muted indigo utility jacket, graphite trousers, ivory shoes. Same clay handmade style and full 12 human-like office poses. Distinctly a robot, no human hair. |
+
 
 ## connected-building
 

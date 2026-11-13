@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeSnapshot, mergeSnapshot, advanceSnapshot, floorOccupancy, freshness, roomIsClosed, actorEvent } from '../src/model.js';
+import { normalizeSnapshot, mergeSnapshot, advanceSnapshot, floorOccupancy, freshness, roomIsClosed, actorEvent, characterAsset } from '../src/model.js';
 
 const now = Date.parse('2026-11-11T21:00:00Z');
 const observedAt = new Date(now).toISOString();
@@ -8,6 +8,18 @@ const ok = { state: 'ok', observedAt };
 const resident = (id, floor = 1) => ({ id: `resident:${id}`, agentId: id, name: id, kind: 'agent', floor, observedAt });
 const session = (id, agentId = 'genie', extra = {}) => ({ id, agentId, name: agentId, provider: 'openclaw', floor: 1, state: 'working', observedAt, startedAt: observedAt, ...extra });
 const snapshot = (extra = {}) => normalizeSnapshot({ schemaVersion: 1, observedAt, residents: [resident('genie'), resident('red')], sessions: [], sources: { residents: ok, sessions: ok, openclawSessions: ok, codexSessions: ok }, ...extra });
+
+test('registered people and Codex have distinct, persistent characters across activity and room changes', () => {
+  const ids = ['owner', 'hj', 'main', 'taxops', 'marketing', 'design', 'genie', 'red', 'codex'];
+  assert.equal(new Set(ids.map(agentId => characterAsset({ agentId }))).size, ids.length);
+  const data = snapshot({ sessions: [session('primary')] });
+  const seated = floorOccupancy(data, [], 1, now).seated.find(s => s.agentId === 'genie');
+  data.questions = [{ id: 'q', sessionId: 'primary', askedAt: observedAt }];
+  const waiting = floorOccupancy(data, [], 4, now).waiting[0].session;
+  assert.equal(characterAsset(seated), characterAsset(waiting));
+  assert.equal(characterAsset(seated), characterAsset({ ...seated, sessionId: 'next-turn', state: 'idle' }));
+  assert.ok(characterAsset({ id: 'unregistered-session', agentId: '__proto__' }).endsWith('.webp'));
+});
 
 test('registered people remain in their room with no running sessions', () => {
   const data = snapshot();

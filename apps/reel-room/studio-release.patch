@@ -1,6 +1,8 @@
+diff --git a/apps/reel-room/deployment.yaml b/apps/reel-room/deployment.yaml
+index 10712d4..5198e9e 100644
 --- a/apps/reel-room/deployment.yaml
 +++ b/apps/reel-room/deployment.yaml
-@@ -24,7 +24,7 @@
+@@ -24,9 +24,11 @@ spec:
          kubernetes.io/hostname: oracle-arm-1
        containers:
          - name: app
@@ -8,8 +10,12 @@
 +          image: ghcr.io/shdkej/video-automation:a6c01640e17c766287a81ef888e9f58394c7c9c2
            imagePullPolicy: Always
            env:
++            - name: VIDAUTO_STUDIO_IMAGE_MODEL
++              value: "gpt-image-1.5"
              - name: OPENAI_API_KEY
-@@ -43,6 +43,8 @@
+               valueFrom:
+                 secretKeyRef:
+@@ -43,6 +45,8 @@ spec:
              - containerPort: 8000
                name: http
            volumeMounts:
@@ -18,7 +24,7 @@
              - name: jobs
                mountPath: /app/web/jobs
              - name: music
-@@ -73,6 +75,10 @@
+@@ -73,6 +77,10 @@ spec:
                cpu: 800m
                memory: 3Gi
        volumes:

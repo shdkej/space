@@ -1,5 +1,9 @@
 # Status Static Site
 
+## LCML 사무실
+
+`https://status.aws.shdkej.com/office/`는 네 층의 AI 사무실입니다. 소스·데이터 계약·실행·검증·사무실 단독 배포는 [Office README](dashboard/office/README.md)가 소유합니다. 모바일 전체 보기는 네 층과 층 선택 메뉴를 한 화면에 맞추며, 개별 층의 긴 상세는 스크롤합니다. 수집기 복구 패치는 `patches/lcml-office-collector.patch`이며 운영 수집기 자체는 이번 화면 변경 대상이 아닙니다.
+
 ## 목적
 
 Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 사이트입니다. 운영 화면과 시각 실험 화면은 서로 다른 경로로 분리합니다.

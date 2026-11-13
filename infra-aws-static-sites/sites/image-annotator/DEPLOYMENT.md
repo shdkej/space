@@ -48,3 +48,15 @@
 - 근거: KL `SERVICE_REGISTRY.md`, Context Pack `/tmp/image-dashboard-clef-context.json` (product, 2026-11-13, zg hybrid+FTS), 실제 dashboard/`sorter/lib/archive-upload.ts` 호출 경로. 선택된 위키의 Marketing 「결과 직후 30초」, Collection 「수집물은 보관 상태가 아니라 다음 행동 상태로 나뉜다」를 참고해 저장 성공과 분류 완료 문구를 구분했다. Teamwork·Infra·Future locator도 읽었으며 제품별 구현 근거는 운영 소스에서 확인했다.
 - 성공 기준: 대시보드 추가·분류 진입점 1개, 브라우저 Decisions 요청 0회, 업로드→등록→Clef 분류→보관함 복귀 동작, 320/375/414/768/1440px 가로 넘침·겹침 없음. 새 기능 확장은 이번 중복 제거 목표에 필요하지 않아 제외한다.
 - 검증 상태: 프런트 14개 테스트, TypeScript/Vite build, dashboard JS 문법 검사, 배포 도메인 자동 선택 3사례 통과. 독립 리뷰의 README 테스트 경로 지적을 수정했다. 브라우저 검증에서 발견한 분류 중 완료 표시를 `Clef 분류 중`으로 수정했다. 320/375/414/768/1440px에서 검색·목록/지도·주석 열기·사진 저장→등록→Clef 분류→보관함 복귀를 확인했고 Decisions 요청·브라우저 오류·가로 넘침은 0건이었다. API/업로드는 로컬 fixture로 대체했으며 실제 기존 사진을 변경하거나 AI를 호출하지 않았다. 증거는 `/tmp/image-clef-review/`에 있다. 배포 후 실제 결과와 revision을 아래에 기록한다.
+
+
+### 운영 반영 확인
+
+- 화면 source: Space main `bf3cdd11c084e8d71daece73711734c4d9581f6a`.
+- [자동 배포 43408071760](https://github.com/shdkej/space/actions/runs/43408071760): 성공. image-annotator 한 사이트만 S3 동기화·`/sort/` 게시·CloudFront 무효화했다.
+- 운영 HTML 2개·dashboard JS/CSS·sorter JS/CSS 총 6개 파일의 SHA-256이 로컬 검증 산출물과 일치했다.
+- 운영 화면의 320/375/414/768/1440px 렌더·기존 사진 조회·Clef 연결 상태·단일 진입점·보관함 복귀를 확인했다. 브라우저 오류 0, 가로 넘침 0. 이 확인은 GET만 사용했고 기존 사진·태그를 변경하지 않았다.
+- `/api/sort/health`는 200, 모델 `@cf/cloudflare/clef`, source revision `a5e0da8d154c26e141e6be70ac61bc73d5953420`으로 기존 백엔드 유지 확인. `/api/health`도 200이다.
+- main 원격·로컬 SHA 일치를 대상 경로 검증 스크립트로 확인했다. 기존 무관한 system-dashboard 변경·office-live.json은 보존했다.
+- 남은 검증 경계: 이번 변경에서 실제 새 사진 업로드·유료 AI 재호출은 하지 않았다. 저장→분류 요청 경로는 브라우저 fixture로 검증했고 운영 API는 읽기만 확인했다. 기존 API 동작은 2026-11-11 검증 기록을 참조한다.
+- 복구: 화면만 되돌릴 때 `23ba51d`의 `sites/image-annotator/dist/`를 별도 worktree에서 가져와 main의 같은 경로에 복원·재배포한다. Lambda·Worker·사진 데이터는 건드리지 않는다.

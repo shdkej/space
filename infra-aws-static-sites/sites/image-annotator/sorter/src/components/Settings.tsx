@@ -1,0 +1,12 @@
+import {useEffect,useRef,useState} from 'react';
+import {X,Check,KeyRound} from 'lucide-react';
+type Props={open:boolean;onClose:()=>void;categories:string[];threshold:number;serverKey:boolean;onSave:(categories:string[],threshold:number)=>Promise<void>};
+export default function Settings(p:Props){
+ const dialog=useRef<HTMLDialogElement>(null);const [names,setNames]=useState(''),[threshold,setThreshold]=useState(.8),[pending,setPending]=useState(false),[error,setError]=useState('');
+ useEffect(()=>{if(p.open){setNames(p.categories.join('\n'));setThreshold(p.threshold);setError('');dialog.current?.showModal()}else dialog.current?.close()},[p.open]);
+ async function save(){setPending(true);try{await p.onSave(names.split('\n').map(s=>s.trim()).filter(Boolean),threshold);p.onClose()}catch(e){setError((e as Error).message)}finally{setPending(false)}}
+ return <dialog ref={dialog} className="settings-dialog" aria-labelledby="settings-title" onCancel={p.onClose} onClick={e=>{if(e.target===e.currentTarget)p.onClose()}}><div className="dialog-body"><div className="dialog-heading"><div><span className="eyebrow">내 사진에 맞게</span><h2 id="settings-title">분류 설정</h2></div><button className="icon-button" aria-label="설정 닫기" onClick={p.onClose}><X size={20}/></button></div>
+ <section className="setting-section"><h3><KeyRound size={17}/>Clef 연결</h3><p className={p.serverKey?'success-line':'review-note'}>{p.serverKey&&<Check size={16}/>} {p.serverKey?'서버에 API 키가 연결되어 있어요.':'서버의 Clef 연결을 확인해 주세요.'}</p><p className="hint">확신도가 낮은 결과는 검토 후 보관함에 저장해요. 분류 비용은 연결된 Cloudflare 계정에 발생해요.</p></section>
+ <section className="setting-section"><label htmlFor="categories">분류 이름 <span className="hint">한 줄에 하나 · 2~24개</span></label><textarea id="categories" rows={8} value={names} onChange={e=>setNames(e.target.value)}/><p className="hint">새 기준은 다음 분류부터 적용돼요. 기존 사진은 선택해서 재분류할 수 있어요.</p></section>
+ <section className="setting-section"><label htmlFor="threshold">검토가 필요한 기준 <strong>{Math.round(threshold*100)}%</strong></label><input id="threshold" type="range" min="0" max="100" step="5" value={Math.round(threshold*100)} onChange={e=>setThreshold(Number(e.target.value)/100)}/><p className="hint">이 값보다 낮으면 ‘검토 필요’에 모아요. 정확도를 보장하는 수치는 아니에요.</p></section>{error&&<p role="alert" className="form-message">{error}</p>}<button className="primary full" disabled={pending} onClick={save}>{pending?'저장 중…':'설정 저장'}</button></div></dialog>
+}

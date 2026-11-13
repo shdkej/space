@@ -67,7 +67,13 @@ jobs:
             fi
 
             if [ -z "$domain" ]; then
-              domain="${app}.aws.shdkej.com"
+              domain="$(python3 - "$app" <<'PY'
+          import json, sys
+          with open("infra-aws-static-sites/sites/registry.json", encoding="utf-8") as handle:
+              sites = json.load(handle)["sites"]
+          print(next((site["domain_name"] for site in sites if site["app"] == sys.argv[1]), f"{sys.argv[1]}.aws.shdkej.com"))
+          PY
+              )"
             fi
 
             if [[ ! "$domain" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$ ]]; then

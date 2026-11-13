@@ -12,7 +12,7 @@
 
 1. 소스의 pytest·UI build·브라우저/실제 MP4 증거 및 GHCR `:<source SHA>` 빌드 성공을 확인합니다.
 2. 현재 배포 image tag/revision을 복구 기록으로 남깁니다.
-3. `deployment.yaml`은 source SHA `f8d5edef7c2d1563c6edbc65ad24adbf5af04a18`를 지정합니다. 해당 이미지 빌드 성공과 manifest diff를 확인합니다. 호스트 경로 `/var/lib/reel-room/studio`를 `/app/web/studio-data`에 마운트합니다. 기존 jobs emptyDir와 음악 hostPath를 유지합니다.
+3. `deployment.yaml`은 source SHA `02cf36a27d590b5a47b732f757604efd84397d9e`를 지정합니다. 해당 이미지 빌드 성공과 manifest diff를 확인합니다. 호스트 경로 `/var/lib/reel-room/studio`를 `/app/web/studio-data`에 마운트합니다. 기존 jobs emptyDir와 음악 hostPath를 유지합니다.
 4. 변경 diff·Kubernetes server dry-run을 확인한 뒤 승인 범위에서 Space main commit/push합니다. 정상 Argo CD 동기화는 기존 단일 Pod를 Recreate로 교체합니다. 아래의 현재 동기화 제약이 남아 있으면 원격에 게시한 동일 `deployment.yaml`만 `/usr/local/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f apps/reel-room/deployment.yaml`로 적용하고 rollout/imageID를 검증합니다.
 5. 인증된 운영 주소의 스튜디오·업로드·저장/재열기·실제 릴스·기존 `?mode=cut`를 확인합니다. 프로젝트가 Pod 재시작 뒤에도 남는지 확인합니다.
 6. Instagram Maker의 두 정적 진입(`sites/instagram-maker/dist`, `sites/infinity/dist/instagram-maker`)은 스튜디오 이동 문서를 제공합니다. Infinity의 `dist/instagram-maker.html`은 기존 AWS workflow가 확장자 없는 `/instagram-maker` 객체로도 게시하여 슬래시 없는 주소를 지원합니다. 정적 변경은 별도의 public 사이트 배포이므로 승인 범위를 확인하고 실제 URL 이동을 검증합니다.
@@ -39,10 +39,18 @@
 - `https://instagram-maker.aws.shdkej.com/`와 `https://infinity.aws.shdkej.com/instagram-maker/` 및 슬래시 없는 주소 모두 실제 브라우저에서 스튜디오로 이동했습니다. 외부 서비스의 기존 Basic Auth는 유지합니다.
 - 실행 증거와 유료 AI 보류 상태의 정본: Infinity `reel-room-studio-20261113`. Argo 자동 동기화 오류는 위의 별도 운영 제약으로 남아 있습니다.
 
-## 현재 배포: 키워드 실측·참고 검색·브라우저 AI 키
+## 키워드 실측·참고 검색·브라우저 AI 키 배포
 
 source `f8d5edef7c2d1563c6edbc65ad24adbf5af04a18`는 네이버 연관 키워드와 검색량 직접 조회, 키워드 바로 참고 검색, 출처 필터·이미지/영상 미리보기, 탭에서 입력하는 OpenAI 키를 추가합니다. UI 입력 키는 AI 요청별로만 전달하며 Secret이나 서버 환경을 변경하지 않습니다. 새로고침하면 탭 키는 사라집니다.
 
 Python 212개와 UI 빌드/실제 검색·브라우저를 확인했습니다. server dry-run 통과. 기존 승인된 배포 범위이며 유료 AI 검증 보류는 유지합니다. 이미지 빌드 https://github.com/shdkej/video-automation/actions/runs/43429546562 성공 후 원격 manifest commit `35d738f7a0fcf183e5150b72e62d9740cdc654de`와 동일한 Deployment를 적용했습니다. 직전 복구 기준은 source b5d8b42·revision73·digest `sha256:7cce8be049cbda86880ca48940f8839b82b9d361ac8e02074439d92830c5c2b8`입니다. 영구 프로젝트 볼륨은 보존합니다.
 
-현재 revision **74**, ready 1, 이미지 digest `sha256:bbdcb5cdc12434be4cdd955c823d8cbb7c83258346cca3d4a3c97b61a483165e`. 서버에서 Naver·YouTube capability가 활성화됐고, 실제 브라우저 검색은 Naver 후보 45개(872개 중), YouTube 영상 6개, Commons 이미지 8개를 반환했습니다. 375/768/1440px에서 선택·저장·새로고침 복원과 탭 키의 AI 요청 한정 전달을 검증했습니다(키는 테스트용 가짜 값, AI 경로는 가로채기; 유료 호출 0회). 기존 샘플 프로젝트의 전체 파일 14개 SHA256이 교체 전후 동일했고 외부 Basic Auth 401도 유지됩니다. 실행 증거: Infinity work/keyword-deployment.json, keyword-browser-production.json.
+revision **74**, ready 1, 이미지 digest `sha256:bbdcb5cdc12434be4cdd955c823d8cbb7c83258346cca3d4a3c97b61a483165e`. 서버에서 Naver·YouTube capability가 활성화됐고, 실제 브라우저 검색은 Naver 후보 45개(872개 중), YouTube 영상 6개, Commons 이미지 8개를 반환했습니다. 375/768/1440px에서 선택·저장·새로고침 복원과 탭 키의 AI 요청 한정 전달을 검증했습니다(키는 테스트용 가짜 값, AI 경로는 가로채기; 유료 호출 0회). 기존 샘플 프로젝트의 전체 파일 14개 SHA256이 교체 전후 동일했고 외부 Basic Auth 401도 유지됩니다. 실행 증거: Infinity work/keyword-deployment.json, keyword-browser-production.json.
+
+## 참고영상 파일 연결 수정
+
+source `02cf36a27d590b5a47b732f757604efd84397d9e`는 4번 소재 선택에서 보관한 참고영상이 빠지는 문제를 수정합니다. 파일이 없는 참고 자료도 3·4번에서 표시하고, 원본 파일을 연결하면 해당 장면에 바로 지정합니다. 실제 파일과 reference_id를 저장하며 잘못된 종류·너무 짧은 영상은 추가를 되돌립니다.
+
+전체 215 tests, UI build/lint, 375/768/1440px 실제 브라우저, 파일 연결·재열기·1080×1920 MP4 출력을 확인했습니다. 테스트 영상은 합성 패턴입니다. YouTube URL을 직접 내려받아 출력했다는 검증은 아닙니다. 운영 서버에서 해당 YouTube 영상은 로그인/봇 확인으로 거부되어, 현재 사용자가 원본 파일을 연결해야 합니다. 유료 AI 호출은 수행하지 않았습니다.
+
+배포 이미지 빌드: https://github.com/shdkej/video-automation/actions/runs/43433124746 . 직전 복구 기준은 source `f8d5edef7c2d1563c6edbc65ad24adbf5af04a18`, revision **74**, digest `sha256:bbdcb5cdc12434be4cdd955c823d8cbb7c83258346cca3d4a3c97b61a483165e`입니다. 배포 시 영구 studio 볼륨과 기존 프로젝트를 보존합니다. 최종 배포 증거는 Infinity work/reference-material-*에 기록합니다.

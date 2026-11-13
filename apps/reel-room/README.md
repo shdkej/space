@@ -6,16 +6,16 @@
 
 ## 준비와 반영 경계
 
-소스 master push는 GHCR 이미지 빌드입니다. Argo CD는 이 폴더의 `deployment.yaml`, `service.yaml`, `ingress.yaml` 세 파일만 읽습니다. 사용자는 2026-11-13 “ㅇㅇ ㄱㄱ”로 통합 운영 배포·두 기존 주소 전환·실제 AI 검증(이미지 2장·음성 1개·추천 1회)을 승인했습니다. 준비 패치는 적용 전 diff 확인용이며 자동 적용하지 않습니다.
+소스 master push는 GHCR 이미지 빌드입니다. Argo CD는 이 폴더의 `deployment.yaml`, `service.yaml`, `ingress.yaml` 세 파일만 읽습니다. 사용자는 2026-11-13 “ㅇㅇ ㄱㄱ”로 통합 운영 배포·두 기존 주소 전환·실제 AI 검증(이미지 2장·음성 1개·추천 1회)을 승인했습니다. 적용한 배포 선언과 정적 진입 파일이 정본입니다. 준비 패치는 적용 후 제거했으며 Git 이력에서 확인할 수 있습니다.
 
 운영 배포 승인 후:
 
 1. 소스의 pytest·UI build·브라우저/실제 MP4 증거 및 GHCR `:<source SHA>` 빌드 성공을 확인합니다.
 2. 현재 배포 image tag/revision을 복구 기록으로 남깁니다.
-3. `studio-release.patch`는 검증한 source SHA `a6c01640e17c766287a81ef888e9f58394c7c9c2`를 지정합니다. 해당 이미지 빌드 성공을 확인하고 Space 루트에서 `git apply --check` 후 적용합니다. 호스트 경로 `/var/lib/reel-room/studio`를 `/app/web/studio-data`에 마운트합니다. 기존 jobs emptyDir와 음악 hostPath를 유지합니다.
+3. `deployment.yaml`은 source SHA `b5d8b42e49280ff68fc45c078ada23916c8b5efa`를 지정합니다. 해당 이미지 빌드 성공과 manifest diff를 확인합니다. 호스트 경로 `/var/lib/reel-room/studio`를 `/app/web/studio-data`에 마운트합니다. 기존 jobs emptyDir와 음악 hostPath를 유지합니다.
 4. 변경 diff·Kubernetes server dry-run을 확인한 뒤 승인 범위에서 Space main commit/push합니다. 정상 Argo CD 동기화는 기존 단일 Pod를 Recreate로 교체합니다. 아래의 현재 동기화 제약이 남아 있으면 원격에 게시한 동일 `deployment.yaml`만 `/usr/local/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f apps/reel-room/deployment.yaml`로 적용하고 rollout/imageID를 검증합니다.
 5. 인증된 운영 주소의 스튜디오·업로드·저장/재열기·실제 릴스·기존 `?mode=cut`를 확인합니다. 프로젝트가 Pod 재시작 뒤에도 남는지 확인합니다.
-6. 운영 확인 후 Instagram Maker의 두 정적 진입(`sites/instagram-maker/dist`, `sites/infinity/dist/instagram-maker`)을 `instagram-entry.patch`로 스튜디오 링크로 전환합니다. 먼저 `git apply --check`로 현재 내용과 일치하는지 확인합니다. 이 정적 변경은 별도의 public 사이트 배포를 발생시키므로 승인에 포함돼 있어야 합니다.
+6. Instagram Maker의 두 정적 진입(`sites/instagram-maker/dist`, `sites/infinity/dist/instagram-maker`)은 스튜디오 이동 문서를 제공합니다. Infinity의 `dist/instagram-maker.html`은 기존 AWS workflow가 확장자 없는 `/instagram-maker` 객체로도 게시하여 슬래시 없는 주소를 지원합니다. 정적 변경은 별도의 public 사이트 배포이므로 승인 범위를 확인하고 실제 URL 이동을 검증합니다.
 
 ## 데이터·비밀·복구
 
@@ -32,4 +32,5 @@
 - 복구 기준: 배포 revision 71, 실제 이미지 `ghcr.io/shdkej/video-automation@sha256:b14727a531e797063e8677883ba09c4e10e528275f9177edb74681ec81cde44c`. 문제가 생기면 이 digest로 Deployment의 image를 되돌리고 영구 studio 볼륨을 보존합니다.
 - Argo CD는 2026-11-06부터 Space의 다른 비공개 서브모듈 `system-dashboard`를 인증하지 못해 `ComparisonError`입니다. Reel Room은 그 서브모듈을 사용하지 않습니다. 이번 배포는 같은 Git manifest의 대상 Deployment만 직접 적용하며 전역 Argo 설정·권한은 바꾸지 않습니다. Git 자동 동기화 복구는 별도 운영 과제입니다.
 - 운영 키를 사용한 OpenAI 추천·이미지·내레이션 검증은 모두 HTTP 429(사용 한도/요청 빈도)로 실패했습니다. 성공 생성물은 없으며 계정 한도 확인 전 추가 유료 검증을 반복하지 않습니다.
-- 배포·라이브 검증 진행 중입니다. 최종 revision과 검증 증거는 Infinity `reel-room-studio-20261113`에 기록합니다.
+- 사용자 요청으로 유료 AI 실호출 검증을 보류했습니다. 추가 생성 호출 없이 운영 배포·수동 제작·무료 참고 검색·파일 보존 검증을 마무리합니다.
+- 첫 이미지의 httpx 직접 의존성 누락은 소스 b5d8b42에서 수정했습니다. OpenAI 2.44.0/httpx 0.28.1을 명시하고 Docker import 검증을 추가했습니다. 새 이미지 빌드 성공 후 교체·최종 보존 검증을 진행하며, 실제 revision은 Infinity `reel-room-studio-20261113`에 기록합니다.

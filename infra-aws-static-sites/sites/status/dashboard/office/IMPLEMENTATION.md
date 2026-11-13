@@ -44,3 +44,6 @@
 - Git 범위: 운영 중인 Office는 `origin/codex/lcml-office`의 `5e8c6c3`에만 있었으므로 그 Office 소스·자산·빌드 설정·복구 문서만 현재 `main`으로 가져온다. 이미지 분류·여행·기타 미반영 변경과 기존 작업 트리는 보존한다. 수집기 자체는 변경하지 않는다. 배포 시 `office-live.json`을 보호하는 제외 항목도 기본 workflow에 반영한다.
 - 배포 범위: 이 커밋은 `[skip ci]`로 전체 Status 버킷 자동 동기화를 실행하지 않고 Office README의 `/office/` 전용 명령을 사용한다. 다른 화면이 동시에 갱신 중이므로 사무실 이외의 운영 자산을 교체하지 않기 위한 범위 제한이다. 기존 해시 자산을 보존하고 이전 HTML로 복구할 수 있다.
 - Context Pack 및 검색 영수증: Knowledge Lab `reports/context-packs/2026-11-13-lcml-mobile.json`, `logs/agent-wiki-query.md`의 같은 날짜 기록. 소유 문서와 실제 렌더로 판단했으며 사용자 범용 취향을 새로 기록하지 않았다.
+- 독립 리뷰: 568×320 가로 화면에서 건물이 과도하게 작아지는 문제를 지적받아 2열 배치로 수정했다. 재검토에서 해당 문제 해소·새 중요 회귀 없음. 세로320/375/390/414 및 가로500/568/667/844/960 너비, 네 개별 층 스크롤·복귀를 Chrome으로 확인했다.
+- 원격 소스 `e3ee3f2`를 `main`에 반영했다. 공개 `/office/`·`/office/index.html`·참조 JS/CSS·7개 이미지 총11개가 HTTP200 및 로컬 SHA256과 일치했다. CloudFront 무효화 `I1ABHW9YFQWTRDPCB9GI293TEX`는 `Completed`다.
+- 공개 URL Chrome에서 위9개 크기·정상/오류 총17개 시나리오를 확인했다. 문서 가로·세로 넘침0, 네 층/층명/메뉴 화면 내부, JavaScript 오류0. 모바일 각 층 진입·상세 스크롤·전체 보기 복귀와 뷰포트 높이 변경도 통과했다. 기존 패치 파일은 원본 바이트를 유지했으며 diff 공백 검사는 패치 형식의 context 공백을 제외하고 통과했다.

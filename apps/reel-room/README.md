@@ -54,3 +54,5 @@ source `02cf36a27d590b5a47b732f757604efd84397d9e`는 4번 소재 선택에서 �
 전체 215 tests, UI build/lint, 375/768/1440px 실제 브라우저, 파일 연결·재열기·1080×1920 MP4 출력을 확인했습니다. 테스트 영상은 합성 패턴입니다. YouTube URL을 직접 내려받아 출력했다는 검증은 아닙니다. 운영 서버에서 해당 YouTube 영상은 로그인/봇 확인으로 거부되어, 현재 사용자가 원본 파일을 연결해야 합니다. 유료 AI 호출은 수행하지 않았습니다.
 
 배포 이미지 빌드: https://github.com/shdkej/video-automation/actions/runs/43433124746 . 직전 복구 기준은 source `f8d5edef7c2d1563c6edbc65ad24adbf5af04a18`, revision **74**, digest `sha256:bbdcb5cdc12434be4cdd955c823d8cbb7c83258346cca3d4a3c97b61a483165e`입니다. 배포 시 영구 studio 볼륨과 기존 프로젝트를 보존합니다. 최종 배포 증거는 Infinity work/reference-material-*에 기록합니다.
+
+현재 운영 revision **75**, ready 1, digest `sha256:03a20c583216b0badbdbfcd70244c78a04ffb3b32d804a5a4078739bff7452df`. 원격 manifest `00fd6d6cd5f99dbf48257a7ec4e04236f57e57c1`과 동일한 Deployment를 적용했습니다. 기존 프로젝트 파일 17개 SHA256이 모두 동일하며, 운영 브라우저에서도 참고영상 선택→원본 파일 연결→장면 지정→재열기→2초 1080×1920 MP4 출력을 확인했습니다. 375/768/1440px 화면과 Basic Auth 401, Naver·YouTube 검색 capability를 확인했고 유료 AI 호출은 하지 않았습니다.

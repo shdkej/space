@@ -41,3 +41,5 @@
 사용 안내는 `https://metrics.oracle.shdkej.com/guide.html`이며 앱 상단 ‘사용 가이드’(모바일 책 아이콘)에서 연다. 정본은 소스 `public/guide.html`과 `guide.css`다. 제품층에서 첫 지표 설정, 기준과 지표의 차이, AI 적용/저장, 인스타 예시, 데이터 소스 조건, 상태 해석과 문제 해결을 안내한다. 자동 수집·알림·다음 행동 실행이 없는 현재 기능 경계도 설명한다. README는 안내 진입점을 연결하며 본문을 중복 관리하지 않는다.
 
 변경 source `5cb7a59fa3d4f8b650b5c9c86d0c616c15458355`. 테스트 16개·build, 320/390/768/1440px 지도→가이드→지도 이동과 목차/접기/넘침을 검증했다. 복구 이미지는 최초 배포 source `b19582f8b6ccacce4ef0915073db1c925d99b29a`다. 데이터 모델·저장·인증·AI·수집기는 변경하지 않는다.
+
+가이드 배포 확인: [Actions 43583529867](https://github.com/shdkej/agent-metrics/actions/runs/43583529867) 성공, 운영 revision **4**/ready **1**. 외부 health의 source SHA 일치, 운영 이미지에서 guide HTTP 200과 검증한 HTML의 SHA256 일치, 외부 가이드 URL의 미인증 401을 확인했다. 로컬 실제 브라우저의 4개 너비 렌더·이동 검증과 운영 파일 검증을 구분한다. 배포 전후 기존 지도·연결·관측의 행 수와 내용 해시가 동일하다.

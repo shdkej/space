@@ -7,6 +7,7 @@ Default targets:
 - Status board: `status.aws.shdkej.com`
 - Travel Ops board: `travel.aws.shdkej.com`
 - Card News Library: `library.aws.shdkej.com`
+- 모두의정책 policy map: `policycock.aws.shdkej.com` ([source and deployment guide](sites/policycock/README.md))
 - S3 region: `ap-northeast-2`
 - ACM certificate region for CloudFront: `us-east-1`
 - DNS: Route53 hosted zone `aws.shdkej.com`
@@ -32,6 +33,21 @@ terraform init
 terraform plan
 terraform apply
 ```
+
+The AWS provider constraint is 6.x, matching the existing state and the
+6.72.0 provider used on 2026-11-14. Do not initialize this state with 5.x:
+it cannot decode the newer state attributes. The canonical local state is
+`/home/ubuntu/workspace/space/infra-aws-static-sites/terraform.tfstate`;
+isolated checkouts must explicitly use it after initialization.
+
+Review every planned change before applying. On 2026-11-14, even a new-app
+target plan included deletion of the legacy `image-annotator` resources
+because that module remains in state after its registry hosting changed.
+That plan was not applied. Policycock was initialized with the shared module
+in an isolated empty state, then its module address was merged into the
+canonical state with all existing resource records preserved. See its
+deployment guide for the initial creation and state transfer procedure.
+Legacy state cleanup is separate from adding or publishing this site.
 
 Static apps live under one path:
 

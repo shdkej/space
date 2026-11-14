@@ -1,0 +1,235 @@
+{
+  "checkedAt": "2026-11-14T06:00:07.279008+00:00",
+  "note": "HTTP 응답만 검사. 차단/timeout은 내용 부재와 구분. 본문은 별도 웹조사 근거를 사용. 충남 404는 응답 본문에서 웹방화벽 차단임을 확인. 전북은 공식 현행 도메인으로 수정했으나 환경에서 416 응답. 국회 400, 협의회 PDF timeout은 미검증 경계.",
+  "links": [
+    {
+      "label": "이재명 원문",
+      "url": "https://gnews.gg.go.kr/news/news_detail.do?number=201812041024027055C059&s_code=C059",
+      "http_status": 200,
+      "final_url": "https://gnews.gg.go.kr/news/news_detail.do?number=201812041024027055C059&s_code=C059"
+    },
+    {
+      "label": "이재명 뉴스",
+      "url": "https://www.yna.co.kr/view/AKR20190901005800061",
+      "http_status": 200,
+      "final_url": "https://www.yna.co.kr/view/AKR20190901005800061"
+    },
+    {
+      "label": "김동연 원문",
+      "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=55553",
+      "http_status": 200,
+      "final_url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=55553"
+    },
+    {
+      "label": "김동연 뉴스",
+      "url": "https://www.yna.co.kr/amp/view/AKR20230614082551061",
+      "http_status": 200,
+      "final_url": "https://www.yna.co.kr/amp/view/AKR20230614082551061"
+    },
+    {
+      "label": "김경수 원문",
+      "url": "https://council.gyeongnam.go.kr/record/recordView.do?key=067b32375db7d4ac4df84dcf0f20a2ca59172014d2146b61327c9fa12b1988fde350fafcbabec262",
+      "http_status": 200,
+      "final_url": "https://council.gyeongnam.go.kr/record/recordView.do?key=067b32375db7d4ac4df84dcf0f20a2ca59172014d2146b61327c9fa12b1988fde350fafcbabec262"
+    },
+    {
+      "label": "김경수 뉴스",
+      "url": "https://www.viva100.com/article/202104093644775",
+      "http_status": 200,
+      "final_url": "https://www.viva100.com/article/202104093644775"
+    },
+    {
+      "label": "박주민 원문",
+      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2111964/detailRP",
+      "http_status": 200,
+      "final_url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2111964/detailRP"
+    },
+    {
+      "label": "박주민 뉴스",
+      "url": "https://www.yna.co.kr/amp/view/AKR20210809138900001",
+      "http_status": 200,
+      "final_url": "https://www.yna.co.kr/amp/view/AKR20210809138900001"
+    },
+    {
+      "label": "문재인 원문",
+      "url": "https://www.mohw.go.kr/upload/content_data/2018/pop180503-01.pdf",
+      "http_status": 200,
+      "final_url": "https://www.mohw.go.kr/upload/content_data/2018/pop180503-01.pdf"
+    },
+    {
+      "label": "문재인 뉴스",
+      "url": "https://www.newsis.com/view/NISX20170414_0014831376",
+      "http_status": 200,
+      "final_url": "https://www.newsis.com/view/NISX20170414_0014831376"
+    },
+    {
+      "label": "오세훈 원문",
+      "url": "https://www.seoul.go.kr/news/news_report.do?nttNo=414644&tr_code=snews",
+      "http_status": 200,
+      "final_url": "https://www.seoul.go.kr/news/news_report.do?nttNo=414644&tr_code=snews"
+    },
+    {
+      "label": "오세훈 뉴스",
+      "url": "https://www.yna.co.kr/view/AKR20240129086000004",
+      "http_status": 200,
+      "final_url": "https://www.yna.co.kr/view/AKR20240129086000004"
+    },
+    {
+      "label": "홍준표 원문",
+      "url": "https://www.gaok.or.kr/T_Newsletter_2021/2023_11/1/Vol111.pdf",
+      "http_status": null,
+      "error": "ReadTimeout"
+    },
+    {
+      "label": "홍준표 뉴스",
+      "url": "https://www.newsis.com/view/NISX20231227_0002572679",
+      "http_status": 200,
+      "final_url": "https://www.newsis.com/view/NISX20231227_0002572679"
+    },
+    {
+      "label": "유승민 원문",
+      "url": "https://www.yna.co.kr/view/AKR20210805037800001",
+      "http_status": 200,
+      "final_url": "https://www.yna.co.kr/view/AKR20210805037800001"
+    },
+    {
+      "label": "유승민 뉴스",
+      "url": "https://www.ytn.co.kr/_ln/0101_202108050906381757",
+      "http_status": 200,
+      "final_url": "https://www.ytn.co.kr/_ln/0101_202108050906381757"
+    },
+    {
+      "label": "나경원 원문",
+      "url": "https://likms.assembly.go.kr/bill/billDetail.do?billId=PRC_A2Z4O0U5R3E0L1H1P2U4S1R1Q8X4W8",
+      "http_status": 200,
+      "final_url": "https://likms.assembly.go.kr/bill/bi/billDetailPage.do?billId=PRC_A2Z4O0U5R3E0L1H1P2U4S1R1Q8X4W8&currMenuNo=2600044"
+    },
+    {
+      "label": "나경원 뉴스",
+      "url": "https://www.newsis.com/view/NISX20240531_0002757021",
+      "http_status": 200,
+      "final_url": "https://www.newsis.com/view/NISX20240531_0002757021"
+    },
+    {
+      "label": "한동훈 원문",
+      "url": "https://www.peoplepowerparty.kr/news/comment_view/BBSDD0001/102690",
+      "http_status": 200,
+      "final_url": "https://www.peoplepowerparty.kr/news/comment_view/BBSDD0001/102690"
+    },
+    {
+      "label": "한동훈 뉴스",
+      "url": "https://imnews.imbc.com/news/2024/politics/article/6624859_36431.html",
+      "http_status": 200,
+      "final_url": "https://imnews.imbc.com/news/2024/politics/article/6624859_36431.html"
+    },
+    {
+      "label": "국회 의회",
+      "url": "https://www.assembly.go.kr/",
+      "http_status": 400,
+      "final_url": "https://www.assembly.go.kr/"
+    },
+    {
+      "label": "서울 의회",
+      "url": "https://www.smc.seoul.kr/",
+      "http_status": 200,
+      "final_url": "https://www.smc.seoul.kr/main/index.do"
+    },
+    {
+      "label": "인천 의회",
+      "url": "https://www.icouncil.go.kr/",
+      "http_status": 200,
+      "final_url": "https://www.icouncil.go.kr/"
+    },
+    {
+      "label": "경기 의회",
+      "url": "https://www.ggc.go.kr/",
+      "http_status": 200,
+      "final_url": "https://www.ggc.go.kr/site/main/home"
+    },
+    {
+      "label": "강원 의회",
+      "url": "https://council.gangwon.kr/",
+      "http_status": 200,
+      "final_url": "https://council.gangwon.kr/"
+    },
+    {
+      "label": "충북 의회",
+      "url": "https://council.chungbuk.kr/",
+      "http_status": 200,
+      "final_url": "https://council.chungbuk.kr/kr/main.do"
+    },
+    {
+      "label": "충남 의회",
+      "url": "https://council.chungnam.go.kr/",
+      "http_status": 404,
+      "final_url": "https://council.chungnam.go.kr/"
+    },
+    {
+      "label": "대전 의회",
+      "url": "https://council.daejeon.go.kr/",
+      "http_status": 200,
+      "final_url": "https://council.daejeon.go.kr/"
+    },
+    {
+      "label": "세종 의회",
+      "url": "https://council.sejong.go.kr/",
+      "http_status": 200,
+      "final_url": "https://council.sejong.go.kr/"
+    },
+    {
+      "label": "전북 의회",
+      "url": "https://jbstatecouncil.jeonbuk.kr/",
+      "http_status": 416,
+      "error": "환경 응답 제한; 공식 검색 본문 확인",
+      "final_url": "https://jbstatecouncil.jeonbuk.kr/"
+    },
+    {
+      "label": "광주 의회",
+      "url": "https://council.gwangju.go.kr/",
+      "http_status": 200,
+      "final_url": "https://council.gwangju.go.kr/"
+    },
+    {
+      "label": "전남 의회",
+      "url": "https://www.jnassembly.go.kr/",
+      "http_status": 200,
+      "final_url": "https://www.jnassembly.go.kr/"
+    },
+    {
+      "label": "경북 의회",
+      "url": "https://council.gb.go.kr/",
+      "http_status": 200,
+      "final_url": "https://council.gb.go.kr/"
+    },
+    {
+      "label": "대구 의회",
+      "url": "https://council.daegu.go.kr/",
+      "http_status": 200,
+      "final_url": "https://council.daegu.go.kr/"
+    },
+    {
+      "label": "울산 의회",
+      "url": "https://www.council.ulsan.kr/",
+      "http_status": 200,
+      "final_url": "https://www.council.ulsan.kr/"
+    },
+    {
+      "label": "경남 의회",
+      "url": "https://council.gyeongnam.go.kr/",
+      "http_status": 200,
+      "final_url": "https://council.gyeongnam.go.kr/intro/intro.do"
+    },
+    {
+      "label": "부산 의회",
+      "url": "https://council.busan.go.kr/",
+      "http_status": 200,
+      "final_url": "https://council.busan.go.kr/council/index"
+    },
+    {
+      "label": "제주 의회",
+      "url": "https://www.council.jeju.kr/",
+      "http_status": 200,
+      "final_url": "https://www.council.jeju.kr/"
+    }
+  ]
+}

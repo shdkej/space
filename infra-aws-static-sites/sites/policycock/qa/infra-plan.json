@@ -1,0 +1,90 @@
+{
+  "status": "reviewed",
+  "provider": "hashicorp/aws 6.72.0",
+  "scope": "policycock initial creation in isolated state; merge into Space after apply",
+  "summary": {
+    "create": 12,
+    "update": 0,
+    "delete": 0
+  },
+  "changes": [
+    {
+      "address": "module.app_static_sites[\"policycock\"].data.aws_iam_policy_document.site_bucket",
+      "actions": [
+        "read"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_acm_certificate.site",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_acm_certificate_validation.site",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_cloudfront_distribution.site",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_cloudfront_origin_access_control.site",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_route53_record.cert_validation[\"policycock.aws.shdkej.com\"]",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_route53_record.site_a",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_route53_record.site_aaaa",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_s3_bucket.site",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_s3_bucket_ownership_controls.site",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_s3_bucket_policy.site",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_s3_bucket_public_access_block.site",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.app_static_sites[\"policycock\"].aws_s3_bucket_server_side_encryption_configuration.site",
+      "actions": [
+        "create"
+      ]
+    }
+  ]
+}

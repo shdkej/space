@@ -1,0 +1,5 @@
+{
+  "name": "policycock-landing", "private": true, "version": "1.0.0",
+  "scripts": {"start": "python3 -m http.server 4173 --directory dist --bind 127.0.0.1", "check": "node --check dist/app.js && node --check dist/data.js && node --check dist/sources.js", "test": "node scripts/verify-browser.cjs"},
+  "devDependencies": {"playwright-core": "1.65.1"}
+}

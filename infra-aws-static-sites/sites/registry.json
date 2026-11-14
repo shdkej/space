@@ -137,7 +137,18 @@
       "detail": "Video automation web UI for reel production (basic auth)",
       "deployment_name": "reel room",
       "hosting": "kubernetes ingress",
-      "ok_status": [401],
+      "ok_status": [
+        401
+      ],
+      "spa_fallback": false
+    },
+    {
+      "app": "policycock",
+      "name": "모두의정책",
+      "domain_name": "policycock.aws.shdkej.com",
+      "kind": "landing",
+      "detail": "국회·광역의회와 정치인 정책을 탐색하고 관심 정책을 브라우저에 저장하는 지도",
+      "deployment_name": "모두의정책 정책 지도",
       "spa_fallback": false
     }
   ],

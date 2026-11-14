@@ -230,7 +230,7 @@ function App() {
   const fresh = freshness(feed, now);
   const live = fresh.live && connection === 'ok';
   const project = data.projects.find(p => p.id === projectId) || data.projects[0];
-  const session = officeActors(data, eventQueue).find(s => s.id === selected);
+  const session = officeActors(data, eventQueue, now).find(s => s.id === selected);
   const occupancy = floorOccupancy(data, eventQueue, floor, now);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
   useEffect(() => { if (!live) return; const id = setInterval(() => setTick(t => t + 1), 650); return () => clearInterval(id); }, [live]);

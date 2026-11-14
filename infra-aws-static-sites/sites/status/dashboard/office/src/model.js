@@ -195,16 +195,19 @@ export function sceneSessions(sessions, queue, floor) {
   return combined.filter(session => session.floor === floor && (session.state !== 'ended' || queue.some(entry => entry.session.id === session.id)));
 }
 // Membership is independent of activity: a resident keeps their place when a
-// turn ends. A real primary session animates that person; children stay separate.
-export function officeActors(snapshot, eventQueue = []) {
+// turn ends. Delegated work also animates that person; extra sessions stay separate.
+export function officeActors(snapshot, eventQueue = [], now = Date.now()) {
   const sessions = [...(snapshot.sessions || []), ...eventQueue.map(entry => entry.session).filter(s => !(snapshot.sessions || []).some(item => item.id === s.id))];
   const queued = new Set(eventQueue.map(entry => entry.session.id));
   const available = sessions.filter(s => s.state !== 'ended' || queued.has(s.id));
   const bound = new Set();
   const rank = ['owner','hj','main','taxops','marketing','design','genie','red'];
   const residents = [...(snapshot.residents || [])].sort((a,b) => rank.indexOf(a.agentId) - rank.indexOf(b.agentId)).map(resident => {
-    const primary = resident.kind !== 'owner' && available.filter(s => !s.parentId && s.agentId === resident.agentId && s.provider !== 'codex')
-      .sort((a,b) => Number(a.state === 'ended') - Number(b.state === 'ended') || (timestamp(b.startedAt) || 0) - (timestamp(a.startedAt) || 0))[0];
+    const primary = resident.kind !== 'owner' && available.filter(s => s.agentId === resident.agentId && s.provider !== 'codex')
+      .sort((a,b) => Number(a.state === 'ended') - Number(b.state === 'ended')
+        || Number(freshness(snapshot, now, b).live) - Number(freshness(snapshot, now, a).live)
+        || Number(!!a.parentId) - Number(!!b.parentId)
+        || (timestamp(b.startedAt) || 0) - (timestamp(a.startedAt) || 0))[0];
     if (primary) bound.add(primary.id);
     return {
       ...primary, ...resident, resident: true, sessionId: primary?.id || null, provider: 'openclaw',
@@ -230,7 +233,7 @@ export function runtimeSessionCounts(snapshot, now, sessions = snapshot.sessions
   };
 }
 export function floorOccupancy(snapshot, eventQueue, floor, now = Date.now()) {
-  const actors = officeActors(snapshot, eventQueue);
+  const actors = officeActors(snapshot, eventQueue, now);
   const questions = snapshot.questions || [];
   const waiting = [];
   const questioners = new Set();

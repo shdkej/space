@@ -49,6 +49,63 @@ test('questioning resident moves once to the owner queue and returns after resol
   assert.equal(floorOccupancy(data, [], 1, now).count, 2);
 });
 
+test('delegated Genie and Red work binds to each resident without duplicate people or sessions', () => {
+  const data = snapshot({ sessions: [
+    session('genie-child', 'genie', { parentId: 'sam' }),
+    session('red-child', 'red', { parentId: 'genie-child' }),
+  ] });
+  const room = floorOccupancy(data, [], 1, now);
+  assert.equal(room.count, 2);
+  assert.equal(room.sessionCount, 2);
+  for (const id of ['genie', 'red']) {
+    const actor = room.seated.find(s => s.id === `resident:${id}`);
+    assert.equal(actor.state, 'working');
+    assert.equal(actor.sessionId, `${id}-child`);
+  }
+  data.questions = [{ id: 'review', sessionId: 'red-child', askedAt: observedAt }];
+  assert.equal(floorOccupancy(data, [], 1, now).count, 1);
+  assert.equal(floorOccupancy(data, [], 4, now).waiting[0].session.id, 'resident:red');
+});
+
+test('fresh delegated work takes precedence over an unknown or stale primary session', () => {
+  for (const extra of [
+    { state: 'unknown' },
+    { observedAt: new Date(now - 721_000).toISOString() },
+  ]) {
+    const data = snapshot({ sessions: [session('primary', 'genie', extra), session('child', 'genie', { parentId: 'sam' })] });
+    const room = floorOccupancy(data, [], 1, now);
+    assert.equal(room.seated.find(s => s.id === 'resident:genie').sessionId, 'child');
+    assert.equal(room.sessionCount, 1);
+    assert.equal(room.unknownSessionCount, 1);
+  }
+});
+
+test('a queued primary completion cannot mark a resident idle while delegated work continues', () => {
+  const finished = session('finished', 'red', { state: 'ended' });
+  const data = snapshot({ sessions: [finished, session('child', 'red', { parentId: 'sam' })] });
+  const queue = [{ session: finished, events: [{ type: 'reported', sessionId: 'finished' }] }];
+  const room = floorOccupancy(data, queue, 1, now);
+  const actor = room.seated.find(s => s.id === 'resident:red');
+  assert.equal(actor.state, 'working');
+  assert.equal(actor.sessionId, 'child');
+  assert.equal(actorEvent(actor, queue), undefined);
+  assert.equal(room.sessionCount, 1);
+});
+
+test('delegated completion returns a resident to idle and stale work stays unverified', () => {
+  const data = snapshot({ sessions: [session('child', 'red', { parentId: 'sam' })] });
+  const stale = floorOccupancy(data, [], 1, now + 721_000);
+  const actor = stale.seated.find(s => s.id === 'resident:red');
+  assert.equal(actor.sessionId, 'child');
+  assert.equal(freshness(data, now + 721_000, actor).live, false);
+  assert.equal(stale.sessionCount, 0);
+  data.sessions[0].state = 'ended';
+  const ended = floorOccupancy(data, [], 1, now);
+  assert.equal(ended.seated.find(s => s.id === 'resident:red').state, 'idle');
+  assert.equal(ended.count, 2);
+  assert.equal(ended.sessionCount, 0);
+});
+
 test('ended work never removes the resident or counts an idle resident as a running session', () => {
   const data = snapshot({ sessions: [session('finished', 'genie', { state: 'ended' })] });
   const room = floorOccupancy(data, [], 1, now);

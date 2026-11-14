@@ -1,0 +1,8 @@
+{
+  "verifiedAt": "2026-11-14T06:25:43.523583+00:00",
+  "existingResourcesUnchanged": 256,
+  "newManagedResources": 12,
+  "newDataSources": 5,
+  "lineagePreserved": true,
+  "canonicalState": "/home/ubuntu/workspace/space/infra-aws-static-sites/terraform.tfstate"
+}

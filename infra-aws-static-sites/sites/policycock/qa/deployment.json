@@ -1,0 +1,50 @@
+{
+  "verifiedAt": "2026-11-14T06:26:57.437554+00:00",
+  "status": "deployed-and-verified",
+  "url": "https://policycock.aws.shdkej.com/",
+  "sourceRepository": "https://github.com/shdkej/space",
+  "sourcePath": "infra-aws-static-sites/sites/policycock",
+  "sourceCommit": "456588f995d89135e7ec63738e9f60419d01aeed",
+  "workflow": {
+    "name": "Deploy static site to AWS",
+    "runId": 43566210780,
+    "url": "https://github.com/shdkej/space/actions/runs/43566210780",
+    "conclusion": "success",
+    "jobs": [
+      "detect",
+      "deploy policycock",
+      "deploy status"
+    ]
+  },
+  "infrastructure": {
+    "s3Bucket": "static-policycock-aws-shdkej-com",
+    "s3Region": "ap-northeast-2",
+    "s3PublicAccessBlocked": true,
+    "cloudfrontDistributionId": "E1IR9GXLCMQK6X",
+    "cloudfrontDomain": "d1noz07xzd37dt.cloudfront.net",
+    "cloudfrontStatus": "Deployed",
+    "httpsRedirect": true,
+    "minimumTls": "TLSv1.2_2021",
+    "spaFallback": false,
+    "createdResources": 12,
+    "existingResourcesChanged": 0,
+    "existingStateRecordsPreserved": 256,
+    "provider": "hashicorp/aws 6.72.0"
+  },
+  "verification": {
+    "local": "qa/verification.json",
+    "browser": "qa/live-verification.json",
+    "assetHashes": "qa/live-assets.json",
+    "stateTransfer": "qa/state-transfer.json",
+    "visualReview": [
+      "375px mobile",
+      "1440px desktop"
+    ]
+  },
+  "notes": [
+    "Shared-root plan included unrelated legacy image-annotator deletions and was not applied.",
+    "Created only the policycock module in an isolated initial state, then moved its 17 resource/data records into the canonical Space state.",
+    "Existing shared-root output values were preserved during state transfer; GitHub Actions resolves resources directly from AWS.",
+    "Policy changes, notifications, accounts and analytics remain outside this static prototype."
+  ]
+}

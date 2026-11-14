@@ -1,0 +1,68 @@
+{
+  "verifiedAt": "2026-11-14T06:25:29.962631+00:00",
+  "status": "passed",
+  "rootMatchesIndex": true,
+  "extensionlessSourcesMatches": true,
+  "files": [
+    {
+      "path": "app.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "sha256": "701606da6ea5dea63b1e3874ea58daf3fa2861442aabd712b7b7b9307a18c5ef"
+    },
+    {
+      "path": "assets/OFL.txt",
+      "status": 200,
+      "contentType": "text/plain",
+      "sha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f"
+    },
+    {
+      "path": "assets/PretendardVariable.woff2",
+      "status": 200,
+      "contentType": "font/woff2",
+      "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4"
+    },
+    {
+      "path": "assets/favicon.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "sha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666"
+    },
+    {
+      "path": "assets/korea.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "sha256": "5cf65df8124a94c94104c798910f7233ab5a6c82e04a25eafd76d50965a9161b"
+    },
+    {
+      "path": "data.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "sha256": "4066cf579cf05265f1e9948ddbfdf3828e1af5d3a674431560bddac5042de62f"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "contentType": "text/html",
+      "sha256": "2307d277231f76f0d070f1b925e4050dd4b3a888fae5766de11155085fedfb8c"
+    },
+    {
+      "path": "sources.html",
+      "status": 200,
+      "contentType": "text/html",
+      "sha256": "97a06e0f1cf8b7776b31691538b6e7063bfcecf00bbb63d0c6379a2013e2c616"
+    },
+    {
+      "path": "sources.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "sha256": "f556b8d15e254c5c02e35d6e9939070d814c603713abed3023405e265413b343"
+    },
+    {
+      "path": "styles.css",
+      "status": 200,
+      "contentType": "text/css",
+      "sha256": "c1523fbbe1b385c82a55e97e9174379cf8bec291c68017b336e777d82fd7aa1d"
+    }
+  ]
+}

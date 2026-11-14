@@ -67,7 +67,7 @@ Node.js 26, Playwright Core 1.65.1, 로컬 Chrome으로 검증했습니다. 테�
 
 Terraform state 정본은 `/home/ubuntu/workspace/space/infra-aws-static-sites/terraform.tfstate`입니다. 이 경로에는 다른 사이트도 있으므로 전체 apply 대신 plan 범위를 검토해야 합니다. 기존 image-annotator 상태 정리는 이번 배포 범위 밖입니다. 자격증명·tfvars·state·plan 파일은 커밋하지 않습니다.
 
-검증 순서는 `npm run check` → `npm test` → registry 및 Terraform plan의 변경 범위 확인 → 승인된 초기 인프라 반영 → main push → Actions 성공 → `node scripts/verify-live.cjs`입니다. 이번 요청은 초기 인프라 반영과 정적 배포를 포함한 사용자 승인입니다. 실제 완료 증거는 `qa/deployment.json`에 기록합니다.
+검증 순서는 `npm run check` → `npm test` → registry 및 Terraform plan의 변경 범위 확인 → 승인된 초기 인프라 반영 → main push → Actions 성공 → `node scripts/verify-live.cjs`입니다. 이번 요청은 초기 인프라 반영과 정적 배포를 포함한 사용자 승인입니다. 실제 완료 증거는 `qa/deployment.json`에 기록합니다. 2026-11-14 소스 `456588f`의 [Actions 배포](https://github.com/shdkej/space/actions/runs/43566210780)가 성공했고, 라이브 375/1440px 렌더·선택·저장·메모 복원·삭제·내보내기·출처 화면과 정적 파일 10개의 SHA-256 일치를 확인했습니다. 신규 관리 리소스 12개를 생성했으며 기존 state의 리소스 기록 256개는 변하지 않았습니다. 상태 이전 시 공유 루트의 기존 output 값은 보존했고 Actions는 AWS에서 리소스를 직접 조회합니다.
 
 ### 복구
 

@@ -26,3 +26,12 @@
 ## 검증 기록
 
 초기 소스: `b19582f` (정확한 전체 SHA는 deployment.yaml). 테스트 16개, 실제 AI 응답, 320/390/768/1440px 화면, 수동 0·공개 JSON 실측·연결 중 초안 보존·동시 저장 충돌 복구를 사전 확인했습니다. 라이브 결과는 배포 후 아래에 추가합니다.
+
+### 2026-11-14 라이브 확인
+
+- 이미지 빌드: [Actions 43567794759](https://github.com/shdkej/agent-metrics/actions/runs/43567794759) 성공. 실행 source `b19582f8b6ccacce4ef0915073db1c925d99b29a`, OCI manifest `sha256:97d59acf4f02239834d6c96bbd33eb6f76b122ee0110c64bf662343ccc1ffe79`. Pod imageID(config digest)는 `sha256:4718066665773e3f4c7245b7e6e4031683b256ce05a5918d6929ea63aeca9855`다.
+- 배포 revision **3**, ready **1**, oracle-arm-1. TLS 발급 완료. 미인증 화면·데이터 API 401, 공개 health의 source revision 일치를 확인했다. nginx의 Basic Auth가 Authorization 헤더를 제거하는 현상은 해당 Ingress의 중복 인증 설정을 제거하여 해결했다. 앱의 Basic Auth 검증은 유지한다.
+- 운영 Chromium 320/390/768/1440px에서 넘침·JS 오류 없음. 기준·지표 저장/재열기, 수동 0, 공개 JSON 실측 600, 연결 중 초안 보존, 다른 탭 변경과 명시적 충돌 복구를 확인했다. Pod 교체 후 정의·관측·연결도 유지됐다.
+- 운영 AI 실응답은 ‘인스타그램 조회수’, `views`, 후행, 7일, 매주를 반환했다. 인스타 미연결 상태는 유지하며 실제 계정 수치를 검증했다고 보고하지 않는다.
+- 별도 검증 계정의 지도·연결·관측을 삭제했고 인증 해시를 기존 계정만 남도록 복구했다. 재시작 후 임시 계정의 401과 원본 Reel Room 인증 해시 일치를 확인했다. 원본 Reel Room Secret은 변경하지 않았다.
+- 소스의 `docs/verification.json`이 검증 요약이다. 후속 테스트 스크립트·기록 commit은 실행 이미지와 구분한다. Argo `ComparisonError`는 기존 Space 서브모듈 문제로 남아 있으며 이번 앱은 원격 manifest `2568455`와 동일하게 적용했다.

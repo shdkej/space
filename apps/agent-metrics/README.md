@@ -16,7 +16,7 @@
 
 ## 인증·데이터·복구
 
-- `agent-metrics-basic-auth/auth`는 기존 Reel Room Basic Auth 해시를 복사한 별도 Secret입니다. nginx와 앱 양쪽에서 검증합니다. 사용자명별 지도·연결·관측을 분리합니다. 기존 Reel Room Secret은 수정하지 않습니다. 비밀번호 변경은 두 앱의 별도 Secret에 각각 반영해야 합니다.
+- `agent-metrics-basic-auth/auth`는 기존 Reel Room Basic Auth 해시를 복사한 별도 Secret입니다. 앱 서버에서 검증하고 nginx는 TLS·프록시를 담당합니다. nginx Basic Auth를 중복 설정하면 Authorization 헤더를 지우므로 이 앱의 Ingress에는 auth-type을 두지 않습니다. 미인증 화면·데이터 API는 401이며 `/api/health`는 상태·소스 revision만 공개합니다. 사용자명별 지도·연결·관측을 분리합니다. 기존 Reel Room Secret은 수정하지 않습니다. 비밀번호 변경은 두 앱의 별도 Secret에 각각 반영해야 합니다.
 - `agent-metrics-env`에는 `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_WORKERS_AI_API_TOKEN`, `DATA_ENCRYPTION_KEY`만 보관합니다. 실제 값은 Git·브라우저·로그에 넣지 않습니다.
 - 데이터는 oracle-arm-1 `/var/lib/agent-metrics`에 영구 저장합니다. Pod의 `/data`에 마운트하고 Node uid1000으로 실행합니다. 단일 Pod/Recreate 방식입니다.
 - 백업은 SQLite `.backup`으로 일관된 DB를 만들고 암호화 키 Secret을 별도로 보존합니다. 실행 중인 SQLite 파일만 복사하지 않습니다. 자동 백업·장애 복제는 아직 없습니다.

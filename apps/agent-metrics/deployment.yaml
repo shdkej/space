@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-metrics
+  namespace: default
+  labels: {app: agent-metrics}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: agent-metrics}
+  template:
+    metadata:
+      labels: {app: agent-metrics}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: oracle-arm-1
+      securityContext:
+        seccompProfile: {type: RuntimeDefault}
+      initContainers:
+        - name: data-permissions
+          image: ghcr.io/shdkej/agent-metrics:b19582f8b6ccacce4ef0915073db1c925d99b29a
+          imagePullPolicy: IfNotPresent
+          command: ["node", "--input-type=module", "-e", "import fs from 'node:fs'; fs.mkdirSync('/data',{recursive:true}); fs.chmodSync('/data',0o700); fs.chownSync('/data',1000,1000);"]
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+          resources:
+            requests: {cpu: 10m, memory: 32Mi}
+            limits: {cpu: 100m, memory: 128Mi}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+      containers:
+        - name: app
+          image: ghcr.io/shdkej/agent-metrics:b19582f8b6ccacce4ef0915073db1c925d99b29a
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8786}
+          env:
+            - {name: NODE_ENV, value: production}
+            - {name: DATA_DIR, value: /data}
+            - name: AUTH_HTPASSWD
+              valueFrom:
+                secretKeyRef: {name: agent-metrics-basic-auth, key: auth}
+          envFrom:
+            - secretRef: {name: agent-metrics-env}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {cpu: 300m, memory: 384Mi}
+          readinessProbe:
+            httpGet: {path: /api/health, port: http}
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /api/health, port: http}
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          volumeMounts:
+            - {name: data, mountPath: /data}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: data
+          hostPath: {path: /var/lib/agent-metrics, type: DirectoryOrCreate}
+        - name: tmp
+          emptyDir: {sizeLimit: 16Mi}

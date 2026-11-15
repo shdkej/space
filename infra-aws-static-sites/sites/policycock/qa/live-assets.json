@@ -1,5 +1,5 @@
 {
-  "verifiedAt": "2026-11-14T06:25:29.962631+00:00",
+  "verifiedAt": "2026-11-15T13:14:51.864Z",
   "status": "passed",
   "rootMatchesIndex": true,
   "extensionlessSourcesMatches": true,
@@ -35,6 +35,12 @@
       "sha256": "5cf65df8124a94c94104c798910f7233ab5a6c82e04a25eafd76d50965a9161b"
     },
     {
+      "path": "assets/urban-glass.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "sha256": "118a9ee3769270daddc18ee470a5eefab0ec83a70fef4a8d23a2b7e1f4ff3304"
+    },
+    {
       "path": "data.js",
       "status": 200,
       "contentType": "text/javascript",
@@ -44,7 +50,7 @@
       "path": "index.html",
       "status": 200,
       "contentType": "text/html",
-      "sha256": "2307d277231f76f0d070f1b925e4050dd4b3a888fae5766de11155085fedfb8c"
+      "sha256": "423a30f200428d10178abf49d3f3f5a4bea3f5d4a67e814128d626a0a9fddef0"
     },
     {
       "path": "sources.html",
@@ -62,7 +68,7 @@
       "path": "styles.css",
       "status": 200,
       "contentType": "text/css",
-      "sha256": "c1523fbbe1b385c82a55e97e9174379cf8bec291c68017b336e777d82fd7aa1d"
+      "sha256": "6384b8a11c7cc721a64375869d182abfd9b81442e1cd5a47dcb46ed89496239f"
     }
   ]
 }

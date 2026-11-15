@@ -1,19 +1,18 @@
 {
-  "verifiedAt": "2026-11-14T06:26:57.437554+00:00",
+  "verifiedAt": "2026-11-15T13:14:51.864Z",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "456588f995d89135e7ec63738e9f60419d01aeed",
+  "sourceCommit": "f3f9e236f122b3ccb8ddead3e71eaba76397e6ea",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 43566210780,
-    "url": "https://github.com/shdkej/space/actions/runs/43566210780",
+    "runId": 43717886447,
+    "url": "https://github.com/shdkej/space/actions/runs/43717886447",
     "conclusion": "success",
     "jobs": [
       "detect",
-      "deploy policycock",
-      "deploy status"
+      "deploy policycock"
     ]
   },
   "infrastructure": {
@@ -45,6 +44,7 @@
     "Shared-root plan included unrelated legacy image-annotator deletions and was not applied.",
     "Created only the policycock module in an isolated initial state, then moved its 17 resource/data records into the canonical Space state.",
     "Existing shared-root output values were preserved during state transfer; GitHub Actions resolves resources directly from AWS.",
+    "The 2026-11-15 design update deployed the urban-glass asset; 11 static files matched the live origin and 375/1440px live browser checks passed.",
     "Policy changes, notifications, accounts and analytics remain outside this static prototype."
   ]
 }

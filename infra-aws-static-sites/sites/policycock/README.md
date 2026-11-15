@@ -27,8 +27,12 @@ npm start
 - `dist/data.js`: 10개 정책 사례 및 의회 공식 링크
 - `dist/sources.html`, `sources.js`: 방문자용 자료 출처
 - `dist/assets/`: 자체 호스팅 글꼴·지도·아이콘
+- `dist/assets/urban-glass.svg`: 도시 건축 모형과 유리 조형물의 장식용 SVG. 실제 정책 위치·현황을 나타내지 않음
+- `scripts/render-hero-art.py`: 장식 SVG를 재생성하는 결정적 Python 스크립트 (표준 라이브러리만 사용)
 - `scripts/map-svg.py`: 출처 GeoJSON에서 지도 SVG 생성. 재생성한 SVG는 index.html에도 반영해야 함
 - `scripts/verify-browser.cjs`, `qa/verification.json`: 재현 가능한 검증과 결과
+
+첫 화면은 남색·라일락 유리 오브젝트와 백색 도시 모형으로 정책의 탐색 경험을 소개하고, 실제 의회 핀과 정책 사례는 아래의 별도 한국 지도에서 제공합니다. 시각 토큰·반응형·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요. 도시 이미지는 설명용 장식으로서 사실 지도가 아닙니다.
 
 ## 데이터·외부 의존성
 
@@ -45,6 +49,8 @@ npm ci
 npm run check
 CHROME_PATH=/opt/google/chrome/chrome npm test
 ```
+
+`npm test`는 지도 영역을 뷰포트에 스크롤한 뒤 핀이 가려지지 않는지도 확인하고 `qa/viewport-*.png`를 생성합니다. 런타임 브라우저 라이브러리가 없는 환경에서는 설치된 Chromium에 필요한 시스템 라이브러리와 `CHROME_PATH`를 별도로 제공해야 합니다.
 
 Node.js 26, Playwright Core 1.65.1, 로컬 Chrome으로 검증했습니다. 테스트가 4187 포트에 임시 HTTP 서버를 띄우고 종료합니다. 브라우저는 설치된 Chrome을 사용하며 다른 환경에서는 `CHROME_PATH`를 지정합니다.
 

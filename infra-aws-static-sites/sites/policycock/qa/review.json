@@ -119,6 +119,26 @@
     "liveEvidence": ["qa/live-verification.json (12 checks)", "qa/live-assets.json (17 dist files and 2 routes matched)", "qa/deployment.json (run 43845272094)"],
     "qualityLimits": ["Hallmark strict lint 418 FAIL/297 REFLEX remains unresolved; its render tier did not start without puppeteer-core. Prior 423/305 was not a clean baseline.", "No project DESIGN.md token charter; DESIGN_SYSTEM.md is the product design direction.", "User aesthetic acceptance and current policy effectiveness are not proven by technical checks."]
   },
+  "editorialMapReview": {
+    "parentSession": "20261115_220218_c6a755ca",
+    "route": "Hermes openai-codex delegate_task; four direct role children, no nested Codex CLI",
+    "initialDelegation": "deleg_e9a8d2d2",
+    "crossReviewDelegation": "deleg_6cf0c1fd",
+    "finalDelegation": "deleg_fa402bc0",
+    "finalRoleChildren": ["sa-0-1f7fb90a", "sa-1-b5bbe7cd", "sa-2-8af62d7c", "sa-3-63a7f3ee"],
+    "roles": [
+      "Planner: first screen shows 10 historical policy names/stages and 44-agency range/type; all 44 names remain in the expanded directory. A shared index is not a policy-agency relationship map.",
+      "Developer: replacing 54 first-fold names with 19/6/19 scope is justified by the user's correction; protect 10/44 links, modal details and no-JS fallback. Source copy must not imply every reference is an official primary document.",
+      "Marketer: large Korean headline and source-first hierarchy improve readability, but the map-like feeling and user taste are not yet validated; CMO retains brand authority.",
+      "Operator: release only after site-specific job, invalidation, live mobile first fold, all dist byte parity and retired asset checks; rollback only this site's dist."
+    ],
+    "redReviews": [
+      {"delegation": "deleg_ae8ba56d", "child": "sa-0-41e3f498", "verdict": "FAIL: localhost smoke could overwrite live-verification.json and only index.css byte parity was tested."},
+      {"delegation": "deleg_d1fb56fe", "child": "sa-0-f5af94e1", "verdict": "PASS: local-only smoke does not write live proof; all 11 dist files, two routes and three retired assets are checked. Public deployment remains a separate gate."}
+    ],
+    "ownerDecision": "Discard the 54-names-first-fold rule after the explicit user correction. Give 10 case names and 44-agency scope/types a shared visual index, leave 44 names expanded below, avoid fabricated assignments, and preserve historical stages and sources. Local tests and a reviewer PASS do not establish user aesthetic approval or public deployment.",
+    "localEvidence": "qa/verification.json (20 passing browser check groups; 320–1440px); local-only verify-live smoke (8 passing groups); Hallmark static 0 FAIL/0 REFLEX/1 WARN with render tier unavailable"
+  },
   "ownerVerification": {
     "local": "qa/verification.json",
     "institutionLinks": "qa/institution-links.json",

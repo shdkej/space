@@ -1,12 +1,12 @@
 # 모두의정책 정책 지도
 
-내 삶과 연결된 정책을 찾기 어려운 문제를 위한 정적 참고 시제품입니다. 새 Civic Ledger 화면은 정책 사례 10건과 중앙행정기관 44곳을 한 장에 나란히 펼칩니다. 관심 정책과 메모는 브라우저에 남깁니다. 이전 은하수형 화면은 현재 디자인이 아닙니다.
+내 삶과 연결된 정책을 찾기 어려운 문제를 위한 정적 참고 시제품입니다. 새 로컬 시안은 정책 사례 10건의 이름과 중앙행정기관 44곳의 범위·유형을 한 장의 인덱스로 보여주고, 기관명 44개는 이어지는 본문에 모두 펼칩니다. 관심 정책과 메모는 브라우저에 남깁니다. 공개 배포 여부는 아래 최신 배포 기록을 확인하세요.
 
 ## 제공 범위
 
 - 민주당 계열 5명·보수 계열 5명의 역사적 정책 사례를 히어로에서 먼저 표시. 클릭하면 정책 요약·단계·발표 당시 소속·원문이 즉시 모달로 열림
 - 중앙행정기관 **44곳(19부·6처·19청)**의 명칭·유형·확인일을 선택 즉시 기관 모달에 표시. 공식 기구도/사이트는 모달 안의 보조 링크; 기관 검색·필터 유지
-- OpenPencil로 설계한 정보 장부와 Blender 5.3으로 만든 비의미적 기록지 장식을 사용. 첫 화면에서 정책 10건과 기관 44곳을 동시에 읽고, 국민·헌법·입법/행정/사법의 큰 구분을 참고하며 국회·17개 광역의회의 별도 링크를 유지
+- OpenPencil에서 조망면을 먼저 설계한 뒤 큰 한글 표제와 정책 10건·기관 19/6/19 유형을 같은 화면에 구성. 기관명 44곳은 아래에서 읽기 좋은 크기로 펼칩니다. 국민·헌법·입법/행정/사법 구분과 국회·17개 광역의회 링크는 유지합니다. 이전 Blender 장식은 새 화면에서 제외했습니다.
 - 발표 당시 소속·연도·공약/발의/시행 구분, 원문·뉴스·관련 법령 검색
 - 내 활성 지도: 정책 저장/삭제, 카테고리별 모음, 240자 관심 이유, JSON 내보내기
 - 모바일, 키보드 포커스와 모션 감소 지원, 저장소 손상/차단 시 탐색 유지
@@ -24,14 +24,14 @@ npm start
 
 런타임 의존성은 없습니다. Python 3는 로컬 서버에 사용합니다. HTML/CSS/JS를 직접 편집하므로 빌드 단계도 없습니다.
 
-- `dist/index.html`, `styles.css`, `ledger.css`, `app.js`: Civic Ledger 화면·두 모달과 인터랙션. HTML에는 JS 실패를 대비한 정책 사례 10건의 정적 출처 링크가 있으며, `npm test`가 원문 URL 일치를 검사
+- `dist/index.html`, `index.css`, `app.js`: 한 장의 정책·기관 인덱스, 두 대화상자와 인터랙션. CSS는 독립 파일 하나로 소유합니다. HTML에는 JS 실패에 대비한 정책 사례 10건의 정적 출처 링크가 있으며, `npm test`가 URL 일치를 검사합니다.
 - `dist/data.js`: 10개 정책 사례 및 의회 참고 링크
 - `dist/institutions.js`, `institutions.json`: 2026-11-16 중앙행정기관 스냅샷(검색·유형 필터, 출처·확인일 표기)
 - `dist/sources.html`, `sources.js`: 방문자용 자료 출처
-- `dist/assets/`: 자체 호스팅 글꼴·파비콘·비의미적 장식
-- `design/openpencil/policycock-civic-ledger.fig`: 새 화면의 편집 가능한 OpenPencil 와이어프레임, SVG와 PNG 미리보기 포함
-- `design/reviews/ledger-{1440,375,375-agencies,375-last-agency}.png`: 새 화면의 실제 데스크톱·모바일 브라우저 렌더 근거
-- `design/blender/ledger_relief.py`, `ledger-relief.blend`, `dist/assets/ledger-relief.png`: Blender 5.3으로 제작한 추상 기록지 더미와 배포 장식 이미지
+- `dist/assets/`: 자체 호스팅 글꼴·파비콘
+- `design/openpencil/policycock-editorial-index.svg`: OpenPencil에서 만든 새 1440px 조망 시안. 편집 가능한 `.fig` 저장과 PNG 출력은 도구 메모리 오류로 실패했으므로 SVG만 보존했습니다.
+- `qa/editorial-map-{1440,375,375-agencies,375-last-agency}.png`: 새 화면의 실제 데스크톱·모바일 브라우저 렌더 근거
+- `design/openpencil/policycock-civic-ledger.fig`, `design/blender/ledger_relief.py`, `ledger-relief.blend`: 이전 Civic Ledger의 제작 이력이며 현재 화면에서 사용하지 않습니다.
 - `scripts/render-galaxy.py`, `scripts/galaxy.blend`: 이전 은하수의 보존된 제작 소스. 배포 이미지는 제거됨
 - `scripts/render-policy-diagram*.py`, 대응하는 `.blend`: 이전 5×2/2×5 받침대의 보존된 제작 소스. 배포 이미지는 제거됨
 - `scripts/render-institution-atlas.py`, `scripts/institution-atlas.blend`, `scripts/convert-atlas.py`: 이전 한국 지형·국회 모형 제작 소스(배포 자산 제거)
@@ -40,9 +40,9 @@ npm start
 - `scripts/map-svg.py`: Blender 지형 입력인 `assets/korea.svg`의 기존 SVG 생성기
 - `scripts/verify-browser.cjs`, `qa/verification.json`: 재현 가능한 검증과 결과
 
-첫 화면은 밝은 정책 기록면과 짙은 제도 참고면을 나란히 두어 1440×900에서 정책명 10개·기관명 44개를 함께 살펴봅니다. 정책 분류는 발표 당시 정당 계열이며 현재 당적이나 정책의 이념이 아닙니다. 기관 목록은 유형별 이름 탐색이며 정책의 담당·집행 기관을 연결하지 않습니다. 모바일에서는 먼저 10/44 전체 범위를 보여주고 항목은 한 열씩 읽습니다. 시각·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
+2026-11-16 사용자 교정에 따라, 첫 화면의 목표는 44개 기관명을 축소해 전부 넣는 것이 아니라 정책 10건의 실제 이름과 기관 44곳의 부19·처6·청19 범위를 **한 맵처럼 조망**하는 것입니다. 44개 기관명은 같은 페이지 바로 아래에 모두 펼치고, 모달·검색·필터로 탐색합니다. 정책 분류는 발표 당시 정당 계열이며 현재 당적이나 정책의 이념이 아닙니다. 정책과 기관의 담당·집행 관계는 표시하지 않습니다. 모바일에서는 먼저 10/44 범위를 보고 항목을 한 열씩 읽습니다. 자세한 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
 
-장식 장면 재생성: Windows Blender 5.3을 WSL에서 `'/mnt/c/Program Files/Blender Foundation/Blender 5.3/blender.exe' -b --python "$(wslpath -w design/blender/ledger_relief.py)"`로 실행합니다. 같은 경로에 `.blend`, `dist/assets/`에 PNG가 저장됩니다. 앱 동작은 장식 이미지에 의존하지 않습니다. 과거 은하수/받침대/지형 스크립트는 현재 화면에서 호출하지 않습니다.
+이전 장식 재생성은 Windows Blender 5.3에서 `design/blender/ledger_relief.py`로 가능하지만 새 화면에는 통합하지 않습니다. 시각적 초점을 분산시키는 3D 장식보다 실제 정책명과 기관 유형을 앞세우기 위해서입니다. 과거 은하수/받침대/지형 스크립트도 현재 화면에서 호출하지 않습니다.
 
 ## 데이터·외부 의존성
 
@@ -63,7 +63,7 @@ BROWSER_CDP=http://localhost:9222 node scripts/verify-live.cjs # 배포 후 공�
 python3 scripts/verify-institution-links.py
 ```
 
-`npm test`는 1440×900 첫 화면 정책 10건·기관 44곳의 동시 노출, 원장/URL 전수 일치, 320–1440px 아홉 너비의 가로 넘침과 카드 겹침, 두 모달 10+44건, 검색·필터·저장·메모·내보내기·JS 실패 대체를 검사합니다. 375/1440px 캡처는 `qa/ledger-*.png`에 남깁니다. 로컬 Chrome 또는 외부 CDP 브라우저가 필요합니다.
+`npm test`는 1440×900 첫 화면 정책 10건의 이름과 기관 44곳의 세 유형·전체 명단 진입점, 원장/URL 전수 일치, 320–1440px 아홉 너비의 가로 넘침과 항목 겹침, 두 모달 10+44건, 검색·필터·저장·메모·내보내기·JS 실패 대체를 검사합니다. 375/1440px 캡처는 `qa/editorial-map-*.png`에 남깁니다. 로컬 Chrome 또는 외부 CDP 브라우저가 필요합니다.
 
 Node.js 26, Playwright Core 1.65.1, Windows Edge 157 CDP로 새 화면을 검증했습니다. 테스트가 4187 포트에 임시 HTTP 서버를 띄우고 종료합니다. 설치된 Chrome은 `CHROME_PATH`, 실행 중인 브라우저는 `BROWSER_CDP`로 지정합니다.
 

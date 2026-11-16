@@ -41,28 +41,26 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       const view=innerHeight;
       const policy=[...document.querySelectorAll('.person')].map(n=>n.getBoundingClientRect());
       const agency=[...document.querySelectorAll('.agency-link')].map(n=>n.getBoundingClientRect());
-      const a=document.querySelector('#agencies').getBoundingClientRect();
-      const p=document.querySelector('#policies').getBoundingClientRect();
-      const img=document.querySelector('.ledger-relief');
-      return {policy:policy.length,agency:agency.length,policyBottom:Math.max(...policy.map(r=>r.bottom)),agencyBottom:Math.max(...agency.map(r=>r.bottom)),columns:p.right<=a.left+2,asset:img.complete&&img.naturalWidth>0,width:document.documentElement.scrollWidth,view};
+      const map=document.querySelector('.overview-agencies').getBoundingClientRect();
+      const kinds=[...document.querySelectorAll('.overview-agencies-kinds span')].map(n=>n.textContent.trim());
+      return {policy:policy.length,agency:agency.length,policyBottom:Math.max(...policy.map(r=>r.bottom)),mapBottom:map.bottom,kinds,mapName:document.querySelector('.overview-agencies-title strong').textContent,mapLink:document.querySelector('.overview-agencies a').getAttribute('href'),width:document.documentElement.scrollWidth,view};
     });
     assert.equal(firstFold.policy,10);assert.equal(firstFold.agency,44);
-    assert.ok(firstFold.columns,'desktop panels must be adjacent');
     assert.ok(firstFold.policyBottom<=900,`policy rows below first screen: ${firstFold.policyBottom}`);
-    assert.ok(firstFold.agencyBottom<=900,`agency names below first screen: ${firstFold.agencyBottom}`);
-    assert.ok(firstFold.asset,'Blender relief did not load');
+    assert.ok(firstFold.mapBottom<=900,`agency scope below first screen: ${firstFold.mapBottom}`);
+    assert.deepEqual(firstFold.kinds,['부 19','처 6','청 19']);
+    assert.equal(firstFold.mapName,'중앙행정기관 44곳');
+    assert.equal(firstFold.mapLink,'#agency-list');
     assert.ok(firstFold.width<=1440,'desktop horizontal overflow');
     const agencyReadability=await page.locator('.agency-link').evaluateAll(links=>({minHeight:Math.min(...links.map(a=>a.getBoundingClientRect().height)),minFont:Math.min(...links.map(a=>parseFloat(getComputedStyle(a).fontSize))),clipped:links.filter(a=>a.scrollWidth>a.clientWidth+2).map(a=>a.textContent)}));
-    assert.ok(agencyReadability.minHeight>=24,`agency tap target ${agencyReadability.minHeight}px`);
-    assert.ok(agencyReadability.minFont>=12,`agency font ${agencyReadability.minFont}px`);
+    assert.ok(agencyReadability.minHeight>=39,`agency tap target ${agencyReadability.minHeight}px`);
+    assert.ok(agencyReadability.minFont>=17,`agency font ${agencyReadability.minFont}px`);
     assert.deepEqual(agencyReadability.clipped,[]);
-    pass('1440×900 첫 화면에 정책 10건·기관 44곳 동시 조망, Blender 에셋 로드');
+    pass('1440×900 한 조망면에 정책 10건 이름·기관 44곳의 19/6/19 유형, 아래 명단 17px 이상');
 
-    const asset=fs.readFileSync(path.join(root,'dist/assets/ledger-relief.png'));
-    assert.deepEqual([...asset.subarray(0,8)],[137,80,78,71,13,10,26,10]);
-    assert.ok(fs.statSync(path.join(root,'design/blender/ledger-relief.blend')).size>1000);
-    assert.ok(fs.statSync(path.join(root,'design/openpencil/policycock-civic-ledger.fig')).size>1000);
-    pass('Blender .blend/PNG와 OpenPencil .fig 소스 보존');
+    assert.equal(await page.locator('.ledger-relief').count(),0);
+    assert.ok(fs.statSync(path.join(root,'design/openpencil/policycock-editorial-index.svg')).size>1000);
+    pass('구형 3D 장식 제거·OpenPencil 편집 시안 SVG 보존');
 
     await page.locator('[data-agency-filter="처"]').click();
     assert.equal(await page.locator('.agency-link').count(),6);
@@ -158,7 +156,7 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
 
     const sources=await context.newPage();await sources.goto(base+'/sources.html');
     assert.equal(await sources.locator('.source-item').count(),10);
-    assert.match(await sources.locator('.source-page').textContent(),/지형이나 국회 건축 모형을 표시하지 않습니다/);
+    assert.match(await sources.locator('.source-page').textContent(),/44개 기관명은 이어지는 본문/);
     assert.ok(await sources.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     await sources.close();
     pass('출처 페이지 10건 및 새 디자인 설명 일치');
@@ -181,7 +179,7 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
         return list.some((a,i)=>list.slice(i+1).some(b=>Math.min(a.right,b.right)-Math.max(a.left,b.left)>3&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>3));
       });
       assert.equal(overlaps,false,`${width}px policy cards overlap`);
-      if([375,1440].includes(width))await page.screenshot({path:path.join(root,'qa',`ledger-${width}.png`),fullPage:false});
+      if([375,1440].includes(width))await page.screenshot({path:path.join(root,'qa',`editorial-map-${width}.png`),fullPage:false});
     }
     pass('320–1440px 아홉 너비에서 수평 오버플로·정책 카드 겹침 없음');
     for(const [width,height] of [[320,568],[375,667]]){
@@ -199,7 +197,7 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       const last=page.locator('.agency-link').last();
       await last.scrollIntoViewIfNeeded();await last.focus();
       assert.ok(await last.evaluate(n=>{const r=n.getBoundingClientRect(),p=n.closest('#agency-list').getBoundingClientRect();return n===document.activeElement&&r.top>=0&&r.bottom<=innerHeight&&r.left>=p.left&&r.right<=p.right}));
-      if(width===375){await page.locator('#agencies').screenshot({path:path.join(root,'qa','ledger-375-agencies.png')});await page.screenshot({path:path.join(root,'qa','ledger-375-last-agency.png')});}
+      if(width===375){await page.locator('#agencies').screenshot({path:path.join(root,'qa','editorial-map-375-agencies.png')});await page.screenshot({path:path.join(root,'qa','editorial-map-375-last-agency.png')});}
       await last.click();assert.equal(await page.locator('#agency-dialog-title').textContent(),agencies.at(-1).name);
       await page.keyboard.press('Escape');
       assert.equal(await last.evaluate(n=>n===document.activeElement),true);
@@ -229,14 +227,7 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       await failed.close();
     }
     pass('정책·기관 데이터 스크립트 실패에도 정적 링크 보존');
-    const imageFallback=await browser.newContext();
-    const imagePage=await imageFallback.newPage();
-    await imagePage.route('**/assets/ledger-relief.png',route=>route.abort());
-    await imagePage.goto(base);
-    assert.equal(await imagePage.locator('.person').count(),10);
-    assert.equal(await imagePage.locator('.agency-link').count(),44);
-    await imageFallback.close();
-    pass('Blender 장식 이미지 실패에도 정책·기관 내용 보존');
+    pass('장식 이미지 없이도 정책·기관 내용 표시');
     assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
     pass('브라우저 스크립트 오류·자동 외부 요청 없음');
     fs.writeFileSync(path.join(root,'qa','verification.json'),JSON.stringify({verifiedAt:new Date().toISOString(),status:'passed',checks:results,limits:['현행 정책 효력과 외부 원문 응답은 검증하지 않음','실제 사용자 조사 및 운영 배포는 별도 승인·검증 대상']},null,2)+'\n');

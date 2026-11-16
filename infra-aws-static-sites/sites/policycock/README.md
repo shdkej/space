@@ -1,12 +1,12 @@
 # 모두의정책 정책 지도
 
-내 삶과 연결된 정책을 찾기 어려운 문제를 위한 정적 랜딩 시제품입니다. 첫 화면에서 정치인 10명의 발표 당시 정책 사례를 먼저 보고 중앙행정기관 44곳의 정보를 선택해 확인합니다. 관심 정책과 메모는 브라우저에 남깁니다.
+내 삶과 연결된 정책을 찾기 어려운 문제를 위한 정적 참고 시제품입니다. 새 Civic Ledger 화면은 정책 사례 10건과 중앙행정기관 44곳을 한 장에 나란히 펼칩니다. 관심 정책과 메모는 브라우저에 남깁니다. 이전 은하수형 화면은 현재 디자인이 아닙니다.
 
 ## 제공 범위
 
 - 민주당 계열 5명·보수 계열 5명의 역사적 정책 사례를 히어로에서 먼저 표시. 클릭하면 정책 요약·단계·발표 당시 소속·원문이 즉시 모달로 열림
 - 중앙행정기관 **44곳(19부·6처·19청)**의 명칭·유형·확인일을 선택 즉시 기관 모달에 표시. 공식 기구도/사이트는 모달 안의 보조 링크; 기관 검색·필터 유지
-- 실제 Blender 5.3으로 렌더한 불규칙한 별무리 위에 정책 사례 10건의 각기 다른 점·짧은 선·이름 아바타·정책 텍스트를 HTML/SVG로 표시. 아래에는 국민·헌법·입법/행정/사법의 한국형 개략 윤곽과 행정 영역에 부·처·청 44곳의 이름을 배치해 탐색하며 국회·17개 광역의회의 별도 참고 링크 유지
+- OpenPencil로 설계한 정보 장부와 Blender 5.3으로 만든 비의미적 기록지 장식을 사용. 첫 화면에서 정책 10건과 기관 44곳을 동시에 읽고, 국민·헌법·입법/행정/사법의 큰 구분을 참고하며 국회·17개 광역의회의 별도 링크를 유지
 - 발표 당시 소속·연도·공약/발의/시행 구분, 원문·뉴스·관련 법령 검색
 - 내 활성 지도: 정책 저장/삭제, 카테고리별 모음, 240자 관심 이유, JSON 내보내기
 - 모바일, 키보드 포커스와 모션 감소 지원, 저장소 손상/차단 시 탐색 유지
@@ -24,29 +24,31 @@ npm start
 
 런타임 의존성은 없습니다. Python 3는 로컬 서버에 사용합니다. HTML/CSS/JS를 직접 편집하므로 빌드 단계도 없습니다.
 
-- `dist/index.html`, `styles.css`, `galaxy.css`, `app.js`: 은하수 정책 히어로·한국형 개략도·두 모달과 인터랙션. HTML에는 JS 실패를 대비한 정책 사례 10건의 정적 출처 링크가 있으며, `npm test`가 `data.js`와 원문 URL 일치를 검사
+- `dist/index.html`, `styles.css`, `ledger.css`, `app.js`: Civic Ledger 화면·두 모달과 인터랙션. HTML에는 JS 실패를 대비한 정책 사례 10건의 정적 출처 링크가 있으며, `npm test`가 원문 URL 일치를 검사
 - `dist/data.js`: 10개 정책 사례 및 의회 참고 링크
 - `dist/institutions.js`, `institutions.json`: 2026-11-16 중앙행정기관 스냅샷(검색·유형 필터, 출처·확인일 표기)
 - `dist/sources.html`, `sources.js`: 방문자용 자료 출처
-- `dist/assets/`: 자체 호스팅 글꼴·지도·아이콘
-- `dist/assets/galaxy.webp`: Blender 5.3으로 렌더한 은하수의 비상호작용 배경. 위치가 고정된 정책 도트·선·받침대는 포함하지 않음
-- `scripts/render-galaxy.py`, `scripts/galaxy.blend`: 현재 은하수 배경의 재현 스크립트와 편집 가능한 장면
-- `dist/assets/policy-diagram*.webp`, `scripts/render-policy-diagram*.py`, 대응하는 `.blend`: 이전 5×2/2×5 받침대 장면의 재현 자료. 현재 페이지에서 호출하지 않음
-- `scripts/render-institution-atlas.py`, `scripts/institution-atlas.blend`, `scripts/convert-atlas.py`: 이전 한국 지형·국회 모형 재현 자료(현재 페이지 미사용)
+- `dist/assets/`: 자체 호스팅 글꼴·파비콘·비의미적 장식
+- `design/openpencil/policycock-civic-ledger.fig`: 새 화면의 편집 가능한 OpenPencil 와이어프레임, SVG와 PNG 미리보기 포함
+- `design/reviews/ledger-1440.png`, `ledger-375-agencies.png`, `ledger-375-last-agency.png`: 새 화면의 실제 브라우저 렌더 근거
+- `design/blender/ledger_relief.py`, `ledger-relief.blend`, `dist/assets/ledger-relief.png`: Blender 5.3으로 제작한 추상 기록지 더미와 배포 장식 이미지
+- `scripts/render-galaxy.py`, `scripts/galaxy.blend`: 이전 은하수의 보존된 제작 소스. 배포 이미지는 제거됨
+- `scripts/render-policy-diagram*.py`, 대응하는 `.blend`: 이전 5×2/2×5 받침대의 보존된 제작 소스. 배포 이미지는 제거됨
+- `scripts/render-institution-atlas.py`, `scripts/institution-atlas.blend`, `scripts/convert-atlas.py`: 이전 한국 지형·국회 모형 제작 소스(배포 자산 제거)
 - `scripts/sync-institutions.py`: 정부 기구도 목록을 수동 확인해 JSON·JS와 `index.html`의 무스크립트용 44개 공식 링크를 함께 갱신. 목록·분류가 바뀌면 자동 실패하여 검토 요구
 - `scripts/verify-institution-links.py`, `qa/institution-links.json`: 기관 링크 44개의 HTTP 응답 및 본문 기관명 확인 기록
 - `scripts/map-svg.py`: Blender 지형 입력인 `assets/korea.svg`의 기존 SVG 생성기
 - `scripts/verify-browser.cjs`, `qa/verification.json`: 재현 가능한 검증과 결과
 
-첫 화면은 Blender가 렌더한 불규칙한 별무리를 배경으로, **왼쪽 민주당 계열 5건·오른쪽 보수 계열 5건**의 발표 당시 사례를 가로로 펼칩니다. 각 표식은 `점 → 가는 선 → 이름 아바타 → 정책 이름·당시 단계`를 보여주고, 좁은 모바일에서는 민주당 계열 다음 보수 계열을 한 열로 읽습니다. 버튼을 누르면 즉시 해당 정책 모달이 열립니다. 아래의 한국형 제도 개략도는 넓은 화면에서 국민·헌법·입법·행정·사법을 한 가로줄에 펼치고, 그 아래 부·처·청 44곳을 유형별 3·1·3열의 전폭 명단으로 보여줍니다. 부·처·청 이름을 누르면 별도 기관 모달이 열리며 44곳 모두 검색·필터로 찾을 수 있습니다. 모바일은 은하수 표식을 한 열로 읽고 조직도는 세 갈래 다음에 읽기 쉬운 세로 명단으로 펼칩니다. **별무리의 선은 한 점에서 해당 역사적 사례를 꺼내는 표시일 뿐, 인물 간 관계나 정책↔기관의 담당·집행 관계를 의미하지 않습니다.** 가로로 나란히 놓인 국가기관 범주도 위계·지휘 관계를 뜻하지 않습니다. 미국 그림의 연방·주·지방 위계나 임명·거부권을 한국 사실관계로 옮기지 않습니다. 시각·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
+첫 화면은 밝은 정책 기록면과 짙은 제도 참고면을 나란히 두어 1440×900에서 정책명 10개·기관명 44개를 함께 살펴봅니다. 정책 분류는 발표 당시 정당 계열이며 현재 당적이나 정책의 이념이 아닙니다. 기관 목록은 유형별 이름 탐색이며 정책의 담당·집행 기관을 연결하지 않습니다. 모바일에서는 먼저 10/44 전체 범위를 보여주고 항목은 한 열씩 읽습니다. 시각·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
 
-현재 장면을 재생성할 때는 Windows Blender 5.3을 WSL에서 `blender.exe --background --factory-startup --python "$(wslpath -w scripts/render-galaxy.py)"`로 실행합니다. 스크립트가 편집 가능한 `.blend`와 PNG를 저장하며, 웹용 이미지는 `python3 -c 'from PIL import Image; Image.open("scripts/galaxy.png").convert("RGB").save("dist/assets/galaxy.webp", "WEBP", quality=83, method=6)'`로 변환합니다. PNG와 `.blend1`은 Git에서 제외합니다. 이전 5×2 받침대와 지형 자산을 재현할 때만 각각 `scripts/render-policy-diagram*.py`와 `scripts/render-institution-atlas.py`를 사용합니다.
+장식 장면 재생성: Windows Blender 5.3을 WSL에서 `'/mnt/c/Program Files/Blender Foundation/Blender 5.3/blender.exe' -b --python "$(wslpath -w design/blender/ledger_relief.py)"`로 실행합니다. 같은 경로에 `.blend`, `dist/assets/`에 PNG가 저장됩니다. 앱 동작은 장식 이미지에 의존하지 않습니다. 과거 은하수/받침대/지형 스크립트는 현재 화면에서 호출하지 않습니다.
 
 ## 데이터·외부 의존성
 
 정책 자료 확인일은 2026-11-14입니다. `data.js`의 정당·연도·단계는 발표 당시 자료를 의미하며 현재 당적, 직함, 정책 적용 조건을 나타내지 않습니다. 법령 링크는 검색 진입점입니다. 김경수 회의록과 나경원 국회 법안은 웹 조사 당시 원문 직접 열람 실패를 상세에 표시했습니다. 유승민 자료는 발표 보도이며 공식 원문으로 표기하지 않습니다.
 
-지형은 southkorea/southkorea-maps의 KOSTAT 2013 단순화 행정경계를 Blender 장면으로 가공했습니다. 현재 행정구역·선거구·실제 기관 주소를 뜻하지 않는 개략 표현입니다. 중앙행정기관 명단은 정부조직관리시스템의 기관별 기구도 49개 항목 중 부·처·청을 가져오되, 옛 대검찰청을 제외하고 공식 사이트가 확인된 공소청·중대범죄수사청을 반영해 44곳으로 정리했습니다. 위원회 6곳은 사용자가 확정한 범위 밖입니다. 2026-11-16 확인 기준이며 자동 갱신되지 않습니다. Pretendard v1.3.9는 SIL OFL 1.1이며 라이선스를 자산에 동봉했습니다. 사진은 사용하지 않고 인물 이름 배지를 동일 크기로 제공합니다.
+과거 지형 장면은 southkorea/southkorea-maps의 KOSTAT 2013 단순화 행정경계를 사용했지만 현재 화면은 지형을 표시하지 않습니다. 중앙행정기관 명단은 정부조직관리시스템의 기관별 기구도 49개 항목 중 부·처·청을 가져오되, 옛 대검찰청을 제외하고 공식 사이트가 확인된 공소청·중대범죄수사청을 반영해 44곳으로 정리했습니다. 위원회 6곳은 확정 범위 밖입니다. 2026-11-16 확인 기준이며 자동 갱신되지 않습니다. Pretendard v1.3.9는 SIL OFL 1.1이며 라이선스를 자산에 동봉했습니다. 인물 사진은 사용하지 않습니다.
 
 저장 키는 `modu-policy-map-v1`이며 `{정책ID: {note: 문자열}}`만 localStorage에 둡니다. 자동 외부 요청은 없고, 외부 사이트는 링크 클릭 때 열립니다. 내보내기 파일에는 저장 정책, 원문 URL, 관심 메모와 내보낸 시각이 포함됩니다.
 
@@ -55,13 +57,14 @@ npm start
 ```bash
 npm ci
 npm run check
-CHROME_PATH=/opt/google/chrome/chrome npm test
+BROWSER_CDP=http://localhost:9222 npm test # Windows Edge/CDP 등 기존 브라우저 이용 시
+# 또는 CHROME_PATH=/path/to/chrome npm test
 python3 scripts/verify-institution-links.py
 ```
 
-`npm test`는 은하수 표식 10개 각각의 점·리드·아바타·텍스트, 한국형 개략도의 세 갈래와 후속 전폭 기관 영역, 320/375/414/768/901/1024/1100/1200/1280/1320/1321/1440px의 선 끝점·라벨 충돌·클릭 중심·가로 넘침을 검사합니다. 정적·동적 기관 제목 계층과 모바일 시각·DOM 순서도 확인합니다. 두 모달 내용·포커스·Escape·저장, 기관 검색/필터·마지막 기관 키보드 접근, JavaScript/이미지 실패 시 정적 링크 대체와 낮은 모바일 화면도 확인하고 `qa/viewport-*.png`를 갱신합니다. Chromium에 필요한 시스템 라이브러리와 `CHROME_PATH`가 필요합니다.
+`npm test`는 1440×900 첫 화면 정책 10건·기관 44곳의 동시 노출, 원장/URL 전수 일치, 320–1440px 아홉 너비의 가로 넘침과 카드 겹침, 두 모달 10+44건, 검색·필터·저장·메모·내보내기·JS 실패 대체를 검사합니다. 375/1440px 캡처는 `qa/ledger-*.png`에 남깁니다. 로컬 Chrome 또는 외부 CDP 브라우저가 필요합니다.
 
-Node.js 26, Playwright Core 1.65.1, 로컬 Chrome으로 검증했습니다. 테스트가 4187 포트에 임시 HTTP 서버를 띄우고 종료합니다. 브라우저는 설치된 Chrome을 사용하며 다른 환경에서는 `CHROME_PATH`를 지정합니다.
+Node.js 26, Playwright Core 1.65.1, Windows Edge 157 CDP로 새 화면을 검증했습니다. 테스트가 4187 포트에 임시 HTTP 서버를 띄우고 종료합니다. 설치된 Chrome은 `CHROME_PATH`, 실행 중인 브라우저는 `BROWSER_CDP`로 지정합니다.
 
 2026-11-14 확인: 320/375/414/768/1440px 렌더·가로 넘침·지도 상세 겹침, 5+5 정책과 18개 의회 링크, 10개 정책 상세, 저장·메모·새로고침 복원·삭제·JSON 다운로드, 손상/차단된 저장소, 메모 입력 직후 새로고침 보존, 두 탭 저장 병합, 의회 핀 클릭 대상, 메모 HTML 비실행, 키보드·모션 감소, 출처 페이지, JS 오류와 자동 외부 요청 없음. 캡처는 `qa/viewport-*.png`, 구조화 결과는 `qa/verification.json`입니다.
 

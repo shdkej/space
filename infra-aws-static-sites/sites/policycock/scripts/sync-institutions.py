@@ -68,7 +68,7 @@ end_marker = '<!-- INSTITUTION_LINKS_END -->'
 if page.count(start_marker) != 1 or page.count(end_marker) != 1:
     raise RuntimeError('Static HTML institution-list markers missing or duplicated')
 static_rows = []
-for kind, heading in [('부', '부처 · MINISTRIES'), ('처', '처 · OFFICES'), ('청', '청 · AGENCIES')]:
+for kind, heading in [('부', '부'), ('처', '처'), ('청', '청')]:
     items = [i for i in institutions if i['kind'] == kind]
     static_rows.append(f'<section class="agency-group" data-kind="{kind}"><h4>{heading}<span>{len(items):02d}</span></h4>')
     for item in items:

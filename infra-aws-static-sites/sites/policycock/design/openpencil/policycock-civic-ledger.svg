@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1440" height="900" viewBox="0 0 1440 900">
+  <g>
+    <rect width="1440" height="900" fill="#F2F0E9"/>
+    <g transform="translate(42, 28)">
+      <g transform="translate(0, 10.5)">
+        <text x="0" y="22" font-family="Inter" font-size="22" font-weight="700" fill="#152431">모두의정책  /  POLICY INDEX</text>
+      </g>
+      <g transform="translate(1080, 15.5)">
+        <text x="0" y="14" font-family="Inter" font-size="14" fill="#53626A">정책 사례     중앙행정기관     내 관심 정책 ↗</text>
+      </g>
+    </g>
+    <g transform="translate(42, 112)">
+      <g>
+        <text x="0" y="14" font-family="Inter" font-size="14" fill="#BE542F">CIVIC REFERENCE · 2026</text>
+      </g>
+      <g transform="translate(0, 29)">
+        <text x="0" y="46" font-family="Inter" font-size="46" font-weight="700" fill="#152431">정책과 제도, 한 장에서.</text>
+      </g>
+      <g transform="translate(0, 102)">
+        <text x="0" y="15" font-family="Inter" font-size="15" fill="#53626A">발표 당시 정책 사례 10건과 중앙행정기관 44곳을 별도의 자료로 한눈에 살펴봅니다.</text>
+      </g>
+    </g>
+    <g transform="translate(1070, 128)">
+      <g>
+        <rect width="150" height="88" fill="#E3E6DB"/>
+        <g transform="translate(15, 15)">
+          <text x="0" y="30" font-family="Inter" font-size="30" font-weight="700" fill="#152431">10</text>
+        </g>
+        <g transform="translate(15, 59)">
+          <text x="0" y="12" font-family="Inter" font-size="12" fill="#53626A">정책 사례</text>
+        </g>
+      </g>
+      <g transform="translate(166, 0)">
+        <rect width="150" height="88" fill="#E3E6DB"/>
+        <g transform="translate(15, 15)">
+          <text x="0" y="30" font-family="Inter" font-size="30" font-weight="700" fill="#152431">44</text>
+        </g>
+        <g transform="translate(15, 59)">
+          <text x="0" y="12" font-family="Inter" font-size="12" fill="#53626A">중앙행정기관</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(42, 257)">
+      <rect width="745" height="584" fill="#FFFFFF"/>
+      <g transform="translate(25, 25)">
+        <text x="0" y="13" font-family="Inter" font-size="13" font-weight="700" fill="#BE542F">01 / 정책 기록  ·  발표 당시 정당 계열</text>
+      </g>
+      <g transform="translate(25, 60)">
+        <text x="0" y="27" font-family="Inter" font-size="27" font-weight="700" fill="#152431">열 개의 사례를 빠르게 비교</text>
+      </g>
+      <g transform="translate(25, 114)">
+        <g>
+          <g>
+            <text x="0" y="14" font-family="Inter" font-size="14" font-weight="700" fill="#345D76">민주당 계열  05</text>
+          </g>
+          <g transform="translate(0, 33)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">청년기본소득  ·  이재명</text>
+          </g>
+          <g transform="translate(0, 68)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">예술인 기회소득  ·  김동연</text>
+          </g>
+          <g transform="translate(0, 103)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">부울경 메가시티  ·  김경수</text>
+          </g>
+          <g transform="translate(0, 138)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">평등에 관한 법률안  ·  박주민</text>
+          </g>
+          <g transform="translate(0, 173)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">아동수당  ·  문재인</text>
+          </g>
+        </g>
+        <g transform="translate(365, 0)">
+          <g>
+            <text x="0" y="14" font-family="Inter" font-size="14" font-weight="700" fill="#A35C36">보수 계열  05</text>
+          </g>
+          <g transform="translate(0, 33)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">기후동행카드  ·  오세훈</text>
+          </g>
+          <g transform="translate(0, 68)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">어르신 통합 무임교통  ·  홍준표</text>
+          </g>
+          <g transform="translate(0, 103)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">육아휴직 3년  ·  유승민</text>
+          </g>
+          <g transform="translate(0, 138)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">신혼부부 주거 지원  ·  나경원</text>
+          </g>
+          <g transform="translate(0, 173)">
+            <text x="0" y="16" font-family="Inter" font-size="16" fill="#152431">금융투자소득세 폐지  ·  한동훈</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(25, 326)">
+        <text x="0" y="13" font-family="Inter" font-size="13" fill="#53626A">사례를 선택해 출처와 당시 단계를 확인하세요. 현재 효력은 별도 확인이 필요합니다.</text>
+      </g>
+    </g>
+    <g transform="translate(810, 257)">
+      <rect width="588" height="584" fill="#152431"/>
+      <g transform="translate(24, 24)">
+        <text x="0" y="13" font-family="Inter" font-size="13" font-weight="700" fill="#D8A374">02 / 제도 참고  ·  관계도 아님</text>
+      </g>
+      <g transform="translate(24, 58)">
+        <text x="0" y="27" font-family="Inter" font-size="27" font-weight="700" fill="#F2F0E9">국가기관의 큰 윤곽</text>
+      </g>
+      <g transform="translate(24, 111)">
+        <rect width="540" height="62" fill="#233848"/>
+        <g transform="translate(14, 14)">
+          <text x="0" y="16" font-family="Inter" font-size="16" fill="#F2F0E9">국민  →  헌법의 틀</text>
+        </g>
+        <g transform="translate(400, 14)">
+          <text x="0" y="14" font-family="Inter" font-size="14" fill="#C8D2D0">입법  /  행정  /  사법</text>
+        </g>
+      </g>
+      <g transform="translate(24, 190)">
+        <text x="0" y="14" font-family="Inter" font-size="14" font-weight="700" fill="#D8A374">중앙행정기관 44곳   /   부 19 · 처 6 · 청 19</text>
+      </g>
+      <g transform="translate(24, 226)">
+        <g>
+          <g>
+            <text x="0" y="13" font-family="Inter" font-size="13" fill="#C8D2D0">부 · 19</text>
+          </g>
+          <g transform="translate(0, 26)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">재정경제부</text>
+          </g>
+          <g transform="translate(0, 54)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">교육부</text>
+          </g>
+          <g transform="translate(0, 82)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">과학기술정보통신부</text>
+          </g>
+          <g transform="translate(0, 110)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">외교부</text>
+          </g>
+          <g transform="translate(0, 138)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">통일부</text>
+          </g>
+          <g transform="translate(0, 166)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">…</text>
+          </g>
+        </g>
+        <g transform="translate(183, 0)">
+          <g>
+            <text x="0" y="13" font-family="Inter" font-size="13" fill="#C8D2D0">처 · 06</text>
+          </g>
+          <g transform="translate(0, 26)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">기획예산처</text>
+          </g>
+          <g transform="translate(0, 54)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">인사혁신처</text>
+          </g>
+          <g transform="translate(0, 82)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">법제처</text>
+          </g>
+          <g transform="translate(0, 110)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">식품의약품안전처</text>
+          </g>
+          <g transform="translate(0, 138)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">국가데이터처</text>
+          </g>
+          <g transform="translate(0, 166)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">지식재산처</text>
+          </g>
+        </g>
+        <g transform="translate(366, 0)">
+          <g>
+            <text x="0" y="13" font-family="Inter" font-size="13" fill="#C8D2D0">청 · 19</text>
+          </g>
+          <g transform="translate(0, 26)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">국세청</text>
+          </g>
+          <g transform="translate(0, 54)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">관세청</text>
+          </g>
+          <g transform="translate(0, 82)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">조달청</text>
+          </g>
+          <g transform="translate(0, 110)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">우주항공청</text>
+          </g>
+          <g transform="translate(0, 138)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">재외동포청</text>
+          </g>
+          <g transform="translate(0, 166)">
+            <text x="0" y="14" font-family="Inter" font-size="14" fill="#F2F0E9">…</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(24, 428)">
+        <text x="0" y="12" font-family="Inter" font-size="12" fill="#C8D2D0">정책 사례와 기관 명단 사이의 담당·집행 관계를 뜻하지 않습니다.</text>
+      </g>
+    </g>
+  </g>
+</svg>

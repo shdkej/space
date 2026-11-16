@@ -1,19 +1,109 @@
+'use strict';
 const {chromium}=require('playwright-core');
-const fs=require('node:fs');const path=require('node:path');const assert=require('node:assert/strict');
-const base='https://policycock.aws.shdkej.com';
-(async()=>{const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});const checks=[];try{
-const context=await browser.newContext();const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-const response=await page.goto(base,{waitUntil:'networkidle'});assert.equal(response.status(),200);await page.evaluate(()=>document.fonts.ready);checks.push('HTTPS 200 및 자산 로드');
-const institutions=JSON.parse(fs.readFileSync(path.join(__dirname,'../dist/institutions.json'),'utf8')).institutions;
-assert.equal(institutions.length,44);assert.equal(await page.locator('.agency-link').count(),44);assert.deepEqual((await page.locator('.agency-link').evaluateAll(links=>links.map(a=>a.href))).sort(),institutions.map(i=>i.url).sort());assert.equal(await page.locator('.galaxy-hero .lead-mark svg').count(),10);assert.equal(await page.locator('.outline-branches>.branch').count(),3);assert.ok(await page.evaluate(async()=>{const image=new Image();image.src='/assets/galaxy.webp';await image.decode();return image.naturalWidth===1800}));assert.equal(await page.getByRole('link',{name:'국회 공식 사이트 ↗'}).getAttribute('href'),'https://www.assembly.go.kr/');checks.push('Blender 은하수 정책 10개 리드·한국형 기관 윤곽·중앙행정기관 44개 전수 일치');
-await page.locator('[data-agency-filter="청"]').click();assert.equal(await page.locator('.agency-link').count(),19);await page.locator('[data-agency-filter="all"]').click();await page.locator('#agency-search').fill('공소청');assert.equal(await page.locator('.agency-link').count(),1);await page.locator('#agency-search').fill('');checks.push('기관 필터·검색 및 개편 기관 링크');
-assert.equal(await page.locator('.galaxy-hero .person').count(),10);assert.equal(await page.locator('#council-links a').count(),18);checks.push('히어로 정책 사례 10건·의회 참고 링크 18개');
-for(const policy of await page.evaluate(()=>POLICY_DATA.map(p=>({id:p.id,title:p.policy,source:p.source})))){await page.locator(`[data-policy="${policy.id}"]`).click();assert.equal(await page.locator('#policy-dialog').evaluate(d=>d.open),true);assert.equal(await page.locator('#detail-title').textContent(),policy.title);assert.equal(await page.locator('#detail-links a').first().getAttribute('href'),policy.source);await page.keyboard.press('Escape');}checks.push('정책 10건 상세 모달·원문 일치');
-for(const name of ['보건복지부','공소청','중대범죄수사청']){const link=page.locator('.agency-link').filter({hasText:name}).first();await link.click();assert.equal(await page.locator('#agency-dialog-title').textContent(),name);assert.equal(await page.locator('#agency-official').getAttribute('href'),institutions.find(i=>i.name===name).url);await page.locator('#agency-dialog .dialog-close').click();assert.equal(await link.evaluate(e=>e===document.activeElement),true);}checks.push('기관 상세 모달·공식 링크 보조·포커스 복귀');
-await page.locator('[data-policy=oh]').click();assert.equal(await page.locator('#detail-title').textContent(),'기후동행카드');await page.locator('#save-policy').click();await page.keyboard.press('Escape');await page.locator('#note-oh').fill('라이브 검증 메모');await page.reload();assert.equal(await page.locator('#note-oh').inputValue(),'라이브 검증 메모');checks.push('정책 모달 선택·저장·즉시 메모 복원');
-const download=page.waitForEvent('download');await page.locator('#export-map').click();const file=await download;assert.equal(JSON.parse(fs.readFileSync(await file.path(),'utf8')).policies[0].id,'oh');await page.locator('.remove-btn').click();checks.push('내보내기·저장 해제');
-await page.reload();for(const width of [320,375,414,768,1440]){await page.setViewportSize({width,height:980});await page.evaluate(async()=>{const image=new Image();image.src='/assets/galaxy.webp';await image.decode()});await page.evaluate(()=>scrollTo(0,0));assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.equal(await page.locator('.galaxy-hero .person').count(),10);assert.equal(await page.locator('.galaxy-hero .lead-mark').count(),10);assert.equal(await page.locator('.outline-branches>.directory-panel .agency-link').count(),44);await page.locator('[data-policy=lee]').click();assert.equal(await page.locator('#policy-dialog').evaluate(d=>d.open),true);await page.keyboard.press('Escape');await page.locator('.agency-link').first().click();assert.equal(await page.locator('#agency-dialog').evaluate(d=>d.open),true);await page.keyboard.press('Escape');await page.reload();await page.evaluate(()=>scrollTo(0,0));await page.mouse.move(0,0);await page.screenshot({path:path.join(__dirname,'../qa',`live-${width}.png`),fullPage:true});}checks.push('320/375/414/768/1440px 은하수 정책·한국 조직도·모달·가로 넘침 없음');
-await page.setViewportSize({width:1440,height:980});await page.goto(base);const landscape=await page.evaluate(()=>({tops:['.sovereignty','.constitution','.branch-legislative','.branch-executive','.branch-judicial'].map(s=>document.querySelector(s).getBoundingClientRect().top),columns:[...document.querySelectorAll('.agency-group')].map(g=>new Set([...g.querySelectorAll('.agency-link')].map(a=>Math.round(a.getBoundingClientRect().left))).size),height:document.querySelector('.outline-map').getBoundingClientRect().height,heroHeight:document.querySelector('.galaxy-canvas').getBoundingClientRect().height,camps:[...document.querySelectorAll('.galaxy-canvas .people-column')].map(c=>[...c.querySelectorAll('.person')].map(n=>{const r=n.getBoundingClientRect();return{left:r.left,right:r.right,top:r.top,bottom:r.bottom}}))}));assert.ok(Math.max(...landscape.tops)-Math.min(...landscape.tops)<4);assert.deepEqual(landscape.columns,[3,1,3]);assert.ok(landscape.height<960);assert.deepEqual(landscape.camps.map(c=>c.length),[5,5]);assert.ok(Math.max(...landscape.camps[0].map(n=>n.right))<Math.min(...landscape.camps[1].map(n=>n.left)));assert.ok(landscape.heroHeight<950);checks.push('라이브 1440px 민주 왼쪽·보수 오른쪽 5건씩, 기관명 3·1·3열');
-await page.goto(base+'/sources.html');assert.equal(await page.locator('.source-item').count(),10);checks.push('출처 페이지');assert.deepEqual(errors,[]);checks.push('브라우저 실행 오류 없음');
-const result={verifiedAt:new Date().toISOString(),url:base+'/',status:'passed',checks};fs.writeFileSync(path.join(__dirname,'../qa/live-verification.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));
-}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});
+const fs=require('node:fs');
+const path=require('node:path');
+const assert=require('node:assert/strict');
+const root=path.join(__dirname,'..');
+const base=(process.env.SITE_URL||'https://policycock.aws.shdkej.com').replace(/\/$/,'');
+const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json'),'utf8')).institutions;
+(async()=>{
+  const browser=process.env.BROWSER_CDP
+    ? await chromium.connectOverCDP(process.env.BROWSER_CDP)
+    : await chromium.launch({executablePath:process.env.CHROME_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});
+  const checks=[];
+  const pass=name=>{checks.push(name);console.log('PASS '+name)};
+  try{
+    const context=await browser.newContext({viewport:{width:1440,height:900}});
+    const page=await context.newPage(), errors=[];
+    page.on('pageerror',e=>errors.push(e.message));
+    const response=await page.goto(base,{waitUntil:'networkidle'});
+    assert.equal(response.status(),200);
+    await page.evaluate(()=>document.fonts.ready);
+    assert.equal(await page.locator('.person').count(),10);
+    assert.equal(await page.locator('.agency-link').count(),44);
+    assert.equal(await page.locator('#council-links a').count(),18);
+    assert.deepEqual((await page.locator('.agency-link').evaluateAll(a=>a.map(n=>n.href))).sort(),agencies.map(a=>a.url).sort());
+    assert.equal(await page.locator('link[href="ledger.css"]').count(),1);
+    assert.equal(await page.locator('link[href="galaxy.css"]').count(),0);
+    assert.equal(await page.locator('.outline-branches>.branch a').first().isVisible(),true);
+    pass('HTTPS 200·새 CSS·정책 10·기관 44·의회 18·국회 링크');
+
+    const fold=await page.evaluate(()=>({
+      bottom:Math.max(...[...document.querySelectorAll('.person,.agency-link')].map(n=>n.getBoundingClientRect().bottom)),
+      width:document.documentElement.scrollWidth,
+      minTarget:Math.min(...[...document.querySelectorAll('.agency-link')].map(n=>n.getBoundingClientRect().height)),
+      minFont:Math.min(...[...document.querySelectorAll('.agency-link')].map(n=>parseFloat(getComputedStyle(n).fontSize))),
+      clipped:[...document.querySelectorAll('.agency-link')].filter(n=>n.scrollWidth>n.clientWidth+2).map(n=>n.textContent),
+      asset:(()=>{const n=document.querySelector('.ledger-relief');return n.complete&&n.naturalWidth>0})()
+    }));
+    assert.ok(fold.bottom<=900,`last item beyond 900px: ${fold.bottom}`);
+    assert.ok(fold.width<=1440&&fold.minTarget>=24&&fold.minFont>=12&&fold.asset);
+    assert.deepEqual(fold.clipped,[]);
+    await page.screenshot({path:path.join(root,'qa/live-1440.png')});
+    pass('1440×900 정책·기관 전체 첫 화면 가독성과 Blender 장식 로드');
+
+    const policies=await page.evaluate(()=>POLICY_DATA.map(p=>({id:p.id,title:p.policy,source:p.source})));
+    for(const p of policies){
+      await page.locator(`[data-policy="${p.id}"]`).click();
+      assert.equal(await page.locator('#detail-title').textContent(),p.title);
+      assert.equal(await page.locator('#detail-links a').first().getAttribute('href'),p.source);
+      await page.keyboard.press('Escape');
+    }
+    for(const a of agencies){
+      const link=page.locator('.agency-link').filter({hasText:a.name}).first();
+      await link.click();
+      assert.equal(await page.locator('#agency-dialog-title').textContent(),a.name);
+      assert.equal(await page.locator('#agency-official').getAttribute('href'),a.url);
+      await page.keyboard.press('Escape');
+    }
+    pass('정책 10건·기관 44곳 상세와 원문 링크 전수');
+
+    await page.locator('[data-agency-filter="처"]').click();
+    assert.equal(await page.locator('.agency-link').count(),6);
+    await page.locator('[data-agency-filter="all"]').click();
+    await page.locator('#agency-search').fill('기상청');
+    assert.equal(await page.locator('.agency-link').count(),1);
+    await page.locator('#agency-search').fill('');
+    await page.locator('[data-policy=lee]').click();
+    await page.locator('#save-policy').click();
+    await page.keyboard.press('Escape');
+    await page.locator('#note-lee').fill('라이브 검증 메모');
+    await page.reload();
+    assert.equal(await page.locator('#note-lee').inputValue(),'라이브 검증 메모');
+    await page.locator('.remove-btn').click();
+    pass('기관 유형·검색, 관심 정책 저장·메모 복원·삭제');
+
+    const nojs=await browser.newContext({javaScriptEnabled:false});
+    const staticPage=await nojs.newPage();await staticPage.goto(base);
+    assert.equal(await staticPage.locator('a.person').count(),10);
+    assert.equal(await staticPage.locator('.agency-link').count(),44);
+    await nojs.close();
+    pass('무스크립트 정책 10·기관 44 원문 링크');
+
+    for(const [width,height] of [[320,568],[375,667],[768,900],[1280,800]]){
+      await page.setViewportSize({width,height});await page.evaluate(()=>scrollTo(0,0));
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px overflow`);
+      assert.equal(await page.locator('.person').count(),10);
+      assert.equal(await page.locator('.agency-link').count(),44);
+      await page.locator('[data-policy=lee]').click();
+      assert.equal(await page.locator('#policy-dialog').evaluate(n=>n.open),true);
+      await page.keyboard.press('Escape');
+      const last=page.locator('.agency-link').last();
+      await last.scrollIntoViewIfNeeded();await last.focus();
+      assert.ok(await last.evaluate(n=>{const r=n.getBoundingClientRect();return n===document.activeElement&&r.top>=0&&r.bottom<=innerHeight}));
+      await last.click();assert.equal(await page.locator('#agency-dialog-title').textContent(),agencies.at(-1).name);
+      await page.keyboard.press('Escape');
+      assert.equal(await last.evaluate(n=>n===document.activeElement),true);
+      if(width===375)await page.screenshot({path:path.join(root,'qa/live-375-last-agency.png')});
+    }
+    pass('320·375·768·1280px 넘침 없음·모달·마지막 기관 키보드 접근');
+    const sourceResponse=await page.goto(base+'/sources.html');
+    assert.equal(sourceResponse.status(),200);
+    assert.equal(await page.locator('.source-item').count(),10);
+    assert.match(await page.locator('.source-page').textContent(),/지형이나 국회 건축 모형을 표시하지 않습니다/);
+    assert.deepEqual(errors,[]);
+    pass('출처 페이지 새 설명 10건·스크립트 오류 없음');
+    fs.writeFileSync(path.join(root,'qa/live-verification.json'),JSON.stringify({verifiedAt:new Date().toISOString(),url:base+'/',status:'passed',checks,fold},null,2)+'\n');
+    await context.close();
+  }finally{await browser.close()}
+})().catch(error=>{console.error(error);process.exitCode=1});

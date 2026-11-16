@@ -70,7 +70,7 @@ if page.count(start_marker) != 1 or page.count(end_marker) != 1:
 static_rows = []
 for kind, heading in [('부', '부처 · MINISTRIES'), ('처', '처 · OFFICES'), ('청', '청 · AGENCIES')]:
     items = [i for i in institutions if i['kind'] == kind]
-    static_rows.append(f'<section class="agency-group" data-kind="{kind}"><h3>{heading}<span>{len(items):02d}</span></h3>')
+    static_rows.append(f'<section class="agency-group" data-kind="{kind}"><h4>{heading}<span>{len(items):02d}</span></h4>')
     for item in items:
         label = item['name'] + (' 공식 기관 사이트 열기' if item.get('linkKind') == 'official-site'
                                 else ' 정부조직관리시스템 기구도 열기')

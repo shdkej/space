@@ -66,6 +66,27 @@
     "redReview": {"delegation": "deleg_be5b650a", "verdict": "PASS", "scope": "Read-only review of Blender render and five viewport captures; reviewer independently executed Chromium layout, dialog, keyboard and no-JS checks. No release blocker; not a live deployment verdict."},
     "ownerDecision": "Discard old 5x2 plinth hero. Render a real irregular Blender galaxy as non-semantic atmosphere, place ten distinct dot-to-avatar/label leads as responsive HTML/SVG, and put the Korean citizen/constitution/legislative-executive-judicial outline below with 44 ministries/offices/agencies in the executive exploration branch."
   },
+  "skillRedesignReview": {
+    "parentSession": "20261115_220218_c6a755ca",
+    "route": "Hermes openai-codex delegate_task; four independent roles plus cross-review; no nested CLI",
+    "initialDelegation": "deleg_dd84f619",
+    "crossReviewDelegation": "deleg_568956c7",
+    "designerDelegation": "deleg_3adfd61d",
+    "roles": [
+      "Planner: the 44 agencies needed the full map width rather than a narrow executive column.",
+      "Developer: each case lead stays attached to its HTML target; preserve 10/44 links and responsive no-overlap checks.",
+      "Marketer: label category lines as conceptual, not verified agency authority or policy assignments; CMO direction unchanged.",
+      "Operator: check actual responsive screenshots, static fallback, live deployment and byte parity rather than reuse an earlier PASS."
+    ],
+    "reviewRounds": [
+      {"delegation": "deleg_f75b90ea", "visual": "FAIL: first iteration still read like a detached agency list; mobile branch order collapsed.", "code": "FAIL: 901–1100px case leads overlapped or clipped.", "omd": "FAIL: strict DESIGN.md charter absent; heading inversion, legacy 2MB font and no-JS external-link indicator flagged."},
+      {"delegation": "deleg_489a8540", "visual": "PASS: desktop unified outline and mobile three branches before 44-name index.", "code": "FAIL: CSS visual order differed from DOM order; static h5 headings were replaced with h3 at runtime."},
+      {"delegation": "deleg_e590a822", "child": "sa-0-3fc73497", "verdict": "PASS: direct-child directory follows judicial in DOM and visual order; generated and runtime headings both h4. Reviewer browser test unavailable due to Chrome path; owner browser test passed."}
+    ],
+    "ownerDecision": "Place 10 irregular dot-to-name historical case leads above one Korean citizen/constitution/three-branch outline; agencies occupy a full-width classified index after all three branches. Do not draw unverified reporting or policy responsibility lines.",
+    "ownerLocalEvidence": "qa/verification.json",
+    "qualityLimits": ["Hallmark legacy baseline 410 FAIL/280 REFLEX; latest rendered lint remains unresolved, not clean.", "No project DESIGN.md token charter; DESIGN_SYSTEM.md is the project direction.", "Existing large Pretendard asset and external source URL longevity are separate follow-ups, not certified by this review."]
+  },
   "ownerVerification": {
     "local": "qa/verification.json",
     "institutionLinks": "qa/institution-links.json",

@@ -1,4 +1,25 @@
+/* Hallmark · built: Policycock · redesign: full · theme: existing brand · job: explore historical policy cases · hero: dispersed case leads · idea: each policy is discoverable, institutions form a separate Korean outline */
+/* Hallmark · pre-emit critique: P4 H3 E3 S5 R3 V4 · weakest: hierarchy; widened the institution field and increased case-label type without adding a relationship line */
 /* Explore surface: one dot marks one historical case; constitutional outline below is separate. */
+:root{
+  --galaxy-night:#070c1e;
+  --galaxy-field:#101832;
+  --galaxy-ink:#f9f8ff;
+  --galaxy-muted:#d2d5e5;
+  --galaxy-line:#b7c5ed;
+  --galaxy-focus:#f4e1aa;
+  --outline-paper:#f3f2ed;
+  --outline-sheet:#fbfaf7;
+  --outline-ink:#17213d;
+  --outline-rule:#8394a8;
+  --outline-muted:#495672;
+  --outline-link:#243754;
+  --outline-highlight:#e5eaf1;
+  --outline-soft:#aebbc8;
+  --space-chart:32px;
+}
+html,body{overflow-x:clip}
+[hidden]{display:none!important}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .galaxy-hero{background:#070c1e;color:#f9f8ff;padding:0 clamp(16px,4vw,72px) 36px;overflow:hidden}
 .galaxy-intro{max-width:1500px;margin:auto;padding:72px 24px 28px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);align-items:end;column-gap:54px}
@@ -73,8 +94,8 @@
 .government-outline .directory-panel{background:none;color:#17213d;padding:18px 0 0;min-height:0;border-top:1px solid #aebbc8;display:block}
 .government-outline .directory-panel:before{display:none}
 .government-outline .directory-heading .overline{font-size:10px;color:#526786;letter-spacing:.12em;margin:0 0 6px}
-.government-outline .directory-heading h4{font-size:20px;margin:0;letter-spacing:-.045em}
-.government-outline .directory-heading h4 span{font-size:12px;color:#60718a;font-weight:500;letter-spacing:0;margin-left:7px}
+.government-outline .directory-heading h3{font-size:20px;margin:0;letter-spacing:-.045em}
+.government-outline .directory-heading h3 span{font-size:12px;color:#60718a;font-weight:500;letter-spacing:0;margin-left:7px}
 .government-outline .directory-description{font-size:11px;color:#56657d;line-height:1.6;margin:8px 0 13px}
 .government-outline #agency-search{background:#fff;color:#17213d;border:1px solid #aebbc9;max-width:270px;height:42px;font-size:13px}
 .government-outline #agency-search::placeholder{color:#68758a}
@@ -100,3 +121,122 @@
 @media(max-width:700px){.galaxy-hero{padding:0 12px 26px}.galaxy-intro{padding:36px 5px 27px}.galaxy-intro h1{font-size:clamp(38px,10vw,54px)}.galaxy-intro>p:last-child{font-size:13px}.galaxy-canvas{height:1635px;background-position:center center}.galaxy-head{top:22px;left:16px}.galaxy-head h2{font-size:19px}.galaxy-head h2 span{font-size:9px;margin-left:4px}.galaxy-canvas .filters{top:88px;left:15px;right:15px;width:auto;display:flex;justify-content:space-between}.galaxy-canvas .filters button{min-height:44px;padding:0 8px;font-size:11px}.galaxy-hero .person{width:68%;max-width:250px;min-height:106px;left:19%!important;top:auto}.galaxy-hero .person:nth-child(even){left:23%!important}.galaxy-hero .person[data-policy="lee"]{top:11%}.galaxy-hero .person[data-policy="kim-dongyeon"]{top:20%}.galaxy-hero .person[data-policy="kim-kyungsoo"]{top:29%}.galaxy-hero .person[data-policy="park"]{top:38%}.galaxy-hero .person[data-policy="moon"]{top:47%}.galaxy-hero .person[data-policy="oh"]{top:56%}.galaxy-hero .person[data-policy="hong"]{top:65%}.galaxy-hero .person[data-policy="yoo"]{top:74%}.galaxy-hero .person[data-policy="na"]{top:83%}.galaxy-hero .person[data-policy="han"]{top:91%}.galaxy-hero .avatar{width:40px;height:40px;font-size:11px}.galaxy-hero .person-name{font-size:15px}.galaxy-hero .person-policy{font-size:13px}.galaxy-hero .person-stage{font-size:10px}.galaxy-note{bottom:6px;left:15px;font-size:10px}.galaxy-caption{font-size:10px}.government-outline{padding:60px 12px 38px}.outline-heading{display:block;margin-bottom:24px}.outline-heading h2{font-size:clamp(37px,10vw,52px)}.outline-heading>p{margin:16px 0 0;font-size:12px}.outline-map{padding:36px 18px 28px}.sovereignty{flex-direction:column;gap:4px}.sovereignty strong{font-size:31px}.constitution{margin:38px auto 59px}.outline-branches{display:flex;flex-direction:column;padding-top:0;gap:28px}.outline-branches:before{top:0;left:0;right:auto;bottom:0;border-top:0;border-left:1px solid #9ba8b9}.outline-branches>.branch{width:100%;border-top:0;border-left:3px solid #233e68;padding:4px 0 8px 18px}.outline-branches>.branch:before{display:none}.branch h3{font-size:29px}.government-outline .directory-panel{padding:18px 0 0}.government-outline #agency-search{width:100%;max-width:none}.government-outline .agency-filters{display:flex;gap:3px;margin:8px 0 13px}.government-outline .agency-filters button{flex:1;padding:2px 3px;min-height:44px;font-size:10px}.government-outline .agency-groups{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;max-height:none;overflow:visible}.government-outline .agency-group{padding-left:7px!important}.government-outline .agency-link{font-size:11px;min-height:44px}.outline-separate{margin-top:30px}.government-outline .stage-caption{font-size:10px}}
 @media(max-width:380px){.galaxy-hero .person{width:70%;left:18%!important}.galaxy-hero .person:nth-child(even){left:22%!important}.galaxy-hero .person-policy{font-size:12px}.galaxy-hero .lead-mark{left:-36px}.galaxy-note{max-width:94%;font-size:9px}.government-outline .agency-groups{grid-template-columns:1fr 1fr}.government-outline .agency-link{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.galaxy-hero .person{transition:none}}
+
+/* One case per lead. The image adds depth; it never positions a target. */
+.galaxy-hero{background:var(--galaxy-night);color:var(--galaxy-ink)}
+.galaxy-intro{padding-top:48px;padding-bottom:30px}
+.galaxy-intro h1,.outline-heading h2{overflow-wrap:break-word;min-width:0;text-wrap:balance}
+.galaxy-intro h1 span{color:inherit}
+.galaxy-intro>p:last-child{font-size:16px;color:var(--galaxy-muted)}
+.galaxy-canvas{height:940px;background-color:var(--galaxy-field);border-color:var(--outline-rule)}
+.galaxy-canvas:after{content:none}
+.galaxy-head h2{font-size:clamp(24px,2.2vw,34px)}
+.galaxy-hero .person{width:234px;min-height:126px;gap:7px;color:var(--galaxy-ink);text-shadow:0 1px 7px var(--galaxy-night)}
+.galaxy-hero .person:focus-visible{outline-color:var(--galaxy-focus)}
+.galaxy-hero .lead-mark{color:var(--galaxy-line)}
+.galaxy-hero .avatar{width:44px;height:44px;font-size:12px}
+.galaxy-hero .person-name{font-size:17px;color:var(--galaxy-ink)}
+.galaxy-hero .person-policy{font-size:15px;color:var(--galaxy-ink);line-height:1.4}
+.galaxy-hero .person-stage{font-size:12px;color:var(--galaxy-muted)}
+.galaxy-hero .person[data-policy="lee"]{left:8%;top:19%}
+.galaxy-hero .person[data-policy="kim-dongyeon"]{left:37%;top:17%}
+.galaxy-hero .person[data-policy="kim-kyungsoo"]{left:69%;top:23%}
+.galaxy-hero .person[data-policy="park"]{left:77%;top:42%}
+.galaxy-hero .person[data-policy="moon"]{left:45%;top:49%}
+.galaxy-hero .person[data-policy="oh"]{left:10%;top:44%}
+.galaxy-hero .person[data-policy="hong"]{left:30%;top:69%}
+.galaxy-hero .person[data-policy="yoo"]{left:59%;top:71%}
+.galaxy-hero .person[data-policy="na"]{left:78%;top:79%}
+.galaxy-hero .person[data-policy="han"]{left:8%;top:80%}
+
+/* A single silhouette: the three civic categories, then an executive index
+   over the full width. The hairline ends at the category, never an agency. */
+.government-outline{background:var(--outline-paper);color:var(--outline-ink)}
+.outline-heading h2 span{color:inherit}
+.outline-map{background:var(--outline-sheet);border-color:var(--outline-ink)}
+.outline-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:var(--space-chart);row-gap:0;align-items:start;padding-top:24px}
+.outline-branches:before{left:16.67%;right:16.67%;border-color:var(--outline-rule)}
+.outline-branches>.branch{border-color:var(--outline-ink);min-width:0}
+.outline-branches>.branch:before{border-color:var(--outline-rule)}
+.outline-branches>.branch-legislative{grid-column:1;grid-row:1}
+.outline-branches>.branch-executive{grid-column:2;grid-row:1}
+.outline-branches>.branch-judicial{grid-column:3;grid-row:1}
+.branch-executive>p:not(.branch-index){max-width:55ch}
+.government-outline .outline-branches>.directory-panel{grid-column:1/-1;grid-row:2;position:relative;width:100%;margin-top:55px;padding:32px 0 4px;border-top:1px solid var(--outline-soft);background:none}
+.government-outline .outline-branches>.directory-panel:before{display:block;content:'';position:absolute;left:50%;right:auto;top:-56px;height:55px;width:0;border:0;border-left:1px solid var(--outline-rule);pointer-events:none}
+.government-outline .directory-heading h3{font-size:26px;color:var(--outline-ink)}
+.government-outline .directory-description{color:var(--outline-muted);font-size:13px;max-width:70ch}
+.government-outline .agency-groups{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-chart);align-items:start}
+.government-outline .agency-group,.government-outline .agency-group[data-kind="부"],.government-outline .agency-group[data-kind="청"]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px;padding:12px 0 0 14px;border-left:1px solid var(--outline-rule);background:none}
+.government-outline .agency-group[data-kind="처"]{display:grid;grid-template-columns:1fr}
+.government-outline .agency-group h4{grid-column:1/-1;display:flex;justify-content:space-between;gap:5px;margin:0 0 8px;padding:2px 1px 9px;border-bottom:1px solid var(--outline-soft);font-size:14px;font-weight:650;letter-spacing:0;color:var(--outline-link)}
+.government-outline .agency-group h4 span{color:var(--outline-muted)}
+.government-outline .agency-link{min-height:40px;padding:6px 4px;font-size:13px;line-height:1.45;color:var(--outline-link);overflow-wrap:break-word}
+.government-outline .agency-link:focus-visible{outline:3px solid var(--outline-ink);outline-offset:2px;background:var(--outline-highlight)}
+.government-outline .agency-filters button:focus-visible,.government-outline #agency-search:focus-visible{outline:3px solid var(--outline-ink);outline-offset:2px}
+.government-outline .agency-filters button[aria-pressed="true"]{background:var(--outline-ink);border-color:var(--outline-ink);color:var(--outline-sheet)}
+
+/* Classification branches connect to the government category, not to
+   individual agencies or to a claim of subordination between agency types. */
+.government-outline .agency-groups{position:relative;border-top:1px solid var(--outline-rule);padding-top:28px;margin-top:20px}
+.government-outline .agency-group,.government-outline .agency-group[data-kind="부"],.government-outline .agency-group[data-kind="청"],.government-outline .agency-group[data-kind="처"]{position:relative;border-top:2px solid var(--outline-ink);border-left:0;padding:15px 0 0 12px}
+.government-outline .agency-group:before{content:'';position:absolute;left:50%;top:-30px;height:28px;border-left:1px solid var(--outline-rule);pointer-events:none}
+
+@media(max-width:1320px){
+  .galaxy-canvas{height:1230px}
+  .galaxy-hero .person{width:min(238px,42%);min-height:132px}
+  .galaxy-hero .person[data-policy="lee"]{left:13%;top:18%}
+  .galaxy-hero .person[data-policy="kim-dongyeon"]{left:58%;top:20%}
+  .galaxy-hero .person[data-policy="kim-kyungsoo"]{left:17%;top:34%}
+  .galaxy-hero .person[data-policy="park"]{left:60%;top:36%}
+  .galaxy-hero .person[data-policy="moon"]{left:11%;top:51%}
+  .galaxy-hero .person[data-policy="oh"]{left:58%;top:54%}
+  .galaxy-hero .person[data-policy="hong"]{left:16%;top:69%}
+  .galaxy-hero .person[data-policy="yoo"]{left:58%;top:72%}
+  .galaxy-hero .person[data-policy="na"]{left:13%;top:84%}
+  .galaxy-hero .person[data-policy="han"]{left:58%;top:85%}
+  .government-outline .agency-groups{gap:20px}
+  .government-outline .agency-group,.government-outline .agency-group[data-kind="부"],.government-outline .agency-group[data-kind="청"]{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .galaxy-intro{padding-top:32px}
+  .galaxy-intro>p:last-child{font-size:14px}
+  .galaxy-canvas{display:block;height:auto;min-height:0;padding:158px 15px 56px;background-position:center top}
+  .galaxy-canvas .policy-columns{display:grid;grid-template-columns:minmax(0,1fr)}
+  .galaxy-canvas .people-list{display:grid;grid-template-columns:minmax(0,1fr);gap:46px}
+  .galaxy-canvas .conservative-column .people-list{margin-top:46px}
+  .galaxy-hero .person,.galaxy-hero .person:nth-child(even){position:relative;width:min(78%,270px);max-width:none;min-height:106px;top:auto!important;left:auto!important;margin-left:10%}
+  .galaxy-hero .person:nth-child(even){margin-left:19%}
+  .galaxy-hero .avatar{width:44px;height:44px;font-size:12px}
+  .galaxy-hero .person-name{font-size:17px}
+  .galaxy-hero .person-policy{font-size:14px}
+  .galaxy-hero .person-stage{font-size:12px}
+  .galaxy-note{position:static;max-width:none;margin:44px 0 0;font-size:11px}
+  .galaxy-caption{font-size:11px}
+  .outline-branches{display:grid;grid-template-columns:minmax(0,1fr);row-gap:0;padding:0 0 0 18px}
+  .outline-branches:before{left:0;right:auto;top:0;bottom:0;border-top:0;border-left:1px solid var(--outline-rule)}
+  .outline-branches>.branch-legislative{grid-column:1;grid-row:1}
+  .outline-branches>.branch-executive{grid-column:1;grid-row:2}
+  .outline-branches>.branch-judicial{grid-column:1;grid-row:3}
+  .outline-branches>.branch{width:100%;border:0;border-left:2px solid var(--outline-ink);padding:6px 0 18px 17px}
+  .government-outline .outline-branches>.directory-panel{grid-column:1;grid-row:4;margin:18px 0 28px;padding:16px 0 0 17px;border:0;border-left:2px solid var(--outline-ink)}
+  .government-outline .outline-branches>.directory-panel:before{display:none}
+  .government-outline .agency-groups{grid-template-columns:minmax(0,1fr);gap:28px}
+  .government-outline .agency-group,.government-outline .agency-group[data-kind="부"],.government-outline .agency-group[data-kind="청"]{grid-template-columns:minmax(0,1fr);padding-left:12px!important}
+  .government-outline .agency-group[data-kind="처"]{grid-template-columns:minmax(0,1fr)}
+  .government-outline .agency-group:before{left:22px}
+  .government-outline .agency-link{font-size:15px;min-height:44px;overflow-wrap:break-word}
+  .government-outline .agency-group h4{font-size:15px}
+  .government-outline .directory-heading h3{font-size:22px}
+  .government-outline .agency-filters{flex-wrap:wrap}
+  .government-outline .agency-filters button{min-width:65px}
+  .outline-separate{margin-top:26px}
+}
+@media(max-width:380px){
+  .galaxy-hero .person,.galaxy-hero .person:nth-child(even){width:78%;margin-left:10%}
+  .galaxy-hero .person:nth-child(even){margin-left:19%}
+  .galaxy-hero .lead-mark{left:-36px}
+  .galaxy-hero .person-policy{font-size:14px}
+  .government-outline .agency-link{font-size:15px}
+  .government-outline .agency-groups{grid-template-columns:minmax(0,1fr)}
+}

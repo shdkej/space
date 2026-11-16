@@ -59,7 +59,7 @@ CHROME_PATH=/opt/google/chrome/chrome npm test
 python3 scripts/verify-institution-links.py
 ```
 
-`npm test`는 은하수 표식 10개 각각의 점·리드·아바타·텍스트, 한국형 개략도의 순서와 행정 영역 44개 기관, 다섯 화면 폭의 선 끝점·라벨 충돌·클릭 중심·가로 넘침을 검사합니다. 두 모달 내용·포커스·Escape·저장, 기관 검색/필터·마지막 기관 키보드 접근, JavaScript/이미지 실패 시 정적 링크 대체와 낮은 모바일 화면도 확인하고 `qa/viewport-*.png`를 갱신합니다. Chromium에 필요한 시스템 라이브러리와 `CHROME_PATH`가 필요합니다.
+`npm test`는 은하수 표식 10개 각각의 점·리드·아바타·텍스트, 한국형 개략도의 세 갈래와 후속 전폭 기관 영역, 320/375/414/768/901/1024/1100/1200/1280/1320/1321/1440px의 선 끝점·라벨 충돌·클릭 중심·가로 넘침을 검사합니다. 정적·동적 기관 제목 계층과 모바일 시각·DOM 순서도 확인합니다. 두 모달 내용·포커스·Escape·저장, 기관 검색/필터·마지막 기관 키보드 접근, JavaScript/이미지 실패 시 정적 링크 대체와 낮은 모바일 화면도 확인하고 `qa/viewport-*.png`를 갱신합니다. Chromium에 필요한 시스템 라이브러리와 `CHROME_PATH`가 필요합니다.
 
 Node.js 26, Playwright Core 1.65.1, 로컬 Chrome으로 검증했습니다. 테스트가 4187 포트에 임시 HTTP 서버를 띄우고 종료합니다. 브라우저는 설치된 Chrome을 사용하며 다른 환경에서는 `CHROME_PATH`를 지정합니다.
 

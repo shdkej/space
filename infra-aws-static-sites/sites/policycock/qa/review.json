@@ -1,0 +1,28 @@
+{
+  "reviewedAt": "2026-11-16",
+  "parentSession": "20261115_220218_c6a755ca",
+  "route": "Hermes openai-codex delegate_task; no nested Codex CLI",
+  "independentRoles": {
+    "initialDelegation": "deleg_b8f81f15",
+    "crossReviewDelegation": "deleg_a6b1294b",
+    "implementationReviewDelegation": "deleg_22c63bb9",
+    "planner": "Single Blender atlas with a distinct National Assembly and complete central-agency directory; stale screenshots flagged and regenerated.",
+    "developer": "Flagged whole-list aria-live, no-JS failure and mobile keyboard reachability; all three were fixed and retested.",
+    "marketer": "Clarified actual links vs live tracking and made static-prototype copy explicit; customer brand direction remains CMO-owned.",
+    "operator": "Required actual policycock deploy job, live browser validation and asset hashes; all verified after release."
+  },
+  "finalIndependentReview": {
+    "delegation": "deleg_191baa15",
+    "child": "sa-0-b4717fe7",
+    "verdict": "PASS",
+    "scope": "Security, logic, static fallbacks, responsive screenshots and keyboard access; read-only reviewer."
+  },
+  "ownerVerification": {
+    "local": "qa/verification.json",
+    "institutionLinks": "qa/institution-links.json",
+    "deployment": "qa/deployment.json",
+    "liveBrowser": "qa/live-verification.json",
+    "liveAssets": "qa/live-assets.json"
+  },
+  "limits": ["Agencies are listed conceptually, not pinned to verified addresses.", "Brand preference and customer outcomes have not been independently validated."]
+}

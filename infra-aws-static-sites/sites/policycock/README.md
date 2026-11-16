@@ -84,6 +84,8 @@ Terraform state 정본은 `/home/ubuntu/workspace/space/infra-aws-static-sites/t
 
 2026-11-15 Urban Glass 리디자인: 소스 `f3f9e23`의 [정적 배포](https://github.com/shdkej/space/actions/runs/43717886447)가 성공했습니다. 로컬 320/375/414/768/1440px 렌더·기능 테스트와 라이브 375/1440px 렌더·저장/복원·출처 확인을 통과했고, 새 SVG를 포함한 정적 파일 11개의 라이브 바이트가 로컬과 일치했습니다. 실행 결과는 `qa/verification.json`, `qa/live-verification.json`, `qa/live-assets.json`, `qa/deployment.json`에 기록합니다. 도시 모형은 상징적 배경이며 실제 의회 위치나 실시간 정책 상태를 뜻하지 않습니다.
 
+2026-11-16 Blender Institution Atlas: 소스 `eed96c0`의 [정적 배포](https://github.com/shdkej/space/actions/runs/43779796329)에서 `policycock` 잡과 CloudFront 무효화가 성공했습니다. 국회·중앙행정기관 44곳의 한 장면, 검색·필터·정적 링크 대체를 로컬 320–1440px 및 라이브 375/1440px에서 확인했습니다. `dist/` 정적 파일 13개의 라이브 SHA-256이 로컬과 일치하고 옛 `urban-glass.svg`는 제거(403)됐습니다. 기관 링크 44건은 2026-11-16 당시 HTTP 200 및 본문 기관명 일치였습니다. `qa/{verification,live-verification,live-assets,institution-links,deployment}.json`에 증거를 남겼습니다. 이는 공식 기관 정보의 장기적 최신성이나 사용자의 디자인 만족도를 보증하지 않습니다.
+
 ### 복구
 
 후속 화면 변경은 이전의 검증된 커밋에서 이 사이트 `dist/`만 복원하고 새 커밋을 main에 push하여 재배포합니다. 신규 배포의 긴급 비공개 전환은 해당 CloudFront 배포의 비활성화를 검토하며, 다른 사이트나 공유 인프라는 변경하지 않습니다. 초기 Terraform 적용 전 state 백업은 소유 실행 환경에 권한 0600으로 보관했습니다. state 백업을 무조건 되돌리면 실제 AWS 리소스와 어긋나므로, 리소스 제거가 필요하면 해당 모듈의 별도 plan을 검토합니다. 브라우저 메모는 사이트 복구와 별개이며 내보내기로 보관합니다.

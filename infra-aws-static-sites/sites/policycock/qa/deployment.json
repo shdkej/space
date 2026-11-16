@@ -1,14 +1,14 @@
 {
-  "verifiedAt": "2026-11-15T13:14:51.864Z",
+  "verifiedAt": "2026-11-16T09:22:17.764441+09:00",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "f3f9e236f122b3ccb8ddead3e71eaba76397e6ea",
+  "sourceCommit": "eed96c03447db9197aceba93e4b58d0447b3d618",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 43717886447,
-    "url": "https://github.com/shdkej/space/actions/runs/43717886447",
+    "runId": 43779796329,
+    "url": "https://github.com/shdkej/space/actions/runs/43779796329",
     "conclusion": "success",
     "jobs": [
       "detect",
@@ -34,6 +34,7 @@
     "local": "qa/verification.json",
     "browser": "qa/live-verification.json",
     "assetHashes": "qa/live-assets.json",
+    "institutionLinks": "qa/institution-links.json",
     "stateTransfer": "qa/state-transfer.json",
     "visualReview": [
       "375px mobile",
@@ -45,6 +46,7 @@
     "Created only the policycock module in an isolated initial state, then moved its 17 resource/data records into the canonical Space state.",
     "Existing shared-root output values were preserved during state transfer; GitHub Actions resolves resources directly from AWS.",
     "The 2026-11-15 design update deployed the urban-glass asset; 11 static files matched the live origin and 375/1440px live browser checks passed.",
+    "The 2026-11-16 Blender institution atlas update deployed at eed96c0. The policycock deploy job succeeded, local and live browser checks passed, all 13 current dist assets matched live SHA-256, the retired urban-glass asset returned 403, and 44 institution links returned HTTP 200 with matching names.",
     "Policy changes, notifications, accounts and analytics remain outside this static prototype."
   ]
 }

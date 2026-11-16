@@ -1,74 +1,96 @@
 {
-  "verifiedAt": "2026-11-15T13:14:51.864Z",
+  "verifiedAt": "2026-11-16T09:22:17.764441+09:00",
+  "commit": "eed96c03447db9197aceba93e4b58d0447b3d618",
   "status": "passed",
-  "rootMatchesIndex": true,
-  "extensionlessSourcesMatches": true,
+  "checks": {
+    "root": {
+      "status": 200,
+      "matchesLocal": true
+    },
+    "sourcesExtensionless": {
+      "status": 200,
+      "matchesLocal": true
+    }
+  },
+  "removedAssetStatus": 403,
   "files": [
     {
       "path": "app.js",
       "status": 200,
-      "contentType": "text/javascript",
-      "sha256": "701606da6ea5dea63b1e3874ea58daf3fa2861442aabd712b7b7b9307a18c5ef"
+      "sha256": "a343781bef24190a7be98fade43d58ccb3f719321da52bb9300bf9ed5be02e8e",
+      "matchesLocal": true
     },
     {
       "path": "assets/OFL.txt",
       "status": 200,
-      "contentType": "text/plain",
-      "sha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f"
+      "sha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f",
+      "matchesLocal": true
     },
     {
       "path": "assets/PretendardVariable.woff2",
       "status": 200,
-      "contentType": "font/woff2",
-      "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4"
+      "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
+      "matchesLocal": true
     },
     {
       "path": "assets/favicon.svg",
       "status": 200,
-      "contentType": "image/svg+xml",
-      "sha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666"
+      "sha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666",
+      "matchesLocal": true
+    },
+    {
+      "path": "assets/institution-atlas.webp",
+      "status": 200,
+      "sha256": "f03769928d7b07efd69f0c88872d4ef0b7232c0394f11d378ff8a9c7bcc3bf2b",
+      "matchesLocal": true
     },
     {
       "path": "assets/korea.svg",
       "status": 200,
-      "contentType": "image/svg+xml",
-      "sha256": "5cf65df8124a94c94104c798910f7233ab5a6c82e04a25eafd76d50965a9161b"
-    },
-    {
-      "path": "assets/urban-glass.svg",
-      "status": 200,
-      "contentType": "image/svg+xml",
-      "sha256": "118a9ee3769270daddc18ee470a5eefab0ec83a70fef4a8d23a2b7e1f4ff3304"
+      "sha256": "5cf65df8124a94c94104c798910f7233ab5a6c82e04a25eafd76d50965a9161b",
+      "matchesLocal": true
     },
     {
       "path": "data.js",
       "status": 200,
-      "contentType": "text/javascript",
-      "sha256": "4066cf579cf05265f1e9948ddbfdf3828e1af5d3a674431560bddac5042de62f"
+      "sha256": "4066cf579cf05265f1e9948ddbfdf3828e1af5d3a674431560bddac5042de62f",
+      "matchesLocal": true
     },
     {
       "path": "index.html",
       "status": 200,
-      "contentType": "text/html",
-      "sha256": "423a30f200428d10178abf49d3f3f5a4bea3f5d4a67e814128d626a0a9fddef0"
+      "sha256": "ad471341d3db9b44215907aece07d02f1d3b67770a02e03d4a0a9e34e2bad50a",
+      "matchesLocal": true
+    },
+    {
+      "path": "institutions.js",
+      "status": 200,
+      "sha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874",
+      "matchesLocal": true
+    },
+    {
+      "path": "institutions.json",
+      "status": 200,
+      "sha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
+      "matchesLocal": true
     },
     {
       "path": "sources.html",
       "status": 200,
-      "contentType": "text/html",
-      "sha256": "97a06e0f1cf8b7776b31691538b6e7063bfcecf00bbb63d0c6379a2013e2c616"
+      "sha256": "d8ec68b8e68253c6ab1fbf6a40f185f9948ccfb2df2bfc0047125ea088b932c5",
+      "matchesLocal": true
     },
     {
       "path": "sources.js",
       "status": 200,
-      "contentType": "text/javascript",
-      "sha256": "f556b8d15e254c5c02e35d6e9939070d814c603713abed3023405e265413b343"
+      "sha256": "f556b8d15e254c5c02e35d6e9939070d814c603713abed3023405e265413b343",
+      "matchesLocal": true
     },
     {
       "path": "styles.css",
       "status": 200,
-      "contentType": "text/css",
-      "sha256": "6384b8a11c7cc721a64375869d182abfd9b81442e1cd5a47dcb46ed89496239f"
+      "sha256": "293b800825bb36e3267a0b33e9492f8ee41adc280d4575f5c8c00c090c5b12c9",
+      "matchesLocal": true
     }
   ]
 }

@@ -168,6 +168,14 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px horizontal overflow`);
       assert.equal(await page.locator('.person').count(),10);
       assert.equal(await page.locator('.agency-link').count(),44);
+      if(width<=620){
+        const shortcut=page.locator('.site-header nav a[href="#agencies"]');
+        assert.equal(await shortcut.isVisible(),true,`${width}px agency shortcut hidden`);
+        await shortcut.click();
+        assert.equal(await page.evaluate(()=>location.hash),'#agencies');
+        await page.waitForFunction(()=>scrollY>0,null,{timeout:2500});
+        await page.evaluate(()=>{history.replaceState(null,'',location.pathname);scrollTo({top:0,behavior:'instant'})});
+      }
       const overlaps=await page.evaluate(()=>{
         const list=[...document.querySelectorAll('.person')].map(n=>n.getBoundingClientRect());
         return list.some((a,i)=>list.slice(i+1).some(b=>Math.min(a.right,b.right)-Math.max(a.left,b.left)>3&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>3));

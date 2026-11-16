@@ -85,6 +85,13 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px overflow`);
       assert.equal(await page.locator('.person').count(),10);
       assert.equal(await page.locator('.agency-link').count(),44);
+      if(width<=375){
+        const shortcut=page.locator('.site-header nav a[href="#agencies"]');
+        assert.equal(await shortcut.isVisible(),true);
+        await shortcut.click();
+        assert.equal(await page.evaluate(()=>location.hash),'#agencies');
+        await page.evaluate(()=>{history.replaceState(null,'',location.pathname);scrollTo({top:0,behavior:'instant'})});
+      }
       await page.locator('[data-policy=lee]').click();
       assert.equal(await page.locator('#policy-dialog').evaluate(n=>n.open),true);
       await page.keyboard.press('Escape');

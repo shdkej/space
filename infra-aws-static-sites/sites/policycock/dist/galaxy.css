@@ -8,6 +8,9 @@
   --galaxy-muted:#d2d5e5;
   --galaxy-line:#b7c5ed;
   --galaxy-focus:#f4e1aa;
+  --camp-rule:rgba(183,197,237,.65);
+  --camp-divider:rgba(183,197,237,.34);
+  --camp-conservative:#dbcae2;
   --outline-paper:#f3f2ed;
   --outline-sheet:#fbfaf7;
   --outline-ink:#17213d;
@@ -269,4 +272,39 @@ html,body{overflow-x:clip}
 }
 @media(min-width:1101px) and (max-width:1320px){
   .government-outline .agency-group[data-kind="부"],.government-outline .agency-group[data-kind="청"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Two horizontal political fields. Each dot belongs only to its own case;
+   the stagger is a reading rhythm, not a regular card grid or a relationship. */
+.galaxy-canvas{height:auto;min-height:0;padding:128px clamp(20px,3.5vw,52px) var(--space-chart)}
+.galaxy-canvas .policy-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,3vw,52px);padding-top:0}
+.galaxy-canvas .people-column{display:block;min-width:0;max-width:none;position:relative;grid-row:auto;grid-column:auto}
+.galaxy-canvas .conservative-column{border-left:1px solid var(--camp-divider);padding-left:clamp(12px,1.5vw,24px)}
+.galaxy-canvas .camp-heading{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;border-top:1px solid var(--camp-rule);padding:12px 4px 16px;margin:0;color:var(--galaxy-ink);font-size:clamp(19px,2vw,27px);letter-spacing:-.04em}
+.galaxy-canvas .camp-heading span{font-size:11px;letter-spacing:0;font-weight:500;color:var(--galaxy-muted)}
+.galaxy-canvas .conservative-column .camp-heading{border-color:var(--camp-conservative)}
+.galaxy-canvas .people-list{display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(112px,auto);gap:12px;margin:0}
+.galaxy-hero .person,.galaxy-hero .person:nth-child(even){position:relative;top:auto!important;left:auto!important;width:min(234px,calc(100% - max(48px,32%)));min-height:112px;margin:0;max-width:none}
+.galaxy-hero .person:nth-child(1){margin-left:max(48px,11%)}
+.galaxy-hero .person:nth-child(2){margin-left:max(48px,27%)}
+.galaxy-hero .person:nth-child(3){margin-left:max(48px,17%)}
+.galaxy-hero .person:nth-child(4){margin-left:max(48px,31%)}
+.galaxy-hero .person:nth-child(5){margin-left:max(48px,13%)}
+.galaxy-note{position:static;max-width:none;margin:16px 0 0;font-size:11px}
+@media(max-width:900px){
+  .galaxy-canvas{padding-top:164px}
+  .galaxy-canvas .filters{top:92px}
+}
+@media(max-width:700px){
+  .galaxy-canvas{padding:160px 16px var(--space-chart)}
+  .galaxy-canvas .policy-columns{grid-template-columns:minmax(0,1fr);gap:28px}
+  .galaxy-canvas .conservative-column{border-left:0;padding-left:0}
+  .galaxy-canvas .conservative-column .people-list{margin-top:0}
+  .galaxy-canvas .people-list{gap:12px}
+  .galaxy-hero .person,.galaxy-hero .person:nth-child(even){width:min(270px,calc(100% - max(72px,33%)));min-height:112px;margin-right:0}
+  .galaxy-hero .person:nth-child(1){margin-left:48px}
+  .galaxy-hero .person:nth-child(2){margin-left:64px}
+  .galaxy-hero .person:nth-child(3){margin-left:52px}
+  .galaxy-hero .person:nth-child(4){margin-left:68px}
+  .galaxy-hero .person:nth-child(5){margin-left:56px}
 }

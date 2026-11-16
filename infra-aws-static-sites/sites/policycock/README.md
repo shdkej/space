@@ -1,10 +1,10 @@
 # 모두의정책 정책 지도
 
-내 삶과 연결된 정책을 찾기 어렵고, 발표 뒤의 변화를 지속해서 확인하기 어려운 문제를 위한 정적 랜딩 시제품입니다. 국회·17개 광역의회와 정치인 10명의 정책 사례를 탐색하고 관심 정책·메모를 브라우저에 남깁니다.
+내 삶과 연결된 정책을 찾기 어렵고, 발표 뒤의 변화를 지속해서 확인하기 어려운 문제를 위한 정적 랜딩 시제품입니다. 국회·중앙행정기관의 공식 정보와 정치인 10명의 정책 사례를 탐색하고 관심 정책·메모를 브라우저에 남깁니다.
 
 ## 제공 범위
 
-- SVG 입체 한국 지도와 국회 일러스트, 국회·17개 광역의회 공식 링크
+- Blender 5.3으로 렌더한 단일 한국 입체 지형·국회 모형, 국회 링크와 중앙행정기관 **44곳(19부·6처·19청)**의 공식 정보. 별도의 국회·17개 광역의회 참고 링크는 유지
 - 민주당 계열 5명·보수 계열 5명의 역사적 정책 사례, 동일한 정보 밀도와 크기
 - 발표 당시 소속·연도·공약/발의/시행 구분, 원문·뉴스·관련 법령 검색
 - 내 활성 지도: 정책 저장/삭제, 카테고리별 모음, 240자 관심 이유, JSON 내보내기
@@ -24,21 +24,27 @@ npm start
 런타임 의존성은 없습니다. Python 3는 로컬 서버에 사용합니다. HTML/CSS/JS를 직접 편집하므로 빌드 단계도 없습니다.
 
 - `dist/index.html`, `styles.css`, `app.js`: 화면과 인터랙션
-- `dist/data.js`: 10개 정책 사례 및 의회 공식 링크
+- `dist/data.js`: 10개 정책 사례 및 의회 참고 링크
+- `dist/institutions.js`, `institutions.json`: 2026-11-16 중앙행정기관 스냅샷(검색·유형 필터, 출처·확인일 표기)
 - `dist/sources.html`, `sources.js`: 방문자용 자료 출처
 - `dist/assets/`: 자체 호스팅 글꼴·지도·아이콘
-- `dist/assets/urban-glass.svg`: 도시 건축 모형과 유리 조형물의 장식용 SVG. 실제 정책 위치·현황을 나타내지 않음
-- `scripts/render-hero-art.py`: 장식 SVG를 재생성하는 결정적 Python 스크립트 (표준 라이브러리만 사용)
-- `scripts/map-svg.py`: 출처 GeoJSON에서 지도 SVG 생성. 재생성한 SVG는 index.html에도 반영해야 함
+- `dist/assets/institution-atlas.webp`: Blender 입체 지형의 60KB 내외 웹 렌더. 이전 `urban-glass.svg`는 배포에서 제거
+- `scripts/render-institution-atlas.py`, `scripts/institution-atlas.blend`: Blender 장면의 재현 가능한 스크립트와 편집 가능 장면
+- `scripts/convert-atlas.py`: Blender가 만든 `scripts/institution-atlas.png`를 Pillow로 최적화한 웹 자산으로 변환
+- `scripts/sync-institutions.py`: 정부 기구도 목록을 수동 확인해 JSON·JS와 `index.html`의 무스크립트용 44개 공식 링크를 함께 갱신. 목록·분류가 바뀌면 자동 실패하여 검토 요구
+- `scripts/verify-institution-links.py`, `qa/institution-links.json`: 기관 링크 44개의 HTTP 응답 및 본문 기관명 확인 기록
+- `scripts/map-svg.py`: Blender 지형 입력인 `assets/korea.svg`의 기존 SVG 생성기
 - `scripts/verify-browser.cjs`, `qa/verification.json`: 재현 가능한 검증과 결과
 
-첫 화면은 남색·라일락 유리 오브젝트와 백색 도시 모형으로 정책의 탐색 경험을 소개하고, 실제 의회 핀과 정책 사례는 아래의 별도 한국 지도에서 제공합니다. 시각 토큰·반응형·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요. 도시 이미지는 설명용 장식으로서 사실 지도가 아닙니다.
+첫 화면에서 남색·라일락 조명의 3D 한국 지형과 백색 기관 디렉터리를 한 프레임에 제공합니다. 기관별 실제 위치를 표시한 지도는 아니며, 국회 건축 모형은 강조를 위해 확대했습니다. 시각·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
+
+그래픽을 다시 만들 때는 설치된 Blender 5.3으로 `scripts/render-institution-atlas.py`를 백그라운드 실행한 뒤, `python3 scripts/convert-atlas.py`를 실행합니다(Pillow 필요). Windows Blender를 WSL에서 호출한다면 `blender.exe --background --factory-startup --python "$(wslpath -w scripts/render-institution-atlas.py)"` 형태를 사용합니다. PNG와 Blender의 `.blend1` 백업은 Git에서 제외하며, `.blend`와 WebP만 추적합니다.
 
 ## 데이터·외부 의존성
 
 정책 자료 확인일은 2026-11-14입니다. `data.js`의 정당·연도·단계는 발표 당시 자료를 의미하며 현재 당적, 직함, 정책 적용 조건을 나타내지 않습니다. 법령 링크는 검색 진입점입니다. 김경수 회의록과 나경원 국회 법안은 웹 조사 당시 원문 직접 열람 실패를 상세에 표시했습니다. 유승민 자료는 발표 보도이며 공식 원문으로 표기하지 않습니다.
 
-지도는 southkorea/southkorea-maps의 KOSTAT 2013 단순화 행정경계를 가공했습니다. 현재 행정구역·선거구·정당별 지지도가 아닌 지리적 개략 표현입니다. 의회 좌표도 위치 안내용입니다. 상세 출처는 `dist/sources.html`에 있습니다. Pretendard v1.3.9는 SIL OFL 1.1이며 라이선스를 자산에 동봉했습니다. 사진은 사용하지 않고 인물 이름 배지를 동일 크기로 제공합니다.
+지형은 southkorea/southkorea-maps의 KOSTAT 2013 단순화 행정경계를 Blender 장면으로 가공했습니다. 현재 행정구역·선거구·실제 기관 주소를 뜻하지 않는 개략 표현입니다. 중앙행정기관 명단은 정부조직관리시스템의 기관별 기구도 49개 항목 중 부·처·청을 가져오되, 옛 대검찰청을 제외하고 공식 사이트가 확인된 공소청·중대범죄수사청을 반영해 44곳으로 정리했습니다. 위원회 6곳은 사용자가 확정한 범위 밖입니다. 2026-11-16 확인 기준이며 자동 갱신되지 않습니다. Pretendard v1.3.9는 SIL OFL 1.1이며 라이선스를 자산에 동봉했습니다. 사진은 사용하지 않고 인물 이름 배지를 동일 크기로 제공합니다.
 
 저장 키는 `modu-policy-map-v1`이며 `{정책ID: {note: 문자열}}`만 localStorage에 둡니다. 자동 외부 요청은 없고, 외부 사이트는 링크 클릭 때 열립니다. 내보내기 파일에는 저장 정책, 원문 URL, 관심 메모와 내보낸 시각이 포함됩니다.
 
@@ -48,9 +54,10 @@ npm start
 npm ci
 npm run check
 CHROME_PATH=/opt/google/chrome/chrome npm test
+python3 scripts/verify-institution-links.py
 ```
 
-`npm test`는 지도 영역을 뷰포트에 스크롤한 뒤 핀이 가려지지 않는지도 확인하고 `qa/viewport-*.png`를 생성합니다. 런타임 브라우저 라이브러리가 없는 환경에서는 설치된 Chromium에 필요한 시스템 라이브러리와 `CHROME_PATH`를 별도로 제공해야 합니다.
+`npm test`는 44개 기관명·URL 전수 일치, 검색·필터·스크린리더 결과 알림, JavaScript/이미지 로드 실패 시 공식 링크 대체, 모바일 목록의 마지막 항목까지 키보드 접근, 기존 저장·정책 기능, 320–1440px 렌더를 확인하고 `qa/viewport-*.png`를 생성합니다. Chromium에 필요한 시스템 라이브러리와 `CHROME_PATH`가 필요합니다.
 
 Node.js 26, Playwright Core 1.65.1, 로컬 Chrome으로 검증했습니다. 테스트가 4187 포트에 임시 HTTP 서버를 띄우고 종료합니다. 브라우저는 설치된 Chrome을 사용하며 다른 환경에서는 `CHROME_PATH`를 지정합니다.
 
@@ -85,6 +92,6 @@ Terraform state 정본은 `/home/ubuntu/workspace/space/infra-aws-static-sites/t
 
 제품 방향·1/2차 고객 검증·3분 IR·수익 실험은 `/home/ubuntu/workspace/projects/policycock/docs/policy-map-plan.md`가 소유합니다. 원래 사업계획은 Knowledge Lab의 `source/openclaw-system/data/policycock-brief.md`에 보존합니다.
 
-광역의회만 연결하며 기초의회 전체를 수집하지 않습니다. 링크된 기관의 장애·차단·페이지 변경은 별도이며, 이 시제품은 외부 링크의 지속 가용성이나 법령의 현재 효력을 보증하지 않습니다. 저장은 브라우저·출처별로 분리되고, 다른 기기와 동기화되지 않습니다.
+국회와 부·처·청을 첫 장면에 표시하고, 광역의회는 아래 참고 링크에 유지합니다. 기초의회 전체와 6개 중앙행정위원회는 포함하지 않습니다. 링크된 기관의 장애·차단·페이지 변경은 별도이며, 이 시제품은 외부 링크의 지속 가용성이나 법령의 현재 효력을 보증하지 않습니다. 저장은 브라우저·출처별로 분리되고, 다른 기기와 동기화되지 않습니다.
 
 외부 링크 검사: 38개 중 34개 HTTP 2xx. 충남은 응답 본문에서 웹방화벽 차단을 확인했고, 국회는 400, 현행 전북 의회는 416, 시도지사협의회 PDF는 timeout으로 남았습니다. 전체 결과는 `qa/links.json`입니다. HTTP 성공은 본문 정확성이나 최신 정책 효력 검증과 다릅니다.

@@ -1,0 +1,275 @@
+{
+  "checkedAt": "2026-11-16",
+  "source": "https://www.org.go.kr/cop/bbs/getInstiChartList.do",
+  "sourceEntries": 49,
+  "excludedCommissions": 6,
+  "registryCorrection": "Legacy 대검찰청 removed; 공소청 and 중대범죄수사청 linked to their official sites.",
+  "institutions": [
+    {
+      "id": "1053000",
+      "name": "재정경제부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1053000&chartId=63"
+    },
+    {
+      "id": "1050050",
+      "name": "기획예산처",
+      "kind": "처",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1050050&chartId=62"
+    },
+    {
+      "id": "1342000",
+      "name": "교육부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1342000&chartId=61"
+    },
+    {
+      "id": "1721000",
+      "name": "과학기술정보통신부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1721000&chartId=60"
+    },
+    {
+      "id": "1262000",
+      "name": "외교부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1262000&chartId=59"
+    },
+    {
+      "id": "1250000",
+      "name": "통일부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1250000&chartId=58"
+    },
+    {
+      "id": "1270000",
+      "name": "법무부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1270000&chartId=57"
+    },
+    {
+      "id": "1290000",
+      "name": "국방부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1290000&chartId=56"
+    },
+    {
+      "id": "1741000",
+      "name": "행정안전부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1741000&chartId=55"
+    },
+    {
+      "id": "1830000",
+      "name": "국가보훈부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1830000&chartId=54"
+    },
+    {
+      "id": "1371000",
+      "name": "문화체육관광부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1371000&chartId=53"
+    },
+    {
+      "id": "1543000",
+      "name": "농림축산식품부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1543000&chartId=52"
+    },
+    {
+      "id": "1451000",
+      "name": "산업통상부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1451000&chartId=51"
+    },
+    {
+      "id": "1352000",
+      "name": "보건복지부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1352000&chartId=50"
+    },
+    {
+      "id": "1482000",
+      "name": "기후에너지환경부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1482000&chartId=49"
+    },
+    {
+      "id": "1492000",
+      "name": "고용노동부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1492000&chartId=48"
+    },
+    {
+      "id": "1384000",
+      "name": "성평등가족부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1384000&chartId=47"
+    },
+    {
+      "id": "1613000",
+      "name": "국토교통부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1613000&chartId=46"
+    },
+    {
+      "id": "1192000",
+      "name": "해양수산부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1192000&chartId=45"
+    },
+    {
+      "id": "1421000",
+      "name": "중소벤처기업부",
+      "kind": "부",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1421000&chartId=44"
+    },
+    {
+      "id": "1760000",
+      "name": "인사혁신처",
+      "kind": "처",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1760000&chartId=43"
+    },
+    {
+      "id": "1170000",
+      "name": "법제처",
+      "kind": "처",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1170000&chartId=42"
+    },
+    {
+      "id": "1471000",
+      "name": "식품의약품안전처",
+      "kind": "처",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1471000&chartId=41"
+    },
+    {
+      "id": "1210000",
+      "name": "국세청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1210000&chartId=40"
+    },
+    {
+      "id": "1220000",
+      "name": "관세청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1220000&chartId=39"
+    },
+    {
+      "id": "1230000",
+      "name": "조달청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1230000&chartId=38"
+    },
+    {
+      "id": "1241000",
+      "name": "국가데이터처",
+      "kind": "처",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1241000&chartId=37"
+    },
+    {
+      "id": "1834100",
+      "name": "우주항공청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1834100&chartId=36"
+    },
+    {
+      "id": "1832000",
+      "name": "재외동포청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1832000&chartId=35"
+    },
+    {
+      "id": "1300000",
+      "name": "병무청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1300000&chartId=33"
+    },
+    {
+      "id": "1690000",
+      "name": "방위사업청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1690000&chartId=32"
+    },
+    {
+      "id": "1320000",
+      "name": "경찰청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1320000&chartId=31"
+    },
+    {
+      "id": "1661000",
+      "name": "소방청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1661000&chartId=30"
+    },
+    {
+      "id": "1833100",
+      "name": "국가유산청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1833100&chartId=29"
+    },
+    {
+      "id": "1390000",
+      "name": "농촌진흥청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1390000&chartId=28"
+    },
+    {
+      "id": "1400000",
+      "name": "산림청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1400000&chartId=27"
+    },
+    {
+      "id": "1431000",
+      "name": "지식재산처",
+      "kind": "처",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1431000&chartId=26"
+    },
+    {
+      "id": "1790387",
+      "name": "질병관리청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1790387&chartId=25"
+    },
+    {
+      "id": "1360000",
+      "name": "기상청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1360000&chartId=24"
+    },
+    {
+      "id": "1670000",
+      "name": "행정중심복합도시건설청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1670000&chartId=23"
+    },
+    {
+      "id": "1730000",
+      "name": "새만금개발청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1730000&chartId=22"
+    },
+    {
+      "id": "1532000",
+      "name": "해양경찰청",
+      "kind": "청",
+      "url": "https://www.org.go.kr/cop/bbs/getInstiChartDetail.do?codeNum=%EC%A4%91%EC%95%99%ED%96%89%EC%A0%95%EA%B8%B0%EA%B4%80&orgCode=1532000&chartId=21"
+    },
+    {
+      "id": "official:spo",
+      "name": "공소청",
+      "kind": "청",
+      "linkKind": "official-site",
+      "url": "https://www.spo.go.kr/site/spo/main.do"
+    },
+    {
+      "id": "official:sci",
+      "name": "중대범죄수사청",
+      "kind": "청",
+      "linkKind": "official-site",
+      "url": "https://www.sci.go.kr/main.do"
+    }
+  ]
+}

@@ -3,3 +3,5 @@ node_modules/
 .env*
 .openai/source-state.json
 qa/*.png
+scripts/institution-atlas.png
+scripts/institution-atlas.blend1

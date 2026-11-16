@@ -140,6 +140,7 @@ function App() {
   const outputs = live?.outputs || []; const monitoring = live?.monitoring || {};
   const monitoringRows = [
     { name: "서비스 접점", state: checks.length && checks.every((item) => item.state === "ok") ? "ok" : "warn", detail: `${checks.filter((item) => item.state === "ok").length}/${checks.length || 0}개 응답 정상 · 평균 지연 ${checks.length ? Math.round(checks.reduce((sum, item) => sum + (item.latencyMs || 0), 0) / checks.length) : "—"}ms` },
+    { name: "에이전트 지표 지도", state: "none", detail: "로그인 후 4층 지표·실측 데이터 확인", url: "https://metrics.oracle.shdkej.com/" },
     { name: "PostHog 제품 지표", state: monitoringState(monitoring.posthog?.state), detail: `활성 사용자 1일 ${metricValue(monitoring.posthog?.metrics?.product_active_users, "1d")}명 · 7일 조회 ${metricValue(monitoring.posthog?.metrics?.product_page_views, "7d")}회 · 전환 ${metricValue(monitoring.posthog?.metrics?.product_conversion_rate)}%` },
     { name: "비즈니스 지표", state: monitoringState(monitoring.business?.state), detail: monitoring.business?.metrics && Object.values(monitoring.business.metrics).some((items) => items?.length) ? "DAU·가입·매출 수집 중" : "DAU·가입·매출 데이터 없음" },
     { name: "콘텐츠 지표", state: monitoringState(monitoring.content?.state), detail: monitoring.content?.availability === "missing" ? "연결된 콘텐츠 원천 없음" : "콘텐츠 원천 연결됨" },

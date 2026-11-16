@@ -1,15 +1,21 @@
 {
-  "verifiedAt": "2026-11-16T09:53:40.578661+09:00",
-  "commit": "e1316dcfce33138b724e3a7bc380b47eeb2c46dd",
+  "verifiedAt": "2026-11-16T10:35:46.378912+09:00",
+  "commit": "5a00819a51cdd6627b08dbbad94fade651c83043",
   "status": "passed",
   "checks": {
     "root": {
+      "path": "root",
       "status": 200,
-      "matchesLocal": true
+      "sha256": "68bab6666fcea7582ca3b4028e3f6a4e422aae22970eb28e6386797eda4c74d4",
+      "matchesLocal": true,
+      "contentType": "text/html"
     },
     "sourcesExtensionless": {
+      "path": "sourcesExtensionless",
       "status": 200,
-      "matchesLocal": true
+      "sha256": "65f45cd93fa3fbc14f9e92cf46eeadb8d4febbba819cf80adb2e2c4eb609e767",
+      "matchesLocal": true,
+      "contentType": "text/html"
     }
   },
   "files": [
@@ -17,79 +23,106 @@
       "path": "app.js",
       "status": 200,
       "sha256": "dd0ce4137616228af56db065d15e641dc8e7fcb9843f42426ce8b85c0a8c2e49",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "text/javascript"
     },
     {
       "path": "assets/OFL.txt",
       "status": 200,
       "sha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "text/plain"
     },
     {
       "path": "assets/PretendardVariable.woff2",
       "status": 200,
       "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "font/woff2"
     },
     {
       "path": "assets/favicon.svg",
       "status": 200,
       "sha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "image/svg+xml"
     },
     {
       "path": "assets/institution-atlas.webp",
       "status": 200,
       "sha256": "f03769928d7b07efd69f0c88872d4ef0b7232c0394f11d378ff8a9c7bcc3bf2b",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "image/webp"
     },
     {
       "path": "assets/korea.svg",
       "status": 200,
       "sha256": "5cf65df8124a94c94104c798910f7233ab5a6c82e04a25eafd76d50965a9161b",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "image/svg+xml"
+    },
+    {
+      "path": "assets/policy-diagram-mobile.webp",
+      "status": 200,
+      "sha256": "1bc34786264a66efadfcf6de57f841449d69d5d257fae2539598c2f1b03637f1",
+      "matchesLocal": true,
+      "contentType": "image/webp"
+    },
+    {
+      "path": "assets/policy-diagram.webp",
+      "status": 200,
+      "sha256": "32132bf631b15ee2f0bed6cbfd25d39259cfb8440b2f3e267e445fb6e72164ee",
+      "matchesLocal": true,
+      "contentType": "image/webp"
     },
     {
       "path": "data.js",
       "status": 200,
       "sha256": "4066cf579cf05265f1e9948ddbfdf3828e1af5d3a674431560bddac5042de62f",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "text/javascript"
     },
     {
       "path": "index.html",
       "status": 200,
-      "sha256": "e1f31767d61f781a8b01b888d6a86dacb395de2c893c46bd1bde263501d9bd7a",
-      "matchesLocal": true
+      "sha256": "68bab6666fcea7582ca3b4028e3f6a4e422aae22970eb28e6386797eda4c74d4",
+      "matchesLocal": true,
+      "contentType": "text/html"
     },
     {
       "path": "institutions.js",
       "status": 200,
       "sha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "text/javascript"
     },
     {
       "path": "institutions.json",
       "status": 200,
       "sha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "application/json"
     },
     {
       "path": "sources.html",
       "status": 200,
       "sha256": "65f45cd93fa3fbc14f9e92cf46eeadb8d4febbba819cf80adb2e2c4eb609e767",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "text/html"
     },
     {
       "path": "sources.js",
       "status": 200,
       "sha256": "f556b8d15e254c5c02e35d6e9939070d814c603713abed3023405e265413b343",
-      "matchesLocal": true
+      "matchesLocal": true,
+      "contentType": "text/javascript"
     },
     {
       "path": "styles.css",
       "status": 200,
-      "sha256": "93c73e72ec15998ccc6a416a10ef8fd4bc9f666dbee28c5969d83af1c62e0e01",
-      "matchesLocal": true
+      "sha256": "a540122d038d1f06bfd5ca4c75942d61d6de1e567cfc57b9f3bcda8f13e7897e",
+      "matchesLocal": true,
+      "contentType": "text/css"
     }
   ]
 }

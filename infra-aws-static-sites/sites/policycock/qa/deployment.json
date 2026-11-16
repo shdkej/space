@@ -1,18 +1,18 @@
 {
-  "verifiedAt": "2026-11-16T10:04:39+00:00",
+  "verifiedAt": "2026-11-16T11:51:17.417538+00:00",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "2b5cac930f6af4d474472faca7d9c1845b4ecd1f",
+  "sourceCommit": "188a2553029e4e2dca816384a19fd9127d060571",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 43845272094,
-    "url": "https://github.com/shdkej/space/actions/runs/43845272094",
+    "runId": 43860956016,
+    "url": "https://github.com/shdkej/space/actions/runs/43860956016",
     "conclusion": "success",
     "jobs": [
       "detect",
-      "deploy policycock"
+      "deploy (policycock)"
     ]
   },
   "infrastructure": {
@@ -34,15 +34,18 @@
     "local": "qa/verification.json",
     "browser": "qa/live-verification.json",
     "assetHashes": "qa/live-assets.json",
-    "localChecks": 48,
-    "liveChecks": 12,
-    "matchedDistFiles": 17,
-    "additionalMatchedRoutes": ["/", "/sources"],
+    "localChecks": 20,
+    "liveChecks": 7,
+    "matchedDistFiles": 13,
+    "additionalMatchedRoutes": [
+      "/",
+      "/sources"
+    ],
     "institutionLinks": "qa/institution-links.json",
     "stateTransfer": "qa/state-transfer.json",
     "visualReview": [
-      "375px mobile",
-      "1440px desktop"
+      "1440×900 live desktop",
+      "375×667 live last agency"
     ]
   },
   "notes": [
@@ -57,6 +60,13 @@
     "The 2026-11-16 skill-guided redesign deployed from 90d96de301c7f5c193b2088577f567c41d8c12f2 in run 43815041302. The policycock deploy job and CloudFront invalidation succeeded. Local 43 browser checks including twelve widths and live 11 checks passed. All 17 tracked dist files plus root and extensionless sources matched live bytes. The owner inspected live 375/1440px captures. Independent visual Red and final code reviewers passed the corrected tree; the latter could not start its own Chromium, so the owner ran the browser checks. Strict Hallmark lint remains at 423 FAIL/305 REFLEX (baseline 410/280), and OMD's missing DESIGN.md token charter and the existing large font are not represented as clean QA. User aesthetic acceptance and current policy effects remain unverified.",
     "The 2026-11-16 horizontal outline update deployed from f7d09d797e3359dc154faecb84aac2257560fbec in run 43840258584. The policycock S3 sync and CloudFront invalidation both succeeded. Local 48 checks at sixteen widths and live 12 checks passed, including exact 1440px five-category horizontal alignment and 3/1/3 agency columns. All 17 dist files and root and extensionless sources matched live bytes. The owner inspected live 375/1440px captures and an independent final read-only reviewer passed the source and local captures. Strict Hallmark rendered at 423 FAIL/305 REFLEX, with no newly added normalized findings relative to the prior build; this is not a lint pass. User visual satisfaction and current policy effectiveness are not established.",
     "The 2026-11-16 horizontal hero update deployed from 2b5cac930f6af4d474472faca7d9c1845b4ecd1f in run 43845272094. The policycock S3 sync and CloudFront invalidation succeeded. Democratic-affiliated cases are on the left and conservative-affiliated cases on the right at 701px and wider; narrow screens present the two groups in DOM order. Local 48 checks at sixteen widths cover all ten target centers per width and no label overlap; live 12 checks passed. All 17 dist files and root and extensionless sources matched live bytes. The owner inspected 375/1440px live captures and an independent read-only Red reviewer passed the local source and screenshots. Strict Hallmark remains unresolved at 418 FAIL/297 REFLEX; its render tier could not start without puppeteer-core. These technical checks do not establish user aesthetic acceptance, political representativeness or current policy effects.",
-    "Policy changes, notifications, accounts and analytics remain outside this static prototype."
-  ]
+    "Policy changes, notifications, accounts and analytics remain outside this static prototype.",
+    "The 2026-11-16 Civic Ledger redesign deployed from 188a2553029e4e2dca816384a19fd9127d060571 in run 43860956016. S3 sync and CloudFront invalidation succeeded. Local 20 grouped browser checks and live 7 checks passed, including all 10 cases and 44 agencies, mobile last-agency keyboard route and no-JS fallback. All 13 dist files plus / and /sources matched live bytes. Six obsolete galaxy/atlas assets returned 403. Independent final Red approved the corrected local design conditionally; the owner separately verified the live UI. Final user aesthetic preference and current policy effectiveness remain unverified."
+  ],
+  "review": {
+    "independent": "deleg_cf1df8b9: Planner, Developer, Marketer, Operator, Designer completed",
+    "crossReview": "deleg_c972d3f6: Planner, Developer, Marketer, Operator, Red completed; small targets, hidden National Assembly link, mobile last agency, stale live verification addressed",
+    "finalRed": "deleg_4d464b2c: local design conditionally approved; public verification pending at review time, now owner verified with live browser and asset hashes",
+    "ownerDecision": "Separate policy cases and central agencies; no unsupported responsibility links; retain searchable details and static source links."
+  }
 }

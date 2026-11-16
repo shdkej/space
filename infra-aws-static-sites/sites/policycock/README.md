@@ -59,6 +59,7 @@ npm ci
 npm run check
 BROWSER_CDP=http://localhost:9222 npm test # Windows Edge/CDP 등 기존 브라우저 이용 시
 # 또는 CHROME_PATH=/path/to/chrome npm test
+BROWSER_CDP=http://localhost:9222 node scripts/verify-live.cjs # 배포 후 공개 도메인 검증
 python3 scripts/verify-institution-links.py
 ```
 
@@ -102,6 +103,8 @@ Terraform state 정본은 `/home/ubuntu/workspace/space/infra-aws-static-sites/t
 2026-11-16 가로형 제도 개략도: 소스 `f7d09d7`의 정적 배포 run `43840258584`에서 `policycock` S3 배포·CloudFront 무효화가 성공했습니다. 데스크톱의 국민·헌법과 입법·행정·사법은 가로 한 줄에서 시각적으로 구분되고, 기관 44곳은 아래 3·1·3열로 펼쳐집니다. 모바일은 세 갈래 다음에 읽기 쉬운 한 열 명단을 유지합니다. 로컬 **48개**(16개 화면 폭), 라이브 **12개** 검사와 `dist/` **17개 파일** 및 루트·확장자 없는 출처 경로의 바이트 일치를 확인하고 375/1440px 라이브 화면을 직접 살폈습니다. 독립 최종 검토는 로컬 코드·화면을 PASS로 판정했으며, Hallmark 엄격 검사는 이전과 동일한 **423 FAIL/305 REFLEX**로 여전히 미해결입니다. 증거는 `qa/{verification,live-verification,live-assets,deployment,review}.json`에 있습니다.
 
 2026-11-16 가로형 정책 히어로: 소스 `2b5cac9`의 정적 배포 run `43845272094`에서 `policycock` S3 배포·CloudFront 무효화가 성공했습니다. 701px 이상에서 왼쪽 민주당 계열 5건·오른쪽 보수 계열 5건으로 나뉘며, 좁은 화면은 민주당 다음 보수 계열을 읽습니다. 화면 분류는 발표 당시 소속 계열을 위한 탐색 배치이지 정책 이념이나 현재 당적의 판정이 아닙니다. 로컬 **48개**(16개 폭, 정책 10건 각각의 클릭 중심)와 라이브 **12개** 검사를 통과하고 `dist/` **17개 파일** 및 `/`, `/sources` 바이트 일치를 확인했습니다. 독립 Red 검토 PASS 뒤 지적된 클릭 검사 범위를 10건 전부로 확대·재실행했으며, 375/1440px 라이브 화면을 직접 확인했습니다. Hallmark 엄격 검사 **418 FAIL/297 REFLEX**는 여전히 미해결이고 렌더 티어는 `puppeteer-core` 부재로 실행되지 않았습니다. 증거는 `qa/{verification,live-verification,live-assets,deployment,review}.json`입니다.
+
+2026-11-16 Civic Ledger 전면 재구성: 소스 `188a2553029e4e2dca816384a19fd9127d060571`의 배포 run `43860956016`에서 `policycock` S3 동기화와 CloudFront 무효화가 성공했습니다. OpenPencil 편집 원본과 Blender 재현 소스·장식을 포함하며, 과거 은하수·지형의 공개 에셋 여섯 개는 제거했습니다. 로컬 **20개 검사 묶음**과 라이브 **7개 묶음**을 통과했고 정책 10건·기관 44곳의 상세·출처, 모바일 마지막 기관의 키보드 접근, 무스크립트 경로를 확인했습니다. 13개 `dist/` 파일 및 `/`, `/sources`의 라이브 바이트가 일치하며 제거 파일 6개는 403입니다. 독립 Red의 수정 후 로컬 조건부 승인과 오너의 라이브 화면 검증은 별개입니다. `qa/{verification,live-verification,live-assets,deployment}.json`을 근거로 보되, 고객의 미적 만족과 정책의 현재 효력은 미확인입니다.
 
 ### 복구
 

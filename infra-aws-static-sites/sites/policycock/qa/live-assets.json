@@ -1,19 +1,19 @@
 {
-  "verifiedAt": "2026-11-16T10:06:44.069385+00:00",
-  "commit": "2b5cac930f6af4d474472faca7d9c1845b4ecd1f",
+  "verifiedAt": "2026-11-16T11:50:03.702395+00:00",
+  "commit": "188a2553029e4e2dca816384a19fd9127d060571",
   "status": "passed",
   "checks": {
     "root": {
       "path": "/",
       "status": 200,
-      "sha256": "856c381ee160bbad6d64d81ea29b01930bafea593d30667f4bf8889fdd8253c9",
+      "sha256": "64b7e13a03fb39700765f627440383b43ed6b2b742ddc978ed707b9953e201f1",
       "matchesLocal": true,
       "contentType": "text/html"
     },
     "sourcesExtensionless": {
       "path": "/sources",
       "status": 200,
-      "sha256": "65f45cd93fa3fbc14f9e92cf46eeadb8d4febbba819cf80adb2e2c4eb609e767",
+      "sha256": "f044e5825f7d16612823c90b55142a7687a3ffd5d1bab82c5de485bf99400bb4",
       "matchesLocal": true,
       "contentType": "text/html"
     }
@@ -23,7 +23,7 @@
       "file": "app.js",
       "path": "/app.js",
       "status": 200,
-      "sha256": "53cf457ba3399a6b1ff9c8f156bd5aa9259ba99ec8530561cb305a66b50db58f",
+      "sha256": "12c98315f7435ad1541d9b3c275fc45ce737e4843393dab50939a65d8dd75d36",
       "matchesLocal": true,
       "contentType": "text/javascript"
     },
@@ -52,44 +52,12 @@
       "contentType": "image/svg+xml"
     },
     {
-      "file": "assets/galaxy.webp",
-      "path": "/assets/galaxy.webp",
+      "file": "assets/ledger-relief.png",
+      "path": "/assets/ledger-relief.png",
       "status": 200,
-      "sha256": "a38d22ca8784067fb5d874edffaaf0c769edad015eda2ae2e2dfaa19b9c7c897",
+      "sha256": "b57a44e98be98fac59360f0fb8c778b29e3e4354a1489c4554a3365f778f489a",
       "matchesLocal": true,
-      "contentType": "image/webp"
-    },
-    {
-      "file": "assets/institution-atlas.webp",
-      "path": "/assets/institution-atlas.webp",
-      "status": 200,
-      "sha256": "f03769928d7b07efd69f0c88872d4ef0b7232c0394f11d378ff8a9c7bcc3bf2b",
-      "matchesLocal": true,
-      "contentType": "image/webp"
-    },
-    {
-      "file": "assets/korea.svg",
-      "path": "/assets/korea.svg",
-      "status": 200,
-      "sha256": "5cf65df8124a94c94104c798910f7233ab5a6c82e04a25eafd76d50965a9161b",
-      "matchesLocal": true,
-      "contentType": "image/svg+xml"
-    },
-    {
-      "file": "assets/policy-diagram-mobile.webp",
-      "path": "/assets/policy-diagram-mobile.webp",
-      "status": 200,
-      "sha256": "1bc34786264a66efadfcf6de57f841449d69d5d257fae2539598c2f1b03637f1",
-      "matchesLocal": true,
-      "contentType": "image/webp"
-    },
-    {
-      "file": "assets/policy-diagram.webp",
-      "path": "/assets/policy-diagram.webp",
-      "status": 200,
-      "sha256": "32132bf631b15ee2f0bed6cbfd25d39259cfb8440b2f3e267e445fb6e72164ee",
-      "matchesLocal": true,
-      "contentType": "image/webp"
+      "contentType": "image/png"
     },
     {
       "file": "data.js",
@@ -100,18 +68,10 @@
       "contentType": "text/javascript"
     },
     {
-      "file": "galaxy.css",
-      "path": "/galaxy.css",
-      "status": 200,
-      "sha256": "670fd2f96d2f88eece704240d57a53935431d720ee27328ffe228924322e41e1",
-      "matchesLocal": true,
-      "contentType": "text/css"
-    },
-    {
       "file": "index.html",
       "path": "/index.html",
       "status": 200,
-      "sha256": "856c381ee160bbad6d64d81ea29b01930bafea593d30667f4bf8889fdd8253c9",
+      "sha256": "64b7e13a03fb39700765f627440383b43ed6b2b742ddc978ed707b9953e201f1",
       "matchesLocal": true,
       "contentType": "text/html"
     },
@@ -132,10 +92,18 @@
       "contentType": "application/json"
     },
     {
+      "file": "ledger.css",
+      "path": "/ledger.css",
+      "status": 200,
+      "sha256": "990947ec50df46d382a5b81866c714ada397632c50f42a803c9fa63edbedd7dd",
+      "matchesLocal": true,
+      "contentType": "text/css"
+    },
+    {
       "file": "sources.html",
       "path": "/sources.html",
       "status": 200,
-      "sha256": "65f45cd93fa3fbc14f9e92cf46eeadb8d4febbba819cf80adb2e2c4eb609e767",
+      "sha256": "f044e5825f7d16612823c90b55142a7687a3ffd5d1bab82c5de485bf99400bb4",
       "matchesLocal": true,
       "contentType": "text/html"
     },
@@ -154,6 +122,32 @@
       "sha256": "a540122d038d1f06bfd5ca4c75942d61d6de1e567cfc57b9f3bcda8f13e7897e",
       "matchesLocal": true,
       "contentType": "text/css"
+    }
+  ],
+  "retiredFiles": [
+    {
+      "path": "/galaxy.css",
+      "status": 403
+    },
+    {
+      "path": "/assets/galaxy.webp",
+      "status": 403
+    },
+    {
+      "path": "/assets/institution-atlas.webp",
+      "status": 403
+    },
+    {
+      "path": "/assets/korea.svg",
+      "status": 403
+    },
+    {
+      "path": "/assets/policy-diagram.webp",
+      "status": 403
+    },
+    {
+      "path": "/assets/policy-diagram-mobile.webp",
+      "status": 403
     }
   ]
 }

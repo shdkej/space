@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-16T09:22:17.764441+09:00",
-  "commit": "eed96c03447db9197aceba93e4b58d0447b3d618",
+  "verifiedAt": "2026-11-16T09:53:40.578661+09:00",
+  "commit": "e1316dcfce33138b724e3a7bc380b47eeb2c46dd",
   "status": "passed",
   "checks": {
     "root": {
@@ -12,12 +12,11 @@
       "matchesLocal": true
     }
   },
-  "removedAssetStatus": 403,
   "files": [
     {
       "path": "app.js",
       "status": 200,
-      "sha256": "a343781bef24190a7be98fade43d58ccb3f719321da52bb9300bf9ed5be02e8e",
+      "sha256": "dd0ce4137616228af56db065d15e641dc8e7fcb9843f42426ce8b85c0a8c2e49",
       "matchesLocal": true
     },
     {
@@ -59,7 +58,7 @@
     {
       "path": "index.html",
       "status": 200,
-      "sha256": "ad471341d3db9b44215907aece07d02f1d3b67770a02e03d4a0a9e34e2bad50a",
+      "sha256": "e1f31767d61f781a8b01b888d6a86dacb395de2c893c46bd1bde263501d9bd7a",
       "matchesLocal": true
     },
     {
@@ -77,7 +76,7 @@
     {
       "path": "sources.html",
       "status": 200,
-      "sha256": "d8ec68b8e68253c6ab1fbf6a40f185f9948ccfb2df2bfc0047125ea088b932c5",
+      "sha256": "65f45cd93fa3fbc14f9e92cf46eeadb8d4febbba819cf80adb2e2c4eb609e767",
       "matchesLocal": true
     },
     {
@@ -89,7 +88,7 @@
     {
       "path": "styles.css",
       "status": 200,
-      "sha256": "293b800825bb36e3267a0b33e9492f8ee41adc280d4575f5c8c00c090c5b12c9",
+      "sha256": "93c73e72ec15998ccc6a416a10ef8fd4bc9f666dbee28c5969d83af1c62e0e01",
       "matchesLocal": true
     }
   ]

@@ -1,14 +1,14 @@
 {
-  "verifiedAt": "2026-11-16T09:22:17.764441+09:00",
+  "verifiedAt": "2026-11-16T09:53:50+09:00",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "eed96c03447db9197aceba93e4b58d0447b3d618",
+  "sourceCommit": "e1316dcfce33138b724e3a7bc380b47eeb2c46dd",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 43779796329,
-    "url": "https://github.com/shdkej/space/actions/runs/43779796329",
+    "runId": 43782796135,
+    "url": "https://github.com/shdkej/space/actions/runs/43782796135",
     "conclusion": "success",
     "jobs": [
       "detect",
@@ -47,6 +47,7 @@
     "Existing shared-root output values were preserved during state transfer; GitHub Actions resolves resources directly from AWS.",
     "The 2026-11-15 design update deployed the urban-glass asset; 11 static files matched the live origin and 375/1440px live browser checks passed.",
     "The 2026-11-16 Blender institution atlas update deployed at eed96c0. The policycock deploy job succeeded, local and live browser checks passed, all 13 current dist assets matched live SHA-256, the retired urban-glass asset returned 403, and 44 institution links returned HTTP 200 with matching names.",
+    "The 2026-11-16 policy-first redesign deployed at e1316dc. Ten politician policy cases lead the hero, and policy/agency details open in separate on-page dialogs. The policycock deploy job and CloudFront invalidation succeeded; local 29 checks and live 11 checks passed, and 13 dist files plus root and extensionless sources matched live bytes.",
     "Policy changes, notifications, accounts and analytics remain outside this static prototype."
   ]
 }

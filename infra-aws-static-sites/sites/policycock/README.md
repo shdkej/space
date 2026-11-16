@@ -24,7 +24,7 @@ npm start
 
 런타임 의존성은 없습니다. Python 3는 로컬 서버에 사용합니다. HTML/CSS/JS를 직접 편집하므로 빌드 단계도 없습니다.
 
-- `dist/index.html`, `styles.css`, `app.js`: 화면과 인터랙션
+- `dist/index.html`, `styles.css`, `app.js`: 정책 우선 히어로와 두 모달·인터랙션. HTML에는 JS 실패를 대비한 정책 사례 10건의 정적 출처 링크가 있으며, `npm test`가 `data.js`와 원문 URL 일치를 검사
 - `dist/data.js`: 10개 정책 사례 및 의회 참고 링크
 - `dist/institutions.js`, `institutions.json`: 2026-11-16 중앙행정기관 스냅샷(검색·유형 필터, 출처·확인일 표기)
 - `dist/sources.html`, `sources.js`: 방문자용 자료 출처
@@ -86,6 +86,8 @@ Terraform state 정본은 `/home/ubuntu/workspace/space/infra-aws-static-sites/t
 2026-11-15 Urban Glass 리디자인: 소스 `f3f9e23`의 [정적 배포](https://github.com/shdkej/space/actions/runs/43717886447)가 성공했습니다. 로컬 320/375/414/768/1440px 렌더·기능 테스트와 라이브 375/1440px 렌더·저장/복원·출처 확인을 통과했고, 새 SVG를 포함한 정적 파일 11개의 라이브 바이트가 로컬과 일치했습니다. 실행 결과는 `qa/verification.json`, `qa/live-verification.json`, `qa/live-assets.json`, `qa/deployment.json`에 기록합니다. 도시 모형은 상징적 배경이며 실제 의회 위치나 실시간 정책 상태를 뜻하지 않습니다.
 
 2026-11-16 Blender Institution Atlas: 소스 `eed96c0`의 [정적 배포](https://github.com/shdkej/space/actions/runs/43779796329)에서 `policycock` 잡과 CloudFront 무효화가 성공했습니다. 국회·중앙행정기관 44곳의 한 장면, 검색·필터·정적 링크 대체를 로컬 320–1440px 및 라이브 375/1440px에서 확인했습니다. `dist/` 정적 파일 13개의 라이브 SHA-256이 로컬과 일치하고 옛 `urban-glass.svg`는 제거(403)됐습니다. 기관 링크 44건은 2026-11-16 당시 HTTP 200 및 본문 기관명 일치였습니다. `qa/{verification,live-verification,live-assets,institution-links,deployment}.json`에 증거를 남겼습니다. 이는 공식 기관 정보의 장기적 최신성이나 사용자의 디자인 만족도를 보증하지 않습니다.
+
+2026-11-16 Policy-first Atlas: 소스 `e1316dc`의 [정적 배포](https://github.com/shdkej/space/actions/runs/43782796135)에서 `policycock` 잡과 CloudFront 무효화가 성공했습니다. 첫 장면의 정책 10건과 기관 44곳, 인물·기관 모달, 검색과 저장을 로컬 **29개 검사** 및 라이브 **11개 검사**로 확인했습니다. 320/375/414/768/1440px과 낮은 모바일 높이에서 모달의 닫기·내부 동작에 접근했고, 라이브 `dist/` 13개 파일 및 루트·확장자 없는 출처 페이지의 바이트 일치를 확인했습니다. `qa/{verification,live-verification,live-assets,deployment,review}.json`이 이번 버전의 검증 기록입니다. 네 역할·교차 검토와 독립 Red 검토도 기록했습니다. 특정 정책의 중앙행정기관 담당 관계는 확인되지 않아 연결하지 않았으며, 사용자의 최종 시각적 취향과 고객 성과는 별도 판정입니다.
 
 ### 복구
 

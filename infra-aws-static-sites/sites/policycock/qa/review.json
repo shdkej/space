@@ -31,6 +31,24 @@
     "redVerdict": "PASS; no release-blocking defect found. Reviewer could not start own Chromium due to libnspr4.so; owner independently ran browser checks.",
     "ownerDecision": "Policy-first hero with 10 cases and agency catalogue in one stage; distinct on-page dialogs, official source links secondary; no fabricated policy-to-agency assignments."
   },
+  "diagramReview": {
+    "initialDelegation": "deleg_0827bba6",
+    "crossReviewDelegation": "deleg_ecc9e127",
+    "roles": [
+      "Planner: policy cases first, agency categories independently; no causal edge across systems.",
+      "Developer: Blender scenery with HTML-owned nodes and modal hit targets; mobile portrait composition required.",
+      "Marketer: remove policy-to-agency causal wording and distinguish the two catalogues; CMO retains brand direction.",
+      "Operator: image failure, 320px last agency, modal and live asset parity are release gates."
+    ],
+    "designDelegations": ["deleg_378e9b92", "deleg_1da17cac"],
+    "redReviews": [
+      {"delegation": "deleg_dff854ea", "verdict": "FAIL", "reason": "Mobile 5x2 Blender art did not match 2x5 HTML; agency trays and cards misaligned."},
+      {"delegation": "deleg_9677dcad", "verdict": "FAIL", "reason": "Desktop/tablet outer pedestals offset and agency tray ghosts remained."},
+      {"delegation": "deleg_75049d37", "child": "sa-0-e557026f", "verdict": "PASS", "scope": "Source, assets, regenerated 320–1440 screenshots, no-JS and modal evidence; reviewer browser unavailable; owner ran 32 local browser checks."}
+    ],
+    "ownerDecision": "Actual Blender desktop 5x2 and mobile 2x5 plinths aligned with HTML controls; lower Blender agency trays masked where they cannot match variable-length HTML, and 44 agencies remain in distinct HTML groups without invented policy links.",
+    "localEvidence": "qa/verification.json"
+  },
   "ownerVerification": {
     "local": "qa/verification.json",
     "institutionLinks": "qa/institution-links.json",

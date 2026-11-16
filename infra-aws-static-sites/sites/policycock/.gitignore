@@ -5,3 +5,7 @@ node_modules/
 qa/*.png
 scripts/institution-atlas.png
 scripts/institution-atlas.blend1
+scripts/policy-diagram.png
+scripts/policy-diagram.blend1
+scripts/policy-diagram-mobile.png
+scripts/policy-diagram-mobile.blend1

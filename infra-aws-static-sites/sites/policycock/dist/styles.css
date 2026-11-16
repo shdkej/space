@@ -173,3 +173,67 @@ body{background:var(--paper)}
 @media(max-width:1050px){.atlas-stage{grid-template-columns:1fr}.policy-front-heading{min-height:120px}.policy-front .institution-map{right:10px}.agency-groups{grid-template-columns:repeat(3,minmax(0,1fr))}.directory-panel{padding:25px}.policy-front .person{min-height:64px}}
 @media(max-width:600px){.institution-hero{padding:28px 13px 22px}.institution-intro{margin-bottom:20px}.institution-intro h1{font-size:clamp(37px,10vw,53px)}.institution-intro>p:last-child{font-size:12px}.policy-front{padding:18px 12px 16px}.policy-front-heading{min-height:122px}.policy-front-heading h2{font-size:22px}.policy-front-heading>div:first-child{max-width:70%}.policy-front .institution-map{right:-21px;top:-22px;width:165px;height:145px}.policy-front .filters{display:flex}.policy-front .filters button{flex:1;white-space:nowrap;padding:0 4px;font-size:10px}.policy-columns{gap:7px}.policy-front .person{min-height:80px;padding:8px 6px;gap:5px;align-items:flex-start}.policy-front .avatar{width:26px;height:26px;font-size:8px}.policy-front .person-name{font-size:11px}.policy-front .person-policy{font-size:10px}.policy-front .person-stage{font-size:9px}.policy-front .person-arrow{display:none}.directory-panel{padding:19px 14px}.agency-groups{grid-template-columns:repeat(2,minmax(0,1fr));max-height:490px}.agency-link{min-height:44px;font-size:11px}.detail-dialog .policy-detail,.agency-detail{padding:22px 19px 28px}.dialog-top{padding:9px 15px}.detail-dialog .detail-action{flex-wrap:wrap}.stage-caption{font-size:10px}}
 @media(max-width:360px){.policy-front .institution-map{opacity:.58}.policy-front .avatar{display:none}.policy-front .person{min-height:82px}.policy-front .person-policy{font-size:10px}}
+
+/* Diagram-first atlas. Blender supplies physical depth; HTML owns every target. */
+.institution-hero{background:#090e25;padding-top:28px}
+.institution-intro{max-width:1580px;grid-template-columns:1fr 1fr;margin-bottom:21px}
+.institution-intro h1{font-size:clamp(43px,4.5vw,70px)}
+.atlas-stage{position:relative;display:block;min-height:840px;background:#0e1635;border:1px solid #58648b;isolation:isolate}
+.diagram-render{position:absolute;z-index:-1;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}
+.policy-front{background:transparent;padding:22px clamp(20px,3.4vw,58px) 16px;overflow:visible;isolation:auto}
+.policy-front:before{display:none}
+.policy-front-heading{min-height:102px;align-items:flex-start}
+.policy-front-heading>div:first-child{max-width:72%}
+.policy-front-heading h2{font-size:clamp(25px,2.3vw,37px);text-shadow:0 2px 17px #070d24}
+.policy-front-heading p:last-child{font-size:12px;color:#d8ddf0}
+.diagram-count{display:inline-block;margin-left:12px;font:650 10px Pretendard,system-ui;letter-spacing:.17em;color:#d8c6ff;vertical-align:middle}
+.policy-front .filters{position:absolute;right:clamp(20px,3.4vw,58px);top:27px;margin:0}
+.policy-columns{display:grid;grid-template-columns:1fr;gap:22px}
+.policy-front .people-column{max-width:none;grid-row:auto}
+.policy-front .people-column h3{margin:0 4px 10px;font-size:11px;letter-spacing:.06em;color:#d5d8f4}
+.policy-front .people-list{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}
+.policy-front .person{min-height:94px;align-items:center;padding:12px 12px;border-radius:13px;border:1px solid rgba(218,220,255,.5);background:linear-gradient(130deg,rgba(29,39,79,.91),rgba(64,58,109,.79));box-shadow:0 11px 0 -6px #0b1335,0 20px 28px rgba(1,5,22,.45),inset 0 1px rgba(255,255,255,.2);backdrop-filter:blur(8px);transition:transform .18s,background .18s,box-shadow .18s}
+.policy-front .person:hover,.policy-front .person:focus-visible{background:#3a3d77;border-color:#f3e6ff;transform:translateY(-4px);box-shadow:0 15px 0 -6px #0b1335,0 25px 30px rgba(1,5,22,.55)}
+.policy-front .avatar{width:29px;height:29px;font-size:9px}
+.policy-front .person-name{font-size:13px}
+.policy-front .person-policy{font-size:11px;line-height:1.35}
+.policy-front .person-stage{font-size:9px}
+.policy-front .person-arrow{display:none}
+.policy-front-note{margin:20px 2px 0;font-size:11px;color:#d0d6ef}
+.directory-panel{position:relative;display:block;min-height:455px;padding:33px clamp(20px,3.4vw,58px) 27px;background:linear-gradient(180deg,rgba(11,20,48,.25),rgba(12,20,49,.62) 60%,rgba(13,22,52,.84));color:#f7f6ff}
+.directory-panel:before{content:'';position:absolute;top:0;left:clamp(20px,3.4vw,58px);right:clamp(20px,3.4vw,58px);border-top:1px dashed rgba(212,220,255,.45);pointer-events:none}
+.directory-heading{align-items:center}
+.directory-heading h2{color:#f7f6ff;font-size:clamp(25px,2.3vw,36px)}
+.directory-heading h2 span{color:#d8d5f3}
+.directory-panel .overline{color:#d0bdff}
+.directory-mark{color:#b5a4ed}
+.directory-description{color:#d2d6eb;margin:6px 0 10px}
+#agency-search{background:rgba(12,21,51,.75);border:1px solid #7780ac;color:#fff;max-width:310px}
+#agency-search::placeholder{color:#abb4d0}
+.agency-filters{display:inline-flex;margin:0 0 9px 11px;vertical-align:middle}
+.agency-filters button{background:rgba(22,31,66,.8);color:#dce1f8;border:1px solid #687396}
+.agency-filters button[aria-pressed="true"]{background:#e2d7ff;color:#171c40;border-color:#e2d7ff}
+.agency-groups{display:grid;grid-template-columns:1fr .85fr 1fr;gap:16px;align-items:stretch;max-height:none;overflow:visible}
+.agency-group{background:linear-gradient(170deg,rgba(39,52,101,.92),rgba(25,32,69,.94));border:1px solid rgba(200,211,250,.48);border-radius:13px;min-width:0;padding:13px 14px 16px;box-shadow:0 9px 0 -5px #0b1335,0 22px 36px rgba(2,6,25,.45),inset 0 1px rgba(255,255,255,.15);align-self:start}
+.agency-group h3{font-size:11px;color:#ece9ff;margin:0 0 8px;border-color:#7982ab;padding:2px 1px 9px}
+.agency-group h3 span{color:#cac6e3}
+.agency-group[data-kind="부"],.agency-group[data-kind="청"]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 8px}
+.agency-group[data-kind="부"] h3,.agency-group[data-kind="청"] h3{grid-column:1/-1}
+.agency-link{min-height:35px;line-height:1.28;font-size:clamp(10px,.85vw,12px);color:#f1f1ff;border-color:rgba(177,190,232,.22);padding:5px 3px;overflow-wrap:anywhere}
+.agency-link:hover,.agency-link:focus-visible{background:rgba(213,198,255,.21);color:#fff}
+.agency-arrow{color:#d1baff}
+.directory-scroll-hint{display:none}
+.stage-caption{margin-top:15px;color:#c3c7e2}
+@media(max-width:1080px){.atlas-stage{min-height:0}.policy-front .people-list{grid-template-columns:repeat(5,minmax(0,1fr))}.agency-groups{grid-template-columns:1fr 1fr 1fr}.agency-group[data-kind="부"]{grid-column:auto;grid-row:auto}.agency-link{min-height:39px}.diagram-render{object-fit:cover}}
+@media(max-width:740px){.institution-intro{display:block}.institution-intro>p:last-child{margin-top:12px}.policy-front-heading>div:first-child{max-width:100%}.policy-front-heading{min-height:0;padding-bottom:72px}.policy-front .filters{left:18px;right:18px;top:112px}.policy-front .filters button{flex:1}.policy-front .people-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.policy-columns{grid-template-columns:1fr 1fr;gap:10px}.policy-front .people-column h3{font-size:10px}.policy-front .person{min-height:82px}.policy-front .avatar{display:none}.policy-front .person-policy{font-size:10px}.diagram-render{height:520px;object-fit:cover;object-position:top center}.directory-panel{background:rgba(12,20,48,.78)}.agency-groups{grid-template-columns:1fr 1fr;gap:10px;max-height:490px;overflow-y:auto;overscroll-behavior:contain}.agency-group[data-kind="부"]{grid-column:1;grid-row:1/3}.agency-group[data-kind="청"],.agency-group[data-kind="부"]{display:block}.agency-group{padding:9px}.agency-link{min-height:44px;font-size:11px}.directory-scroll-hint{display:block;color:#d1d5ea}}
+@media(max-width:540px){.institution-hero{padding:24px 12px}.institution-intro h1{font-size:clamp(35px,9vw,48px)}.policy-front{padding:18px 11px 16px}.policy-front-heading h2{font-size:23px}.policy-front-heading{padding-bottom:70px}.policy-front .filters{top:112px;left:11px;right:11px}.policy-front .person{padding:9px 7px;min-height:85px}.policy-front .person-name{font-size:11px}.policy-front .person-stage{font-size:9px}.diagram-count{font-size:9px;margin-left:6px}.directory-panel{padding:27px 11px}.directory-panel:before{left:11px;right:11px}.agency-filters{display:flex;margin:10px 0}.agency-filters button{flex:1;min-height:44px;padding:3px 4px;font-size:10px}#agency-search{width:100%;max-width:none}.agency-groups{gap:7px}.agency-link{font-size:10px;padding:4px 2px}.agency-group{padding:8px 6px}}
+@media(max-width:360px){.policy-front .person{min-height:92px}.policy-front .person-policy{font-size:10px}.policy-front-heading{padding-bottom:82px}.policy-front .filters{top:123px}.agency-link{font-size:10px}}
+@media(min-width:1081px){.diagram-render{height:1050px}.policy-front{padding-bottom:76px}.policy-columns{padding-top:40px;gap:72px}}
+@media(max-width:900px) and (min-width:741px){.policy-columns{grid-template-columns:1fr}.policy-front .people-column{grid-row:auto}.policy-front .people-list{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:740px){.policy-columns{grid-template-columns:repeat(2,minmax(0,1fr))}.policy-front .people-list{grid-template-columns:minmax(0,1fr)}.policy-front .filters{width:auto;background:#202b56;border-color:#8a91bf;box-shadow:0 10px 25px rgba(3,7,25,.65)}.policy-front .filters button{color:#edf0ff}}
+.diagram-picture{position:absolute;z-index:-1;inset:0 auto auto 0;width:100%;height:1050px;overflow:hidden;pointer-events:none;user-select:none}
+.diagram-picture .diagram-render{position:static;display:block;width:100%;height:100%;object-fit:fill}
+@media(min-width:741px){.diagram-picture{mask-image:linear-gradient(to bottom,#000 0%,#000 48%,transparent 55%)}}
+@media(min-width:741px) and (max-width:1080px){.diagram-picture{top:30px;height:750px}}
+@media(max-width:740px){.diagram-picture{height:1600px;mask-image:linear-gradient(to bottom,#000 0,#000 680px,transparent 800px)}.diagram-picture .diagram-render{height:100%;object-fit:fill}}
+@media(prefers-reduced-motion:reduce){.policy-front .person{transition:none}}

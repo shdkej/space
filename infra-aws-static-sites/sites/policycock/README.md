@@ -6,7 +6,7 @@
 
 - 민주당 계열 5명·보수 계열 5명의 역사적 정책 사례를 히어로에서 먼저 표시. 클릭하면 정책 요약·단계·발표 당시 소속·원문이 즉시 모달로 열림
 - 중앙행정기관 **44곳(19부·6처·19청)**의 명칭·유형·확인일을 선택 즉시 기관 모달에 표시. 공식 기구도/사이트는 모달 안의 보조 링크; 기관 검색·필터 유지
-- Blender 5.3의 한국 입체 지형·국회 모형은 정책 히어로의 보조 시각 요소. 국회·17개 광역의회의 별도 참고 링크 유지
+- Blender 5.3으로 제작한 정책 10개 노드와 부·처·청 3개 군집의 개념적 입체 다이어그램. 실제 명칭·선택·키보드 동작은 이미지가 아닌 HTML에 구현하며, 국회·17개 광역의회의 별도 참고 링크를 유지
 - 발표 당시 소속·연도·공약/발의/시행 구분, 원문·뉴스·관련 법령 검색
 - 내 활성 지도: 정책 저장/삭제, 카테고리별 모음, 240자 관심 이유, JSON 내보내기
 - 모바일, 키보드 포커스와 모션 감소 지원, 저장소 손상/차단 시 탐색 유지
@@ -29,17 +29,17 @@ npm start
 - `dist/institutions.js`, `institutions.json`: 2026-11-16 중앙행정기관 스냅샷(검색·유형 필터, 출처·확인일 표기)
 - `dist/sources.html`, `sources.js`: 방문자용 자료 출처
 - `dist/assets/`: 자체 호스팅 글꼴·지도·아이콘
-- `dist/assets/institution-atlas.webp`: Blender 입체 지형의 60KB 내외 웹 렌더. 이전 `urban-glass.svg`는 배포에서 제거
-- `scripts/render-institution-atlas.py`, `scripts/institution-atlas.blend`: Blender 장면의 재현 가능한 스크립트와 편집 가능 장면
-- `scripts/convert-atlas.py`: Blender가 만든 `scripts/institution-atlas.png`를 Pillow로 최적화한 웹 자산으로 변환
+- `dist/assets/policy-diagram.webp`, `policy-diagram-mobile.webp`: 각각 데스크톱 5×2·모바일 2×5 정책 노드 구도와 분리된 부·처·청 세 군집의 Blender 개념 장면. 이전 지형 자산 `institution-atlas.webp`는 재현 자료로 남아 있지만 현재 페이지에서는 호출하지 않음
+- `scripts/render-policy-diagram.py`, `render-policy-diagram-mobile.py`, 대응하는 `.blend`: 데스크톱·모바일 입체 다이어그램 재현 스크립트와 편집 가능한 장면
+- `scripts/render-institution-atlas.py`, `scripts/institution-atlas.blend`, `scripts/convert-atlas.py`: 이전 한국 지형·국회 모형 재현 자료(현재 페이지 미사용)
 - `scripts/sync-institutions.py`: 정부 기구도 목록을 수동 확인해 JSON·JS와 `index.html`의 무스크립트용 44개 공식 링크를 함께 갱신. 목록·분류가 바뀌면 자동 실패하여 검토 요구
 - `scripts/verify-institution-links.py`, `qa/institution-links.json`: 기관 링크 44개의 HTTP 응답 및 본문 기관명 확인 기록
 - `scripts/map-svg.py`: Blender 지형 입력인 `assets/korea.svg`의 기존 SVG 생성기
 - `scripts/verify-browser.cjs`, `qa/verification.json`: 재현 가능한 검증과 결과
 
-첫 화면에서 남색·라일락 유리 질감의 정책 카드 10개와 백색 기관 목록 44개를 같은 장면에 두고, 선택하면 각각 화면 안에서 모달이 열립니다. Blender 지형·국회 모형은 보조 이미지로 유지하되 실제 기관 위치를 표시하지 않습니다. **정책↔기관의 담당·집행 관계는 검증된 자료가 없어 연결선이나 담당 정책으로 표기하지 않습니다.** 시각·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
+첫 화면은 Blender의 데스크톱 5×2·모바일 2×5 정책 받침대에 실제 HTML 정책 노드 10개를 겹쳐 보여주고, 이어서 독립된 HTML 부·처·청 3개 군집에서 기관 44곳을 탐색합니다. Blender 원본에는 기관 분류 받침대도 있지만 반응형에서 기관명과 어긋나므로 웹 화면에서는 해당 구간을 마스킹하고 HTML 군집만 표시합니다. 이미지 자체에는 상호작용이 없으며 각 정책·기관은 HTML 요소를 선택해 해당 모달을 엽니다. 모바일에서는 기관 목록을 내부 스크롤합니다. **정책↔기관의 담당·집행 관계는 검증된 자료가 없어 연결선이나 담당 정책으로 표기하지 않습니다.** 이 장면은 실제 정부 조직도나 기관 위치도가 아닙니다. 시각·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
 
-그래픽을 다시 만들 때는 설치된 Blender 5.3으로 `scripts/render-institution-atlas.py`를 백그라운드 실행한 뒤, `python3 scripts/convert-atlas.py`를 실행합니다(Pillow 필요). Windows Blender를 WSL에서 호출한다면 `blender.exe --background --factory-startup --python "$(wslpath -w scripts/render-institution-atlas.py)"` 형태를 사용합니다. PNG와 Blender의 `.blend1` 백업은 Git에서 제외하며, `.blend`와 WebP만 추적합니다.
+Blender 5.3에서 `scripts/render-policy-diagram.py`와 `scripts/render-policy-diagram-mobile.py`를 각각 백그라운드로 실행하면 대응하는 편집 가능 `.blend`와 PNG를 생성합니다. 다음 명령으로 Pillow를 사용해 웹용 WebP 두 개를 변환합니다: `python3 -c 'from PIL import Image; from pathlib import Path; [(Image.open("scripts/policy-diagram"+suffix+".png").convert("RGB").save("dist/assets/policy-diagram"+suffix+".webp", "WEBP", quality=83, method=6)) for suffix in ("", "-mobile")]'`. Windows Blender를 WSL에서 호출할 때는 각 스크립트에 `blender.exe --background --factory-startup --python "$(wslpath -w scripts/render-policy-diagram.py)"` 형태를 사용합니다. PNG와 `.blend1`은 Git에서 제외합니다. 이전 지형 자산을 재현할 때만 `scripts/render-institution-atlas.py`와 `scripts/convert-atlas.py`를 실행합니다.
 
 ## 데이터·외부 의존성
 

@@ -107,6 +107,18 @@
     "localEvidence": "qa/verification.json (48 passing checks; 16 viewport widths)",
     "qualityLimits": ["Hallmark render ran; 423 FAIL/305 REFLEX, same normalized finding set as prior 423/305, not a clean pass.", "Project DESIGN.md is absent; DESIGN_SYSTEM.md supplies the local design direction."]
   },
+  "horizontalHeroReview": {
+    "parentSession": "20261115_220218_c6a755ca",
+    "route": "Hermes openai-codex delegate_task; four direct role children, no nested Codex CLI",
+    "independentDelegations": ["deleg_d65efe7b", "deleg_a57990d6"],
+    "roleChildren": ["sa-0-b8014bfb", "sa-1-a6a70ece", "sa-2-a2f24414", "sa-3-002de671"],
+    "crossReview": "Planner warned that absolute percentage positions collide at narrow widths; Developer recommended group grid with flowing, staggered labels and tested real widths; Marketer warned that left/right is not a policy ideology score or current party status; Operator required no-JS, live deploy and byte parity. These are scoped role critiques, not CMO approval.",
+    "redReview": {"delegation": "deleg_f896f9d9", "child": "sa-0-2f5c6c17", "verdict": "PASS on local 1440/701/375px captures and source. Reviewer noted that only first/last case hit centers were tested at each width; owner expanded the browser assertion to all ten and reran 48 checks."},
+    "ownerDecision": "At 701px and above, present five historical Democratic-party-affiliated cases on the left and five conservative-party-affiliated cases on the right within separate galaxy fields; at 700px and below keep Democratic then conservative in DOM and visual order. Preserve case-specific leads, static source links and the independent 44-agency outline. Explain that left/right is a browse layout, not ideology or current affiliation.",
+    "localEvidence": "qa/verification.json (48 checks, 16 widths, all 10 hit centers per width)",
+    "liveEvidence": ["qa/live-verification.json (12 checks)", "qa/live-assets.json (17 dist files and 2 routes matched)", "qa/deployment.json (run 43845272094)"],
+    "qualityLimits": ["Hallmark strict lint 418 FAIL/297 REFLEX remains unresolved; its render tier did not start without puppeteer-core. Prior 423/305 was not a clean baseline.", "No project DESIGN.md token charter; DESIGN_SYSTEM.md is the product design direction.", "User aesthetic acceptance and current policy effectiveness are not proven by technical checks."]
+  },
   "ownerVerification": {
     "local": "qa/verification.json",
     "institutionLinks": "qa/institution-links.json",

@@ -1,14 +1,14 @@
 {
-  "verifiedAt": "2026-11-16T18:32:54+09:00",
+  "verifiedAt": "2026-11-16T10:04:39+00:00",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "f7d09d797e3359dc154faecb84aac2257560fbec",
+  "sourceCommit": "2b5cac930f6af4d474472faca7d9c1845b4ecd1f",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 43840258584,
-    "url": "https://github.com/shdkej/space/actions/runs/43840258584",
+    "runId": 43845272094,
+    "url": "https://github.com/shdkej/space/actions/runs/43845272094",
     "conclusion": "success",
     "jobs": [
       "detect",
@@ -56,6 +56,7 @@
     "The 2026-11-16 galaxy redesign deployed from d64c417f01a1bf6ca558905b1cdcbce8f03176f4 in run 43799147546. The policycock deploy job and CloudFront invalidation succeeded; local 36 and live 11 browser checks passed. All 17 dist files plus root and extensionless sources matched live bytes. A separate Red reviewer passed the local assets and independently tested five viewports, dialogs, keyboard reachability and no-JS fallback. The owner inspected live 320/1440px captures. The Blender galaxy is atmospheric, while ten interactive dot-to-label leads and the Korean government outline are HTML/SVG. These checks do not establish final user design satisfaction or current policy effects.",
     "The 2026-11-16 skill-guided redesign deployed from 90d96de301c7f5c193b2088577f567c41d8c12f2 in run 43815041302. The policycock deploy job and CloudFront invalidation succeeded. Local 43 browser checks including twelve widths and live 11 checks passed. All 17 tracked dist files plus root and extensionless sources matched live bytes. The owner inspected live 375/1440px captures. Independent visual Red and final code reviewers passed the corrected tree; the latter could not start its own Chromium, so the owner ran the browser checks. Strict Hallmark lint remains at 423 FAIL/305 REFLEX (baseline 410/280), and OMD's missing DESIGN.md token charter and the existing large font are not represented as clean QA. User aesthetic acceptance and current policy effects remain unverified.",
     "The 2026-11-16 horizontal outline update deployed from f7d09d797e3359dc154faecb84aac2257560fbec in run 43840258584. The policycock S3 sync and CloudFront invalidation both succeeded. Local 48 checks at sixteen widths and live 12 checks passed, including exact 1440px five-category horizontal alignment and 3/1/3 agency columns. All 17 dist files and root and extensionless sources matched live bytes. The owner inspected live 375/1440px captures and an independent final read-only reviewer passed the source and local captures. Strict Hallmark rendered at 423 FAIL/305 REFLEX, with no newly added normalized findings relative to the prior build; this is not a lint pass. User visual satisfaction and current policy effectiveness are not established.",
+    "The 2026-11-16 horizontal hero update deployed from 2b5cac930f6af4d474472faca7d9c1845b4ecd1f in run 43845272094. The policycock S3 sync and CloudFront invalidation succeeded. Democratic-affiliated cases are on the left and conservative-affiliated cases on the right at 701px and wider; narrow screens present the two groups in DOM order. Local 48 checks at sixteen widths cover all ten target centers per width and no label overlap; live 12 checks passed. All 17 dist files and root and extensionless sources matched live bytes. The owner inspected 375/1440px live captures and an independent read-only Red reviewer passed the local source and screenshots. Strict Hallmark remains unresolved at 418 FAIL/297 REFLEX; its render tier could not start without puppeteer-core. These technical checks do not establish user aesthetic acceptance, political representativeness or current policy effects.",
     "Policy changes, notifications, accounts and analytics remain outside this static prototype."
   ]
 }

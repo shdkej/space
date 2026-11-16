@@ -124,3 +124,52 @@ body{background:var(--paper)}
 @media(max-width:900px){.institution-intro{display:block;margin-bottom:24px}.institution-intro h1{font-size:clamp(43px,8vw,70px)}.institution-intro>p:last-child{margin:18px 0 0}.atlas-stage{grid-template-columns:1fr}.institution-map{max-height:590px}.directory-panel{padding:25px}.agency-groups{grid-template-columns:repeat(3,minmax(0,1fr))}.agency-group[data-kind="부"]{grid-column:auto;grid-row:auto}.agency-link{font-size:12px;min-height:30px}.stage-caption a{margin-left:0}.policy-atlas .atlas-scene{gap:18px}}
 @media(max-width:600px){.institution-hero{padding:30px 14px 22px}.institution-intro h1{font-size:clamp(38px,10vw,53px);line-height:1.13}.institution-intro>p:last-child{font-size:12px}.institution-intro>p:last-child br{display:none}.atlas-stage{border-radius:16px}.institution-map{width:100%;aspect-ratio:9/7}.assembly-hotspot{font-size:10px;top:26%;left:43%;transform:translate(2px,-50%)}.hotspot-dot{width:12px;height:12px;border-width:2px;box-shadow:0 0 0 4px rgba(194,165,255,.4)}.assembly-hotspot>span:last-child{padding:5px 7px}.map-label{bottom:8px;left:10px;font-size:8px}.map-label small{font-size:8px}.directory-panel{padding:19px 14px}.agency-groups{grid-template-columns:repeat(2,minmax(0,1fr));max-height:490px;overflow-y:auto;overscroll-behavior:contain;scrollbar-color:#acb4ce #eef0f6}.agency-group[data-kind="부"]{grid-column:1;grid-row:1/3}.agency-link{font-size:12px;min-height:44px}.agency-filters button{min-height:44px;padding:3px 10px}.directory-scroll-hint{display:block}.stage-caption{font-size:11px}.policy-atlas{padding-top:65px}.policy-heading{display:block}.policy-heading .filters{width:100%;margin-top:16px}.policy-atlas .atlas-scene{grid-template-columns:1fr 1fr;gap:10px}.policy-atlas .people-list{grid-template-columns:1fr}.policy-atlas .person{min-height:68px}.policy-atlas .column-label h3{font-size:11px}}
 @media(max-width:360px){.institution-intro h1{font-size:36px}.agency-filters button{padding:2px 8px;font-size:10px}.agency-link{font-size:11px}.directory-panel{padding:15px 10px}.policy-atlas .person{padding:9px 6px}}
+
+/* Policy-first hierarchy: politician → historical case; agencies are a separate catalogue. */
+.institution-hero{padding-top:30px;background:radial-gradient(ellipse 70% 60% at 15% 40%,#212956,#090e27 82%)}
+.institution-intro{grid-template-columns:1.05fr .95fr;margin-bottom:22px}
+.institution-intro h1{font-size:clamp(42px,4.45vw,72px)}
+.atlas-stage{grid-template-columns:54% 46%;align-items:stretch}
+.policy-front{position:relative;overflow:hidden;padding:25px clamp(17px,2vw,32px) 16px;background:radial-gradient(ellipse 70% 42% at 83% 10%,rgba(155,131,225,.32),transparent 85%),linear-gradient(155deg,#18244c,#141936 70%,#151634);min-width:0;isolation:isolate}
+.policy-front:before{content:'';pointer-events:none;position:absolute;inset:0;background:linear-gradient(90deg,transparent 96%,rgba(200,185,255,.13));z-index:-1}
+.policy-front-heading{position:relative;display:flex;align-items:flex-start;min-height:140px}
+.policy-front-heading>div:first-child{position:relative;z-index:1;max-width:72%}
+.policy-front .overline,.directory-panel .overline{font-size:10px;letter-spacing:.14em;color:#c7b9ff;margin:0 0 8px}
+.policy-front-heading h2{font-size:clamp(22px,2.1vw,32px);margin:0;letter-spacing:-.05em;font-weight:680}
+.policy-front-heading p:last-child{color:#d8d9ef;font-size:11px;line-height:1.55;word-break:keep-all;margin:9px 0 0}
+.policy-front .institution-map{position:absolute;right:3px;top:-35px;width:230px;height:190px;aspect-ratio:auto;background:none;opacity:.85;pointer-events:none;filter:drop-shadow(0 20px 25px rgba(0,0,0,.3))}
+.policy-front .institution-map img{width:100%;height:100%;object-fit:contain}
+.policy-front .filters{position:relative;z-index:1;display:inline-flex;margin:0 0 17px;border-color:rgba(214,201,255,.27);background:rgba(242,237,255,.08)}
+.policy-front .filters button{color:#dcd9ed}.policy-front .filters button.active{background:#eee8ff;color:#21224a}
+.policy-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.policy-front .people-column h3{display:flex;justify-content:space-between;gap:5px;color:#d4c9ff;margin:0 4px 9px;font-size:11px;font-weight:600}
+.policy-front .people-column h3 span{letter-spacing:.12em;font-size:10px;opacity:.7}
+.policy-front .people-list{display:grid;gap:7px}
+.policy-front .person{border:1px solid rgba(237,231,255,.26);background:linear-gradient(120deg,rgba(255,255,255,.16),rgba(208,200,255,.08));color:#fff;border-radius:12px;min-height:70px;padding:8px 10px;backdrop-filter:blur(8px);box-shadow:0 5px 22px rgba(5,8,29,.12)}
+.policy-front .person:hover,.policy-front .person:focus-visible{background:rgba(239,230,255,.2);border-color:#d6c5ff;transform:translateY(-2px)}
+.policy-front .avatar{flex:none;width:36px;height:36px;background:linear-gradient(140deg,#a691e7,#6a6fc0);border:1px solid rgba(244,235,255,.5);color:#fff;font-size:10px}
+.policy-front .conservative-column .avatar{background:linear-gradient(140deg,#bfa2bb,#826d9a)}
+.policy-front .person-copy{min-width:0}.policy-front .person-name{font-size:12px;color:#fcfbff;margin-bottom:2px}
+.policy-front .person-policy{font-size:11px;color:#eeebfb;white-space:normal;line-height:1.3;word-break:keep-all}
+.policy-front .person-stage{display:block;color:#c4c3df;font-size:9px;margin-top:3px;line-height:1.2}
+.policy-front .person-arrow{flex:none;color:#ede4ff;font-size:17px;opacity:.95}
+.policy-front .saved-indicator{background:#d6c2ff}
+.policy-front-note{margin:13px 2px 0;color:#c7c5dc;font-size:10px;line-height:1.5;word-break:keep-all}
+.directory-panel{background:linear-gradient(145deg,#fff,#f3f1fb 75%,#eceafb);padding:25px clamp(16px,2vw,30px) 14px}
+.directory-panel .overline{color:#7563a4}.directory-description{font-size:11px;margin:10px 0 13px}
+.directory-heading h2{font-size:clamp(22px,2.1vw,32px)}
+.agency-groups{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.agency-link{min-height:27px;color:#293658;font-size:clamp(10px,.82vw,12px)}
+.agency-arrow{color:#7759b8}.stage-caption{align-items:center}.stage-caption a{margin-left:0}
+.detail-dialog{width:min(700px,calc(100% - 24px));max-width:700px;max-height:min(88dvh,760px);overflow-y:auto;margin:auto;padding:0;border:1px solid #ccc7e9;border-radius:22px;background:#f9f8ff;color:#192344;box-shadow:0 34px 90px rgba(3,6,26,.55)}
+.detail-dialog::backdrop{background:rgba(4,8,27,.73);backdrop-filter:blur(7px)}
+.dialog-top{position:sticky;top:0;z-index:2;background:#e8e3f6;border-bottom:1px solid #d4cde6;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 24px;color:#5c557b;letter-spacing:.1em;font-size:10px;font-weight:700}
+.dialog-close{border:1px solid #b6aecf;background:#fff;color:#252747;border-radius:100px;padding:9px 13px;min-width:65px;min-height:44px;font-size:12px;letter-spacing:0}
+.dialog-close:hover{background:#dcd2f3}
+.detail-dialog .policy-detail{display:grid;grid-template-columns:1fr;gap:17px;padding:27px 30px 34px;margin:0;border:0}
+.detail-dialog .detail-identity p{font-size:16px;margin:9px 0 4px}.detail-dialog .detail-main h2{font-size:clamp(27px,4vw,40px);margin:0 0 10px}.detail-dialog .detail-main>p{font-size:14px;line-height:1.7}.detail-dialog .detail-action{display:flex;gap:13px;align-items:center;justify-self:stretch}.detail-dialog .detail-action p{margin:0;color:#6b7188;font-size:10px}
+.detail-dialog .source-links a{min-height:44px;display:inline-flex;align-items:center}
+.agency-detail{padding:32px 30px 38px}.agency-detail-kind{color:#7a66ac;font-size:11px;font-weight:700;letter-spacing:.1em}.agency-detail h2{font-size:clamp(31px,5vw,48px);letter-spacing:-.055em;margin:8px 0 12px}.agency-detail>p{line-height:1.7;word-break:keep-all}.agency-detail #agency-dialog-meta{color:#697186;font-size:12px}.agency-detail #agency-dialog-description{font-size:15px}.agency-relation-note{padding:14px;background:#eeeaf8;border-left:3px solid #a890df;font-size:12px;color:#5c5770}.agency-detail #agency-official{display:inline-flex;align-items:center;justify-content:center;min-height:46px;border-radius:100px;background:#28335a;color:#fff;padding:0 20px;font-size:12px;font-weight:650}
+@media(max-width:1050px){.atlas-stage{grid-template-columns:1fr}.policy-front-heading{min-height:120px}.policy-front .institution-map{right:10px}.agency-groups{grid-template-columns:repeat(3,minmax(0,1fr))}.directory-panel{padding:25px}.policy-front .person{min-height:64px}}
+@media(max-width:600px){.institution-hero{padding:28px 13px 22px}.institution-intro{margin-bottom:20px}.institution-intro h1{font-size:clamp(37px,10vw,53px)}.institution-intro>p:last-child{font-size:12px}.policy-front{padding:18px 12px 16px}.policy-front-heading{min-height:122px}.policy-front-heading h2{font-size:22px}.policy-front-heading>div:first-child{max-width:70%}.policy-front .institution-map{right:-21px;top:-22px;width:165px;height:145px}.policy-front .filters{display:flex}.policy-front .filters button{flex:1;white-space:nowrap;padding:0 4px;font-size:10px}.policy-columns{gap:7px}.policy-front .person{min-height:80px;padding:8px 6px;gap:5px;align-items:flex-start}.policy-front .avatar{width:26px;height:26px;font-size:8px}.policy-front .person-name{font-size:11px}.policy-front .person-policy{font-size:10px}.policy-front .person-stage{font-size:9px}.policy-front .person-arrow{display:none}.directory-panel{padding:19px 14px}.agency-groups{grid-template-columns:repeat(2,minmax(0,1fr));max-height:490px}.agency-link{min-height:44px;font-size:11px}.detail-dialog .policy-detail,.agency-detail{padding:22px 19px 28px}.dialog-top{padding:9px 15px}.detail-dialog .detail-action{flex-wrap:wrap}.stage-caption{font-size:10px}}
+@media(max-width:360px){.policy-front .institution-map{opacity:.58}.policy-front .avatar{display:none}.policy-front .person{min-height:82px}.policy-front .person-policy{font-size:10px}}

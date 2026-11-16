@@ -17,6 +17,20 @@
     "verdict": "PASS",
     "scope": "Security, logic, static fallbacks, responsive screenshots and keyboard access; read-only reviewer."
   },
+  "policyFirstReview": {
+    "initialDelegation": "deleg_f3294ed7",
+    "roleChildren": ["sa-0-55d3b440", "sa-1-bfb0957b", "sa-2-9774bb65", "sa-3-8e1df939"],
+    "crossReviewDelegation": "deleg_017570c9",
+    "crossReviewChildren": ["sa-0-7d42eecb", "sa-1-74591625", "sa-2-3217a3fa", "sa-3-48059ed7"],
+    "planner": "Historical policy cards first, agency catalogue nearby but no unverified causal edges; mobile does not need all ten above fold.",
+    "developer": "Native policy and agency dialogs; preserve actual static anchor hrefs for JS failure; restore focus after saved card rerender.",
+    "marketer": "Historical policy stage and source differentiated from current effect; no agency execution claim or CMO sign-off.",
+    "operator": "Local regression, responsive and no-JS checks plus actual deployment and live browser/asset readback required.",
+    "redDelegation": "deleg_b3db7829",
+    "redChild": "sa-0-5203d9e3",
+    "redVerdict": "PASS; no release-blocking defect found. Reviewer could not start own Chromium due to libnspr4.so; owner independently ran browser checks.",
+    "ownerDecision": "Policy-first hero with 10 cases and agency catalogue in one stage; distinct on-page dialogs, official source links secondary; no fabricated policy-to-agency assignments."
+  },
   "ownerVerification": {
     "local": "qa/verification.json",
     "institutionLinks": "qa/institution-links.json",

@@ -6,7 +6,7 @@
 
 - 민주당 계열 5명·보수 계열 5명의 역사적 정책 사례를 히어로에서 먼저 표시. 클릭하면 정책 요약·단계·발표 당시 소속·원문이 즉시 모달로 열림
 - 중앙행정기관 **44곳(19부·6처·19청)**의 명칭·유형·확인일을 선택 즉시 기관 모달에 표시. 공식 기구도/사이트는 모달 안의 보조 링크; 기관 검색·필터 유지
-- Blender 5.3으로 제작한 정책 10개 노드와 부·처·청 3개 군집의 개념적 입체 다이어그램. 실제 명칭·선택·키보드 동작은 이미지가 아닌 HTML에 구현하며, 국회·17개 광역의회의 별도 참고 링크를 유지
+- 실제 Blender 5.3으로 렌더한 불규칙한 별무리 위에 정책 사례 10건의 각기 다른 점·짧은 선·이름 아바타·정책 텍스트를 HTML/SVG로 표시. 아래에는 국민·헌법·입법/행정/사법의 한국형 개략 윤곽과 행정 영역에 부·처·청 44곳의 이름을 배치해 탐색하며 국회·17개 광역의회의 별도 참고 링크 유지
 - 발표 당시 소속·연도·공약/발의/시행 구분, 원문·뉴스·관련 법령 검색
 - 내 활성 지도: 정책 저장/삭제, 카테고리별 모음, 240자 관심 이유, JSON 내보내기
 - 모바일, 키보드 포커스와 모션 감소 지원, 저장소 손상/차단 시 탐색 유지
@@ -24,22 +24,23 @@ npm start
 
 런타임 의존성은 없습니다. Python 3는 로컬 서버에 사용합니다. HTML/CSS/JS를 직접 편집하므로 빌드 단계도 없습니다.
 
-- `dist/index.html`, `styles.css`, `app.js`: 정책 우선 히어로와 두 모달·인터랙션. HTML에는 JS 실패를 대비한 정책 사례 10건의 정적 출처 링크가 있으며, `npm test`가 `data.js`와 원문 URL 일치를 검사
+- `dist/index.html`, `styles.css`, `galaxy.css`, `app.js`: 은하수 정책 히어로·한국형 개략도·두 모달과 인터랙션. HTML에는 JS 실패를 대비한 정책 사례 10건의 정적 출처 링크가 있으며, `npm test`가 `data.js`와 원문 URL 일치를 검사
 - `dist/data.js`: 10개 정책 사례 및 의회 참고 링크
 - `dist/institutions.js`, `institutions.json`: 2026-11-16 중앙행정기관 스냅샷(검색·유형 필터, 출처·확인일 표기)
 - `dist/sources.html`, `sources.js`: 방문자용 자료 출처
 - `dist/assets/`: 자체 호스팅 글꼴·지도·아이콘
-- `dist/assets/policy-diagram.webp`, `policy-diagram-mobile.webp`: 각각 데스크톱 5×2·모바일 2×5 정책 노드 구도와 분리된 부·처·청 세 군집의 Blender 개념 장면. 이전 지형 자산 `institution-atlas.webp`는 재현 자료로 남아 있지만 현재 페이지에서는 호출하지 않음
-- `scripts/render-policy-diagram.py`, `render-policy-diagram-mobile.py`, 대응하는 `.blend`: 데스크톱·모바일 입체 다이어그램 재현 스크립트와 편집 가능한 장면
+- `dist/assets/galaxy.webp`: Blender 5.3으로 렌더한 은하수의 비상호작용 배경. 위치가 고정된 정책 도트·선·받침대는 포함하지 않음
+- `scripts/render-galaxy.py`, `scripts/galaxy.blend`: 현재 은하수 배경의 재현 스크립트와 편집 가능한 장면
+- `dist/assets/policy-diagram*.webp`, `scripts/render-policy-diagram*.py`, 대응하는 `.blend`: 이전 5×2/2×5 받침대 장면의 재현 자료. 현재 페이지에서 호출하지 않음
 - `scripts/render-institution-atlas.py`, `scripts/institution-atlas.blend`, `scripts/convert-atlas.py`: 이전 한국 지형·국회 모형 재현 자료(현재 페이지 미사용)
 - `scripts/sync-institutions.py`: 정부 기구도 목록을 수동 확인해 JSON·JS와 `index.html`의 무스크립트용 44개 공식 링크를 함께 갱신. 목록·분류가 바뀌면 자동 실패하여 검토 요구
 - `scripts/verify-institution-links.py`, `qa/institution-links.json`: 기관 링크 44개의 HTTP 응답 및 본문 기관명 확인 기록
 - `scripts/map-svg.py`: Blender 지형 입력인 `assets/korea.svg`의 기존 SVG 생성기
 - `scripts/verify-browser.cjs`, `qa/verification.json`: 재현 가능한 검증과 결과
 
-첫 화면은 Blender의 데스크톱 5×2·모바일 2×5 정책 받침대에 실제 HTML 정책 노드 10개를 겹쳐 보여주고, 이어서 독립된 HTML 부·처·청 3개 군집에서 기관 44곳을 탐색합니다. Blender 원본에는 기관 분류 받침대도 있지만 반응형에서 기관명과 어긋나므로 웹 화면에서는 해당 구간을 마스킹하고 HTML 군집만 표시합니다. 이미지 자체에는 상호작용이 없으며 각 정책·기관은 HTML 요소를 선택해 해당 모달을 엽니다. 모바일에서는 기관 목록을 내부 스크롤합니다. **정책↔기관의 담당·집행 관계는 검증된 자료가 없어 연결선이나 담당 정책으로 표기하지 않습니다.** 이 장면은 실제 정부 조직도나 기관 위치도가 아닙니다. 시각·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
+첫 화면은 Blender가 렌더한 불규칙한 별무리를 배경으로, 서로 다른 열 개의 HTML/SVG 정책 표식이 각각 `점 → 가는 선 → 이름 아바타 → 정책 이름·당시 단계`를 보여줍니다. 버튼을 누르면 즉시 해당 정책 모달이 열립니다. 아래의 한국형 제도 개략도는 국민·헌법과 입법/행정/사법의 큰 윤곽을 먼저 보여주고, 행정 영역 안에 부·처·청 44곳의 이름을 상자보다 가는 선과 타이포그래피로 배치합니다. 부·처·청 이름을 누르면 별도 기관 모달이 열리며 44곳 모두 검색·필터로 찾을 수 있습니다. 모바일은 은하수 표식을 한 열로 읽고 조직도는 세로 흐름으로 펼칩니다. **별무리의 선은 한 점에서 해당 역사적 사례를 꺼내는 표시일 뿐, 인물 간 관계나 정책↔기관의 담당·집행 관계를 의미하지 않습니다.** 미국 그림의 연방·주·지방 위계나 임명·거부권을 한국 사실관계로 옮기지 않습니다. 시각·접근성 기준은 `DESIGN_SYSTEM.md`를 참고하세요.
 
-Blender 5.3에서 `scripts/render-policy-diagram.py`와 `scripts/render-policy-diagram-mobile.py`를 각각 백그라운드로 실행하면 대응하는 편집 가능 `.blend`와 PNG를 생성합니다. 다음 명령으로 Pillow를 사용해 웹용 WebP 두 개를 변환합니다: `python3 -c 'from PIL import Image; from pathlib import Path; [(Image.open("scripts/policy-diagram"+suffix+".png").convert("RGB").save("dist/assets/policy-diagram"+suffix+".webp", "WEBP", quality=83, method=6)) for suffix in ("", "-mobile")]'`. Windows Blender를 WSL에서 호출할 때는 각 스크립트에 `blender.exe --background --factory-startup --python "$(wslpath -w scripts/render-policy-diagram.py)"` 형태를 사용합니다. PNG와 `.blend1`은 Git에서 제외합니다. 이전 지형 자산을 재현할 때만 `scripts/render-institution-atlas.py`와 `scripts/convert-atlas.py`를 실행합니다.
+현재 장면을 재생성할 때는 Windows Blender 5.3을 WSL에서 `blender.exe --background --factory-startup --python "$(wslpath -w scripts/render-galaxy.py)"`로 실행합니다. 스크립트가 편집 가능한 `.blend`와 PNG를 저장하며, 웹용 이미지는 `python3 -c 'from PIL import Image; Image.open("scripts/galaxy.png").convert("RGB").save("dist/assets/galaxy.webp", "WEBP", quality=83, method=6)'`로 변환합니다. PNG와 `.blend1`은 Git에서 제외합니다. 이전 5×2 받침대와 지형 자산을 재현할 때만 각각 `scripts/render-policy-diagram*.py`와 `scripts/render-institution-atlas.py`를 사용합니다.
 
 ## 데이터·외부 의존성
 
@@ -58,7 +59,7 @@ CHROME_PATH=/opt/google/chrome/chrome npm test
 python3 scripts/verify-institution-links.py
 ```
 
-`npm test`는 첫 화면 정책 10개·기관 44개의 모달 내용과 링크, 포커스·Escape·저장 기능, 검색·필터·스크린리더 결과 알림, JavaScript/이미지 실패 시 정적 링크 대체, 모바일 목록 키보드 접근 및 320–1440px 렌더를 확인하고 `qa/viewport-*.png`를 생성합니다. Chromium에 필요한 시스템 라이브러리와 `CHROME_PATH`가 필요합니다.
+`npm test`는 은하수 표식 10개 각각의 점·리드·아바타·텍스트, 한국형 개략도의 순서와 행정 영역 44개 기관, 다섯 화면 폭의 선 끝점·라벨 충돌·클릭 중심·가로 넘침을 검사합니다. 두 모달 내용·포커스·Escape·저장, 기관 검색/필터·마지막 기관 키보드 접근, JavaScript/이미지 실패 시 정적 링크 대체와 낮은 모바일 화면도 확인하고 `qa/viewport-*.png`를 갱신합니다. Chromium에 필요한 시스템 라이브러리와 `CHROME_PATH`가 필요합니다.
 
 Node.js 26, Playwright Core 1.65.1, 로컬 Chrome으로 검증했습니다. 테스트가 4187 포트에 임시 HTTP 서버를 띄우고 종료합니다. 브라우저는 설치된 Chrome을 사용하며 다른 환경에서는 `CHROME_PATH`를 지정합니다.
 

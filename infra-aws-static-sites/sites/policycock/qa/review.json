@@ -49,6 +49,23 @@
     "ownerDecision": "Actual Blender desktop 5x2 and mobile 2x5 plinths aligned with HTML controls; lower Blender agency trays masked where they cannot match variable-length HTML, and 44 agencies remain in distinct HTML groups without invented policy links.",
     "localEvidence": "qa/verification.json"
   },
+  "galaxyReview": {
+    "initialDelegation": "deleg_d54e50ee",
+    "roleChildren": ["sa-0-125eed77", "sa-1-e21907be", "sa-2-e9cd867b", "sa-3-b6b325b1"],
+    "crossReviewDelegation": "deleg_eed9ffb6",
+    "crossReviewChildren": ["sa-0-ce7a8c8d", "sa-1-8ba976ca", "sa-2-f18f4bb0", "sa-3-3fd04f04"],
+    "designerDelegation": "deleg_08053294",
+    "designerChild": "sa-0-7502d1e7",
+    "roles": [
+      "Planner: one dot/short lead/avatar/name/policy per case; Korean citizen/constitution/three-branch silhouette with agencies readable at 320px.",
+      "Developer: own semantic leads and hit targets in HTML/SVG, keep Blender as non-positional depth; static fallbacks and modal state must survive rerender.",
+      "Marketer: use named initials rather than invented portraits; separate policy case pointers from organization structure; CMO retains brand authority.",
+      "Operator: assert ten distinct interactive leads, last agency reachability, all viewport screenshots, deployment/asset parity and narrow rollback."
+    ],
+    "crossReview": "A detached triple list would under-deliver the US poster's macro silhouette; integrate 44 clickable names inside the executive branch of a broad Korean outline, while avoiding fabricated ministry reporting lines and US federal/state arrows.",
+    "redReview": {"delegation": "deleg_be5b650a", "verdict": "PASS", "scope": "Read-only review of Blender render and five viewport captures; reviewer independently executed Chromium layout, dialog, keyboard and no-JS checks. No release blocker; not a live deployment verdict."},
+    "ownerDecision": "Discard old 5x2 plinth hero. Render a real irregular Blender galaxy as non-semantic atmosphere, place ten distinct dot-to-avatar/label leads as responsive HTML/SVG, and put the Korean citizen/constitution/legislative-executive-judicial outline below with 44 ministries/offices/agencies in the executive exploration branch."
+  },
   "ownerVerification": {
     "local": "qa/verification.json",
     "institutionLinks": "qa/institution-links.json",

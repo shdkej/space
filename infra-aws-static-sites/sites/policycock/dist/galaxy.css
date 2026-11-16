@@ -240,3 +240,33 @@ html,body{overflow-x:clip}
   .government-outline .agency-link{font-size:15px}
   .government-outline .agency-groups{grid-template-columns:minmax(0,1fr)}
 }
+
+/* A landscape reading line above a seven-column institution field. The
+   categories are adjacent for comparison, not a chain of command. */
+@media(min-width:1101px){
+  .outline-map{display:grid;grid-template-columns:minmax(110px,.7fr) minmax(180px,1fr) repeat(3,minmax(0,1.2fr));column-gap:16px;align-items:start}
+  .sovereignty{grid-column:1;grid-row:1;flex-direction:column;align-items:flex-start;text-align:left;gap:4px;padding-top:20px;border-top:1px solid var(--outline-rule)}
+  .sovereignty strong{font-size:clamp(27px,2.4vw,35px)}
+  .constitution{grid-column:2;grid-row:1;display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin:0;padding-top:20px;border-top:1px solid var(--outline-rule)}
+  .constitution:before{display:none}
+  .constitution:after{display:block;content:'';position:absolute;left:auto;right:-9px;top:0;bottom:auto;width:1px;height:100%;background:var(--outline-rule);transform:none}
+  .outline-branches{display:contents}
+  .outline-branches:before{display:none}
+  .outline-branches>.branch{grid-row:1;padding-top:16px}
+  .outline-branches>.branch:before{display:none}
+  .outline-branches>.branch-legislative{grid-column:3}
+  .outline-branches>.branch-executive{grid-column:4}
+  .outline-branches>.branch-judicial{grid-column:5}
+  .branch h3{font-size:clamp(26px,2.6vw,39px)}
+  .government-outline .outline-branches>.directory-panel{grid-column:1/-1;grid-row:2;margin-top:24px;padding-top:24px}
+  .government-outline .outline-branches>.directory-panel:before{display:none}
+  .outline-separate{grid-column:1/-1;margin-top:16px}
+  .government-outline .agency-groups{grid-template-columns:minmax(0,3fr) minmax(0,1.45fr) minmax(0,3fr);gap:16px}
+  .government-outline .agency-group[data-kind="부"],.government-outline .agency-group[data-kind="청"]{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 8px}
+  .government-outline .agency-group[data-kind="부"]{grid-column:auto;grid-row:auto}
+  .government-outline .agency-group[data-kind="처"]{grid-template-columns:minmax(0,1fr)}
+  .government-outline .agency-group:before{display:none}
+}
+@media(min-width:1101px) and (max-width:1320px){
+  .government-outline .agency-group[data-kind="부"],.government-outline .agency-group[data-kind="청"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

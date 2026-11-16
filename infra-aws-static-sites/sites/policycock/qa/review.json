@@ -87,6 +87,26 @@
     "ownerLocalEvidence": "qa/verification.json",
     "qualityLimits": ["Hallmark legacy baseline 410 FAIL/280 REFLEX; latest rendered lint remains unresolved, not clean.", "No project DESIGN.md token charter; DESIGN_SYSTEM.md is the project direction.", "Existing large Pretendard asset and external source URL longevity are separate follow-ups, not certified by this review."]
   },
+  "horizontalOutlineReview": {
+    "parentSession": "20261115_220218_c6a755ca",
+    "route": "Hermes openai-codex delegate_task; no nested Codex CLI",
+    "independentDelegations": ["deleg_2df87fdb", "deleg_4cf10eec"],
+    "roleChildren": ["sa-0-646c2f34", "sa-1-a53a70d2", "sa-2-95d34351", "sa-3-c2600cdc"],
+    "crossReviewDelegation": "deleg_133de4f1",
+    "crossReviewChildren": ["sa-0-f3da0f50", "sa-1-c3efdb7c", "sa-2-e10e33e5", "sa-3-575e9223"],
+    "roles": [
+      "Planner: spread 44 names in 3/1/3 reading columns at desktop; preserve legible mobile flow and distinguish constitutional foundation from three branches.",
+      "Developer: preserve DOM and fallback links; verify actual seven columns and name sizes rather than approximate x-coordinate count.",
+      "Marketer: distinguish exploratory visual adjacency from institutional hierarchy or policy responsibility; CMO retains brand authority.",
+      "Operator: local responsive, keyboard and no-JS tests are necessary but live deployment, invalidation and byte parity are separate gates."
+    ],
+    "crossReview": "Planner and Marketer challenged five equal-looking categories; thin rules and a vertical divider now visually distinguish citizen/constitution from the three dark-topped branches, with an explicit non-hierarchy note. Developer challenged approximate column counting; the browser test now asserts exact per-group 3/1/3 columns, 13px text and 40px hit areas. Operator required release readback.",
+    "redReview": {"delegation": "deleg_b794f507", "child": "sa-0-a348fb83", "verdict": "PASS on 1440/1101/375 screenshot and source; reviewer did not independently run keyboard or screen-reader tests; owner's browser suite did."},
+    "finalReview": {"delegation": "deleg_2b511c34", "child": "sa-0-486cb88b", "verdict": "PASS on exact final diff and 1440/375 screenshots; thin-rule grouping, 3/1/3 columns, mobile DOM order and 10/44 static links checked; reviewer did not rerun browser tests."},
+    "ownerDecision": "Keep the historical-case galaxy. On wide screens lay citizen, constitution and three branches on one horizontal row but visually distinguish foundation from branches; distribute 44 agencies across 3/1/3 columns below without invented authority edges. On mobile keep a readable DOM-matched single-column flow.",
+    "localEvidence": "qa/verification.json (48 passing checks; 16 viewport widths)",
+    "qualityLimits": ["Hallmark render ran; 423 FAIL/305 REFLEX, same normalized finding set as prior 423/305, not a clean pass.", "Project DESIGN.md is absent; DESIGN_SYSTEM.md supplies the local design direction."]
+  },
   "ownerVerification": {
     "local": "qa/verification.json",
     "institutionLinks": "qa/institution-links.json",

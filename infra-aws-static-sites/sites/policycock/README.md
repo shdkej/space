@@ -30,7 +30,7 @@ npm start
 - `dist/sources.html`, `sources.js`: 방문자용 자료 출처
 - `dist/assets/`: 자체 호스팅 글꼴·파비콘·비의미적 장식
 - `design/openpencil/policycock-civic-ledger.fig`: 새 화면의 편집 가능한 OpenPencil 와이어프레임, SVG와 PNG 미리보기 포함
-- `design/reviews/ledger-1440.png`, `ledger-375-agencies.png`, `ledger-375-last-agency.png`: 새 화면의 실제 브라우저 렌더 근거
+- `design/reviews/ledger-{1440,375,375-agencies,375-last-agency}.png`: 새 화면의 실제 데스크톱·모바일 브라우저 렌더 근거
 - `design/blender/ledger_relief.py`, `ledger-relief.blend`, `dist/assets/ledger-relief.png`: Blender 5.3으로 제작한 추상 기록지 더미와 배포 장식 이미지
 - `scripts/render-galaxy.py`, `scripts/galaxy.blend`: 이전 은하수의 보존된 제작 소스. 배포 이미지는 제거됨
 - `scripts/render-policy-diagram*.py`, 대응하는 `.blend`: 이전 5×2/2×5 받침대의 보존된 제작 소스. 배포 이미지는 제거됨
@@ -105,6 +105,8 @@ Terraform state 정본은 `/home/ubuntu/workspace/space/infra-aws-static-sites/t
 2026-11-16 가로형 정책 히어로: 소스 `2b5cac9`의 정적 배포 run `43845272094`에서 `policycock` S3 배포·CloudFront 무효화가 성공했습니다. 701px 이상에서 왼쪽 민주당 계열 5건·오른쪽 보수 계열 5건으로 나뉘며, 좁은 화면은 민주당 다음 보수 계열을 읽습니다. 화면 분류는 발표 당시 소속 계열을 위한 탐색 배치이지 정책 이념이나 현재 당적의 판정이 아닙니다. 로컬 **48개**(16개 폭, 정책 10건 각각의 클릭 중심)와 라이브 **12개** 검사를 통과하고 `dist/` **17개 파일** 및 `/`, `/sources` 바이트 일치를 확인했습니다. 독립 Red 검토 PASS 뒤 지적된 클릭 검사 범위를 10건 전부로 확대·재실행했으며, 375/1440px 라이브 화면을 직접 확인했습니다. Hallmark 엄격 검사 **418 FAIL/297 REFLEX**는 여전히 미해결이고 렌더 티어는 `puppeteer-core` 부재로 실행되지 않았습니다. 증거는 `qa/{verification,live-verification,live-assets,deployment,review}.json`입니다.
 
 2026-11-16 Civic Ledger 전면 재구성: 소스 `188a2553029e4e2dca816384a19fd9127d060571`의 배포 run `43860956016`에서 `policycock` S3 동기화와 CloudFront 무효화가 성공했습니다. OpenPencil 편집 원본과 Blender 재현 소스·장식을 포함하며, 과거 은하수·지형의 공개 에셋 여섯 개는 제거했습니다. 로컬 **20개 검사 묶음**과 라이브 **7개 묶음**을 통과했고 정책 10건·기관 44곳의 상세·출처, 모바일 마지막 기관의 키보드 접근, 무스크립트 경로를 확인했습니다. 13개 `dist/` 파일 및 `/`, `/sources`의 라이브 바이트가 일치하며 제거 파일 6개는 403입니다. 독립 Red의 수정 후 로컬 조건부 승인과 오너의 라이브 화면 검증은 별개입니다. `qa/{verification,live-verification,live-assets,deployment}.json`을 근거로 보되, 고객의 미적 만족과 정책의 현재 효력은 미확인입니다.
+
+최종 라이브 모바일 화면에서 상단의 기관 바로가기가 기존 스타일에 가려진 것을 발견해 `d9b1c2faf6a73c5c950369a5ac22fa32882fb455`에서 복구했습니다. **현재 공개 배포**는 run `43862045462`이며 S3·CloudFront 성공, 모바일 바로가기 실제 노출과 키보드 경로, 로컬 20·라이브 7개 묶음, 13개 파일과 두 경로의 바이트 일치를 다시 확인했습니다. 상세 증거는 위 `qa/` 파일의 최신 revision을 따릅니다.
 
 ### 복구
 

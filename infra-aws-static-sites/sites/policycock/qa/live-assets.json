@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-16T11:50:03.702395+00:00",
-  "commit": "188a2553029e4e2dca816384a19fd9127d060571",
+  "verifiedAt": "2026-11-16T11:57:39.148375+00:00",
+  "commit": "d9b1c2faf6a73c5c950369a5ac22fa32882fb455",
   "status": "passed",
   "checks": {
     "root": {
@@ -95,7 +95,7 @@
       "file": "ledger.css",
       "path": "/ledger.css",
       "status": 200,
-      "sha256": "990947ec50df46d382a5b81866c714ada397632c50f42a803c9fa63edbedd7dd",
+      "sha256": "a4635c6d7f52fb59e1ae3a443365ca7461937fc362e961852b1186b206c9b5af",
       "matchesLocal": true,
       "contentType": "text/css"
     },

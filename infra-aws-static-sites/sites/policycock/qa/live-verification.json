@@ -1,22 +1,50 @@
 {
-  "verifiedAt": "2026-11-16T11:57:18.866Z",
+  "verifiedAt": "2026-11-16T12:57:13.623Z",
   "url": "https://policycock.aws.shdkej.com/",
   "status": "passed",
   "checks": [
+    "11개 dist 파일·두 경로 바이트 일치·구형 자산 3개 비노출",
     "HTTPS 200·새 CSS·정책 10·기관 44·의회 18·국회 링크",
-    "1440×900 정책·기관 전체 첫 화면 가독성과 Blender 장식 로드",
+    "1440×900 정책 10건 이름·기관 44곳의 범위와 유형을 한 조망면에 표시",
     "정책 10건·기관 44곳 상세와 원문 링크 전수",
     "기관 유형·검색, 관심 정책 저장·메모 복원·삭제",
     "무스크립트 정책 10·기관 44 원문 링크",
-    "320·375·768·1280px 넘침 없음·모달·마지막 기관 키보드 접근",
+    "320·375px 첫 화면 범위·명단 바로가기, 320·375·768·1280px 넘침 없음·모달·마지막 기관 키보드 접근",
     "출처 페이지 새 설명 10건·스크립트 오류 없음"
   ],
   "fold": {
-    "bottom": 864.71875,
+    "policyBottom": 558.6875,
+    "mapBottom": 644.6875,
+    "kinds": [
+      "부 19",
+      "처 6",
+      "청 19"
+    ],
     "width": 1425,
-    "minTarget": 24,
-    "minFont": 12,
-    "clipped": [],
-    "asset": true
-  }
+    "minTarget": 39,
+    "minFont": 17,
+    "clipped": []
+  },
+  "matchedDistFiles": [
+    "app.js",
+    "assets/OFL.txt",
+    "assets/PretendardVariable.woff2",
+    "assets/favicon.svg",
+    "data.js",
+    "index.css",
+    "index.html",
+    "institutions.js",
+    "institutions.json",
+    "sources.html",
+    "sources.js"
+  ],
+  "matchedRoutes": [
+    "/",
+    "/sources"
+  ],
+  "retiredAssets": [
+    "styles.css",
+    "ledger.css",
+    "assets/ledger-relief.png"
+  ]
 }

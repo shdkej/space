@@ -1,18 +1,22 @@
 {
-  "verifiedAt": "2026-11-16T11:58:14.790065+00:00",
+  "verifiedAt": "2026-11-16T12:59:00.008266+00:00",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "d9b1c2faf6a73c5c950369a5ac22fa32882fb455",
+  "sourceCommit": "7ad02f36338f4f91fc1133f6abaaca1f4e96098d",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 43862045462,
-    "url": "https://github.com/shdkej/space/actions/runs/43862045462",
+    "runId": 43870900083,
+    "url": "https://github.com/shdkej/space/actions/runs/43870900083",
     "conclusion": "success",
     "jobs": [
       "detect",
       "deploy (policycock)"
+    ],
+    "steps": [
+      "Sync S3: success",
+      "Invalidate CloudFront: success"
     ]
   },
   "infrastructure": {
@@ -35,8 +39,8 @@
     "browser": "qa/live-verification.json",
     "assetHashes": "qa/live-assets.json",
     "localChecks": 20,
-    "liveChecks": 7,
-    "matchedDistFiles": 13,
+    "liveChecks": 8,
+    "matchedDistFiles": 11,
     "additionalMatchedRoutes": [
       "/",
       "/sources"
@@ -44,9 +48,9 @@
     "institutionLinks": "qa/institution-links.json",
     "stateTransfer": "qa/state-transfer.json",
     "visualReview": [
-      "1440×900 live desktop",
-      "375×812 live mobile with agency shortcut",
-      "375×667 live last agency"
+      "1440×900 live editorial overview",
+      "375×667 live first fold with 10/44 and agency shortcut",
+      "375×667 live last agency with keyboard focus"
     ]
   },
   "notes": [
@@ -63,12 +67,13 @@
     "The 2026-11-16 horizontal hero update deployed from 2b5cac930f6af4d474472faca7d9c1845b4ecd1f in run 43845272094. The policycock S3 sync and CloudFront invalidation succeeded. Democratic-affiliated cases are on the left and conservative-affiliated cases on the right at 701px and wider; narrow screens present the two groups in DOM order. Local 48 checks at sixteen widths cover all ten target centers per width and no label overlap; live 12 checks passed. All 17 dist files and root and extensionless sources matched live bytes. The owner inspected 375/1440px live captures and an independent read-only Red reviewer passed the local source and screenshots. Strict Hallmark remains unresolved at 418 FAIL/297 REFLEX; its render tier could not start without puppeteer-core. These technical checks do not establish user aesthetic acceptance, political representativeness or current policy effects.",
     "Policy changes, notifications, accounts and analytics remain outside this static prototype.",
     "The 2026-11-16 Civic Ledger redesign deployed from 188a2553029e4e2dca816384a19fd9127d060571 in run 43860956016. S3 sync and CloudFront invalidation succeeded. Local 20 grouped browser checks and live 7 checks passed, including all 10 cases and 44 agencies, mobile last-agency keyboard route and no-JS fallback. All 13 dist files plus / and /sources matched live bytes. Six obsolete galaxy/atlas assets returned 403. Independent final Red approved the corrected local design conditionally; the owner separately verified the live UI. Final user aesthetic preference and current policy effectiveness remain unverified.",
-    "After inspecting the first live mobile screenshot, an inherited mobile header rule was found hiding the agency shortcut. Commit d9b1c2faf6a73c5c950369a5ac22fa32882fb455 restored the visible nav and expanded browser assertions. Run 43862045462 completed S3 sync and CloudFront invalidation. The final live 375px screenshot, 20 local/7 live grouped checks, 13 file hashes and / plus /sources byte parity were reverified on this revision."
+    "After inspecting the first live mobile screenshot, an inherited mobile header rule was found hiding the agency shortcut. Commit d9b1c2faf6a73c5c950369a5ac22fa32882fb455 restored the visible nav and expanded browser assertions. Run 43862045462 completed S3 sync and CloudFront invalidation. The final live 375px screenshot, 20 local/7 live grouped checks, 13 file hashes and / plus /sources byte parity were reverified on this revision.",
+    "The 2026-11-16 editorial index deployed from 7ad02f36338f4f91fc1133f6abaaca1f4e96098d in run 43870900083. The policycock job completed S3 sync and CloudFront invalidation. Local 20 and live 8 grouped browser checks passed; all 11 dist files and / plus /sources matched bytes, and three retired CSS/image assets returned 403. The owner inspected actual 1440/375 live screenshots, including the first-fold agency shortcut and last-agency focus. A first Red review found a release-verifier false-proof risk, corrected before release; a second independent review passed the fix. User aesthetic approval and current policy effectiveness remain unverified."
   ],
   "review": {
-    "independent": "deleg_cf1df8b9: Planner, Developer, Marketer, Operator, Designer completed",
-    "crossReview": "deleg_c972d3f6: Planner, Developer, Marketer, Operator, Red completed; small targets, hidden National Assembly link, mobile last agency, stale live verification addressed",
-    "finalRed": "deleg_4d464b2c: local design conditionally approved; public verification pending at review time, now owner verified with live browser and asset hashes",
-    "ownerDecision": "Separate policy cases and central agencies; no unsupported responsibility links; retain searchable details and static source links. Live visual inspection caught an inherited mobile display:none navigation rule after the first deployment; corrected it, reran local/live tests, and redeployed."
+    "independent": "deleg_fa402bc0: four roles completed, with user correction superseding 54 names in the first fold",
+    "crossReview": "deleg_6cf0c1fd: Planner, Developer, Marketer, Operator completed; revised acceptance confirmed by user",
+    "finalRed": "deleg_ae8ba56d FAIL on live verifier; deleg_d1fb56fe PASS after all-file byte parity and localhost proof guard",
+    "ownerDecision": "One information index for 10 historical case names and 44-agency scope/types; 44 names remain expanded below. No unsupported agency assignments. Owner ran local and production browser/byte checks and inspected live screenshots."
   }
 }

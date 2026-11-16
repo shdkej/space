@@ -1,19 +1,19 @@
 {
-  "verifiedAt": "2026-11-16T11:57:39.148375+00:00",
-  "commit": "d9b1c2faf6a73c5c950369a5ac22fa32882fb455",
+  "verifiedAt": "2026-11-16T12:57:48.038910+00:00",
+  "commit": "7ad02f36338f4f91fc1133f6abaaca1f4e96098d",
   "status": "passed",
   "checks": {
     "root": {
       "path": "/",
       "status": 200,
-      "sha256": "64b7e13a03fb39700765f627440383b43ed6b2b742ddc978ed707b9953e201f1",
+      "sha256": "c5bccfdc16555cdce2bae5898ebb71a67473ba868c3b4deeaa7d9e22a484d3a7",
       "matchesLocal": true,
       "contentType": "text/html"
     },
     "sourcesExtensionless": {
       "path": "/sources",
       "status": 200,
-      "sha256": "f044e5825f7d16612823c90b55142a7687a3ffd5d1bab82c5de485bf99400bb4",
+      "sha256": "36e558d29a7fba53f3d3fd48441265584832ae35e08529be24b0df1f9e0641db",
       "matchesLocal": true,
       "contentType": "text/html"
     }
@@ -23,7 +23,7 @@
       "file": "app.js",
       "path": "/app.js",
       "status": 200,
-      "sha256": "12c98315f7435ad1541d9b3c275fc45ce737e4843393dab50939a65d8dd75d36",
+      "sha256": "5afcc7cb2e9cc3955baece2a12ce5abdcff8649d55fbb4eee6c58f55c5877fa7",
       "matchesLocal": true,
       "contentType": "text/javascript"
     },
@@ -52,26 +52,26 @@
       "contentType": "image/svg+xml"
     },
     {
-      "file": "assets/ledger-relief.png",
-      "path": "/assets/ledger-relief.png",
-      "status": 200,
-      "sha256": "b57a44e98be98fac59360f0fb8c778b29e3e4354a1489c4554a3365f778f489a",
-      "matchesLocal": true,
-      "contentType": "image/png"
-    },
-    {
       "file": "data.js",
       "path": "/data.js",
       "status": 200,
-      "sha256": "4066cf579cf05265f1e9948ddbfdf3828e1af5d3a674431560bddac5042de62f",
+      "sha256": "ae242a36274a13f278580986a741224616da0c9b3c009a3ab03f06b902978742",
       "matchesLocal": true,
       "contentType": "text/javascript"
+    },
+    {
+      "file": "index.css",
+      "path": "/index.css",
+      "status": 200,
+      "sha256": "396e9b60acbd9d5bd08bbd98a7e1f8a54bb4f975181c09e710c34595f3de6a9a",
+      "matchesLocal": true,
+      "contentType": "text/css"
     },
     {
       "file": "index.html",
       "path": "/index.html",
       "status": 200,
-      "sha256": "64b7e13a03fb39700765f627440383b43ed6b2b742ddc978ed707b9953e201f1",
+      "sha256": "c5bccfdc16555cdce2bae5898ebb71a67473ba868c3b4deeaa7d9e22a484d3a7",
       "matchesLocal": true,
       "contentType": "text/html"
     },
@@ -92,18 +92,10 @@
       "contentType": "application/json"
     },
     {
-      "file": "ledger.css",
-      "path": "/ledger.css",
-      "status": 200,
-      "sha256": "a4635c6d7f52fb59e1ae3a443365ca7461937fc362e961852b1186b206c9b5af",
-      "matchesLocal": true,
-      "contentType": "text/css"
-    },
-    {
       "file": "sources.html",
       "path": "/sources.html",
       "status": 200,
-      "sha256": "f044e5825f7d16612823c90b55142a7687a3ffd5d1bab82c5de485bf99400bb4",
+      "sha256": "36e558d29a7fba53f3d3fd48441265584832ae35e08529be24b0df1f9e0641db",
       "matchesLocal": true,
       "contentType": "text/html"
     },
@@ -111,43 +103,19 @@
       "file": "sources.js",
       "path": "/sources.js",
       "status": 200,
-      "sha256": "f556b8d15e254c5c02e35d6e9939070d814c603713abed3023405e265413b343",
+      "sha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0",
       "matchesLocal": true,
       "contentType": "text/javascript"
-    },
-    {
-      "file": "styles.css",
-      "path": "/styles.css",
-      "status": 200,
-      "sha256": "a540122d038d1f06bfd5ca4c75942d61d6de1e567cfc57b9f3bcda8f13e7897e",
-      "matchesLocal": true,
-      "contentType": "text/css"
     }
   ],
-  "retiredFiles": [
-    {
-      "path": "/galaxy.css",
-      "status": 403
-    },
-    {
-      "path": "/assets/galaxy.webp",
-      "status": 403
-    },
-    {
-      "path": "/assets/institution-atlas.webp",
-      "status": 403
-    },
-    {
-      "path": "/assets/korea.svg",
-      "status": 403
-    },
-    {
-      "path": "/assets/policy-diagram.webp",
-      "status": 403
-    },
-    {
-      "path": "/assets/policy-diagram-mobile.webp",
-      "status": 403
-    }
+  "retiredAssets": {
+    "styles.css": 403,
+    "ledger.css": 403,
+    "assets/ledger-relief.png": 403
+  },
+  "matchedDistFiles": 11,
+  "matchedRoutes": [
+    "/",
+    "/sources"
   ]
 }

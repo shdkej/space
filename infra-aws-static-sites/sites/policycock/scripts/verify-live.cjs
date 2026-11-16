@@ -123,7 +123,10 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
         assert.ok(overview.top>=0&&overview.bottom<=height,`${width}px first-fold scope: ${JSON.stringify(overview)}`);
         const listShortcut=page.locator('.overview-counts a[href="#agency-list"]');
         assert.equal(await listShortcut.isVisible(),true);
-        if(width===375&&isProduction)await page.screenshot({path:path.join(root,'qa/live-editorial-map-375.png')});
+        if(width===375&&isProduction){
+          await page.waitForFunction(()=>!document.querySelector('#toast').classList.contains('visible'),null,{timeout:5000});
+          await page.screenshot({path:path.join(root,'qa/live-editorial-map-375.png')});
+        }
         await listShortcut.click();
         assert.equal(await page.evaluate(()=>location.hash),'#agency-list');
         await page.waitForFunction(()=>{const top=document.querySelector('#agency-list').getBoundingClientRect().top;return top>=0&&top<innerHeight},null,{timeout:3000});

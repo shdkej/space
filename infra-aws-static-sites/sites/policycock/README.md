@@ -92,6 +92,8 @@ Terraform state 정본은 `/home/ubuntu/workspace/space/infra-aws-static-sites/t
 
 2026-11-16 Blender Policy Diagram: 소스 `5a00819`의 [정적 배포](https://github.com/shdkej/space/actions/runs/43786928136)에서 `policycock` 잡과 CloudFront 무효화가 성공했습니다. 데스크톱 5×2·모바일 2×5 받침대를 실제 Blender로 제작하고, HTML 정책 10건·기관 44곳의 선택과 모달을 유지했습니다. 로컬 **32개**, 라이브 **11개** 브라우저 검사를 통과했고, `dist/` **15개 파일**과 루트·확장자 없는 출처 경로의 라이브 바이트가 일치했습니다. 독립 Red 검토는 화면 정렬 두 차례 FAIL 후 수정본의 로컬 캡처·소스 기준 PASS였고, 별도 브라우저 실행은 환경 문제로 못 했습니다. 부모의 로컬·라이브 브라우저 검증은 각각 독립적으로 수행했습니다. `qa/{verification,live-verification,live-assets,deployment,review}.json`을 참조합니다. 정책 사례와 기관 사이에 확인되지 않은 소관·집행 관계를 표시하지 않으며, 사용자의 최종 디자인 취향과 고객 성과는 미검증입니다.
 
+2026-11-16 은하수·한국형 기관 개략도 재구성: 소스 `d64c417`의 [정적 배포](https://github.com/shdkej/space/actions/runs/43799147546)에서 `policycock` 잡과 CloudFront 무효화가 성공했습니다. Blender에서 새 별무리를 렌더하고 각 정책의 점→선→아바타·이름·정책을 HTML/SVG의 개별 클릭 대상으로 구성했습니다. 히어로 아래에는 한국의 국민·헌법·입법/행정/사법 큰 윤곽과 행정 영역의 기관 44곳을 배치했습니다. 로컬 **36개**와 라이브 **11개** 브라우저 검사를 통과했고 `dist/` **17개 파일** 및 루트·확장자 없는 출처 경로의 라이브 바이트가 일치합니다. 독립 Red 검토자는 로컬 다섯 화면 폭·모달·무JS 대체를 직접 확인해 출시 차단 결함을 발견하지 못했습니다. `qa/{verification,live-verification,live-assets,deployment,review}.json`에 검증 근거를 남겼습니다. 사용자의 최종 미적 만족과 정책의 현재 효력은 이 기술 검증으로 확인되지 않습니다.
+
 ### 복구
 
 후속 화면 변경은 이전의 검증된 커밋에서 이 사이트 `dist/`만 복원하고 새 커밋을 main에 push하여 재배포합니다. 신규 배포의 긴급 비공개 전환은 해당 CloudFront 배포의 비활성화를 검토하며, 다른 사이트나 공유 인프라는 변경하지 않습니다. 초기 Terraform 적용 전 state 백업은 소유 실행 환경에 권한 0600으로 보관했습니다. state 백업을 무조건 되돌리면 실제 AWS 리소스와 어긋나므로, 리소스 제거가 필요하면 해당 모듈의 별도 plan을 검토합니다. 브라우저 메모는 사이트 복구와 별개이며 내보내기로 보관합니다.

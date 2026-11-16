@@ -1,14 +1,14 @@
 {
-  "verifiedAt": "2026-11-16T10:35:46+09:00",
+  "verifiedAt": "2026-11-16T12:38:09+09:00",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "5a00819a51cdd6627b08dbbad94fade651c83043",
+  "sourceCommit": "d64c417f01a1bf6ca558905b1cdcbce8f03176f4",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 43786928136,
-    "url": "https://github.com/shdkej/space/actions/runs/43786928136",
+    "runId": 43799147546,
+    "url": "https://github.com/shdkej/space/actions/runs/43799147546",
     "conclusion": "success",
     "jobs": [
       "detect",
@@ -34,14 +34,14 @@
     "local": "qa/verification.json",
     "browser": "qa/live-verification.json",
     "assetHashes": "qa/live-assets.json",
-    "localChecks": 32,
+    "localChecks": 36,
     "liveChecks": 11,
-    "matchedDistFiles": 15,
+    "matchedDistFiles": 17,
     "additionalMatchedRoutes": ["/", "/sources"],
     "institutionLinks": "qa/institution-links.json",
     "stateTransfer": "qa/state-transfer.json",
     "visualReview": [
-      "375px mobile",
+      "320px mobile",
       "1440px desktop"
     ]
   },
@@ -53,6 +53,7 @@
     "The 2026-11-16 Blender institution atlas update deployed at eed96c0. The policycock deploy job succeeded, local and live browser checks passed, all 13 current dist assets matched live SHA-256, the retired urban-glass asset returned 403, and 44 institution links returned HTTP 200 with matching names.",
     "The 2026-11-16 policy-first redesign deployed at e1316dc. Ten politician policy cases lead the hero, and policy/agency details open in separate on-page dialogs. The policycock deploy job and CloudFront invalidation succeeded; local 29 checks and live 11 checks passed, and 13 dist files plus root and extensionless sources matched live bytes.",
     "The 2026-11-16 Blender diagram deployed from 5a00819a51cdd6627b08dbbad94fade651c83043 in run 43786928136. The policycock deploy job and CloudFront invalidation succeeded. Desktop and mobile scenes were rendered in Blender; local 32 and live 11 browser checks passed. All 15 dist files plus root and extensionless sources matched live bytes. Independent Red review passed on local artifacts after two alignment failures were fixed; its browser could not start, so the owner reran browser tests and inspected live screenshots separately. No policy-to-agency assignment is asserted.",
+    "The 2026-11-16 galaxy redesign deployed from d64c417f01a1bf6ca558905b1cdcbce8f03176f4 in run 43799147546. The policycock deploy job and CloudFront invalidation succeeded; local 36 and live 11 browser checks passed. All 17 dist files plus root and extensionless sources matched live bytes. A separate Red reviewer passed the local assets and independently tested five viewports, dialogs, keyboard reachability and no-JS fallback. The owner inspected live 320/1440px captures. The Blender galaxy is atmospheric, while ten interactive dot-to-label leads and the Korean government outline are HTML/SVG. These checks do not establish final user design satisfaction or current policy effects.",
     "Policy changes, notifications, accounts and analytics remain outside this static prototype."
   ]
 }

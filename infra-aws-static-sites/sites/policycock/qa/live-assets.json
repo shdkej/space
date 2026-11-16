@@ -1,17 +1,17 @@
 {
-  "verifiedAt": "2026-11-16T10:35:46.378912+09:00",
-  "commit": "5a00819a51cdd6627b08dbbad94fade651c83043",
+  "verifiedAt": "2026-11-16T03:37:52.661029+00:00",
+  "commit": "d64c417f01a1bf6ca558905b1cdcbce8f03176f4",
   "status": "passed",
   "checks": {
     "root": {
-      "path": "root",
+      "path": "/",
       "status": 200,
-      "sha256": "68bab6666fcea7582ca3b4028e3f6a4e422aae22970eb28e6386797eda4c74d4",
+      "sha256": "55e0d0d1b7ecd24c508da39282e371d997a66f1105bcfc92402bd2b3307cdf82",
       "matchesLocal": true,
       "contentType": "text/html"
     },
     "sourcesExtensionless": {
-      "path": "sourcesExtensionless",
+      "path": "/sources",
       "status": 200,
       "sha256": "65f45cd93fa3fbc14f9e92cf46eeadb8d4febbba819cf80adb2e2c4eb609e767",
       "matchesLocal": true,
@@ -20,105 +20,136 @@
   },
   "files": [
     {
-      "path": "app.js",
+      "file": "app.js",
+      "path": "/app.js",
       "status": 200,
-      "sha256": "dd0ce4137616228af56db065d15e641dc8e7fcb9843f42426ce8b85c0a8c2e49",
+      "sha256": "ae1ba95a9e4ea8a11a2c8759d972705ca7ee3c09563e3ddc5438c859e67849f8",
       "matchesLocal": true,
       "contentType": "text/javascript"
     },
     {
-      "path": "assets/OFL.txt",
+      "file": "assets/OFL.txt",
+      "path": "/assets/OFL.txt",
       "status": 200,
       "sha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f",
       "matchesLocal": true,
       "contentType": "text/plain"
     },
     {
-      "path": "assets/PretendardVariable.woff2",
+      "file": "assets/PretendardVariable.woff2",
+      "path": "/assets/PretendardVariable.woff2",
       "status": 200,
       "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
       "matchesLocal": true,
       "contentType": "font/woff2"
     },
     {
-      "path": "assets/favicon.svg",
+      "file": "assets/favicon.svg",
+      "path": "/assets/favicon.svg",
       "status": 200,
       "sha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666",
       "matchesLocal": true,
       "contentType": "image/svg+xml"
     },
     {
-      "path": "assets/institution-atlas.webp",
+      "file": "assets/galaxy.webp",
+      "path": "/assets/galaxy.webp",
+      "status": 200,
+      "sha256": "a38d22ca8784067fb5d874edffaaf0c769edad015eda2ae2e2dfaa19b9c7c897",
+      "matchesLocal": true,
+      "contentType": "image/webp"
+    },
+    {
+      "file": "assets/institution-atlas.webp",
+      "path": "/assets/institution-atlas.webp",
       "status": 200,
       "sha256": "f03769928d7b07efd69f0c88872d4ef0b7232c0394f11d378ff8a9c7bcc3bf2b",
       "matchesLocal": true,
       "contentType": "image/webp"
     },
     {
-      "path": "assets/korea.svg",
+      "file": "assets/korea.svg",
+      "path": "/assets/korea.svg",
       "status": 200,
       "sha256": "5cf65df8124a94c94104c798910f7233ab5a6c82e04a25eafd76d50965a9161b",
       "matchesLocal": true,
       "contentType": "image/svg+xml"
     },
     {
-      "path": "assets/policy-diagram-mobile.webp",
+      "file": "assets/policy-diagram-mobile.webp",
+      "path": "/assets/policy-diagram-mobile.webp",
       "status": 200,
       "sha256": "1bc34786264a66efadfcf6de57f841449d69d5d257fae2539598c2f1b03637f1",
       "matchesLocal": true,
       "contentType": "image/webp"
     },
     {
-      "path": "assets/policy-diagram.webp",
+      "file": "assets/policy-diagram.webp",
+      "path": "/assets/policy-diagram.webp",
       "status": 200,
       "sha256": "32132bf631b15ee2f0bed6cbfd25d39259cfb8440b2f3e267e445fb6e72164ee",
       "matchesLocal": true,
       "contentType": "image/webp"
     },
     {
-      "path": "data.js",
+      "file": "data.js",
+      "path": "/data.js",
       "status": 200,
       "sha256": "4066cf579cf05265f1e9948ddbfdf3828e1af5d3a674431560bddac5042de62f",
       "matchesLocal": true,
       "contentType": "text/javascript"
     },
     {
-      "path": "index.html",
+      "file": "galaxy.css",
+      "path": "/galaxy.css",
       "status": 200,
-      "sha256": "68bab6666fcea7582ca3b4028e3f6a4e422aae22970eb28e6386797eda4c74d4",
+      "sha256": "e4193380098e42bd697feccc1ff457d0a748c65bef21d89fec881a027a1f814f",
+      "matchesLocal": true,
+      "contentType": "text/css"
+    },
+    {
+      "file": "index.html",
+      "path": "/index.html",
+      "status": 200,
+      "sha256": "55e0d0d1b7ecd24c508da39282e371d997a66f1105bcfc92402bd2b3307cdf82",
       "matchesLocal": true,
       "contentType": "text/html"
     },
     {
-      "path": "institutions.js",
+      "file": "institutions.js",
+      "path": "/institutions.js",
       "status": 200,
       "sha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874",
       "matchesLocal": true,
       "contentType": "text/javascript"
     },
     {
-      "path": "institutions.json",
+      "file": "institutions.json",
+      "path": "/institutions.json",
       "status": 200,
       "sha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
       "matchesLocal": true,
       "contentType": "application/json"
     },
     {
-      "path": "sources.html",
+      "file": "sources.html",
+      "path": "/sources.html",
       "status": 200,
       "sha256": "65f45cd93fa3fbc14f9e92cf46eeadb8d4febbba819cf80adb2e2c4eb609e767",
       "matchesLocal": true,
       "contentType": "text/html"
     },
     {
-      "path": "sources.js",
+      "file": "sources.js",
+      "path": "/sources.js",
       "status": 200,
       "sha256": "f556b8d15e254c5c02e35d6e9939070d814c603713abed3023405e265413b343",
       "matchesLocal": true,
       "contentType": "text/javascript"
     },
     {
-      "path": "styles.css",
+      "file": "styles.css",
+      "path": "/styles.css",
       "status": 200,
       "sha256": "a540122d038d1f06bfd5ca4c75942d61d6de1e567cfc57b9f3bcda8f13e7897e",
       "matchesLocal": true,

@@ -1,0 +1,25 @@
+{
+  "verifiedAt": "2026-11-18T09:54:35.200Z",
+  "url": "http://127.0.0.1:4193",
+  "status": "passed",
+  "checks": [
+    "실제 WebGL 캔버스·정책 10개·1440px 장면과 자료 범위",
+    "타일 라벨 위 드래그로 실제 카메라 회전·클릭 분리·전체 복귀",
+    "펼침/모으기 실제 좌표 변화·두 조명의 렌더 결과 변화",
+    "키보드 선택·카메라 접근·상세/저장 동기화·모달 포커스 복귀·빠른 선택 취소",
+    "320–1440px 10개 폭 라벨 비겹침·44px 대상·저장 표시 유지",
+    "모션 감소·모바일 실제 터치 회전/선택·기본 세로 스크롤",
+    "WebGL 실행 중 손실 시 자원 정리·HTML 탐색 유지",
+    "모듈 실패·WebGL 미지원·초기화 도중 실패 시 정리와 정책 상세 유지",
+    "처리되지 않은 브라우저 스크립트 오류 없음"
+  ],
+  "desktopReadyMs": 17759,
+  "browser": "154.0.8037.57",
+  "performanceBoundary": "Headless Chrome software WebGL; real device FPS/battery not measured",
+  "screenshots": [
+    "atlas-1440.png",
+    "atlas-expanded.png",
+    "atlas-selected.png",
+    "atlas-390.png"
+  ]
+}

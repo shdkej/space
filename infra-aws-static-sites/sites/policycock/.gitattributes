@@ -1,0 +1,2 @@
+# Generated vendor files preserve upstream JavaScript and embedded GLSL formatting.
+dist/vendor/three/*.js -whitespace

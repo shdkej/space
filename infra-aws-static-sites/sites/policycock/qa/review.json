@@ -1,150 +1,33 @@
 {
-  "reviewedAt": "2026-11-16",
-  "parentSession": "20261115_220218_c6a755ca",
-  "route": "Hermes openai-codex delegate_task; no nested Codex CLI",
-  "independentRoles": {
-    "initialDelegation": "deleg_b8f81f15",
-    "crossReviewDelegation": "deleg_a6b1294b",
-    "implementationReviewDelegation": "deleg_22c63bb9",
-    "planner": "Single Blender atlas with a distinct National Assembly and complete central-agency directory; stale screenshots flagged and regenerated.",
-    "developer": "Flagged whole-list aria-live, no-JS failure and mobile keyboard reachability; all three were fixed and retested.",
-    "marketer": "Clarified actual links vs live tracking and made static-prototype copy explicit; customer brand direction remains CMO-owned.",
-    "operator": "Required actual policycock deploy job, live browser validation and asset hashes; all verified after release."
+  "reviewedAt": "2026-11-18T09:52:07.278610+00:00",
+  "scope": "2026-11-18 실제 3D 탐색; 기존 AWS 정적 사이트",
+  "baseline": "f0c2802016dc8c59c2bd07c16afa6a1d61dca9dc",
+  "roles": {
+    "planner": "카메라 회전·접근·펼침을 실제 장면으로 구현. 정책 10·기관 44의 미확인 관계를 만들지 않고 기존 기능 보호.",
+    "marketer": "첫 장면의 비중·세라믹 물성·금속 테두리·단계/연도 라벨, 모바일 가독성 검토. 현재 모양은 제품 구현 제안이며 사용자 전체 취향으로 확대하지 않음.",
+    "operator": "기존 AWS/main 경로·vendor 자체 호스팅·라이선스·출산지원금 지도 보존·전체 파일 라이브 바이트 검사.",
+    "developer": "policy-scene 모듈 구현 및 통합 코드 독립 재검토. 주 에이전트가 앱/반응형 통합과 수정·실제 브라우저 검증 수행."
   },
-  "finalIndependentReview": {
-    "delegation": "deleg_191baa15",
-    "child": "sa-0-b4717fe7",
-    "verdict": "PASS",
-    "scope": "Security, logic, static fallbacks, responsive screenshots and keyboard access; read-only reviewer."
-  },
-  "policyFirstReview": {
-    "initialDelegation": "deleg_f3294ed7",
-    "roleChildren": ["sa-0-55d3b440", "sa-1-bfb0957b", "sa-2-9774bb65", "sa-3-8e1df939"],
-    "crossReviewDelegation": "deleg_017570c9",
-    "crossReviewChildren": ["sa-0-7d42eecb", "sa-1-74591625", "sa-2-3217a3fa", "sa-3-48059ed7"],
-    "planner": "Historical policy cards first, agency catalogue nearby but no unverified causal edges; mobile does not need all ten above fold.",
-    "developer": "Native policy and agency dialogs; preserve actual static anchor hrefs for JS failure; restore focus after saved card rerender.",
-    "marketer": "Historical policy stage and source differentiated from current effect; no agency execution claim or CMO sign-off.",
-    "operator": "Local regression, responsive and no-JS checks plus actual deployment and live browser/asset readback required.",
-    "redDelegation": "deleg_b3db7829",
-    "redChild": "sa-0-5203d9e3",
-    "redVerdict": "PASS; no release-blocking defect found. Reviewer could not start own Chromium due to libnspr4.so; owner independently ran browser checks.",
-    "ownerDecision": "Policy-first hero with 10 cases and agency catalogue in one stage; distinct on-page dialogs, official source links secondary; no fabricated policy-to-agency assignments."
-  },
-  "diagramReview": {
-    "initialDelegation": "deleg_0827bba6",
-    "crossReviewDelegation": "deleg_ecc9e127",
-    "roles": [
-      "Planner: policy cases first, agency categories independently; no causal edge across systems.",
-      "Developer: Blender scenery with HTML-owned nodes and modal hit targets; mobile portrait composition required.",
-      "Marketer: remove policy-to-agency causal wording and distinguish the two catalogues; CMO retains brand direction.",
-      "Operator: image failure, 320px last agency, modal and live asset parity are release gates."
-    ],
-    "designDelegations": ["deleg_378e9b92", "deleg_1da17cac"],
-    "redReviews": [
-      {"delegation": "deleg_dff854ea", "verdict": "FAIL", "reason": "Mobile 5x2 Blender art did not match 2x5 HTML; agency trays and cards misaligned."},
-      {"delegation": "deleg_9677dcad", "verdict": "FAIL", "reason": "Desktop/tablet outer pedestals offset and agency tray ghosts remained."},
-      {"delegation": "deleg_75049d37", "child": "sa-0-e557026f", "verdict": "PASS", "scope": "Source, assets, regenerated 320–1440 screenshots, no-JS and modal evidence; reviewer browser unavailable; owner ran 32 local browser checks."}
-    ],
-    "ownerDecision": "Actual Blender desktop 5x2 and mobile 2x5 plinths aligned with HTML controls; lower Blender agency trays masked where they cannot match variable-length HTML, and 44 agencies remain in distinct HTML groups without invented policy links.",
-    "localEvidence": "qa/verification.json"
-  },
-  "galaxyReview": {
-    "initialDelegation": "deleg_d54e50ee",
-    "roleChildren": ["sa-0-125eed77", "sa-1-e21907be", "sa-2-e9cd867b", "sa-3-b6b325b1"],
-    "crossReviewDelegation": "deleg_eed9ffb6",
-    "crossReviewChildren": ["sa-0-ce7a8c8d", "sa-1-8ba976ca", "sa-2-f18f4bb0", "sa-3-3fd04f04"],
-    "designerDelegation": "deleg_08053294",
-    "designerChild": "sa-0-7502d1e7",
-    "roles": [
-      "Planner: one dot/short lead/avatar/name/policy per case; Korean citizen/constitution/three-branch silhouette with agencies readable at 320px.",
-      "Developer: own semantic leads and hit targets in HTML/SVG, keep Blender as non-positional depth; static fallbacks and modal state must survive rerender.",
-      "Marketer: use named initials rather than invented portraits; separate policy case pointers from organization structure; CMO retains brand authority.",
-      "Operator: assert ten distinct interactive leads, last agency reachability, all viewport screenshots, deployment/asset parity and narrow rollback."
-    ],
-    "crossReview": "A detached triple list would under-deliver the US poster's macro silhouette; integrate 44 clickable names inside the executive branch of a broad Korean outline, while avoiding fabricated ministry reporting lines and US federal/state arrows.",
-    "redReview": {"delegation": "deleg_be5b650a", "verdict": "PASS", "scope": "Read-only review of Blender render and five viewport captures; reviewer independently executed Chromium layout, dialog, keyboard and no-JS checks. No release blocker; not a live deployment verdict."},
-    "ownerDecision": "Discard old 5x2 plinth hero. Render a real irregular Blender galaxy as non-semantic atmosphere, place ten distinct dot-to-avatar/label leads as responsive HTML/SVG, and put the Korean citizen/constitution/legislative-executive-judicial outline below with 44 ministries/offices/agencies in the executive exploration branch."
-  },
-  "skillRedesignReview": {
-    "parentSession": "20261115_220218_c6a755ca",
-    "route": "Hermes openai-codex delegate_task; four independent roles plus cross-review; no nested CLI",
-    "initialDelegation": "deleg_dd84f619",
-    "crossReviewDelegation": "deleg_568956c7",
-    "designerDelegation": "deleg_3adfd61d",
-    "roles": [
-      "Planner: the 44 agencies needed the full map width rather than a narrow executive column.",
-      "Developer: each case lead stays attached to its HTML target; preserve 10/44 links and responsive no-overlap checks.",
-      "Marketer: label category lines as conceptual, not verified agency authority or policy assignments; CMO direction unchanged.",
-      "Operator: check actual responsive screenshots, static fallback, live deployment and byte parity rather than reuse an earlier PASS."
-    ],
-    "reviewRounds": [
-      {"delegation": "deleg_f75b90ea", "visual": "FAIL: first iteration still read like a detached agency list; mobile branch order collapsed.", "code": "FAIL: 901–1100px case leads overlapped or clipped.", "omd": "FAIL: strict DESIGN.md charter absent; heading inversion, legacy 2MB font and no-JS external-link indicator flagged."},
-      {"delegation": "deleg_489a8540", "visual": "PASS: desktop unified outline and mobile three branches before 44-name index.", "code": "FAIL: CSS visual order differed from DOM order; static h5 headings were replaced with h3 at runtime."},
-      {"delegation": "deleg_e590a822", "child": "sa-0-3fc73497", "verdict": "PASS: direct-child directory follows judicial in DOM and visual order; generated and runtime headings both h4. Reviewer browser test unavailable due to Chrome path; owner browser test passed."}
-    ],
-    "ownerDecision": "Place 10 irregular dot-to-name historical case leads above one Korean citizen/constitution/three-branch outline; agencies occupy a full-width classified index after all three branches. Do not draw unverified reporting or policy responsibility lines.",
-    "ownerLocalEvidence": "qa/verification.json",
-    "qualityLimits": ["Hallmark legacy baseline 410 FAIL/280 REFLEX; latest rendered lint remains unresolved, not clean.", "No project DESIGN.md token charter; DESIGN_SYSTEM.md is the project direction.", "Existing large Pretendard asset and external source URL longevity are separate follow-ups, not certified by this review."]
-  },
-  "horizontalOutlineReview": {
-    "parentSession": "20261115_220218_c6a755ca",
-    "route": "Hermes openai-codex delegate_task; no nested Codex CLI",
-    "independentDelegations": ["deleg_2df87fdb", "deleg_4cf10eec"],
-    "roleChildren": ["sa-0-646c2f34", "sa-1-a53a70d2", "sa-2-95d34351", "sa-3-c2600cdc"],
-    "crossReviewDelegation": "deleg_133de4f1",
-    "crossReviewChildren": ["sa-0-f3da0f50", "sa-1-c3efdb7c", "sa-2-e10e33e5", "sa-3-575e9223"],
-    "roles": [
-      "Planner: spread 44 names in 3/1/3 reading columns at desktop; preserve legible mobile flow and distinguish constitutional foundation from three branches.",
-      "Developer: preserve DOM and fallback links; verify actual seven columns and name sizes rather than approximate x-coordinate count.",
-      "Marketer: distinguish exploratory visual adjacency from institutional hierarchy or policy responsibility; CMO retains brand authority.",
-      "Operator: local responsive, keyboard and no-JS tests are necessary but live deployment, invalidation and byte parity are separate gates."
-    ],
-    "crossReview": "Planner and Marketer challenged five equal-looking categories; thin rules and a vertical divider now visually distinguish citizen/constitution from the three dark-topped branches, with an explicit non-hierarchy note. Developer challenged approximate column counting; the browser test now asserts exact per-group 3/1/3 columns, 13px text and 40px hit areas. Operator required release readback.",
-    "redReview": {"delegation": "deleg_b794f507", "child": "sa-0-a348fb83", "verdict": "PASS on 1440/1101/375 screenshot and source; reviewer did not independently run keyboard or screen-reader tests; owner's browser suite did."},
-    "finalReview": {"delegation": "deleg_2b511c34", "child": "sa-0-486cb88b", "verdict": "PASS on exact final diff and 1440/375 screenshots; thin-rule grouping, 3/1/3 columns, mobile DOM order and 10/44 static links checked; reviewer did not rerun browser tests."},
-    "ownerDecision": "Keep the historical-case galaxy. On wide screens lay citizen, constitution and three branches on one horizontal row but visually distinguish foundation from branches; distribute 44 agencies across 3/1/3 columns below without invented authority edges. On mobile keep a readable DOM-matched single-column flow.",
-    "localEvidence": "qa/verification.json (48 passing checks; 16 viewport widths)",
-    "qualityLimits": ["Hallmark render ran; 423 FAIL/305 REFLEX, same normalized finding set as prior 423/305, not a clean pass.", "Project DESIGN.md is absent; DESIGN_SYSTEM.md supplies the local design direction."]
-  },
-  "horizontalHeroReview": {
-    "parentSession": "20261115_220218_c6a755ca",
-    "route": "Hermes openai-codex delegate_task; four direct role children, no nested Codex CLI",
-    "independentDelegations": ["deleg_d65efe7b", "deleg_a57990d6"],
-    "roleChildren": ["sa-0-b8014bfb", "sa-1-a6a70ece", "sa-2-a2f24414", "sa-3-002de671"],
-    "crossReview": "Planner warned that absolute percentage positions collide at narrow widths; Developer recommended group grid with flowing, staggered labels and tested real widths; Marketer warned that left/right is not a policy ideology score or current party status; Operator required no-JS, live deploy and byte parity. These are scoped role critiques, not CMO approval.",
-    "redReview": {"delegation": "deleg_f896f9d9", "child": "sa-0-2f5c6c17", "verdict": "PASS on local 1440/701/375px captures and source. Reviewer noted that only first/last case hit centers were tested at each width; owner expanded the browser assertion to all ten and reran 48 checks."},
-    "ownerDecision": "At 701px and above, present five historical Democratic-party-affiliated cases on the left and five conservative-party-affiliated cases on the right within separate galaxy fields; at 700px and below keep Democratic then conservative in DOM and visual order. Preserve case-specific leads, static source links and the independent 44-agency outline. Explain that left/right is a browse layout, not ideology or current affiliation.",
-    "localEvidence": "qa/verification.json (48 checks, 16 widths, all 10 hit centers per width)",
-    "liveEvidence": ["qa/live-verification.json (12 checks)", "qa/live-assets.json (17 dist files and 2 routes matched)", "qa/deployment.json (run 43845272094)"],
-    "qualityLimits": ["Hallmark strict lint 418 FAIL/297 REFLEX remains unresolved; its render tier did not start without puppeteer-core. Prior 423/305 was not a clean baseline.", "No project DESIGN.md token charter; DESIGN_SYSTEM.md is the product design direction.", "User aesthetic acceptance and current policy effectiveness are not proven by technical checks."]
-  },
-  "editorialMapReview": {
-    "parentSession": "20261115_220218_c6a755ca",
-    "route": "Hermes openai-codex delegate_task; four direct role children, no nested Codex CLI",
-    "initialDelegation": "deleg_e9a8d2d2",
-    "crossReviewDelegation": "deleg_6cf0c1fd",
-    "finalDelegation": "deleg_fa402bc0",
-    "finalRoleChildren": ["sa-0-1f7fb90a", "sa-1-b5bbe7cd", "sa-2-8af62d7c", "sa-3-63a7f3ee"],
-    "roles": [
-      "Planner: first screen shows 10 historical policy names/stages and 44-agency range/type; all 44 names remain in the expanded directory. A shared index is not a policy-agency relationship map.",
-      "Developer: replacing 54 first-fold names with 19/6/19 scope is justified by the user's correction; protect 10/44 links, modal details and no-JS fallback. Source copy must not imply every reference is an official primary document.",
-      "Marketer: large Korean headline and source-first hierarchy improve readability, but the map-like feeling and user taste are not yet validated; CMO retains brand authority.",
-      "Operator: release only after site-specific job, invalidation, live mobile first fold, all dist byte parity and retired asset checks; rollback only this site's dist."
-    ],
-    "redReviews": [
-      {"delegation": "deleg_ae8ba56d", "child": "sa-0-41e3f498", "verdict": "FAIL: localhost smoke could overwrite live-verification.json and only index.css byte parity was tested."},
-      {"delegation": "deleg_d1fb56fe", "child": "sa-0-f5af94e1", "verdict": "PASS: local-only smoke does not write live proof; all 11 dist files, two routes and three retired assets are checked. Public deployment remains a separate gate."}
-    ],
-    "ownerDecision": "Discard the 54-names-first-fold rule after the explicit user correction. Give 10 case names and 44-agency scope/types a shared visual index, leave 44 names expanded below, avoid fabricated assignments, and preserve historical stages and sources. Local tests and a reviewer PASS do not establish user aesthetic approval or public deployment.",
-    "localEvidence": "qa/verification.json (20 passing browser check groups; 320–1440px); local-only verify-live smoke (8 passing groups); Hallmark static 0 FAIL/0 REFLEX/1 WARN with render tier unavailable"
-  },
-  "ownerVerification": {
-    "local": "qa/verification.json",
-    "institutionLinks": "qa/institution-links.json",
-    "deployment": "qa/deployment.json",
-    "liveBrowser": "qa/live-verification.json",
-    "liveAssets": "qa/live-assets.json"
-  },
-  "limits": ["Agencies are listed conceptually, not pinned to verified addresses.", "Brand preference and customer outcomes have not been independently validated."]
+  "resolvedFindings": [
+    "카메라 행렬 갱신 후 라벨 투영으로 프레임 지연 제거",
+    "반응형 보드 재생성 시 저장 표시 재동기화",
+    "HTML 라벨 위 드래그를 회전에 연결하고 최대 이동 거리로 클릭과 분리",
+    "초기화 중간 실패와 context loss에서 공통 자원 정리",
+    "태블릿 라벨 겹침을 1100px 이하 3열 배치로 해소",
+    "검증기: CSS 배경을 고정한 빛 비교, 선택되지 않은 라벨의 카메라 이동 비교, 모션 감소의 두 프레임 내 완료 단언으로 강화"
+  ],
+  "independentFinalReview": "Developer: 수정된 네 항목 확인, 추가 배포 차단 문제 없음. 정적 코드 검토이며 실제 브라우저를 별도로 실행하지 않음.",
+  "verificationReview": "Operator: 장면 테스트의 false-pass 가능성 세 항목 제기, 주 에이전트가 검사 강화. 최종 브라우저 결과는 qa/scene-verification.json에서 확인.",
+  "evidence": [
+    "qa/verification.json",
+    "qa/scene-verification.json",
+    "qa/live-verification.json",
+    "qa/live-scene-verification.json",
+    "qa/deployment.json"
+  ],
+  "limits": [
+    "모바일 실기기 FPS·발열·배터리 미측정",
+    "사용자의 최종 미적 만족 및 정책 현재 효력은 기술 검사와 별개"
+  ],
+  "previousReviews": "f0c2802 이전 Git 이력의 qa/review.json"
 }

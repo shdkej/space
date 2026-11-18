@@ -22,6 +22,9 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
   const pass=name=>{checks.push(name);console.log('PASS '+name)};
   try{
     const context=await browser.newContext({viewport:{width:1440,height:900}});
+    // Real WebGL interaction is verified separately by verify-scene.cjs.
+    // This context exercises the HTML fallback without competing for the GPU.
+    await context.route('**/policy-scene.js',route=>route.abort());
     const page=await context.newPage(), errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     const response=await page.goto(base,{waitUntil:'networkidle'});
@@ -43,7 +46,11 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
       const retiredResponse=await context.request.get(base+'/'+retired);
       assert.notEqual(retiredResponse.status(),200,`${retired} should not remain public`);
     }
-    pass(`${fileChecks.length}개 dist 파일·두 경로 바이트 일치·구형 자산 3개 비노출`);
+    assert.ok(fileChecks.includes('birth-grant-map.html'),'지역별 출산지원금 지도 배포 파일 보존');
+    const birthResponse=await context.request.get(base+'/birth-grant-map.html');
+    assert.equal(birthResponse.status(),200);
+    assert.match(await birthResponse.text(),/<title>지역별 출산지원금 지도[^<]*모두의정책<\/title>/);
+    pass(`${fileChecks.length}개 dist 파일·두 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출`);
     await page.evaluate(()=>document.fonts.ready);
     assert.equal(await page.locator('.person').count(),10);
     assert.equal(await page.locator('.agency-link').count(),44);
@@ -54,7 +61,16 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
     assert.equal(await page.locator('.outline-branches>.branch a').first().isVisible(),true);
     pass('HTTPS 200·새 CSS·정책 10·기관 44·의회 18·국회 링크');
 
+    await page.waitForSelector('#policy-scene[data-status="fallback"]');
+    assert.equal(await page.locator('.scene-fallback a[href="#policies"]').isVisible(),true);
+    assert.equal(await page.locator('.scene-list-link[href="#policies"]').isVisible(),true);
     const fold=await page.evaluate(()=>({
+      atlasTop:document.querySelector('#atlas').getBoundingClientRect().top,
+      atlasBottom:document.querySelector('#atlas').getBoundingClientRect().bottom,
+      sceneTop:document.querySelector('#policy-scene').getBoundingClientRect().top,
+      sceneBottom:document.querySelector('#policy-scene').getBoundingClientRect().bottom,
+      scope:document.querySelector('.atlas-scope').textContent,
+      scopeBottom:document.querySelector('.atlas-scope').getBoundingClientRect().bottom,
       policyBottom:Math.max(...[...document.querySelectorAll('.person')].map(n=>n.getBoundingClientRect().bottom)),
       mapBottom:document.querySelector('.overview-agencies').getBoundingClientRect().bottom,
       kinds:[...document.querySelectorAll('.overview-agencies-kinds span')].map(n=>n.textContent.trim()),
@@ -63,12 +79,18 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
       minFont:Math.min(...[...document.querySelectorAll('.agency-link')].map(n=>parseFloat(getComputedStyle(n).fontSize))),
       clipped:[...document.querySelectorAll('.agency-link')].filter(n=>n.scrollWidth>n.clientWidth+2).map(n=>n.textContent)
     }));
-    assert.ok(fold.policyBottom<=900&&fold.mapBottom<=900,`overview beyond 900px: ${JSON.stringify(fold)}`);
+    assert.ok(fold.atlasTop>=0&&fold.atlasBottom<=901&&fold.sceneTop>=fold.atlasTop&&fold.sceneBottom<=fold.atlasBottom&&fold.sceneBottom>fold.sceneTop,`atlas outside 1440×900: ${JSON.stringify(fold)}`);
+    assert.ok(fold.scopeBottom<=901);
+    assert.match(fold.scope,/정책 사례\s*10/);
+    assert.match(fold.scope,/중앙행정기관\s*44/);
     assert.deepEqual(fold.kinds,['부 19','처 6','청 19']);
     assert.ok(fold.width<=1440&&fold.minTarget>=39&&fold.minFont>=17);
     assert.deepEqual(fold.clipped,[]);
-    if(isProduction)await page.screenshot({path:path.join(root,'qa/live-editorial-map-1440.png')});
-    pass('1440×900 정책 10건 이름·기관 44곳의 범위와 유형을 한 조망면에 표시');
+    if(isProduction)await page.screenshot({path:path.join(root,'qa/live-atlas-fallback-1440.png')});
+    await page.locator('.scene-fallback a[href="#policies"]').click();
+    assert.equal(await page.evaluate(()=>location.hash),'#policies');
+    await page.waitForFunction(()=>{const top=document.querySelector('#policies').getBoundingClientRect().top;return top>=0&&top<innerHeight},null,{timeout:3000});
+    pass('1440×900 탐색 히어로·10/44 범위·3D 로딩 실패 시 정책 목록 접근');
 
     const policies=await page.evaluate(()=>POLICY_DATA.map(p=>({id:p.id,title:p.policy,source:p.source})));
     for(const p of policies){
@@ -109,24 +131,35 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
     pass('무스크립트 정책 10·기관 44 원문 링크');
 
     for(const [width,height] of [[320,568],[375,667],[768,900],[1280,800]]){
-      await page.setViewportSize({width,height});await page.evaluate(()=>scrollTo(0,0));
+      await page.setViewportSize({width,height});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px overflow`);
       assert.equal(await page.locator('.person').count(),10);
       assert.equal(await page.locator('.agency-link').count(),44);
       if(width<=375){
         const shortcut=page.locator('.site-header nav a[href="#agencies"]');
         assert.equal(await shortcut.isVisible(),true);
-        assert.equal(await page.locator('.overview-counts').isVisible(),true);
-        const overview=await page.locator('.overview-counts').evaluate(n=>({text:n.textContent,top:n.getBoundingClientRect().top,bottom:n.getBoundingClientRect().bottom}));
-        assert.match(overview.text,/정책 사례 10건/);
-        assert.match(overview.text,/중앙행정기관 44곳/);
-        assert.ok(overview.top>=0&&overview.bottom<=height,`${width}px first-fold scope: ${JSON.stringify(overview)}`);
-        const listShortcut=page.locator('.overview-counts a[href="#agency-list"]');
+        assert.equal(await page.locator('#atlas').isVisible(),true);
+        const title=await page.locator('#hero-title').boundingBox();
+        assert.ok(title&&title.y>=0&&title.y+title.height<=height,`${width}px first-fold title: ${JSON.stringify(title)}`);
+        assert.equal(await page.locator('.atlas-scope').isVisible(),true);
+        const scope=await page.locator('.atlas-scope').textContent();
+        assert.match(scope,/정책 사례\s*10/);
+        assert.match(scope,/중앙행정기관\s*44/);
+        const scopeShortcut=page.locator('.atlas-scope a[href="#agencies"]');
+        assert.equal(await scopeShortcut.isVisible(),true);
+        const policyShortcut=page.locator('.scene-fallback a[href="#policies"]');
+        assert.equal(await policyShortcut.isVisible(),true);
+        const listShortcut=page.locator('.overview-agencies a[href="#agency-list"]');
         assert.equal(await listShortcut.isVisible(),true);
         if(width===375&&isProduction){
           await page.waitForFunction(()=>!document.querySelector('#toast').classList.contains('visible'),null,{timeout:5000});
-          await page.screenshot({path:path.join(root,'qa/live-editorial-map-375.png')});
+          await page.screenshot({path:path.join(root,'qa/live-atlas-fallback-375.png')});
         }
+        await policyShortcut.click();
+        assert.equal(await page.evaluate(()=>location.hash),'#policies');
+        await page.waitForFunction(()=>{const top=document.querySelector('#policies').getBoundingClientRect().top;return top>=0&&top<innerHeight},null,{timeout:3000});
+        await scopeShortcut.click();
+        assert.equal(await page.evaluate(()=>location.hash),'#agencies');
         await listShortcut.click();
         assert.equal(await page.evaluate(()=>location.hash),'#agency-list');
         await page.waitForFunction(()=>{const top=document.querySelector('#agency-list').getBoundingClientRect().top;return top>=0&&top<innerHeight},null,{timeout:3000});
@@ -146,15 +179,15 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
       await last.click();assert.equal(await page.locator('#agency-dialog-title').textContent(),agencies.at(-1).name);
       await page.keyboard.press('Escape');
       assert.equal(await last.evaluate(n=>n===document.activeElement),true);
-      if(width===375&&isProduction)await page.screenshot({path:path.join(root,'qa/live-editorial-map-375-last-agency.png')});
+      if(width===375&&isProduction)await page.screenshot({path:path.join(root,'qa/live-atlas-375-last-agency.png')});
     }
-    pass('320·375px 첫 화면 범위·명단 바로가기, 320·375·768·1280px 넘침 없음·모달·마지막 기관 키보드 접근');
+    pass('320·375px 탐색 표제·10/44 범위·대체 목록·기관 바로가기, 320·375·768·1280px 넘침 없음·모달·마지막 기관 키보드 접근');
     const sourceResponse=await page.goto(base+'/sources.html');
     assert.equal(sourceResponse.status(),200);
     assert.equal(await page.locator('.source-item').count(),10);
     assert.match(await page.locator('.source-page').textContent(),/44개 기관명은 이어지는 본문/);
     assert.deepEqual(errors,[]);
-    pass('출처 페이지 새 설명 10건·스크립트 오류 없음');
+    pass('출처 페이지 설명 10건·HTML 대체 탐색 스크립트 오류 없음');
     if(isProduction)fs.writeFileSync(path.join(root,'qa/live-verification.json'),JSON.stringify({verifiedAt:new Date().toISOString(),url:base+'/',status:'passed',checks,fold,matchedDistFiles:fileChecks,matchedRoutes,retiredAssets:['styles.css','ledger.css','assets/ledger-relief.png']},null,2)+'\n');
     else console.log('LOCAL SMOKE ONLY: qa/live-verification.json was not written');
     await context.close();

@@ -1,26 +1,32 @@
 {
-  "verifiedAt": "2026-11-16T12:57:13.623Z",
+  "verifiedAt": "2026-11-18T09:56:56.349Z",
   "url": "https://policycock.aws.shdkej.com/",
   "status": "passed",
   "checks": [
-    "11개 dist 파일·두 경로 바이트 일치·구형 자산 3개 비노출",
+    "17개 dist 파일·두 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
     "HTTPS 200·새 CSS·정책 10·기관 44·의회 18·국회 링크",
-    "1440×900 정책 10건 이름·기관 44곳의 범위와 유형을 한 조망면에 표시",
+    "1440×900 탐색 히어로·10/44 범위·3D 로딩 실패 시 정책 목록 접근",
     "정책 10건·기관 44곳 상세와 원문 링크 전수",
     "기관 유형·검색, 관심 정책 저장·메모 복원·삭제",
     "무스크립트 정책 10·기관 44 원문 링크",
-    "320·375px 첫 화면 범위·명단 바로가기, 320·375·768·1280px 넘침 없음·모달·마지막 기관 키보드 접근",
-    "출처 페이지 새 설명 10건·스크립트 오류 없음"
+    "320·375px 탐색 표제·10/44 범위·대체 목록·기관 바로가기, 320·375·768·1280px 넘침 없음·모달·마지막 기관 키보드 접근",
+    "출처 페이지 설명 10건·HTML 대체 탐색 스크립트 오류 없음"
   ],
   "fold": {
-    "policyBottom": 558.6875,
-    "mapBottom": 644.6875,
+    "atlasTop": 84,
+    "atlasBottom": 900,
+    "sceneTop": 94,
+    "sceneBottom": 752,
+    "scope": "발표 당시 정책 사례 10중앙행정기관 44부 19 · 처 6 · 청 19↗정책의 현재 효력은 원문에서 확인하세요.",
+    "scopeBottom": 900,
+    "policyBottom": 1494.59375,
+    "mapBottom": 1599.59375,
     "kinds": [
       "부 19",
       "처 6",
       "청 19"
     ],
-    "width": 1425,
+    "width": 1440,
     "minTarget": 39,
     "minFont": 17,
     "clipped": []
@@ -30,13 +36,19 @@
     "assets/OFL.txt",
     "assets/PretendardVariable.woff2",
     "assets/favicon.svg",
+    "birth-grant-map.html",
     "data.js",
     "index.css",
     "index.html",
     "institutions.js",
     "institutions.json",
+    "policy-scene.js",
     "sources.html",
-    "sources.js"
+    "sources.js",
+    "vendor/three/LICENSE",
+    "vendor/three/OrbitControls.js",
+    "vendor/three/RoomEnvironment.js",
+    "vendor/three/three.module.js"
   ],
   "matchedRoutes": [
     "/",

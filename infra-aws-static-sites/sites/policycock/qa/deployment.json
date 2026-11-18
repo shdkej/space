@@ -1,79 +1,65 @@
 {
-  "verifiedAt": "2026-11-16T12:59:00.008266+00:00",
+  "verifiedAt": "2026-11-18T09:58:45.574693+00:00",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "7ad02f36338f4f91fc1133f6abaaca1f4e96098d",
+  "sourceCommit": "8fdad908f5c2141875264c29f1b5ce81d630e8c8",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 43870900083,
-    "url": "https://github.com/shdkej/space/actions/runs/43870900083",
+    "runId": 44280357668,
+    "url": "https://github.com/shdkej/space/actions/runs/44280357668",
     "conclusion": "success",
-    "jobs": [
-      "detect",
-      "deploy (policycock)"
-    ],
-    "steps": [
-      "Sync S3: success",
-      "Invalidate CloudFront: success"
-    ]
+    "jobId": 134719160697,
+    "steps": {
+      "Sync S3": "success",
+      "Invalidate CloudFront": "success"
+    }
   },
   "infrastructure": {
+    "changed": false,
     "s3Bucket": "static-policycock-aws-shdkej-com",
-    "s3Region": "ap-northeast-2",
-    "s3PublicAccessBlocked": true,
     "cloudfrontDistributionId": "E1IR9GXLCMQK6X",
-    "cloudfrontDomain": "d1noz07xzd37dt.cloudfront.net",
-    "cloudfrontStatus": "Deployed",
-    "httpsRedirect": true,
-    "minimumTls": "TLSv1.2_2021",
-    "spaFallback": false,
-    "createdResources": 12,
-    "existingResourcesChanged": 0,
-    "existingStateRecordsPreserved": 256,
-    "provider": "hashicorp/aws 6.72.0"
+    "terraformApplied": false
   },
   "verification": {
-    "local": "qa/verification.json",
-    "browser": "qa/live-verification.json",
+    "localHtml": {
+      "file": "qa/verification.json",
+      "checks": 19
+    },
+    "localScene": {
+      "file": "qa/scene-verification.json",
+      "checks": 9
+    },
+    "liveHtml": {
+      "file": "qa/live-verification.json",
+      "checks": 8
+    },
+    "liveScene": {
+      "file": "qa/live-scene-verification.json",
+      "checks": 9
+    },
     "assetHashes": "qa/live-assets.json",
-    "localChecks": 20,
-    "liveChecks": 8,
-    "matchedDistFiles": 11,
-    "additionalMatchedRoutes": [
+    "matchedDistFiles": 17,
+    "matchedRoutes": [
       "/",
       "/sources"
     ],
-    "institutionLinks": "qa/institution-links.json",
-    "stateTransfer": "qa/state-transfer.json",
+    "birthGrantMapUnchangedFrom": "f0c2802016dc8c59c2bd07c16afa6a1d61dca9dc",
     "visualReview": [
-      "1440×900 live editorial overview",
-      "375×667 live first fold with 10/44 and agency shortcut",
-      "375×667 live last agency with keyboard focus"
+      "1440px live actual WebGL scene",
+      "390px live actual WebGL scene",
+      "local expanded and selected states"
     ]
   },
-  "notes": [
-    "Shared-root plan included unrelated legacy image-annotator deletions and was not applied.",
-    "Created only the policycock module in an isolated initial state, then moved its 17 resource/data records into the canonical Space state.",
-    "Existing shared-root output values were preserved during state transfer; GitHub Actions resolves resources directly from AWS.",
-    "The 2026-11-15 design update deployed the urban-glass asset; 11 static files matched the live origin and 375/1440px live browser checks passed.",
-    "The 2026-11-16 Blender institution atlas update deployed at eed96c0. The policycock deploy job succeeded, local and live browser checks passed, all 13 current dist assets matched live SHA-256, the retired urban-glass asset returned 403, and 44 institution links returned HTTP 200 with matching names.",
-    "The 2026-11-16 policy-first redesign deployed at e1316dc. Ten politician policy cases lead the hero, and policy/agency details open in separate on-page dialogs. The policycock deploy job and CloudFront invalidation succeeded; local 29 checks and live 11 checks passed, and 13 dist files plus root and extensionless sources matched live bytes.",
-    "The 2026-11-16 Blender diagram deployed from 5a00819a51cdd6627b08dbbad94fade651c83043 in run 43786928136. The policycock deploy job and CloudFront invalidation succeeded. Desktop and mobile scenes were rendered in Blender; local 32 and live 11 browser checks passed. All 15 dist files plus root and extensionless sources matched live bytes. Independent Red review passed on local artifacts after two alignment failures were fixed; its browser could not start, so the owner reran browser tests and inspected live screenshots separately. No policy-to-agency assignment is asserted.",
-    "The 2026-11-16 galaxy redesign deployed from d64c417f01a1bf6ca558905b1cdcbce8f03176f4 in run 43799147546. The policycock deploy job and CloudFront invalidation succeeded; local 36 and live 11 browser checks passed. All 17 dist files plus root and extensionless sources matched live bytes. A separate Red reviewer passed the local assets and independently tested five viewports, dialogs, keyboard reachability and no-JS fallback. The owner inspected live 320/1440px captures. The Blender galaxy is atmospheric, while ten interactive dot-to-label leads and the Korean government outline are HTML/SVG. These checks do not establish final user design satisfaction or current policy effects.",
-    "The 2026-11-16 skill-guided redesign deployed from 90d96de301c7f5c193b2088577f567c41d8c12f2 in run 43815041302. The policycock deploy job and CloudFront invalidation succeeded. Local 43 browser checks including twelve widths and live 11 checks passed. All 17 tracked dist files plus root and extensionless sources matched live bytes. The owner inspected live 375/1440px captures. Independent visual Red and final code reviewers passed the corrected tree; the latter could not start its own Chromium, so the owner ran the browser checks. Strict Hallmark lint remains at 423 FAIL/305 REFLEX (baseline 410/280), and OMD's missing DESIGN.md token charter and the existing large font are not represented as clean QA. User aesthetic acceptance and current policy effects remain unverified.",
-    "The 2026-11-16 horizontal outline update deployed from f7d09d797e3359dc154faecb84aac2257560fbec in run 43840258584. The policycock S3 sync and CloudFront invalidation both succeeded. Local 48 checks at sixteen widths and live 12 checks passed, including exact 1440px five-category horizontal alignment and 3/1/3 agency columns. All 17 dist files and root and extensionless sources matched live bytes. The owner inspected live 375/1440px captures and an independent final read-only reviewer passed the source and local captures. Strict Hallmark rendered at 423 FAIL/305 REFLEX, with no newly added normalized findings relative to the prior build; this is not a lint pass. User visual satisfaction and current policy effectiveness are not established.",
-    "The 2026-11-16 horizontal hero update deployed from 2b5cac930f6af4d474472faca7d9c1845b4ecd1f in run 43845272094. The policycock S3 sync and CloudFront invalidation succeeded. Democratic-affiliated cases are on the left and conservative-affiliated cases on the right at 701px and wider; narrow screens present the two groups in DOM order. Local 48 checks at sixteen widths cover all ten target centers per width and no label overlap; live 12 checks passed. All 17 dist files and root and extensionless sources matched live bytes. The owner inspected 375/1440px live captures and an independent read-only Red reviewer passed the local source and screenshots. Strict Hallmark remains unresolved at 418 FAIL/297 REFLEX; its render tier could not start without puppeteer-core. These technical checks do not establish user aesthetic acceptance, political representativeness or current policy effects.",
-    "Policy changes, notifications, accounts and analytics remain outside this static prototype.",
-    "The 2026-11-16 Civic Ledger redesign deployed from 188a2553029e4e2dca816384a19fd9127d060571 in run 43860956016. S3 sync and CloudFront invalidation succeeded. Local 20 grouped browser checks and live 7 checks passed, including all 10 cases and 44 agencies, mobile last-agency keyboard route and no-JS fallback. All 13 dist files plus / and /sources matched live bytes. Six obsolete galaxy/atlas assets returned 403. Independent final Red approved the corrected local design conditionally; the owner separately verified the live UI. Final user aesthetic preference and current policy effectiveness remain unverified.",
-    "After inspecting the first live mobile screenshot, an inherited mobile header rule was found hiding the agency shortcut. Commit d9b1c2faf6a73c5c950369a5ac22fa32882fb455 restored the visible nav and expanded browser assertions. Run 43862045462 completed S3 sync and CloudFront invalidation. The final live 375px screenshot, 20 local/7 live grouped checks, 13 file hashes and / plus /sources byte parity were reverified on this revision.",
-    "The 2026-11-16 editorial index deployed from 7ad02f36338f4f91fc1133f6abaaca1f4e96098d in run 43870900083. The policycock job completed S3 sync and CloudFront invalidation. Local 20 and live 8 grouped browser checks passed; all 11 dist files and / plus /sources matched bytes, and three retired CSS/image assets returned 403. The owner inspected actual 1440/375 live screenshots, including the first-fold agency shortcut and last-agency focus. A first Red review found a release-verifier false-proof risk, corrected before release; a second independent review passed the fix. User aesthetic approval and current policy effectiveness remain unverified."
+  "review": "qa/review.json",
+  "rollback": {
+    "baseline": "f0c2802016dc8c59c2bd07c16afa6a1d61dca9dc",
+    "scope": "Restore only this site dist in a new main commit; preserve later content and verify again."
+  },
+  "limits": [
+    "Headless Chrome software WebGL and touch emulation; real mobile FPS, heat and battery are unmeasured.",
+    "Policy/agency data was preserved; current policy effects and final user aesthetic satisfaction were not established."
   ],
-  "review": {
-    "independent": "deleg_fa402bc0: four roles completed, with user correction superseding 54 names in the first fold",
-    "crossReview": "deleg_6cf0c1fd: Planner, Developer, Marketer, Operator completed; revised acceptance confirmed by user",
-    "finalRed": "deleg_ae8ba56d FAIL on live verifier; deleg_d1fb56fe PASS after all-file byte parity and localhost proof guard",
-    "ownerDecision": "One information index for 10 historical case names and 44-agency scope/types; 44 names remain expanded below. No unsupported agency assignments. Owner ran local and production browser/byte checks and inspected live screenshots."
-  }
+  "previousDeploymentHistory": "Git history of qa/deployment.json before this revision"
 }

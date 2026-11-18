@@ -2,7 +2,7 @@
 
 발표 당시 정책 사례 10건을 직접 돌려보고 선택하면서 내용과 출처를 읽는 정적 웹 시제품입니다. 중앙행정기관 44곳을 검색하고 관심 정책·메모를 브라우저에 저장합니다.
 
-2026-11-18 사용자는 [참고 영상](https://www.threads.com/@bsd_funneldding/post/Dc-GbPOk3Gc) 같은 3D 상호작용을 원했다고 교정하고 개선·배포를 요청했습니다. 현재 소스는 Three.js 장면을 구현한 상태이며, **이번 변경의 공개 배포는 검증 후 진행합니다.** 배포 완료 판정은 이 문서의 기능 설명이 아니라 `qa/deployment.json`의 소스 SHA·Actions 결과와 해당 버전의 라이브 검증 기록으로 확인합니다.
+2026-11-18 사용자는 [참고 영상](https://www.threads.com/@bsd_funneldding/post/Dc-GbPOk3Gc) 같은 3D 상호작용을 원했다고 교정하고 개선·배포를 요청했습니다. Three.js 장면은 소스 `8fdad908`의 [AWS 배포](https://github.com/shdkej/space/actions/runs/44280357668)로 공개됐으며, 실제 데스크톱·모바일 조작과 실패 대체·기존 기능 검사를 통과했습니다. 배포 완료 판정은 이 문서의 기능 설명이 아니라 `qa/deployment.json`의 소스 SHA·Actions 결과와 해당 버전의 라이브 검증 기록으로 확인합니다.
 
 ## 사용과 제공 범위
 

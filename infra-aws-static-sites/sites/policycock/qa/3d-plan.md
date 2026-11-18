@@ -25,8 +25,8 @@
 - [x] 2. 3D 렌더와 읽기 영역 통합, 1440px·375px 실제 렌더 비교 후 수정.
 - [x] 3. 회전 전후·펼침·정책 선택·복귀·터치/스크롤·WebGL 실패·모션 감소 검증.
 - [x] 4. 기존 정책 10·기관 44 상세, 저장·메모·내보내기·오류·무JS 회귀 테스트.
-- [ ] 5. 독립 역할 교차 검토, README/디자인 기준 갱신, main push 및 Actions 완료 확인.
-- [ ] 6. 라이브 동작·전체 dist 바이트·모바일·기존 출산 지도 확인, 배포 증거 원격 저장.
+- [x] 5. 독립 역할 교차 검토, README/디자인 기준 갱신, main push 및 Actions 완료 확인.
+- [x] 6. 라이브 동작·전체 dist 바이트·모바일·기존 출산 지도 확인, 배포 증거 원격 저장.
 
 ## 검토 초점
 
@@ -45,3 +45,6 @@
 [WORKFLOW:QA] npm run check와 npm test가 종료 코드 0으로 통과했다. 기존 HTML 기능 19개 묶음과 실제 3D 9개 묶음이며, qa/verification.json과 qa/scene-verification.json에 기록한다. Chrome 소프트웨어 WebGL을 사용했으므로 실기기 FPS 측정으로 해석하지 않는다. 1440px 기본·펼침·선택, 390px 실제 캡처를 직접 살폈다.
 
 [WORKFLOW:REVIEW] 독립 코드 검토의 라벨 행렬·저장 재동기화·라벨 위 드래그·부분 실패 cleanup을 수정했다. 검증기 검토에서 CSS 배경과 조명 변화 혼동, 타일 상승과 카메라 이동 혼동, 모션 감소의 느슨한 기다림을 찾아 단언을 강화한 후 장면 검사 9개 묶음을 다시 실행해 종료 코드 0을 확인했다. 역할별 범위와 한계는 qa/review.json에 남긴다.
+
+
+[WORKFLOW:DEPLOY] 소스 8fdad908f5c2141875264c29f1b5ce81d630e8c8을 main에 push했다. Actions 44280357668의 policycock 잡과 S3 동기화·CloudFront 무효화가 성공했다. 공개 URL에서 HTML 8개·3D 9개 검사 묶음을 통과했고 dist 17개 파일의 바이트·SHA-256·JS MIME, /·/sources 경로, 출산지원금 지도 보존을 확인했다. 1440px·390px 라이브 캡처를 직접 살폈다. qa/deployment.json 및 live-* 결과가 배포 근거다.

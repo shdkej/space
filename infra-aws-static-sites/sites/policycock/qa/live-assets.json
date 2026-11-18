@@ -1,121 +1,161 @@
 {
-  "verifiedAt": "2026-11-16T12:57:48.038910+00:00",
-  "commit": "7ad02f36338f4f91fc1133f6abaaca1f4e96098d",
+  "verifiedAt": "2026-11-18T09:56:42.989Z",
+  "url": "https://policycock.aws.shdkej.com",
+  "sourceCommit": "8fdad908f5c2141875264c29f1b5ce81d630e8c8",
   "status": "passed",
-  "checks": {
-    "root": {
-      "path": "/",
-      "status": 200,
-      "sha256": "c5bccfdc16555cdce2bae5898ebb71a67473ba868c3b4deeaa7d9e22a484d3a7",
-      "matchesLocal": true,
-      "contentType": "text/html"
-    },
-    "sourcesExtensionless": {
-      "path": "/sources",
-      "status": 200,
-      "sha256": "36e558d29a7fba53f3d3fd48441265584832ae35e08529be24b0df1f9e0641db",
-      "matchesLocal": true,
-      "contentType": "text/html"
-    }
-  },
-  "files": [
+  "assets": [
     {
       "file": "app.js",
-      "path": "/app.js",
       "status": 200,
-      "sha256": "5afcc7cb2e9cc3955baece2a12ce5abdcff8649d55fbb4eee6c58f55c5877fa7",
-      "matchesLocal": true,
-      "contentType": "text/javascript"
+      "bytes": 17437,
+      "contentType": "text/javascript",
+      "localSha256": "f3277bcf44656f3cb32994f50a3442647fb0a58265eab6be641ed04eb7f6ca5c",
+      "remoteSha256": "f3277bcf44656f3cb32994f50a3442647fb0a58265eab6be641ed04eb7f6ca5c",
+      "matches": true
     },
     {
       "file": "assets/OFL.txt",
-      "path": "/assets/OFL.txt",
       "status": 200,
-      "sha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f",
-      "matchesLocal": true,
-      "contentType": "text/plain"
+      "bytes": 4815,
+      "contentType": "text/plain",
+      "localSha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f",
+      "remoteSha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f",
+      "matches": true
     },
     {
       "file": "assets/PretendardVariable.woff2",
-      "path": "/assets/PretendardVariable.woff2",
       "status": 200,
-      "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
-      "matchesLocal": true,
-      "contentType": "font/woff2"
+      "bytes": 2057688,
+      "contentType": "font/woff2",
+      "localSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
+      "remoteSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
+      "matches": true
     },
     {
       "file": "assets/favicon.svg",
-      "path": "/assets/favicon.svg",
       "status": 200,
-      "sha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666",
-      "matchesLocal": true,
-      "contentType": "image/svg+xml"
+      "bytes": 261,
+      "contentType": "image/svg+xml",
+      "localSha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666",
+      "remoteSha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666",
+      "matches": true
+    },
+    {
+      "file": "birth-grant-map.html",
+      "status": 200,
+      "bytes": 279019,
+      "contentType": "text/html",
+      "localSha256": "5d08dd50be191d440904a8b8a045cddda0acd94698bdf834be5d53942a485f38",
+      "remoteSha256": "5d08dd50be191d440904a8b8a045cddda0acd94698bdf834be5d53942a485f38",
+      "matches": true
     },
     {
       "file": "data.js",
-      "path": "/data.js",
       "status": 200,
-      "sha256": "ae242a36274a13f278580986a741224616da0c9b3c009a3ab03f06b902978742",
-      "matchesLocal": true,
-      "contentType": "text/javascript"
+      "bytes": 6898,
+      "contentType": "text/javascript",
+      "localSha256": "ae242a36274a13f278580986a741224616da0c9b3c009a3ab03f06b902978742",
+      "remoteSha256": "ae242a36274a13f278580986a741224616da0c9b3c009a3ab03f06b902978742",
+      "matches": true
     },
     {
       "file": "index.css",
-      "path": "/index.css",
       "status": 200,
-      "sha256": "396e9b60acbd9d5bd08bbd98a7e1f8a54bb4f975181c09e710c34595f3de6a9a",
-      "matchesLocal": true,
-      "contentType": "text/css"
+      "bytes": 33118,
+      "contentType": "text/css",
+      "localSha256": "79fea98f27d2ab47fe370cbf79c33de42361a6942875f206aa33cf10c0faecf4",
+      "remoteSha256": "79fea98f27d2ab47fe370cbf79c33de42361a6942875f206aa33cf10c0faecf4",
+      "matches": true
     },
     {
       "file": "index.html",
-      "path": "/index.html",
       "status": 200,
-      "sha256": "c5bccfdc16555cdce2bae5898ebb71a67473ba868c3b4deeaa7d9e22a484d3a7",
-      "matchesLocal": true,
-      "contentType": "text/html"
+      "bytes": 37077,
+      "contentType": "text/html",
+      "localSha256": "02a06f06d66170d93f03b838edd83a1afe1c76cb07b654d2c38506d556ac4807",
+      "remoteSha256": "02a06f06d66170d93f03b838edd83a1afe1c76cb07b654d2c38506d556ac4807",
+      "matches": true
     },
     {
       "file": "institutions.js",
-      "path": "/institutions.js",
       "status": 200,
-      "sha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874",
-      "matchesLocal": true,
-      "contentType": "text/javascript"
+      "bytes": 9201,
+      "contentType": "text/javascript",
+      "localSha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874",
+      "remoteSha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874",
+      "matches": true
     },
     {
       "file": "institutions.json",
-      "path": "/institutions.json",
       "status": 200,
-      "sha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
-      "matchesLocal": true,
-      "contentType": "application/json"
+      "bytes": 11063,
+      "contentType": "application/json",
+      "localSha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
+      "remoteSha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
+      "matches": true
+    },
+    {
+      "file": "policy-scene.js",
+      "status": 200,
+      "bytes": 22942,
+      "contentType": "text/javascript",
+      "localSha256": "d60076d6f4af2b97609363dda33f65e6209c0ca3e6f4d1a494269a17b8552932",
+      "remoteSha256": "d60076d6f4af2b97609363dda33f65e6209c0ca3e6f4d1a494269a17b8552932",
+      "matches": true
     },
     {
       "file": "sources.html",
-      "path": "/sources.html",
       "status": 200,
-      "sha256": "36e558d29a7fba53f3d3fd48441265584832ae35e08529be24b0df1f9e0641db",
-      "matchesLocal": true,
-      "contentType": "text/html"
+      "bytes": 4213,
+      "contentType": "text/html",
+      "localSha256": "3ea269b9fffea69768482e1412f608245a33dde84feb2937805530ad2dd46958",
+      "remoteSha256": "3ea269b9fffea69768482e1412f608245a33dde84feb2937805530ad2dd46958",
+      "matches": true
     },
     {
       "file": "sources.js",
-      "path": "/sources.js",
       "status": 200,
-      "sha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0",
-      "matchesLocal": true,
-      "contentType": "text/javascript"
+      "bytes": 892,
+      "contentType": "text/javascript",
+      "localSha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0",
+      "remoteSha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0",
+      "matches": true
+    },
+    {
+      "file": "vendor/three/LICENSE",
+      "status": 200,
+      "bytes": 1081,
+      "contentType": "binary/octet-stream",
+      "localSha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "remoteSha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "matches": true
+    },
+    {
+      "file": "vendor/three/OrbitControls.js",
+      "status": 200,
+      "bytes": 40918,
+      "contentType": "text/javascript",
+      "localSha256": "e7fca2fe9e7670a828af9b28084669a5909445b7f36f1f26cee9bf8f2961c32c",
+      "remoteSha256": "e7fca2fe9e7670a828af9b28084669a5909445b7f36f1f26cee9bf8f2961c32c",
+      "matches": true
+    },
+    {
+      "file": "vendor/three/RoomEnvironment.js",
+      "status": 200,
+      "bytes": 4960,
+      "contentType": "text/javascript",
+      "localSha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4",
+      "remoteSha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4",
+      "matches": true
+    },
+    {
+      "file": "vendor/three/three.module.js",
+      "status": 200,
+      "bytes": 748873,
+      "contentType": "text/javascript",
+      "localSha256": "ea0b317604d082b1393cb2bbe5c6e5f97884a3b66eaa55cf55d89104f8779a2a",
+      "remoteSha256": "ea0b317604d082b1393cb2bbe5c6e5f97884a3b66eaa55cf55d89104f8779a2a",
+      "matches": true
     }
-  ],
-  "retiredAssets": {
-    "styles.css": 403,
-    "ledger.css": 403,
-    "assets/ledger-relief.png": 403
-  },
-  "matchedDistFiles": 11,
-  "matchedRoutes": [
-    "/",
-    "/sources"
   ]
 }

@@ -1,0 +1,8 @@
+# Release connection checkpoint — 2026-11-18
+
+- Guarded release task: `miniapp-image-tools-20261118-release-01`; existing Intent: `miniapp-image-tools-20261118-qa-01`; slot `pilot-release-01` (11:02:00Z–11:22:00Z hard stop). This checkpoint records observations at approximately 11:06Z, not at slot start.
+- Existing managed browser opened `https://us.posthog.com/` and reached `/login`; no authenticated miniapp project or browser collect key was available. Browser vault listing returned no saved logins. Desktop window enumeration returned zero windows; Windows browser process probe returned no Chrome/Edge process. A local login gap is not PostHog API absence.
+- Hosted connector status did not recognize `monitoring_personal`, `kubernetes`, `ssh`, or `vault` as slugs; `kubectl` and a local kubeconfig were absent. SSH executable exists, but no approved target/session was identified. No secret value, cookie, token or credential was read or copied.
+- The existing `posthog-credentials/access-token` monitoring Secret is Virtue exporter context, not authorization to use its project collect key for this miniapp. Analytics stays disabled until authenticated project/key provisioning and same-run browser capture plus project query prove ingestion and synthetic exclusion.
+- Existing Space deployment workflow is a whole-site sync with `--delete` and `/*` invalidation; do not dispatch it for this subpath. The prior miniapp run failed resource resolution because it is not a registered alias; this does not establish a permission denial.
+- State: connection blocked at authenticated PostHog account/project access. No new IAM, paid resource, browser key, project, or deployment was created by this checkpoint.

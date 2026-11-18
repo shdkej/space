@@ -110,14 +110,15 @@
     invalidate();const ticket=generation, edge=Number(edgeInput.value), mime=formatInput.value, file=selected;
     const base={input_mime:file.type,input_width:dimensions[0],input_height:dimensions[1],input_bytes:file.size,output_mime:mime};
     if(!Number.isInteger(edge)||edge<64||edge>4096||!TYPES.has(mime)){error('긴 변은 64–4096px, 형식은 PNG/JPEG/WebP 중에서 선택하세요.','invalid_settings',base);return;}
-    const scale=Math.min(1,edge/Math.max(...dimensions));
-    const width=Math.max(1,Math.round(dimensions[0]*scale)),height=Math.max(1,Math.round(dimensions[1]*scale));
-    if(width*height>MAX_OUTPUT_PIXELS){error('출력 화소가 1,200만을 넘습니다. 긴 변을 줄이세요.','pixel_limit',base);return;}
     const start=performance.now();let bitmap=null,canvas=null;
-    transform.disabled=true;message('변환 중입니다…');capture('transform_started',{...base,output_width:width,output_height:height});
+    transform.disabled=true;message('변환 중입니다…');capture('transform_started',base);
     try{
       bitmap=await createImageBitmap(file);if(ticket!==generation)return;
-      if(bitmap.width!==dimensions[0]||bitmap.height!==dimensions[1])throw new Error('dimensions');
+      const rotated=file.type==='image/jpeg'&&bitmap.width===dimensions[1]&&bitmap.height===dimensions[0];
+      if(!rotated&&(bitmap.width!==dimensions[0]||bitmap.height!==dimensions[1]))throw new Error('dimensions');
+      const scale=Math.min(1,edge/Math.max(bitmap.width,bitmap.height));
+      const width=Math.max(1,Math.round(bitmap.width*scale)),height=Math.max(1,Math.round(bitmap.height*scale));
+      if(width*height>MAX_OUTPUT_PIXELS)throw new Error('pixel_limit');
       canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
       const context=canvas.getContext('2d',{alpha:mime!=='image/jpeg'});if(!context)throw new Error('context');
       if(mime==='image/jpeg'){context.fillStyle='#ffffff';context.fillRect(0,0,width,height);}
@@ -131,7 +132,7 @@
       meta.textContent=`${width} × ${height}px · ${mime.slice(6).toUpperCase()} · ${(blob.size/1024).toFixed(1)}KB`;
       message('변환이 끝났습니다. 미리보기를 확인하고 내려받으세요.');
       capture('transform_succeeded',{...base,output_width:width,output_height:height,output_bytes:blob.size,duration_ms:Math.round(performance.now()-start)});
-    }catch(e){if(ticket===generation)error(e.message==='unsupported'?'이 브라우저는 선택한 출력 형식을 저장하지 못합니다. 다른 형식을 선택하세요.':e.message==='output_size'?'출력 파일이 64MB를 넘습니다. 더 작은 크기나 다른 형식을 선택하세요.':'이미지 변환에 실패했습니다. 다른 파일이나 더 작은 크기로 다시 시도하세요.',e.message==='unsupported'?'unsupported_output':e.message==='encode'?'encode_failed':e.message==='output_size'?'output_too_large':'decode_failed',base);}
+    }catch(e){if(ticket===generation)error(e.message==='unsupported'?'이 브라우저는 선택한 출력 형식을 저장하지 못합니다. 다른 형식을 선택하세요.':e.message==='output_size'?'출력 파일이 64MB를 넘습니다. 더 작은 크기나 다른 형식을 선택하세요.':e.message==='pixel_limit'?'출력 화소가 1,200만을 넘습니다. 긴 변을 줄이세요.':'이미지 변환에 실패했습니다. 다른 파일이나 더 작은 크기로 다시 시도하세요.',e.message==='unsupported'?'unsupported_output':e.message==='encode'?'encode_failed':e.message==='output_size'?'output_too_large':e.message==='pixel_limit'?'pixel_limit':'decode_failed',base);}
     finally{if(bitmap)bitmap.close();if(canvas){canvas.width=0;canvas.height=0;}if(ticket===generation)transform.disabled=!selected;}
   });
   download.addEventListener('click',()=>{

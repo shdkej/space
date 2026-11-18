@@ -105,6 +105,8 @@ jobs:
               | sed -nE 's#^infra-aws-static-sites/sites/([a-z0-9-]+)/dist/.*#\1#p' \
               | sort -u \
               | while read -r app; do
+                  # This app owns a subpath, not an independent CloudFront alias.
+                  [ "$app" = "miniapp-image-tools" ] && continue
                   [ -n "$app" ] && add_target "$app" "" ""
                 done
 

@@ -1,0 +1,67 @@
+name: Release image converter subpath
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+concurrency:
+  group: images-image-converter-release
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject concurrent image site deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          runs="$(gh api 'repos/${{ github.repository }}/actions/workflows/static-site-aws-template.yml/runs?status=in_progress&per_page=30')"
+          printf '%s' "$runs" | python3 -c '
+          import json,sys
+          runs=json.load(sys.stdin)["workflow_runs"]
+          if runs:
+              print("Existing static-site deployment in progress; image subpath release blocked")
+              sys.exit(1)
+          print("No concurrent static-site deployment")'
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ap-northeast-2
+      - name: Verify existing image bucket and distribution
+        id: target
+        run: |
+          set -euo pipefail
+          aws cloudfront list-distributions --output json > "$RUNNER_TEMP/distributions.json"
+          python3 - "$RUNNER_TEMP/distributions.json" <<'PY' >> "$GITHUB_OUTPUT"
+          import json,sys
+          items=json.load(open(sys.argv[1]))["DistributionList"].get("Items",[])
+          matches=[d for d in items if "images.aws.shdkej.com" in d.get("Aliases",{}).get("Items",[])]
+          if len(matches)!=1:
+              raise SystemExit("Expected exactly one existing images.aws.shdkej.com distribution")
+          d=matches[0]
+          bucket="static-images-aws-shdkej-com"
+          origins=d["Origins"]["Items"]
+          if not any(o["DomainName"].startswith(bucket+".s3") and o["DomainName"].endswith("amazonaws.com") for o in origins):
+              raise SystemExit("Existing distribution does not target expected image S3 bucket")
+          print("bucket="+bucket)
+          print("distribution_id="+d["Id"])
+          PY
+          aws s3api head-object --bucket static-images-aws-shdkej-com --key sort/index.html --query ContentType --output text > /dev/null
+      - name: Upload only image converter objects
+        run: |
+          set -euo pipefail
+          file=infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html
+          bucket="${{ steps.target.outputs.bucket }}"
+          test -s "$file"
+          aws s3 cp "$file" "s3://$bucket/tools/image-converter/index.html" --content-type text/html --cache-control 'public,max-age=60'
+          aws s3api put-object --bucket "$bucket" --key tools/image-converter/ --body "$file" --content-type text/html --cache-control 'public,max-age=60' > /dev/null
+          aws cloudfront create-invalidation --distribution-id "${{ steps.target.outputs.distribution_id }}" --paths '/tools/image-converter/' '/tools/image-converter/index.html' --query 'Invalidation.Id' --output text > "$RUNNER_TEMP/invalidation-id"
+          aws cloudfront wait invalidation-completed --distribution-id "${{ steps.target.outputs.distribution_id }}" --id "$(cat "$RUNNER_TEMP/invalidation-id")"
+          echo "Source revision $GITHUB_SHA; URL https://images.aws.shdkej.com/tools/image-converter/" >> "$GITHUB_STEP_SUMMARY"

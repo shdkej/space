@@ -155,6 +155,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.detect.outputs.matrix) }}
+    concurrency:
+      group: ${{ matrix.domain == 'images.aws.shdkej.com' && 'images-image-converter-release' || format('static-site-{0}-{1}-{2}', github.run_id, github.run_attempt, matrix.app) }}
+      cancel-in-progress: false
+      queue: max
 
     steps:
       - uses: actions/checkout@v4
@@ -196,14 +200,26 @@ jobs:
             --check
 
       - name: Sync S3
+        shell: bash
+        env:
+          DOMAIN_NAME: ${{ matrix.domain }}
         run: |
-          # agents-live.json은 수집기(system-dashboard collector)가 올리는 파일 — 배포가 지우면 안 된다
+          set -euo pipefail
+          # Collector-owned objects must not be deleted by the static site sync.
+          exclusions=(
+            --exclude "agents-live.json"
+            --exclude "office-live.json"
+            --exclude "runtime-map-config.js"
+          )
+          if [ "$DOMAIN_NAME" = "images.aws.shdkej.com" ]; then
+            # The manual image-converter release owns both the trailing-slash
+            # route object and every object below this prefix.
+            exclusions+=(--exclude "tools/image-converter/" --exclude "tools/image-converter/*")
+          fi
           aws s3 sync "${{ matrix.build_dir }}/" \
             "s3://${{ steps.target.outputs.bucket }}" \
             --delete \
-            --exclude "agents-live.json" \
-            --exclude "office-live.json" \
-            --exclude "runtime-map-config.js" \
+            "${exclusions[@]}" \
             --cache-control "public,max-age=60"
 
       - name: Upload extensionless HTML routes
@@ -226,6 +242,8 @@ jobs:
 
       - name: Upload nested directory index routes
         shell: bash
+        env:
+          DOMAIN_NAME: ${{ matrix.domain }}
         run: |
           set -euo pipefail
 
@@ -236,6 +254,10 @@ jobs:
             relative="${file#${{ matrix.build_dir }}/}"
             directory="${relative%/index.html}"
             if [ "$directory" = "$relative" ] || [ "$directory" = "." ]; then
+              continue
+            fi
+            # The dedicated release owns this exact S3 REST trailing-slash key.
+            if [ "$DOMAIN_NAME" = "images.aws.shdkej.com" ] && [ "$directory" = "tools/image-converter" ]; then
               continue
             fi
 

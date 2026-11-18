@@ -6,30 +6,17 @@ on:
 permissions:
   id-token: write
   contents: read
-  actions: read
 
 concurrency:
   group: images-image-converter-release
   cancel-in-progress: false
+  queue: max
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Reject concurrent image site deployment
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          runs="$(gh api 'repos/${{ github.repository }}/actions/workflows/static-site-aws-template.yml/runs?status=in_progress&per_page=30')"
-          printf '%s' "$runs" | python3 -c '
-          import json,sys
-          runs=json.load(sys.stdin)["workflow_runs"]
-          if runs:
-              print("Existing static-site deployment in progress; image subpath release blocked")
-              sys.exit(1)
-          print("No concurrent static-site deployment")'
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}

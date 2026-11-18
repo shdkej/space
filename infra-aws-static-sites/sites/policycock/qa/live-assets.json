@@ -1,16 +1,16 @@
 {
-  "verifiedAt": "2026-11-18T09:56:42.989Z",
+  "verifiedAt": "2026-11-18T12:32:09.807Z",
   "url": "https://policycock.aws.shdkej.com",
-  "sourceCommit": "8fdad908f5c2141875264c29f1b5ce81d630e8c8",
+  "sourceCommit": "c0a0dba999d419d9a6f513c90e29ab3c3852e499",
   "status": "passed",
   "assets": [
     {
       "file": "app.js",
       "status": 200,
-      "bytes": 17437,
+      "bytes": 17905,
       "contentType": "text/javascript",
-      "localSha256": "f3277bcf44656f3cb32994f50a3442647fb0a58265eab6be641ed04eb7f6ca5c",
-      "remoteSha256": "f3277bcf44656f3cb32994f50a3442647fb0a58265eab6be641ed04eb7f6ca5c",
+      "localSha256": "c7a527b5e00a9af1db4ebd4a48b43093bf515cad6ad08c66b888abd80364451a",
+      "remoteSha256": "c7a527b5e00a9af1db4ebd4a48b43093bf515cad6ad08c66b888abd80364451a",
       "matches": true
     },
     {
@@ -29,6 +29,15 @@
       "contentType": "font/woff2",
       "localSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
       "remoteSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
+      "matches": true
+    },
+    {
+      "file": "assets/console-knob.glb",
+      "status": 200,
+      "bytes": 166956,
+      "contentType": "model/gltf-binary",
+      "localSha256": "22802822a1c37a1c97a8b47a1260119ff012f31ee9a2d52db5f60d5a5bf56464",
+      "remoteSha256": "22802822a1c37a1c97a8b47a1260119ff012f31ee9a2d52db5f60d5a5bf56464",
       "matches": true
     },
     {
@@ -61,19 +70,19 @@
     {
       "file": "index.css",
       "status": 200,
-      "bytes": 33118,
+      "bytes": 33229,
       "contentType": "text/css",
-      "localSha256": "79fea98f27d2ab47fe370cbf79c33de42361a6942875f206aa33cf10c0faecf4",
-      "remoteSha256": "79fea98f27d2ab47fe370cbf79c33de42361a6942875f206aa33cf10c0faecf4",
+      "localSha256": "010a329bf2a46a3f938db9d7039eec02109060d16e27a7135f779205370ab7f9",
+      "remoteSha256": "010a329bf2a46a3f938db9d7039eec02109060d16e27a7135f779205370ab7f9",
       "matches": true
     },
     {
       "file": "index.html",
       "status": 200,
-      "bytes": 37077,
+      "bytes": 37130,
       "contentType": "text/html",
-      "localSha256": "02a06f06d66170d93f03b838edd83a1afe1c76cb07b654d2c38506d556ac4807",
-      "remoteSha256": "02a06f06d66170d93f03b838edd83a1afe1c76cb07b654d2c38506d556ac4807",
+      "localSha256": "bd69883048d2a60f2f400668ca9b9d062ab52797a324b47e9f0dfb7d469b9ce3",
+      "remoteSha256": "bd69883048d2a60f2f400668ca9b9d062ab52797a324b47e9f0dfb7d469b9ce3",
       "matches": true
     },
     {
@@ -97,10 +106,10 @@
     {
       "file": "policy-scene.js",
       "status": 200,
-      "bytes": 22942,
+      "bytes": 34395,
       "contentType": "text/javascript",
-      "localSha256": "d60076d6f4af2b97609363dda33f65e6209c0ca3e6f4d1a494269a17b8552932",
-      "remoteSha256": "d60076d6f4af2b97609363dda33f65e6209c0ca3e6f4d1a494269a17b8552932",
+      "localSha256": "124617d20fdb7c4b0d20898e81aa4cd398c3d499dd2ed90138914324d3aec948",
+      "remoteSha256": "124617d20fdb7c4b0d20898e81aa4cd398c3d499dd2ed90138914324d3aec948",
       "matches": true
     },
     {
@@ -119,6 +128,15 @@
       "contentType": "text/javascript",
       "localSha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0",
       "remoteSha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0",
+      "matches": true
+    },
+    {
+      "file": "vendor/three/GLTFLoader.js",
+      "status": 200,
+      "bytes": 47870,
+      "contentType": "text/javascript",
+      "localSha256": "e191250da2a6fbed37aec5dd9e5fef9269a0ad294a7a125707c1219e5216525d",
+      "remoteSha256": "e191250da2a6fbed37aec5dd9e5fef9269a0ad294a7a125707c1219e5216525d",
       "matches": true
     },
     {

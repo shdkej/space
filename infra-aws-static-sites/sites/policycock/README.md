@@ -2,7 +2,7 @@
 
 발표 당시 정책 사례 10건을 직접 돌려보고 선택하면서 내용과 출처를 읽는 정적 웹 시제품입니다. 중앙행정기관 44곳을 검색하고 관심 정책·메모를 브라우저에 저장합니다.
 
-사용자는 [참고 영상](https://www.threads.com/@bsd_funneldding/post/Dc-GbPOk3Gc) 수준의 그래픽과 체감 상호작용을 원하며 첫 배포 `8fdad908`의 시각 품질을 거부했습니다. 후속 버전은 입체 키캡·표면 인쇄·층별 분해·금속 노브를 가진 graphite 콘솔로 다시 구현합니다. 기능 검증과 미적 평가를 구분하며 실제 배포 revision은 `qa/deployment.json`으로 확인합니다.
+사용자는 [참고 영상](https://www.threads.com/@bsd_funneldding/post/Dc-GbPOk3Gc) 수준의 그래픽과 체감 상호작용을 원하며 첫 배포 `8fdad908`의 시각 품질을 거부했습니다. 후속 버전은 입체 키캡·표면 인쇄·층별 분해·금속 노브를 가진 graphite 콘솔로 다시 구현했습니다. 기능 검증과 미적 평가를 구분하며 실제 배포 revision은 `qa/deployment.json`으로 확인합니다.
 
 ## 사용과 제공 범위
 
@@ -41,7 +41,8 @@ HTML·CSS·앱 JavaScript는 `dist/`에서 직접 편집합니다. Three.js 0.18
 | `dist/data.js` | 정책 사례 10건·의회 링크 |
 | `dist/institutions.json`, `institutions.js` | 중앙행정기관 44곳의 확인된 스냅샷 |
 | `dist/sources.html`, `sources.js` | 정책 자료의 출처와 사용 범위 |
-| `dist/assets/`, `dist/vendor/three/` | 글꼴·파비콘, 브라우저용 3D 엔진과 addon·라이선스 |
+| `dist/assets/`, `dist/vendor/three/` | 글꼴·파비콘·GLB 노브, 브라우저용 3D 엔진과 addon·라이선스 |
+| `design/console-knob.blend`, `scripts/build-console-knob.py` | 편집 가능한 Blender 노브 원본과 모델·검토 이미지 재생성 |
 | `scripts/vendor-three.cjs` | 고정된 npm 패키지에서 vendor 산출물 재생성 |
 | `scripts/verify-*.cjs`, `qa/` | 브라우저·장면·라이브 검사와 실제 실행 증거 |
 | `scripts/sync-institutions.py` | 기관 JSON·JS 및 무스크립트 HTML 목록 동시 갱신 |

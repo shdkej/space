@@ -25,6 +25,7 @@
     "qa/hallmark-audit.json",
     "qa/verification.json",
     "qa/scene-verification.json",
+    "qa/mobile-controls-verification.json",
     "qa/live-verification.json",
     "qa/live-scene-verification.json",
     "qa/deployment.json"

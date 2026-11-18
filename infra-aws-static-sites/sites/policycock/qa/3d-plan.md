@@ -61,6 +61,8 @@
 - [x] 3D 콘솔 재설계와 Blender GLB 실제 연결
 - [x] 데스크톱·모바일 실제 렌더 수정, Hallmark audit와 Blender 자산 QA
 - [x] 기능 회귀·키보드·모션 감소·실패 대체 확인
-- [ ] main push·AWS·라이브 검증·정본 기록
+- [x] main push·AWS·라이브 검증·정본 기록
 
 [WORKFLOW:QA] 두 번째 구현의 HTML 19개 묶음, 장면 14개 묶음 통과. 실제 GLB 노브 클릭·조명 상태 동기화, 접근성 HTML pointer를 끈 메시 10개 raycast, 모델 요청 실패 대체를 추가했다. 1440/1280/390 실제 렌더에서 선택·분해·모바일 한글을 검토했다. Hallmark 최종 URL 렌더 완료: 남은 Floor 1건은 공통 audit 프로필이 금지하는 스탬프의 누락이며 디자인 정본을 우선했다. 시각 판정은 테스트 개수와 분리한다.
+
+[WORKFLOW:DEPLOY] 재설계 소스 c0a0dba999d419d9a6f513c90e29ab3c3852e499를 main에 반영했다. Actions 44304316119의 policycock 잡 134801904243에서 S3·CloudFront가 성공했다. 12:32–12:36 UTC 공개 사이트 검증에서 HTML 8개·3D 14개 묶음, dist 19개 파일의 바이트/SHA-256 일치, /·/sources·/birth-grant-map 경로를 확인했다. 실제 1440px 장면과 390px 기본/선택 화면을 살폈다. 기능 통과와 최종 사용자 미적 수용을 구분하며 실기기 FPS·발열은 미측정이다. 상세 증거는 qa/deployment.json과 live-* 파일에 남긴다.

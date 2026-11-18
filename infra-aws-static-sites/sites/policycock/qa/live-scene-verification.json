@@ -1,25 +1,60 @@
 {
-  "verifiedAt": "2026-11-18T09:57:56.035Z",
+  "verifiedAt": "2026-11-18T12:36:26.261Z",
   "url": "https://policycock.aws.shdkej.com",
   "status": "passed",
   "checks": [
-    "실제 WebGL 캔버스·정책 10개·1440px 장면과 자료 범위",
+    "실제 WebGL 캔버스·GLB 모델 로드·정책 10개·1440px 장면과 자료 범위",
+    "실제 GLB 노브 클릭으로 조명 전환·HTML 조명 상태 동기화",
+    "첫 화면 시작 버튼에서 정책 선택·전체 복귀",
     "타일 라벨 위 드래그로 실제 카메라 회전·클릭 분리·전체 복귀",
     "펼침/모으기 실제 좌표 변화·두 조명의 렌더 결과 변화",
     "키보드 선택·카메라 접근·상세/저장 동기화·모달 포커스 복귀·빠른 선택 취소",
+    "1280×800 첫 화면 표제·시작 버튼·장면 조작·자료 범위 노출",
     "320–1440px 10개 폭 라벨 비겹침·44px 대상·저장 표시 유지",
+    "HTML 포인터 대상을 끈 상태에서 정책 메시 10개 직접 클릭·정확한 상세 연결",
     "모션 감소·모바일 실제 터치 회전/선택·기본 세로 스크롤",
     "WebGL 실행 중 손실 시 자원 정리·HTML 탐색 유지",
+    "GLB 요청 실패 시 3D 대체 상태·선택·기존 정책 상세 유지",
     "모듈 실패·WebGL 미지원·초기화 도중 실패 시 정리와 정책 상세 유지",
     "처리되지 않은 브라우저 스크립트 오류 없음"
   ],
-  "desktopReadyMs": 22280,
+  "desktopReadyMs": 16017,
   "browser": "154.0.8037.57",
   "performanceBoundary": "Headless Chrome software WebGL; real device FPS/battery not measured",
+  "visualBoundary": "Automated interaction checks do not judge mesh-surface text readability or visual quality; inspect the screenshots separately",
   "screenshots": [
     "live-atlas-1440.png",
+    "live-atlas-surface-1440.png",
     "live-atlas-expanded.png",
     "live-atlas-selected.png",
-    "live-atlas-390.png"
-  ]
+    "live-atlas-1280x800.png",
+    "live-atlas-390.png",
+    "live-atlas-surface-390.png",
+    "live-atlas-selected-390.png",
+    "live-atlas-model-fallback.png"
+  ],
+  "sourceCommit": "c0a0dba999d419d9a6f513c90e29ab3c3852e499",
+  "visualInspection": {
+    "verifiedAt": "2026-11-18T12:37:04.180312+00:00",
+    "method": "Manual inspection of live browser screenshots after automated checks",
+    "screenshots": [
+      "live-atlas-1440.png",
+      "live-atlas-1280x800.png",
+      "live-atlas-expanded.png",
+      "live-atlas-surface-390.png",
+      "live-atlas-selected-390.png",
+      "live-atlas-model-fallback.png"
+    ],
+    "observations": [
+      "데스크톱에서 키 옆면·모서리·콘솔 층·그림자가 보이고 키 표면 정책명이 원근에 맞춰 표시된다.",
+      "분해 상태에서 키와 콘솔 층 사이의 간격이 실제 화면에 보인다.",
+      "1280×800에서 표제·시작 버튼·조작 버튼·자료 범위가 잘리지 않는다.",
+      "390px 기본·선택 상태에서 모바일 도구가 키 표면 글자를 가리지 않는다.",
+      "GLB 요청을 차단한 화면에서도 기본 노브와 정책 키가 렌더된다."
+    ],
+    "limits": [
+      "사용자 최종 미적 만족과 원본 영상의 제작 품질 동등성은 판정하지 않음",
+      "모바일 실기기 FPS·발열·배터리 영향은 미측정"
+    ]
+  }
 }

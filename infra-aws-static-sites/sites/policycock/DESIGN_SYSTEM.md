@@ -36,7 +36,7 @@
 | --- | --- |
 | [Threads 3D 콘솔](https://www.threads.com/@bsd_funneldding/post/Dc-GbPOk3Gc) | 형태·재질·조명과 직접 입력이 함께 반응하는 장면. 제작 기술은 미확인 |
 | [Codrops](https://tympanus.net/codrops/hub/) | 완성된 동작을 실제 코드·제작 설명과 비교 |
-| [Cloth Carousel](https://tympanus.net/Demos/ClothCarousel/) / [제작기](https://tympanus.net/codrops/2026/11/17/cloth-posters-webgpu/) | 입력 위치·속도에 따라 달라지는 물체 반응, 정지 시 계산 중단. 이 제품에 천 물리 시뮬레이션을 설치했다는 뜻은 아님. [공개 저장소](https://github.com/twotwentytwo-studio/domgl-cloth)의 DomGL은 독점 소프트웨어로 재사용 허가가 제공되지 않음 |
+| [Cloth Carousel](https://tympanus.net/Demos/ClothCarousel/) / [제작기](https://tympanus.net/codrops/2026/11/17/cloth-posters-webgpu/) | TypeScript의 XPBD 물리 계산과 WebGPU 곡면·질감·그림자 렌더링을 결합. 입력 위치·속도에 따라 달라지는 물체 반응, 정지 시 계산 중단을 참고한다. 이 제품에 천 물리 시뮬레이션을 설치했다는 뜻은 아님. [공개 저장소](https://github.com/twotwentytwo-studio/domgl-cloth)의 DomGL은 독점 소프트웨어로 재사용 허가가 제공되지 않음 |
 | [Animista](https://animista.net/) / [Uiverse](https://uiverse.io/) | 짧은 CSS 전환·hover를 비교. 효과 수를 늘리는 대신 선택 피드백에 한정 |
 | [React Bits](https://reactbits.dev/) / [Aceternity UI](https://ui.aceternity.com/) | 컴포넌트 동작 참고. 현 HTML 사이트에 React를 추가하지 않음 |
 | [Blender 스킬](https://github.com/EL4CTEO/blender-skills) | 단면·PBR·GLB·자산 QA 절차를 노브 제작에 적용 |

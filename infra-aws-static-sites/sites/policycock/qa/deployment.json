@@ -1,20 +1,21 @@
 {
-  "verifiedAt": "2026-11-18T09:58:45.574693+00:00",
+  "verifiedAt": "2026-11-18T12:37:14.528698+00:00",
   "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "8fdad908f5c2141875264c29f1b5ce81d630e8c8",
+  "sourceCommit": "c0a0dba999d419d9a6f513c90e29ab3c3852e499",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 44280357668,
-    "url": "https://github.com/shdkej/space/actions/runs/44280357668",
+    "runId": 44304316119,
+    "url": "https://github.com/shdkej/space/actions/runs/44304316119",
     "conclusion": "success",
-    "jobId": 134719160697,
+    "jobId": 134801904243,
     "steps": {
       "Sync S3": "success",
       "Invalidate CloudFront": "success"
-    }
+    },
+    "completedAt": "2026-11-18T12:29:55Z"
   },
   "infrastructure": {
     "changed": false,
@@ -25,41 +26,52 @@
   "verification": {
     "localHtml": {
       "file": "qa/verification.json",
-      "checks": 19
+      "checks": 19,
+      "verifiedAt": "2026-11-18T12:17:26.403Z"
     },
     "localScene": {
       "file": "qa/scene-verification.json",
-      "checks": 9
+      "checks": 14,
+      "verifiedAt": "2026-11-18T12:24:18.518Z"
     },
     "liveHtml": {
       "file": "qa/live-verification.json",
-      "checks": 8
+      "checks": 8,
+      "verifiedAt": "2026-11-18T12:32:32.429Z"
     },
     "liveScene": {
       "file": "qa/live-scene-verification.json",
-      "checks": 9
+      "checks": 14,
+      "verifiedAt": "2026-11-18T12:36:26.261Z"
     },
     "assetHashes": "qa/live-assets.json",
-    "matchedDistFiles": 17,
+    "matchedDistFiles": 19,
     "matchedRoutes": [
       "/",
-      "/sources"
+      "/sources",
+      "/birth-grant-map"
     ],
-    "birthGrantMapUnchangedFrom": "f0c2802016dc8c59c2bd07c16afa6a1d61dca9dc",
+    "birthGrantMapUnchangedFrom": "02bbf4821a8bbfc2b471e0a95164580fb1e37280",
+    "mobileControlLayout": "qa/mobile-controls-verification.json",
+    "blenderAsset": "qa/console-model.json",
+    "hallmarkAudit": "qa/hallmark-audit.json",
     "visualReview": [
-      "1440px live actual WebGL scene",
-      "390px live actual WebGL scene",
-      "local expanded and selected states"
+      "1440px live actual WebGL console and loaded Blender GLB",
+      "390px live idle and selected states; toolbar above keys and readable full policy names",
+      "live expanded keycaps and console layers",
+      "local 320px and 390px selected controls without overlap"
     ]
   },
   "review": "qa/review.json",
   "rollback": {
-    "baseline": "f0c2802016dc8c59c2bd07c16afa6a1d61dca9dc",
+    "baseline": "02bbf4821a8bbfc2b471e0a95164580fb1e37280",
     "scope": "Restore only this site dist in a new main commit; preserve later content and verify again."
   },
   "limits": [
     "Headless Chrome software WebGL and touch emulation; real mobile FPS, heat and battery are unmeasured.",
-    "Policy/agency data was preserved; current policy effects and final user aesthetic satisfaction were not established."
+    "Policy/agency data was preserved; current policy effects and final user aesthetic satisfaction were not established.",
+    "Hallmark audit retains its missing-stamp finding because the canonical audit-only profile prohibits product stamps.",
+    "OpenPencil skills were registered; app document was not connected, so no canvas editing was performed."
   ],
   "previousDeploymentHistory": "Git history of qa/deployment.json before this revision"
 }

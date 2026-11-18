@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src blob:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src https://us.i.posthog.com https://eu.i.posthog.com; base-uri 'none'; form-action 'none'">
+<title>이미지 작업대 — 한 장을 가볍게</title>
+<style>
+/* Hallmark: editorial workbench | signature: large image proof | material: user's local image | job: transform and download */
+/* Critique: no stock imagery, invented claims, gradients, or nested cards. */
+:root{--paper:#e8e9e5;--sheet:#f9faf7;--ink:#1d302c;--muted:#425b54;--line:#aebdb6;--accent:#174c3e;--focus:#126449;--font:ui-sans-serif,system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;overflow-x:clip}body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--font)}button,input,select{font:inherit}button,select,input[type=file]{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.52}.shell{max-width:1160px;margin:auto;padding:24px clamp(18px,4vw,54px) 64px}.mast{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ink);padding-bottom:16px;gap:16px}.brand{font-weight:800;letter-spacing:-.04em}.mast span{color:var(--muted);font-size:.9rem}.intro{padding:clamp(32px,5vw,68px) 0 36px}.intro h1{font-size:clamp(2.5rem,7vw,5.8rem);line-height:1.05;letter-spacing:-.065em;max-width:11ch;margin:0 0 18px;overflow-wrap:break-word;min-width:0}.intro p{max-width:46ch;color:var(--muted);margin:0}.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(20px,4vw,46px);border-top:1px solid var(--ink);padding-top:28px}.controls,.result{min-width:0}.controls h2,.result h2{font-size:1.2rem;margin:0 0 22px;letter-spacing:-.025em}.field{display:block;margin:0 0 20px;font-weight:650}.field small{display:block;font-size:.87rem;font-weight:400;color:var(--muted);margin:4px 0 9px}.field input:not([type=file]),.field select{width:100%;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:0;padding:12px 14px;min-height:48px}.field input[type=file]{display:block;width:100%;max-width:100%;padding:18px;background:var(--sheet);border:1px dashed var(--accent);font-size:.9rem}.field input[type=file]::file-selector-button{border:0;background:var(--accent);color:var(--sheet);padding:9px 12px;margin-right:12px;font:inherit;cursor:pointer}.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.source{font-size:.88rem;color:var(--muted);min-height:1.5em;margin:0 0 14px}.actions{display:flex;flex-wrap:wrap;gap:10px}.action{border:1px solid var(--accent);background:var(--accent);color:var(--sheet);padding:11px 22px;min-height:48px;font-weight:700}.action.secondary{background:transparent;color:var(--accent)}.status{margin:16px 0 0;min-height:2.8em;color:var(--ink)}.status[data-error=true]{color:#813324}.result{border-left:1px solid var(--line);padding-left:clamp(20px,4vw,46px)}.stage{min-height:310px;display:grid;place-items:center;background:var(--sheet);border:1px solid var(--line);padding:16px}.stage img{display:block;width:100%;max-height:440px;object-fit:contain}.stage p{text-align:center;color:var(--muted);max-width:22ch}.result-meta{font-size:.9rem;color:var(--muted);min-height:1.6em;margin:14px 0 18px}.foot{border-top:1px solid var(--line);margin-top:42px;padding-top:16px;color:var(--muted);font-size:.9rem}@media(max-width:760px){.workspace{grid-template-columns:minmax(0,1fr)}.result{border-left:0;border-top:1px solid var(--line);padding:24px 0 0}.intro{padding:36px 0 30px}.stage{min-height:250px}}@media(max-width:360px){.row{grid-template-columns:minmax(0,1fr)}.mast span{display:none}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header class="mast"><div class="brand">이미지 작업대</div><span>한 장씩, 브라우저에서</span></header>
+<section class="intro"><h1>이미지를 필요한 만큼만.</h1><p>한 장을 고르고 크기와 형식을 바꿔 내려받으세요. 원본은 서버로 업로드하지 않습니다.</p></section>
+<div class="workspace">
+<section class="controls" aria-labelledby="controls-title"><h2 id="controls-title">변환 설정</h2>
+<label class="field">이미지 선택<small>PNG, JPEG, WebP · 최대 12MB / 2,000만 화소</small><input id="file" type="file" accept="image/png,image/jpeg,image/webp"></label>
+<p id="source" class="source" aria-live="polite">선택한 이미지가 없습니다.</p>
+<div class="row"><label class="field">긴 변의 최대 길이<small>64–4096px · 원본보다 키우지 않음</small><input id="edge" type="number" min="64" max="4096" step="1" value="1600" inputmode="numeric"></label><label class="field">출력 형식<small>미지원 형식은 저장하지 않음</small><select id="format"><option value="image/webp">WebP</option><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option></select></label></div>
+<div class="actions"><button id="transform" class="action" type="button" disabled>이미지 변환</button></div><p id="status" class="status" role="status" aria-live="polite">이미지를 선택하면 시작할 수 있습니다.</p>
+</section>
+<section class="result" aria-labelledby="result-title"><h2 id="result-title">결과 미리보기</h2><div class="stage"><p id="empty">변환 결과가 여기에 표시됩니다.</p><img id="preview" alt="변환된 이미지 미리보기" hidden></div><p id="result-meta" class="result-meta"></p><button id="download" class="action secondary" type="button" disabled>결과 다운로드</button></section>
+</div><footer class="foot">이미지는 이 화면에서 변환됩니다. 통계 연결 시에도 이미지·파일명·촬영 정보는 보내지 않습니다.</footer>
+</main>
+<script>
+(() => {
+  'use strict';
+  const MAX_BYTES=12*1024*1024, MAX_PIXELS=20_000_000, MAX_EDGE=10_000, MAX_OUTPUT_PIXELS=12_000_000;
+  const TYPES=new Set(['image/png','image/jpeg','image/webp']);
+  const EXT={'image/png':'png','image/jpeg':'jpg','image/webp':'webp'};
+  const $=id=>document.getElementById(id);
+  const fileInput=$('file'), edgeInput=$('edge'), formatInput=$('format'), transform=$('transform'), download=$('download');
+  const status=$('status'), preview=$('preview'), empty=$('empty'), source=$('source'), meta=$('result-meta');
+  let selected=null, dimensions=null, output=null, outputUrl=null, generation=0;
+  const qa=new URLSearchParams(location.search).get('qa')==='1';
+  const qaRunId=qa?crypto.randomUUID():null;
+  const analytics=window.__IMAGE_TOOLS_ANALYTICS__;
+  const HOSTS=new Set(['https://us.i.posthog.com','https://eu.i.posthog.com']);
+  const allowedEvents=new Set(['image_selected','transform_started','transform_succeeded','transform_failed','download_requested']);
+  const sessionId=crypto.randomUUID();
+  const safeInt=(value,max)=>Number.isSafeInteger(value)&&value>=0&&value<=max?value:undefined;
+  const capture=(name,fields={})=>{
+    if(!allowedEvents.has(name)||!analytics||!HOSTS.has(analytics.host)||!/^phc_[a-zA-Z0-9]+$/.test(analytics.key||''))return;
+    const p={app_id:'miniapp-image-tools',build_revision:'pilot-01',traffic_kind:qa?'synthetic':'user'};
+    if(qa)p.qa_run_id=qaRunId;
+    if(TYPES.has(fields.input_mime))p.input_mime=fields.input_mime;
+    if(TYPES.has(fields.output_mime))p.output_mime=fields.output_mime;
+    for(const key of ['input_width','input_height','output_width','output_height']){const n=safeInt(fields[key],MAX_EDGE);if(n!==undefined)p[key]=n;}
+    for(const key of ['input_bytes','output_bytes']){const n=safeInt(fields[key],MAX_BYTES);if(n!==undefined)p[key]=n;}
+    const ms=safeInt(fields.duration_ms,600000);if(ms!==undefined)p.duration_ms=ms;
+    if(['invalid_file','unsupported_format','file_too_large','pixel_limit','invalid_settings','decode_failed','encode_failed','unsupported_output','stale_result'].includes(fields.error_code))p.error_code=fields.error_code;
+    const body={api_key:analytics.key,event:name,distinct_id:sessionId,properties:p};
+    fetch(analytics.host+'/capture/',{method:'POST',mode:'cors',credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),keepalive:false}).catch(()=>{});
+  };
+  const error=(message,code,fields={})=>{status.textContent=message;status.dataset.error='true';capture('transform_failed',{...fields,error_code:code});};
+  const message=text=>{status.textContent=text;status.dataset.error='false';};
+  function clearOutput(){if(outputUrl)URL.revokeObjectURL(outputUrl);outputUrl=null;output=null;preview.removeAttribute('src');preview.hidden=true;empty.hidden=false;meta.textContent='';download.disabled=true;}
+  function invalidate(){generation++;clearOutput();transform.disabled=!selected;}
+  function dimensionsFromHeader(buffer,type){
+    const d=new DataView(buffer), n=d.byteLength;
+    if(type==='image/png'){
+      if(n<24||d.getUint32(0)!==0x89504e47||d.getUint32(4)!==0x0d0a1a0a||d.getUint32(12)!==0x49484452)return null;
+      return [d.getUint32(16),d.getUint32(20)];
+    }
+    if(type==='image/webp'){
+      if(n<30||d.getUint32(0)!==0x52494646||d.getUint32(8)!==0x57454250)return null;
+      const tag=d.getUint32(12);
+      if(tag===0x56503858)return [1+d.getUint8(24)+(d.getUint8(25)<<8)+(d.getUint8(26)<<16),1+d.getUint8(27)+(d.getUint8(28)<<8)+(d.getUint8(29)<<16)];
+      if(tag===0x5650384c){if(n<25||d.getUint8(20)!==0x2f)return null;const v=d.getUint32(21,true);return [(v&0x3fff)+1,((v>>>14)&0x3fff)+1];}
+      if(tag===0x56503820&&n>=30&&d.getUint8(23)===0x9d&&d.getUint8(24)===0x01&&d.getUint8(25)===0x2a)return [d.getUint16(26,true)&0x3fff,d.getUint16(28,true)&0x3fff];
+      return null;
+    }
+    if(type==='image/jpeg'){
+      if(n<4||d.getUint16(0)!==0xffd8)return null;
+      let p=2;
+      while(p+3<n){if(d.getUint8(p++)!==0xff)return null;let marker=d.getUint8(p++);while(marker===0xff&&p<n)marker=d.getUint8(p++);
+        if(marker===0xd9||marker===0xda)break;
+        if(marker===0x01||marker>=0xd0&&marker<=0xd7)continue;
+        if(p+2>n)return null;const len=d.getUint16(p);if(len<2||p+len>n)return null;
+        if([0xc0,0xc1,0xc2,0xc3,0xc5,0xc6,0xc7,0xc9,0xca,0xcb,0xcd,0xce,0xcf].includes(marker)){if(len<7)return null;return [d.getUint16(p+5),d.getUint16(p+3)];}p+=len;
+      }
+    }
+    return null;
+  }
+  fileInput.addEventListener('change',async()=>{
+    selected=null;dimensions=null;invalidate();const ticket=generation;
+    const file=fileInput.files?.[0];if(!file){source.textContent='선택한 이미지가 없습니다.';message('이미지를 선택하면 시작할 수 있습니다.');return;}
+    source.textContent='이미지를 확인하고 있습니다.';
+    if(!TYPES.has(file.type)){source.textContent='선택할 수 없는 형식입니다.';error('PNG, JPEG, WebP 파일을 선택하세요.','unsupported_format');return;}
+    if(!file.size||file.size>MAX_BYTES){source.textContent='파일 크기가 허용 범위를 벗어났습니다.';error('12MB 이하의 이미지를 선택하세요.','file_too_large');return;}
+    try{
+      const header=await file.slice(0,Math.min(file.size,1024*1024)).arrayBuffer();if(ticket!==generation)return;
+      const size=dimensionsFromHeader(header,file.type);
+      if(!size){source.textContent='이미지 정보를 읽을 수 없습니다.';error('손상되었거나 지원되지 않는 이미지입니다. 다른 파일을 선택하세요.','invalid_file');return;}
+      if(size.some(v=>!v||v>MAX_EDGE)||size[0]*size[1]>MAX_PIXELS){source.textContent='이미지 크기가 허용 범위를 벗어났습니다.';error('긴 변 10,000px·2,000만 화소 이하를 선택하세요.','pixel_limit');return;}
+      selected=file;dimensions=size;source.textContent=`${size[0]} × ${size[1]}px · ${(file.size/1024/1024).toFixed(2)}MB`;transform.disabled=false;message('설정을 확인하고 이미지 변환을 누르세요.');
+      capture('image_selected',{input_mime:file.type,input_width:size[0],input_height:size[1],input_bytes:file.size});
+    }catch{if(ticket===generation){source.textContent='이미지를 확인할 수 없습니다.';error('이미지 정보를 읽지 못했습니다. 다른 파일을 선택하세요.','invalid_file');}}
+  });
+  edgeInput.addEventListener('input',invalidate);formatInput.addEventListener('change',invalidate);
+  transform.addEventListener('click',async()=>{
+    if(!selected||!dimensions)return;
+    invalidate();const ticket=generation, edge=Number(edgeInput.value), mime=formatInput.value, file=selected;
+    const base={input_mime:file.type,input_width:dimensions[0],input_height:dimensions[1],input_bytes:file.size,output_mime:mime};
+    if(!Number.isInteger(edge)||edge<64||edge>4096||!TYPES.has(mime)){error('긴 변은 64–4096px, 형식은 PNG/JPEG/WebP 중에서 선택하세요.','invalid_settings',base);return;}
+    const scale=Math.min(1,edge/Math.max(...dimensions));
+    const width=Math.max(1,Math.round(dimensions[0]*scale)),height=Math.max(1,Math.round(dimensions[1]*scale));
+    if(width*height>MAX_OUTPUT_PIXELS){error('출력 화소가 1,200만을 넘습니다. 긴 변을 줄이세요.','pixel_limit',base);return;}
+    const start=performance.now();let bitmap=null,canvas=null;
+    transform.disabled=true;message('변환 중입니다…');capture('transform_started',{...base,output_width:width,output_height:height});
+    try{
+      bitmap=await createImageBitmap(file);if(ticket!==generation)return;
+      if(bitmap.width!==dimensions[0]||bitmap.height!==dimensions[1])throw new Error('dimensions');
+      canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+      const context=canvas.getContext('2d',{alpha:mime!=='image/jpeg'});if(!context)throw new Error('context');
+      if(mime==='image/jpeg'){context.fillStyle='#ffffff';context.fillRect(0,0,width,height);}
+      context.drawImage(bitmap,0,0,width,height);bitmap.close();bitmap=null;
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,mime,mime==='image/png'?undefined:.88));
+      if(ticket!==generation)return;
+      if(!blob||!blob.size)throw new Error('encode');
+      if(blob.type!==mime)throw new Error('unsupported');
+      output=blob;outputUrl=URL.createObjectURL(blob);preview.src=outputUrl;preview.hidden=false;empty.hidden=true;download.disabled=false;
+      meta.textContent=`${width} × ${height}px · ${mime.slice(6).toUpperCase()} · ${(blob.size/1024).toFixed(1)}KB`;
+      message('변환이 끝났습니다. 미리보기를 확인하고 내려받으세요.');
+      capture('transform_succeeded',{...base,output_width:width,output_height:height,output_bytes:blob.size,duration_ms:Math.round(performance.now()-start)});
+    }catch(e){if(ticket===generation)error(e.message==='unsupported'?'이 브라우저는 선택한 출력 형식을 저장하지 못합니다. 다른 형식을 선택하세요.':'이미지 변환에 실패했습니다. 다른 파일이나 더 작은 크기로 다시 시도하세요.',e.message==='unsupported'?'unsupported_output':e.message==='encode'?'encode_failed':'decode_failed',base);}
+    finally{if(bitmap)bitmap.close();if(canvas){canvas.width=0;canvas.height=0;}if(ticket===generation)transform.disabled=!selected;}
+  });
+  download.addEventListener('click',()=>{
+    if(!output||!outputUrl)return;
+    const link=document.createElement('a');link.href=outputUrl;link.download=`converted-image.${EXT[output.type]}`;document.body.append(link);link.click();link.remove();
+    capture('download_requested',{output_mime:output.type,output_bytes:output.size});
+  });
+  addEventListener('pagehide',()=>{generation++;clearOutput();});
+})();
+</script>
+</body>
+</html>

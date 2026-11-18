@@ -20,6 +20,6 @@
 
 데스크톱/모바일 브라우저에서 정상, 투명 PNG→JPEG, 손상 이미지, 입력 상한, 반복 선택과 변환, 다운로드 파일의 MIME·픽셀 크기·열기를 확인합니다. 개발자 도구 Network에서 외부 요청과 payload를 확인하고 이미지나 파일명이 나가지 않는지 확인합니다. 코드 정적 점검은 인코딩 결과의 `Blob.type` 검사와 UI 오류 경로를 포함합니다.
 
-새 앱 등록은 `../registry.json`과 AWS Terraform 전체 plan 검토가 필요합니다. 이 앱 폴더의 main push는 인프라를 만들지 않습니다. 기존 인증과 비용/권한 경계가 확인되기 전에는 registry 등록·Terraform apply·Actions 수동 배포를 하지 않습니다. 운영 리소스가 생성된 후에만 기존 정적 사이트 workflow가 `dist/`를 게시할 수 있습니다. 복구는 이전 Space commit의 이 앱 `dist/`만 재배포하며 다른 사이트·state는 되돌리지 않습니다.
+이 앱은 독립 CloudFront alias가 아닌 기존 `images.aws.shdkej.com/tools/image-converter/` 하위 경로로 게시합니다. `../registry.json`에 새 alias를 등록하거나 Terraform/IAM을 변경하지 않습니다. 기존 범용 정적 사이트 workflow는 전체 사이트 `--delete` 동기화이므로 이 앱을 자동 배포하지 않습니다. 승인된 수동 `.github/workflows/miniapp-image-converter-release.yml`만 기존 OIDC 배포 역할과 이미지 사이트 bucket/distribution을 검증한 뒤 이 하위 경로의 두 HTML object만 올리고 해당 두 경로만 무효화합니다. 복구는 이 앱의 이전 `dist/index.html`을 같은 전용 workflow로 재게시하며 다른 사이트·state는 되돌리지 않습니다. 실행 증거는 `qa/release-checkpoint.md`를 참고하세요. PostHog 앱 전용 프로젝트 접근은 여전히 미확인이라 계측은 꺼져 있습니다.
 
-기획·완료 기준: Knowledge Lab `source/openclaw-system/docs/projects/MINIAPP_IMAGE_TOOLS_PILOT.md`. 이 문서는 소스와 검증 방법을 소유하며, 배포 또는 실제 PostHog 조회를 완료했다고 주장하지 않습니다.
+기획·완료 기준: Knowledge Lab `source/openclaw-system/docs/projects/MINIAPP_IMAGE_TOOLS_PILOT.md`. 배포·브라우저 검증은 `qa/release-checkpoint.md`의 범위에서만 확인하며, 실제 PostHog 조회와 계측 완료는 주장하지 않습니다.

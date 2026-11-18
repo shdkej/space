@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f7f8f2"><meta name="description" content="정책을 펼치고, 돌려보고, 내 삶과 연결해보세요. 발표 당시 정책 사례 10건과 중앙행정기관 44곳을 탐색합니다."><title>모두의정책 — 정책을 펼쳐보세요</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="index.css"><script type="importmap">{"imports":{"three":"./vendor/three/three.module.js"}}</script><script src="data.js" defer></script><script src="institutions.js" defer></script><script src="app.js" defer></script></head>
-<body>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#191b1c"><meta name="description" content="정책을 펼치고, 돌려보고, 내 삶과 연결해보세요. 발표 당시 정책 사례 10건과 중앙행정기관 44곳을 탐색합니다."><title>모두의정책: 정책에, 가까이</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="index.css"><script type="importmap">{"imports":{"three":"./vendor/three/three.module.js"}}</script><script src="data.js" defer></script><script src="institutions.js" defer></script><script src="app.js" defer></script></head>
+<body class="console-page">
 <a class="skip" href="#policies">정책 사례로 건너뛰기</a>
 <header class="site-header"><a class="wordmark" href="#"><span class="brand-symbol" aria-hidden="true">◒</span> 모두의정책</a><nav aria-label="주 메뉴"><a href="#atlas">정책 탐색</a><a href="#agencies">중앙행정기관</a></nav><a class="nav-cta" href="#my-map">내 관심 정책 <span id="saved-count">0</span><span aria-hidden="true">↗</span></a></header>
 <main>
 <section id="atlas" class="atlas" aria-labelledby="hero-title">
-  <div class="atlas-heading"><span class="atlas-kicker"><i aria-hidden="true"></i> 우리 삶을 이루는 정책들</span><h1 id="hero-title">정책을<br> 펼쳐보세요.</h1><p class="atlas-intro">한눈에 둘러보고, 하나씩 가까이.<br>관심 있는 정책에서 시작하세요.</p></div>
+  <div class="atlas-heading"><h1 id="hero-title"><span>정책에,</span><span>가까이.</span></h1><p class="atlas-intro">우리 삶과 맞닿은 정책들.<br>하나를 눌러, 그 이야기를 살펴보세요.</p><button class="scene-start" id="scene-start" type="button">정책 하나 살펴보기 <span aria-hidden="true">↗</span></button></div>
   <div id="policy-scene" class="policy-scene" data-status="loading" aria-label="정책 조각을 선택하는 공간" aria-describedby="scene-instruction">
     <div id="scene-labels" class="scene-labels" role="group" aria-label="정책 조각 10개"></div>
-    <div class="scene-fallback"><span class="fallback-mark" aria-hidden="true">◒</span><p id="scene-load-message">정책을 펼치고 있어요.</p><noscript><style>#scene-load-message,.scene-side-tools,.scene-settings{display:none}</style><p>아래 목록에서 정책을 살펴보세요.</p></noscript><a href="#policies">정책 목록으로 보기 <span aria-hidden="true">↗</span></a></div>
+    <div class="scene-fallback"><span class="fallback-mark" aria-hidden="true">◒</span><p id="scene-load-message">정책 콘솔을 준비하고 있어요.</p><noscript><style>#scene-load-message,.scene-side-tools,.scene-settings,#scene-start{display:none}</style><p>아래 목록에서 정책을 살펴보세요.</p></noscript><a href="#policies">정책 목록으로 보기 <span aria-hidden="true">↗</span></a></div>
   </div>
-  <div class="scene-corner" aria-hidden="true"><span>모두의정책</span><span>정책 아카이브 / 01</span></div>
+  <div class="scene-corner" aria-hidden="true"><span>10개의 정책, 하나의 시작.</span></div>
   <aside id="scene-detail" class="scene-detail" aria-labelledby="scene-detail-title" hidden>
     <p id="scene-detail-category" class="scene-detail-category"></p><h2 id="scene-detail-title"></h2><p id="scene-detail-meta" class="scene-detail-meta"></p><p id="scene-detail-summary"></p><p class="scene-record-note">발표 당시의 기록입니다.</p>
     <div class="scene-detail-actions"><button id="scene-read" class="scene-primary" type="button">내용과 출처 <span aria-hidden="true">↗</span></button><button id="scene-save" class="scene-save" type="button" aria-pressed="false">관심 저장 +</button></div>
@@ -19,15 +19,15 @@
   </aside>
   <div class="scene-side-tools"><button id="scene-reset" type="button" aria-label="정책 공간 전체 보기" title="전체 보기"><span aria-hidden="true">↺</span><span class="tool-label">전체</span></button><button id="scene-touch" type="button" aria-pressed="false"><span aria-hidden="true">↔</span><span class="tool-label">돌려보기</span></button></div>
   <div class="scene-bottom">
-    <div class="scene-instruction" id="scene-instruction"><span class="drag-icon" aria-hidden="true">↔</span><p><strong>돌려보고, 눌러보세요.</strong><span class="desktop-help">드래그로 회전 · 정책 선택</span><span class="mobile-help">정책 선택 · 돌려보기로 회전</span></p></div>
-    <div class="scene-settings"><div class="scene-setting"><span class="setting-label">배치</span><div class="segmented" role="group" aria-label="정책 배치"><button id="scene-assemble" type="button" aria-pressed="true">모아 보기</button><button id="scene-expand" type="button" aria-pressed="false">펼쳐 보기</button></div></div><div class="scene-setting lighting-setting"><span class="setting-label">빛</span><div class="lighting-options" role="group" aria-label="장면 조명"><button id="scene-day" class="light-day" type="button" aria-label="아침빛" aria-pressed="true" title="아침빛"></button><button id="scene-evening" class="light-evening" type="button" aria-label="저녁빛" aria-pressed="false" title="저녁빛"></button></div></div></div>
+    <div class="scene-instruction" id="scene-instruction"><span class="drag-icon" aria-hidden="true">↔</span><p><strong>눌러서 읽고, 끌어서 돌려보세요.</strong><span class="desktop-help">키를 누르면 정책의 기록이 열립니다.</span><span class="mobile-help">정책 선택 · 돌려보기로 회전</span></p></div>
+    <div class="scene-settings"><div class="scene-setting"><span class="setting-label">구조</span><div class="segmented" role="group" aria-label="정책 배치"><button id="scene-assemble" type="button" aria-pressed="true">조립</button><button id="scene-expand" type="button" aria-pressed="false">분해</button></div></div><div class="scene-setting lighting-setting"><span class="setting-label">빛</span><div class="lighting-options" role="group" aria-label="장면 조명"><button id="scene-day" class="light-day" type="button" aria-label="스튜디오 조명" aria-pressed="true" title="스튜디오 조명"></button><button id="scene-evening" class="light-evening" type="button" aria-label="따뜻한 조명" aria-pressed="false" title="따뜻한 조명"></button></div></div></div>
     <a class="scene-list-link" href="#policies">목록으로 읽기 <span aria-hidden="true">↓</span></a>
   </div>
-  <div class="atlas-scope"><span>발표 당시 정책 사례 <strong>10</strong></span><a href="#agencies">중앙행정기관 <strong>44</strong><span class="scope-kinds">부 19 · 처 6 · 청 19</span><span aria-hidden="true">↗</span></a><span class="scope-note">정책의 현재 효력은 원문에서 확인하세요.</span></div>
+  <div class="atlas-scope"><span>발표 당시 정책 사례 <strong>10</strong></span><a href="#agencies">중앙행정기관 <strong>44</strong><span class="scope-kinds">부 19 / 처 6 / 청 19</span><span aria-hidden="true">↗</span></a><span class="scope-note">정책의 현재 효력은 원문에서 확인하세요.</span></div>
   <p id="scene-announcement" class="sr-only" role="status" aria-live="polite"></p>
 </section>
 <div class="ledger-overview">
-<div class="galaxy-intro"><div class="intro-copy"><div><span class="section-eyebrow">01 / 정책 아카이브</span><h2>정책의 이름 뒤에,<br>어떤 이야기가 있을까요.</h2></div><p>공약부터 발의, 시행까지.<br>발표 당시의 단계와 출처를 함께 읽어보세요.</p></div></div>
+<div class="galaxy-intro"><div class="intro-copy"><div><h2>정책의 이름 뒤에,<br>어떤 이야기가 있을까요.</h2></div><p>공약부터 발의, 시행까지.<br>발표 당시의 단계와 출처를 함께 읽어보세요.</p></div></div>
 <section class="galaxy-hero" id="policies" aria-labelledby="galaxy-title">
   <div class="galaxy-canvas" aria-labelledby="galaxy-title">
     <div class="galaxy-head"><h2 id="galaxy-title">정책 사례 10건</h2></div>

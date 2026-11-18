@@ -2,11 +2,11 @@
 
 발표 당시 정책 사례 10건을 직접 돌려보고 선택하면서 내용과 출처를 읽는 정적 웹 시제품입니다. 중앙행정기관 44곳을 검색하고 관심 정책·메모를 브라우저에 저장합니다.
 
-2026-11-18 사용자는 [참고 영상](https://www.threads.com/@bsd_funneldding/post/Dc-GbPOk3Gc) 같은 3D 상호작용을 원했다고 교정하고 개선·배포를 요청했습니다. Three.js 장면은 소스 `8fdad908`의 [AWS 배포](https://github.com/shdkej/space/actions/runs/44280357668)로 공개됐으며, 실제 데스크톱·모바일 조작과 실패 대체·기존 기능 검사를 통과했습니다. 배포 완료 판정은 이 문서의 기능 설명이 아니라 `qa/deployment.json`의 소스 SHA·Actions 결과와 해당 버전의 라이브 검증 기록으로 확인합니다.
+사용자는 [참고 영상](https://www.threads.com/@bsd_funneldding/post/Dc-GbPOk3Gc) 수준의 그래픽과 체감 상호작용을 원하며 첫 배포 `8fdad908`의 시각 품질을 거부했습니다. 후속 버전은 입체 키캡·표면 인쇄·층별 분해·금속 노브를 가진 graphite 콘솔로 다시 구현합니다. 기능 검증과 미적 평가를 구분하며 실제 배포 revision은 `qa/deployment.json`으로 확인합니다.
 
 ## 사용과 제공 범위
 
-- 정책 공간: 드래그 회전, 조각 펼침·모음, 낮·저녁 조명, 정책 선택과 카메라 접근, 전체로 복귀. 정책명·단계는 HTML 버튼으로 읽고 조작합니다.
+- 정책 공간: 드래그 회전, 조각 펼침·모음, 스튜디오·따뜻한 조명, 정책 선택과 카메라 접근, 전체로 복귀. 정책명은 3D 키 표면에 인쇄하고, 같은 위치의 HTML 버튼으로 키보드 조작합니다. 상세 제목·단계는 별도 HTML로 읽습니다.
 - 정책 선택: 장면 옆 요약 → `내용과 출처` → 기존 상세 대화상자. 관심 저장은 장면과 목록에서 같은 브라우저 저장소를 사용합니다.
 - 정책 목록: 민주당 계열 5명·보수 계열 5명의 역사적 정책 사례, 발표 당시 소속·연도·공약/발의/시행 구분, 원문·뉴스·법령 검색 링크.
 - 기관 탐색: 중앙행정기관 44곳(19부·6처·19청)의 이름·유형·확인일, 검색·필터·상세 대화상자. 국회·17개 광역의회 링크도 유지합니다.
@@ -27,7 +27,7 @@ npm start
 # http://127.0.0.1:4173
 ```
 
-HTML·CSS·앱 JavaScript는 `dist/`에서 직접 편집합니다. Three.js 0.187.0은 버전을 고정하며, `npm run vendor`가 esbuild로 엔진을 묶고 OrbitControls·RoomEnvironment·라이선스를 `dist/vendor/three/`에 준비합니다. 의존성이나 vendor 스크립트를 바꾼 경우 이 명령을 다시 실행하고 생성 파일도 함께 커밋합니다. 배포 workflow는 npm 설치나 빌드를 실행하지 않습니다.
+HTML·CSS·앱 JavaScript는 `dist/`에서 직접 편집합니다. Three.js 0.187.0은 버전을 고정하며, `npm run vendor`가 esbuild로 엔진을 묶고 OrbitControls·RoomEnvironment·GLTFLoader·라이선스를 `dist/vendor/three/`에 준비합니다. 의존성이나 vendor 스크립트를 바꾼 경우 이 명령을 다시 실행하고 생성 파일도 함께 커밋합니다. 배포 workflow는 npm 설치나 빌드를 실행하지 않습니다.
 
 3D 장면은 ES module과 import map을 사용하므로 HTTP 서버에서 확인합니다. `file://` 직접 열기를 3D 완료 기준으로 사용하지 않습니다. Three.js·글꼴·장면 자산은 같은 출처에서 제공하며 외부 CDN이나 API 키가 필요하지 않습니다.
 
@@ -46,7 +46,17 @@ HTML·CSS·앱 JavaScript는 `dist/`에서 직접 편집합니다. Three.js 0.18
 | `scripts/verify-*.cjs`, `qa/` | 브라우저·장면·라이브 검사와 실제 실행 증거 |
 | `scripts/sync-institutions.py` | 기관 JSON·JS 및 무스크립트 HTML 목록 동시 갱신 |
 
-`DESIGN_SYSTEM.md`가 장면·상호작용·접근성 기준을 소유합니다. 과거 OpenPencil·Blender 제작 파일은 `design/`, `scripts/`에 보존돼 있지만 현재 장면에서는 호출하지 않습니다. 과거 배포별 설명은 Git 이력과 `qa/deployment.json`의 이전 기록을 참조합니다.
+`DESIGN_SYSTEM.md`가 장면·상호작용·접근성 기준을 소유합니다. 새 Blender 노브는 실제 GLB 런타임 자산입니다. 과거 OpenPencil 시안·기타 Blender 정지 이미지 파일은 제작 이력으로 보존합니다. 과거 배포별 설명은 Git 이력과 `qa/deployment.json`의 이전 기록을 참조합니다.
+
+## Blender 자산 재생성
+
+```bash
+blender -b --factory-startup --python-exit-code 1 -P scripts/build-console-knob.py
+```
+
+Blender 4.0.2 arm64와 Python NumPy, glTF exporter로 검증했습니다. 모델의 editable `.blend`, 배포용 GLB, `qa/console-model.json`, 앞/뒤 소재 검토 이미지를 생성합니다. Cycles CPU 렌더이며 이 환경은 OpenImageDenoiser가 없어 denoising을 끕니다. 스킬의 환경 보고·mesh QA도 실행하고 UV·닫힌 메시·노멀·내보낸 바이트를 확인합니다. 자산 파일 로딩 실패는 `data-model=fallback`으로 남기며 장면 사용은 계속됩니다.
+
+Hallmark와 Blender/OpenPencil 스킬 원본은 Prompt Archive `skills/shared/`가 소유합니다. Hallmark는 audit 보조로 사용하며 OpenPencil은 현재 실행 앱에 문서가 없어 실제 캔버스 작업은 미수행입니다. 공통 레퍼런스·출처는 `DESIGN_SYSTEM.md`를 참고합니다.
 
 ## 데이터와 저장
 
@@ -84,7 +94,7 @@ SITE_URL=http://127.0.0.1:4173 npm run test:scene
 
 배포는 S3 `static-policycock-aws-shdkej-com`과 CloudFront `E1IR9GXLCMQK6X`를 사용합니다. 자산 캐시는 60초이며 workflow가 전체 경로 무효화를 기다립니다. 이번 화면 변경에는 Terraform apply가 필요하지 않습니다. 인프라 정본과 초기 상태 이전 기록은 `../../README.md`, `qa/{infra-plan,state-transfer}.json`에 있고, 공유 Terraform state는 별도 승인 없이 변경하지 않습니다.
 
-복구할 때는 직전 검증된 버전의 **이 사이트 `dist/`만** 되돌리는 새 커밋을 main에 반영합니다. 이번 변경 직전 기준은 출산지도를 포함한 `f0c2802016dc8c59c2bd07c16afa6a1d61dca9dc`입니다. 이후 추가된 콘텐츠가 있으면 보존 범위를 먼저 비교합니다. force-push나 공유 인프라 복원은 사용하지 않으며, 재배포 뒤 동일한 라이브 검증을 수행합니다. 브라우저 메모는 사이트 복구와 별개입니다.
+복구할 때는 직전 검증된 버전의 **이 사이트 `dist/`만** 되돌리는 새 커밋을 main에 반영합니다. 이번 변경 직전 기준은 출산지도를 포함한 `02bbf4821a8bbfc2b471e0a95164580fb1e37280`입니다. 이후 추가된 콘텐츠가 있으면 보존 범위를 먼저 비교합니다. force-push나 공유 인프라 복원은 사용하지 않으며, 재배포 뒤 동일한 라이브 검증을 수행합니다. 브라우저 메모는 사이트 복구와 별개입니다.
 
 ## 한계와 관련 문서
 

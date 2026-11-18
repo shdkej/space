@@ -135,6 +135,8 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
     const nojs=await nojsContext.newPage();await nojs.goto(base);
     assert.equal(await nojs.locator('a.person').count(),10);
     assert.equal(await nojs.locator('.agency-link').count(),44);
+    assert.equal(await nojs.locator('#scene-start').isVisible(),false,'no-JS start action must not remain inert');
+    assert.equal(await nojs.locator('.scene-fallback a[href="#policies"]').isVisible(),true);
     assert.deepEqual((await nojs.locator('a.person').evaluateAll(a=>a.map(n=>n.href))).sort(),policies.map(p=>p.source).sort());
     assert.deepEqual(await nojs.locator('.agency-group h4').allTextContents(),await page.locator('.agency-group h4').allTextContents());
     await nojsContext.close();

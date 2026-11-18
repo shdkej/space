@@ -48,3 +48,19 @@
 
 
 [WORKFLOW:DEPLOY] 소스 8fdad908f5c2141875264c29f1b5ce81d630e8c8을 main에 push했다. Actions 44280357668의 policycock 잡과 S3 동기화·CloudFront 무효화가 성공했다. 공개 URL에서 HTML 8개·3D 9개 검사 묶음을 통과했고 dist 17개 파일의 바이트·SHA-256·JS MIME, /·/sources 경로, 출산지원금 지도 보존을 확인했다. 1440px·390px 라이브 캡처를 직접 살폈다. qa/deployment.json 및 live-* 결과가 배포 근거다.
+
+## 사용자 거부 후 재설계 — 2026-11-18
+
+[WORKFLOW:REQUEST] “그래 그 레퍼런스들 디자인 문서에 추가해주고 블렌더 스킬이나 오픈펜슬 스킬도 찾아서 좀 더 고도화된 사이트로 만들어줘 디자인 스킬도 쓰고. frontend design 이랑 hallmark”
+
+[WORKFLOW:DECISION] 첫 배포의 기술 통과를 시각 승인으로 해석하지 않는다. 새 형태·표면 인쇄·층별 분해·입력 반응·Blender GLB를 만들고 실제 렌더로 수정한다. 공통 디자인 레퍼런스와 공식/커뮤니티 스킬은 Prompt Archive 정본에 등록한다. Cloth Carousel은 WebGPU 물리 반응 참고이며 이 콘솔을 천 캐러셀로 바꾼다는 새 범위로 추정하지 않는다.
+
+[WORKFLOW:PLAN] Planner: 실물처럼 읽히는 단면/재질/접촉 그림자와 연결된 입력 반응을 시각 기준으로 제안; 공통 문서·스킬 설치. Developer: 콘솔 geometry·표면 라벨·실제 모션 구현. Marketer: 스킬 출처·시각 결함 진단. Operator: mesh raycast·GLB 실패·기존 기능·라이브 바이트 검증. Root: 화면·Blender 자산·통합·최종 시각 판단·배포.
+
+- [x] 레퍼런스와 실제 스킬 원본 확인·공통 문서 반영
+- [x] 3D 콘솔 재설계와 Blender GLB 실제 연결
+- [x] 데스크톱·모바일 실제 렌더 수정, Hallmark audit와 Blender 자산 QA
+- [x] 기능 회귀·키보드·모션 감소·실패 대체 확인
+- [ ] main push·AWS·라이브 검증·정본 기록
+
+[WORKFLOW:QA] 두 번째 구현의 HTML 19개 묶음, 장면 14개 묶음 통과. 실제 GLB 노브 클릭·조명 상태 동기화, 접근성 HTML pointer를 끈 메시 10개 raycast, 모델 요청 실패 대체를 추가했다. 1440/1280/390 실제 렌더에서 선택·분해·모바일 한글을 검토했다. Hallmark 최종 URL 렌더 완료: 남은 Floor 1건은 공통 audit 프로필이 금지하는 스탬프의 누락이며 디자인 정본을 우선했다. 시각 판정은 테스트 개수와 분리한다.

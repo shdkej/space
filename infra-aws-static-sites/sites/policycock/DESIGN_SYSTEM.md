@@ -8,22 +8,40 @@
 
 ## 장면과 읽는 순서
 
-1. 첫 화면은 `정책을 펼쳐보세요.`라는 표제, 실제 3D 정책 조각 10개, 회전·선택 안내와 조작부를 보여줍니다.
+1. 첫 화면은 `정책에, 가까이.`라는 표제, 실제 3D 정책 조각 10개, 회전·선택 안내와 조작부를 보여줍니다.
 2. 조각을 선택하면 카메라가 해당 위치로 접근하고 HTML 요약에 정책명·인물·연도·발표 당시 단계가 나타납니다. `내용과 출처`는 기존 상세 대화상자, `관심 저장`은 같은 저장 데이터로 연결합니다.
 3. `전체로 돌아가기`로 조망 위치를 회복합니다. 펼침·모음과 낮·저녁 조명은 실제 물체·카메라·빛을 바꾸며, 평면 이미지 교체로 대신하지 않습니다.
 4. 다음 영역에서 정책 10건을 목록으로 읽고, 별도의 중앙행정기관 44곳(19부·6처·19청)을 검색·선택합니다. 국회·17개 광역의회 참고 링크와 내 관심 정책을 유지합니다.
 
 정책 사례와 기관 목록 사이의 담당·집행 관계는 표시하지 않습니다. 물체의 위치·높이·크기·색과 조립 구조는 지리, 정치 성향, 현재 효력, 중요도 순위, 정부의 지휘 관계를 의미하지 않습니다.
 
-## 시각 언어
+## 시각 언어 — 2026-11-18 두 번째 구현
 
-- **장면:** 옅은 화이트 바탕, 짙은 녹색 받침, 세라믹 정책 조각, 금속 테두리와 부드러운 접촉 그림자. 형태·재질·빛이 공간감을 만들고 화면 밖 장식은 줄입니다.
-- **서체:** 자체 호스팅 Pretendard. 표제는 첫 행동을 알리고, 정책명·단계는 작은 장식 글자가 아니라 읽을 수 있는 HTML 텍스트로 둡니다.
-- **색 토큰:** `--page #f7f8f2`, `--ink #172b25`, `--soft #626e65`, `--line #d0d6cc`, `--line-light #e2e6dc`, `--signal #205442`, `--quiet #eef1e7`. 정당·시행 여부의 암호로 색을 사용하지 않습니다.
-- **선택:** 선택한 조각의 색·높이와 HTML 버튼 상태를 함께 바꾸고 `aria-pressed`로 전달합니다. hover만으로 핵심 정보를 숨기지 않습니다.
-- **조작부:** 모음/펼침, 낮/저녁, 전체 보기와 회전 조작은 짧은 한국어 라벨과 선택 상태를 제공합니다. 화면 카피에 WebGL·렌더러·테스트 같은 구현 용어를 노출하지 않습니다.
+첫 배포의 녹색 판·흰 타일과 평면 HTML 라벨은 사용자가 실감·세련됨·체감 상호작용이 부족하다고 거부했다. 후속 화면은 **정책을 누르는 금속 콘솔**로 설계한다. 어두운 장면은 이 제품의 참고 영상과 요청에 한정하며 공통 브랜드의 라이트 기본값을 바꾸지 않는다.
 
-`dist/index.css`가 HTML 화면을, `dist/policy-scene.js`가 물체·카메라·조명을 소유합니다. Three.js 0.187.0과 addon은 같은 출처의 `dist/vendor/three/`에서 불러옵니다. 기존 Blender 정지 이미지와 OpenPencil 시안은 제작 이력이며 현재 장면의 런타임 자산이 아닙니다.
+- **형태:** 3단 하우징, 좁은 금속 챔퍼, 측면 리브, 나사, 테이퍼 키캡과 스위치. 작은 곡률이 하이라이트를 받아 실제 단면을 구분해야 한다.
+- **재질:** graphite 키캡·도장 본체, 노출된 금속 테두리와 노브, 인쇄된 아이보리 글자. 선택한 정책만 색이 바뀌며 정당·현재 시행 여부를 색으로 암시하지 않는다.
+- **조명:** 넓은 면광원 반사와 좁은 rim 반사, 접촉 그림자. 광량을 올려 평면 전체가 희게 되는 것을 실패로 본다.
+- **글자:** 자체 호스팅 Pretendard를 로드한 뒤 키 표면 텍스처에 정책명을 그린다. HTML 버튼은 같은 위치의 접근성·포커스·최소 터치 영역을 제공한다. 선택한 제목·연도·단계·설명은 HTML로 크게 읽는다.
+- **화면:** 짙은 첫 장면과 따뜻한 밝은 아카이브를 구분한다. 표제 `정책에, 가까이.`와 첫 선택 버튼, 실제 키가 첫 행동을 알린다. 본문 데이터와 기존 저장 흐름은 유지한다.
+- **움직임:** pointer hover/press, 선택 접근, 층별 분해·복귀가 서로 연결된다. 단순 색 교체가 아닌 실제 메시·카메라·조명 변화여야 한다. 모션 감소와 모바일 스크롤을 우선한다.
+
+`dist/index.css`는 HTML, `dist/policy-scene.js`는 실제 장면을 소유한다. `scripts/build-console-knob.py`가 Blender 4.0.2에서 `design/console-knob.blend`와 `dist/assets/console-knob.glb`를 생성한다. GLB는 GLTFLoader로 실제 불러오며 실패 시 코드로 만든 노브와 정책 탐색을 유지한다. Blender 스킬의 5.2+/5.3 전용 API는 그대로 실행하지 않고 설치 버전의 API를 확인했다.
+
+### 참고와 적용 구분
+
+공통 참고 목록 정본은 [Prompt Archive DESIGN_SYSTEM.md](https://github.com/shdkej/prompt-archive/blob/main/DESIGN_SYSTEM.md)의 제작·상호작용 참고 절이다.
+
+| 참고 | 이 제품에서 가져오는 판단 |
+| --- | --- |
+| [Threads 3D 콘솔](https://www.threads.com/@bsd_funneldding/post/Dc-GbPOk3Gc) | 형태·재질·조명과 직접 입력이 함께 반응하는 장면. 제작 기술은 미확인 |
+| [Codrops](https://tympanus.net/codrops/hub/) | 완성된 동작을 실제 코드·제작 설명과 비교 |
+| [Cloth Carousel](https://tympanus.net/Demos/ClothCarousel/) / [제작기](https://tympanus.net/codrops/2026/11/17/cloth-posters-webgpu/) | 입력 위치·속도에 따라 달라지는 물체 반응, 정지 시 계산 중단. 이 제품에 천 물리 시뮬레이션을 설치했다는 뜻은 아님. [공개 저장소](https://github.com/twotwentytwo-studio/domgl-cloth)의 DomGL은 독점 소프트웨어로 재사용 허가가 제공되지 않음 |
+| [Animista](https://animista.net/) / [Uiverse](https://uiverse.io/) | 짧은 CSS 전환·hover를 비교. 효과 수를 늘리는 대신 선택 피드백에 한정 |
+| [React Bits](https://reactbits.dev/) / [Aceternity UI](https://ui.aceternity.com/) | 컴포넌트 동작 참고. 현 HTML 사이트에 React를 추가하지 않음 |
+| [Blender 스킬](https://github.com/EL4CTEO/blender-skills) | 단면·PBR·GLB·자산 QA 절차를 노브 제작에 적용 |
+| [Hallmark](https://github.com/Nutlope/hallmark) | audit 보조. 테마 추첨·스탬프·브랜드 전면 교체는 적용하지 않음 |
+| [OpenPencil 공식 스킬](https://github.com/open-pencil/open-pencil/tree/master/skills/open-pencil) | 설치·발견 확인. 현재 앱에 열린 문서가 없어 캔버스 제작은 수행하지 못함 |
 
 ## 반응형과 조작
 

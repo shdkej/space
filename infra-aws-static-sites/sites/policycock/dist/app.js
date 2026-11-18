@@ -90,7 +90,7 @@ function resetSceneDetail(){
 function sceneUnavailable(){
   $('#policy-scene').dataset.status='fallback';
   $('#scene-load-message').textContent='목록에서 정책을 살펴보세요.';
-  document.querySelectorAll('.scene-settings button,.scene-side-tools button').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.scene-settings button,.scene-side-tools button,#scene-start').forEach(b=>b.disabled=true);
   resetSceneDetail();
 }
 document.addEventListener('policy-scene-select',event=>{
@@ -103,8 +103,10 @@ document.addEventListener('policy-scene-select',event=>{
   $('#scene-announcement').textContent=`${p.policy} 선택. ${p.year}, ${p.stage}. 아래 내용과 출처 버튼에서 자세히 볼 수 있습니다.`;
 });
 document.addEventListener('policy-scene-reset',resetSceneDetail);
-document.addEventListener('policy-scene-ready',()=>{syncSceneSaved();document.querySelectorAll('.scene-settings button,.scene-side-tools button').forEach(b=>b.disabled=false);});
+document.addEventListener('policy-scene-ready',()=>{syncSceneSaved();document.querySelectorAll('.scene-settings button,.scene-side-tools button,#scene-start').forEach(b=>b.disabled=false);});
 document.addEventListener('policy-scene-unavailable',sceneUnavailable);
+document.addEventListener('policy-scene-lighting',event=>{const lighting=event.detail?.lighting;if(!['day','evening'].includes(lighting))return;$('#atlas').dataset.light=lighting;$('#scene-day').setAttribute('aria-pressed',String(lighting==='day'));$('#scene-evening').setAttribute('aria-pressed',String(lighting==='evening'));});
+$('#scene-start').addEventListener('click',()=>{window.policyScene?.select(POLICY_DATA[0].id);});
 $('#scene-read').addEventListener('click',()=>{if(sceneSelectedId)openPolicy(sceneSelectedId,$('#scene-read'));});
 $('#scene-save').addEventListener('click',()=>{if(sceneSelectedId)toggleSavedPolicy(sceneSelectedId);});
 for(const id of ['scene-reset','scene-back'])$('#'+id).addEventListener('click',()=>{window.policyScene?.reset();resetSceneDetail();});
@@ -122,7 +124,7 @@ $('#scene-touch').addEventListener('click',()=>{
   $('#scene-touch .tool-label').textContent=enabled?'스크롤':'돌려보기';
   $('#scene-announcement').textContent=enabled?'장면을 드래그해 돌릴 수 있습니다. 스크롤 버튼을 누르면 페이지를 스크롤합니다.':'페이지를 스크롤할 수 있습니다.';
 });
-document.querySelectorAll('.scene-settings button,.scene-side-tools button').forEach(b=>b.disabled=true);
+document.querySelectorAll('.scene-settings button,.scene-side-tools button,#scene-start').forEach(b=>b.disabled=true);
 window.POLICY_ATLAS_DATA=POLICY_DATA;
 import('./policy-scene.js').catch(sceneUnavailable);
 

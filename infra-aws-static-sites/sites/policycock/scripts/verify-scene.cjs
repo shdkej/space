@@ -6,7 +6,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const base=(process.env.SITE_URL||'http://127.0.0.1:4193').replace(/\/$/,'');
-const live=base.startsWith('https://policycock.aws.shdkej.com');
+const live=base==='https://policycock.aws.shdkej.com';
 const server=process.env.SITE_URL?null:spawn('python3',['-m','http.server','4193','--directory',path.join(root,'dist'),'--bind','127.0.0.1'],{stdio:'ignore'});
 const checks=[], errors=[];
 const pass=name=>{checks.push(name);console.log('PASS '+name)};
@@ -18,12 +18,21 @@ const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 async function reset(page){await page.locator('#scene-reset').click();await settle(page);assert.equal(await page.locator('#scene-detail').isVisible(),false);}
 async function checkLayout(page,width){
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px horizontal overflow`);
+  const scene=await page.locator('#policy-scene').boundingBox();
   const bounds=await page.locator('[data-scene-policy]').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {id:n.dataset.scenePolicy,x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height,visible:getComputedStyle(n).visibility};}));
   assert.equal(bounds.length,10);
   assert.ok(bounds.every(r=>r.visible==='visible'&&r.x>=0&&r.right<=width&&r.width>=44&&r.height>=44),`${width}px clipped or small labels: ${JSON.stringify(bounds)}`);
+  assert.ok(bounds.every(r=>r.y>=scene.y&&r.bottom<=scene.y+scene.height),`${width}px targets outside scene: ${JSON.stringify(bounds)}`);
   const overlaps=[];
   bounds.forEach((a,i)=>bounds.slice(i+1).forEach(b=>{if(Math.min(a.right,b.right)-Math.max(a.x,b.x)>2&&Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y)>2)overlaps.push([a.id,b.id]);}));
   assert.deepEqual(overlaps,[],`${width}px label overlap`);
+  const controls=await page.locator('.scene-side-tools button').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {id:n.id,x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height,visible:getComputedStyle(n).visibility};}).filter(r=>r.width>0&&r.height>0&&r.visible==='visible'));
+  const start=await page.locator('#scene-start').evaluate(n=>{const r=n.getBoundingClientRect();return {id:n.id,x:r.x,y:r.y,right:r.right,bottom:r.bottom,visible:getComputedStyle(n).visibility};});
+  const obscured=[];
+  for(const control of controls)for(const target of [...bounds,...(start.visible==='visible'?[start]:[])]){
+    if(Math.min(control.right,target.right)-Math.max(control.x,target.x)>2&&Math.min(control.bottom,target.bottom)-Math.max(control.y,target.y)>2)obscured.push([control.id,target.id]);
+  }
+  assert.deepEqual(obscured,[],`${width}px scene tools obscure a policy target or start action`);
 }
 (async()=>{let browser;try{
   let serving=false;
@@ -37,10 +46,28 @@ async function checkLayout(page,width){
   await page.waitForSelector('#policy-scene[data-status="ready"]',{timeout:60000});
   const readyMs=Date.now()-started;
   assert.equal(await page.locator('#policy-scene canvas').count(),1);
+  await page.waitForSelector('#policy-scene[data-model="loaded"]',{timeout:60000});
   await settle(page);await checkLayout(page,1440);
   const scope=await page.locator('.atlas-scope').boundingBox();assert.ok(scope.y+scope.height<=900);
   await page.screenshot({path:shot('1440')});
-  pass('실제 WebGL 캔버스·정책 10개·1440px 장면과 자료 범위');
+  await page.locator('#policy-scene canvas').screenshot({path:shot('surface-1440')});
+  pass('실제 WebGL 캔버스·GLB 모델 로드·정책 10개·1440px 장면과 자료 범위');
+
+  // Measured from atlas-1440.png at this fixed 1440×900 default camera view.
+  // Click the visible GLB dial itself, without a DOM proxy or test-only API.
+  await page.mouse.click(1235,367);await settle(page);
+  assert.equal(await page.locator('#policy-scene').getAttribute('data-lighting'),'evening');
+  assert.equal(await page.locator('#scene-evening').getAttribute('aria-pressed'),'true');
+  assert.equal(await page.locator('#scene-day').getAttribute('aria-pressed'),'false');
+  await page.mouse.click(1235,367);await settle(page);
+  assert.equal(await page.locator('#policy-scene').getAttribute('data-lighting'),'day');
+  assert.equal(await page.locator('#scene-day').getAttribute('aria-pressed'),'true');
+  pass('실제 GLB 노브 클릭으로 조명 전환·HTML 조명 상태 동기화');
+
+  await page.locator('#scene-start').click();
+  await page.waitForFunction(()=>document.querySelector('#scene-detail-title')?.textContent==='청년기본소득'&&!document.querySelector('#scene-detail').hidden);
+  await reset(page);
+  pass('첫 화면 시작 버튼에서 정책 선택·전체 복귀');
 
   // Drag starts on a label: a common interaction must rotate, not select.
   const before=await positions(page);
@@ -74,6 +101,7 @@ async function checkLayout(page,width){
   await settle(page);
   assert.equal(await page.locator('#policy-dialog').evaluate(n=>n.open),false,'selection keeps scene visible');
   assert.ok((await positions(page)).filter((p,i)=>p.id!=='lee'&&distance(p,assembled[i])>8).length>=2,'camera moves at least two unselected tiles');
+  await checkLayout(page,1440);
   await page.screenshot({path:shot('selected')});
   await page.locator('#scene-save').click();assert.equal(await page.locator('#saved-count').textContent(),'1');
   assert.ok(await page.locator('[data-scene-policy="lee"]').evaluate(n=>n.classList.contains('is-saved')));
@@ -84,15 +112,42 @@ async function checkLayout(page,width){
   assert.equal(await page.locator('#scene-detail').isVisible(),false);
   pass('키보드 선택·카메라 접근·상세/저장 동기화·모달 포커스 복귀·빠른 선택 취소');
 
+  await page.setViewportSize({width:1280,height:800});
+  await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await settle(page);
+  await checkLayout(page,1280);
+  for(const selector of ['.site-header','#hero-title','#scene-start','.scene-bottom','.atlas-scope']){
+    const box=await page.locator(selector).boundingBox();
+    assert.ok(box&&box.y>=0&&box.y+box.height<=800,`1280×800 clipped ${selector}: ${JSON.stringify(box)}`);
+  }
+  await page.screenshot({path:shot('1280x800')});
+  pass('1280×800 첫 화면 표제·시작 버튼·장면 조작·자료 범위 노출');
+
   // Prefer immediate transitions in the responsive checks; the earlier checks used normal motion.
   await page.emulateMedia({reducedMotion:'reduce'});
   for(const width of [320,375,390,414,768,1024,1100,1101,1280,1440]){
     await page.setViewportSize({width,height:900});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
     await settle(page);await checkLayout(page,width);
     assert.ok(await page.locator('[data-scene-policy="lee"]').evaluate(n=>n.classList.contains('is-saved')),`${width}px saved marker after rebuild`);
-    if(width===390)await page.screenshot({path:shot('390')});
+    if(width===390){
+      await page.screenshot({path:shot('390')});
+      await page.locator('#policy-scene canvas').screenshot({path:shot('surface-390')});
+    }
   }
   pass('320–1440px 10개 폭 라벨 비겹침·44px 대상·저장 표시 유지');
+
+  // Bypass the transparent accessibility buttons to exercise real mesh raycasting.
+  // A working DOM overlay alone must not make the 3D interaction pass.
+  const pointerStyle=await page.addStyleTag({content:'#scene-labels,#scene-labels *{pointer-events:none!important}'});
+  const policies=await page.evaluate(()=>POLICY_DATA.map(p=>({id:p.id,title:p.policy})));
+  for(const policy of policies){
+    const target=await page.locator(`[data-scene-policy="${policy.id}"]`).boundingBox();
+    await page.mouse.click(target.x+target.width/2,target.y+target.height/2);await nextFrames(page);
+    assert.equal(await page.locator('#scene-detail').isVisible(),true,`${policy.id} mesh selection`);
+    assert.equal(await page.locator('#scene-detail-title').textContent(),policy.title,`${policy.id} raycast mapping`);
+    await page.locator('#scene-reset').click();await nextFrames(page);
+  }
+  await pointerStyle.evaluate(n=>n.remove());
+  pass('HTML 포인터 대상을 끈 상태에서 정책 메시 10개 직접 클릭·정확한 상세 연결');
   await page.setViewportSize({width:390,height:844});await settle(page);
   assert.equal(await page.locator('#policy-scene').getAttribute('data-rotation'),'false');
   assert.equal(await page.locator('#policy-scene').evaluate(n=>getComputedStyle(n).touchAction),'pan-y');
@@ -110,6 +165,8 @@ async function checkLayout(page,width){
   await page.locator('[data-scene-policy="lee"]').tap();await nextFrames(page);
   assert.equal(await page.locator('#scene-detail').isVisible(),true,'reduced motion selection completes within two frames');
   assert.equal(await page.locator('#scene-detail-title').textContent(),'청년기본소득');
+  await checkLayout(page,390);
+  await page.screenshot({path:shot('selected-390')});
   await page.locator('#scene-back').click();await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await settle(page);
   const canvasBox=await page.locator('#policy-scene').boundingBox();const startY=Math.min(700,canvasBox.y+canvasBox.height-35);
   await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:195,y:startY}]});
@@ -125,6 +182,23 @@ async function checkLayout(page,width){
   pass('WebGL 실행 중 손실 시 자원 정리·HTML 탐색 유지');
   await context.close();
 
+  const assetContext=await browser.newContext({viewport:{width:1440,height:900}});
+  const assetPage=await assetContext.newPage();
+  assetPage.on('pageerror',e=>errors.push(e.message));
+  let blockedModels=0;
+  await assetPage.route('**/*.glb',route=>{blockedModels++;return route.abort();});
+  await assetPage.goto(base);
+  await assetPage.waitForSelector('#policy-scene[data-status="ready"][data-model="fallback"]',{timeout:60000});
+  assert.ok(blockedModels>0,'GLB failure test must intercept an actual model request');
+  assert.equal(await assetPage.locator('#policy-scene canvas').count(),1);
+  await settle(assetPage);await assetPage.locator('#policy-scene canvas').screenshot({path:shot('model-fallback')});
+  await assetPage.locator('#scene-start').click();
+  await assetPage.waitForFunction(()=>document.querySelector('#scene-detail-title')?.textContent==='청년기본소득'&&!document.querySelector('#scene-detail').hidden);
+  await assetPage.locator('#scene-read').click();
+  assert.equal(await assetPage.locator('#detail-title').textContent(),'청년기본소득');
+  await assetContext.close();
+  pass('GLB 요청 실패 시 3D 대체 상태·선택·기존 정책 상세 유지');
+
   for(const failure of ['module','webgl','partial']){
     const ctx=await browser.newContext();const p=await ctx.newPage();
     p.on('pageerror',e=>errors.push(e.message));
@@ -137,5 +211,5 @@ async function checkLayout(page,width){
   }
   pass('모듈 실패·WebGL 미지원·초기화 도중 실패 시 정리와 정책 상세 유지');
   assert.deepEqual(errors,[]);pass('처리되지 않은 브라우저 스크립트 오류 없음');
-  fs.writeFileSync(path.join(root,'qa',`${live?'live-':''}scene-verification.json`),JSON.stringify({verifiedAt:new Date().toISOString(),url:base,status:'passed',checks,desktopReadyMs:readyMs,browser:await browser.version(),performanceBoundary:'Headless Chrome software WebGL; real device FPS/battery not measured',screenshots:['1440','expanded','selected','390'].map(n=>path.basename(shot(n)))},null,2)+'\n');
+  fs.writeFileSync(path.join(root,'qa',`${live?'live-':''}scene-verification.json`),JSON.stringify({verifiedAt:new Date().toISOString(),url:base,status:'passed',checks,desktopReadyMs:readyMs,browser:await browser.version(),performanceBoundary:'Headless Chrome software WebGL; real device FPS/battery not measured',visualBoundary:'Automated interaction checks do not judge mesh-surface text readability or visual quality; inspect the screenshots separately',screenshots:['1440','surface-1440','expanded','selected','1280x800','390','surface-390','selected-390','model-fallback'].map(n=>path.basename(shot(n)))},null,2)+'\n');
 }finally{if(browser)await browser.close();server?.kill();}})().catch(e=>{console.error(e);process.exitCode=1;});

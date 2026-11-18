@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-11-18T12:14:50.033200+00:00",
+  "mode": "audit; Prompt Archive Hallmark light profile",
+  "skill": "Nutlope/hallmark 04977e15 v2.0.0",
+  "initialRun": {
+    "command": "sloplint.mjs dist/index.html dist/index.css --genre atmospheric --scope app --render --url http://127.0.0.1:4173",
+    "summary": "sloplint: 8 FAIL, 45 REFLEX, 4 WARN across 2 file(s) and 1 URL(s).",
+    "render": "completed before fixes; real input edge contrast issue observed"
+  },
+  "applied": [
+    "검색창과 메모 입력 테두리를 대비 있는 semantic 토큰으로 변경",
+    "작은 장면 범위·주의 문구를 11px로 확대",
+    "중복 eyebrow와 장식 상태점을 제거",
+    "과거 Hallmark 완료 스탬프를 삭제하여 이번 검증으로 오인하지 않게 함",
+    "숨겨진 대화상자 헤더의 sticky 규칙을 열린 대화상자에만 적용"
+  ],
+  "finalStatic": {
+    "summary": "sloplint: 1 FAIL, 41 REFLEX, 2 WARN across 2 file(s).",
+    "remainingFloor": [
+      {
+        "gate": "20",
+        "decision": "not adopted",
+        "reason": "Prompt Archive light profile explicitly prohibits permanent Hallmark stamps; audit findings do not override canonical brand rules."
+      }
+    ]
+  },
+  "renderLimit": "두 후속 시도는 실행 세션 종료로 중단됐다. 소유 프로세스를 분리한 최종 URL 렌더는 완료했다. 화면 움직임/모델 글자 품질은 Hallmark 결과와 별개로 실제 장면 검사·직접 캡처로 확인한다.",
+  "judgment": {
+    "reflex": "4px spacing scale, large selectable policy rows, graphite scene posture, physical accessible hit targets retained according to product requirements. All mechanical warnings are not treated as visual quality scores.",
+    "brand": "Pretendard and existing data preserved; dark console scoped to policycock; no random theme, fake metrics or generated testimonial."
+  },
+  "finalRender": {
+    "command": "sloplint.mjs dist/index.css --genre atmospheric --scope app --render --url http://127.0.0.1:4173",
+    "summary": "sloplint: 1 FAIL, 42 REFLEX, 3 WARN across 1 file(s) and 1 URL(s).",
+    "runResult": {
+      "exitCode": 1,
+      "finishedAt": 1795004471.8156378
+    },
+    "result": "URL render completed. No remaining contrast or overlapping sticky-header Floor findings. One Floor finding is the deliberately omitted Hallmark stamp under canonical light-profile rules.",
+    "remainingFloor": [
+      {
+        "gate": "20",
+        "reason": "Audit-only project profile prohibits permanent Hallmark stamps."
+      }
+    ]
+  }
+}

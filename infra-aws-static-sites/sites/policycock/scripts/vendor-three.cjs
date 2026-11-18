@@ -11,5 +11,6 @@ for(const [from,to] of [
   ['LICENSE','LICENSE']
 ]) fs.copyFileSync(path.join(source,from),path.join(target,to));
 require('esbuild').buildSync({entryPoints:[path.join(source,'build/three.module.js')],outfile:path.join(target,'three.module.js'),bundle:true,minify:true,format:'esm',target:'es2020',legalComments:'inline'});
+require('esbuild').buildSync({entryPoints:[path.join(source,'examples/jsm/loaders/GLTFLoader.js')],outfile:path.join(target,'GLTFLoader.js'),bundle:true,minify:true,format:'esm',external:['three'],target:'es2020',legalComments:'inline'});
 fs.rmSync(path.join(target,'three.core.js'),{force:true});
 console.log('Vendored Three.js '+JSON.parse(fs.readFileSync(path.join(source,'package.json'),'utf8')).version);

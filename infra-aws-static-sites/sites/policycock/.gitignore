@@ -11,3 +11,7 @@ scripts/policy-diagram-mobile.png
 scripts/policy-diagram-mobile.blend1
 scripts/galaxy.png
 scripts/galaxy.blend1
+
+.hallmark/
+dist/.hallmark/
+design/*.blend1

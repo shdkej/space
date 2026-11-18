@@ -36,8 +36,8 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
       assert.deepEqual(await asset.body(),fs.readFileSync(path.join(dist,relative)),`${relative} byte parity`);
       fileChecks.push(relative);
     }
-    const matchedRoutes=['/',isProduction?'/sources':'/sources.html'];
-    for(const [route,file] of [[matchedRoutes[0],'index.html'],[matchedRoutes[1],'sources.html']]){
+    const matchedRoutes=['/',isProduction?'/sources':'/sources.html',isProduction?'/birth-grant-map':'/birth-grant-map.html'];
+    for(const [route,file] of [[matchedRoutes[0],'index.html'],[matchedRoutes[1],'sources.html'],[matchedRoutes[2],'birth-grant-map.html']]){
       const routeResponse=await context.request.get(base+route);
       assert.equal(routeResponse.status(),200,`${route} HTTP status`);
       assert.deepEqual(await routeResponse.body(),fs.readFileSync(path.join(dist,file)),`${route} byte parity`);
@@ -50,7 +50,7 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
     const birthResponse=await context.request.get(base+'/birth-grant-map.html');
     assert.equal(birthResponse.status(),200);
     assert.match(await birthResponse.text(),/<title>지역별 출산지원금 지도[^<]*모두의정책<\/title>/);
-    pass(`${fileChecks.length}개 dist 파일·두 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출`);
+    pass(`${fileChecks.length}개 dist 파일·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출`);
     await page.evaluate(()=>document.fonts.ready);
     assert.equal(await page.locator('.person').count(),10);
     assert.equal(await page.locator('.agency-link').count(),44);
@@ -127,6 +127,8 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
     const staticPage=await nojs.newPage();await staticPage.goto(base);
     assert.equal(await staticPage.locator('a.person').count(),10);
     assert.equal(await staticPage.locator('.agency-link').count(),44);
+    assert.equal(await staticPage.locator('#scene-start').isVisible(),false,'no-JS start action must not remain inert');
+    assert.equal(await staticPage.locator('.scene-fallback a[href="#policies"]').isVisible(),true);
     await nojs.close();
     pass('무스크립트 정책 10·기관 44 원문 링크');
 

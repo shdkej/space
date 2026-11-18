@@ -1,0 +1,257 @@
+{
+  "verifiedAt": "2026-11-18T12:27:46.904Z",
+  "url": "http://127.0.0.1:4173",
+  "status": "passed",
+  "scope": "Targeted verification after moving mobile scene tools above the keys; uses the production scene-suite checkLayout helper",
+  "cases": [
+    {
+      "width": 320,
+      "state": "idle",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 207,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 251,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 320,
+      "state": "selected",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 207,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 251,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 375,
+      "state": "idle",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 262,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 306,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 375,
+      "state": "selected",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 262,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 306,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 390,
+      "state": "idle",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 277,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 321,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 390,
+      "state": "selected",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 277,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 321,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 414,
+      "state": "idle",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 301,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 345,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 414,
+      "state": "selected",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 301,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 345,
+          "y": 283,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 768,
+      "state": "idle",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 648.28125,
+          "y": 249,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 692.28125,
+          "y": 249,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    },
+    {
+      "width": 768,
+      "state": "selected",
+      "policies": 10,
+      "toolPolicyOrStartOverlaps": 0,
+      "controls": [
+        {
+          "id": "scene-reset",
+          "x": 648.28125,
+          "y": 249,
+          "width": 44,
+          "height": 50.5
+        },
+        {
+          "id": "scene-touch",
+          "x": 692.28125,
+          "y": 249,
+          "width": 44,
+          "height": 50.5
+        }
+      ],
+      "requiredMinPolicyTargetPx": 44
+    }
+  ],
+  "noJavaScript": {
+    "startHidden": true,
+    "policyListLinkVisible": true,
+    "policies": 10,
+    "agencies": 44
+  },
+  "screenshots": [
+    "atlas-tools-320-idle.png",
+    "atlas-tools-320-selected.png",
+    "atlas-tools-375-idle.png",
+    "atlas-tools-375-selected.png",
+    "atlas-tools-390-idle.png",
+    "atlas-tools-390-selected.png",
+    "atlas-tools-414-idle.png",
+    "atlas-tools-414-selected.png",
+    "atlas-tools-768-idle.png",
+    "atlas-tools-768-selected.png"
+  ],
+  "boundary": "Headless Chrome software WebGL; screenshots require separate visual inspection; real device FPS not measured"
+}

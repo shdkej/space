@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="이미지 한 장을 브라우저에서 크기와 형식을 바꾸고 미리보기 후 내려받습니다.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src blob: data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src https://us.i.posthog.com https://eu.i.posthog.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src blob: data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src https://us.i.posthog.com; base-uri 'none'; form-action 'none'">
 <title>이미지 작업대: 한 장을 가볍게</title>
 <style>
 /* Hallmark: editorial workbench | signature: large image proof | material: user's local image | job: transform and download */
@@ -27,8 +27,9 @@
 <div class="actions"><button id="transform" class="action" type="button" disabled>이미지 변환</button></div><p id="status" class="status" role="status" aria-live="polite">이미지를 선택하면 시작할 수 있습니다.</p>
 </section>
 <section class="result" aria-labelledby="result-title"><h2 id="result-title">결과 미리보기</h2><div class="stage"><p id="empty">변환 결과가 여기에 표시됩니다.</p><img id="preview" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="변환된 이미지 미리보기" hidden></div><p id="result-meta" class="result-meta"></p><button id="download" class="action secondary" type="button" disabled>결과 다운로드</button></section>
-</div><footer class="foot">이미지는 이 화면에서 변환됩니다. 통계 연결 시에도 이미지·파일명·촬영 정보는 보내지 않습니다.</footer>
+</div><footer class="foot">이미지는 이 화면에서 변환됩니다. 사용 단계와 파일 형식·크기 등 제한된 통계를 PostHog로 전송합니다. 이미지·파일명·촬영 정보는 보내지 않습니다.</footer>
 </main>
+<script>window.__IMAGE_TOOLS_ANALYTICS__={host:'https://us.i.posthog.com',key:'__POSTHOG_MINIAPP_PROJECT_TOKEN__'};</script>
 <script>
 (() => {
   'use strict';
@@ -42,13 +43,13 @@
   const qa=new URLSearchParams(location.search).get('qa')==='1';
   const qaRunId=qa?crypto.randomUUID():null;
   const analytics=window.__IMAGE_TOOLS_ANALYTICS__;
-  const HOSTS=new Set(['https://us.i.posthog.com','https://eu.i.posthog.com']);
+  const HOSTS=new Set(['https://us.i.posthog.com']);
   const allowedEvents=new Set(['image_selected','transform_started','transform_succeeded','transform_failed','download_requested']);
   const sessionId=crypto.randomUUID();
   const safeInt=(value,max)=>Number.isSafeInteger(value)&&value>=0&&value<=max?value:undefined;
   const capture=(name,fields={})=>{
     if(!allowedEvents.has(name)||!analytics||!HOSTS.has(analytics.host)||!/^phc_[a-zA-Z0-9]+$/.test(analytics.key||''))return;
-    const p={app_id:'miniapp-image-tools',build_revision:'pilot-01',traffic_kind:qa?'synthetic':'user'};
+    const p={app_id:'miniapp-image-tools',build_revision:'pilot-01',traffic_kind:qa?'synthetic':'user','$process_person_profile':false};
     if(qa)p.qa_run_id=qaRunId;
     if(TYPES.has(fields.input_mime))p.input_mime=fields.input_mime;
     if(TYPES.has(fields.output_mime))p.output_mime=fields.output_mime;
@@ -57,7 +58,7 @@
     const ms=safeInt(fields.duration_ms,600000);if(ms!==undefined)p.duration_ms=ms;
     if(['invalid_file','unsupported_format','file_too_large','pixel_limit','invalid_settings','decode_failed','encode_failed','unsupported_output','output_too_large'].includes(fields.error_code))p.error_code=fields.error_code;
     const body={api_key:analytics.key,event:name,distinct_id:sessionId,properties:p};
-    fetch(analytics.host+'/capture/',{method:'POST',mode:'cors',credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),keepalive:false}).catch(()=>{});
+    fetch(analytics.host+'/i/v0/e/',{method:'POST',mode:'cors',credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),keepalive:false}).catch(()=>{});
   };
   const error=(message,code,fields={})=>{status.textContent=message;status.dataset.error='true';capture('transform_failed',{...fields,error_code:code});};
   const message=text=>{status.textContent=text;status.dataset.error='false';};

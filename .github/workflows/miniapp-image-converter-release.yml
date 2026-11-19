@@ -42,11 +42,27 @@ jobs:
           PY
           aws s3api head-object --bucket static-images-aws-shdkej-com --key sort/index.html --query ContentType --output text > /dev/null
       - name: Upload only image converter objects
+        env:
+          POSTHOG_MINIAPP_PROJECT_TOKEN: ${{ secrets.POSTHOG_MINIAPP_PROJECT_TOKEN }}
         run: |
           set -euo pipefail
           file=infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html
           bucket="${{ steps.target.outputs.bucket }}"
           test -s "$file"
+          node --test infra-aws-static-sites/sites/miniapp-image-tools/tests/*.test.mjs
+          python3 - "$file" "$RUNNER_TEMP/image-converter.html" <<'PY'
+          import os,re,sys
+          from pathlib import Path
+          token=os.environ.get('POSTHOG_MINIAPP_PROJECT_TOKEN','')
+          if not re.fullmatch(r'phc_[A-Za-z0-9]+',token):
+              raise SystemExit('PostHog project token missing or malformed')
+          source=Path(sys.argv[1]).read_text()
+          marker='__POSTHOG_MINIAPP_PROJECT_TOKEN__'
+          if source.count(marker)!=1:
+              raise SystemExit('Expected exactly one PostHog token placeholder')
+          Path(sys.argv[2]).write_text(source.replace(marker,token))
+          PY
+          file="$RUNNER_TEMP/image-converter.html"
           aws s3 cp "$file" "s3://$bucket/tools/image-converter/index.html" --content-type text/html --cache-control 'public,max-age=60'
           aws s3api put-object --bucket "$bucket" --key tools/image-converter/ --body "$file" --content-type text/html --cache-control 'public,max-age=60' > /dev/null
           aws cloudfront create-invalidation --distribution-id "${{ steps.target.outputs.distribution_id }}" --paths '/tools/image-converter/' '/tools/image-converter/index.html' --query 'Invalidation.Id' --output text > "$RUNNER_TEMP/invalidation-id"

@@ -34,6 +34,7 @@ variable "app_feedback_allowed_origins" {
   type        = list(string)
   default = [
     "https://virtue.aws.shdkej.com",
+    "https://policycock.aws.shdkej.com",
     "http://localhost:3000",
   ]
 }

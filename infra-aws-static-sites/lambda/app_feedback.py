@@ -1,10 +1,13 @@
 import base64
 import csv
+import hashlib
 import io
 import json
 import os
 import re
-from datetime import datetime, timezone
+import secrets
+import uuid
+from datetime import datetime, timedelta, timezone
 from urllib.parse import quote
 
 import boto3
@@ -95,6 +98,178 @@ def _append_monthly_csv(key, row):
     )
 
 
+TOKEN_RE = re.compile(r"^([a-f0-9]{64})\.([A-Za-z0-9_-]{30,128})$")
+
+
+def _signup_table():
+    # Only load the table on the explicitly enabled route; existing feedback is unchanged.
+    return boto3.resource("dynamodb").Table(os.environ["POLICYCOCK_SIGNUP_TABLE"])
+
+
+def _conditional_failure(exc):
+    return getattr(exc, "response", {}).get("Error", {}).get("Code") == "ConditionalCheckFailedException"
+
+
+def _signup_item(table, email_hash):
+    return table.get_item(Key={"email_hash": email_hash}, ConsistentRead=True).get("Item")
+
+
+def _notify_owner(table, item, now):
+    key = {"email_hash": item["email_hash"]}
+    token_hash = item["token_hash"]
+    try:
+        table.update_item(
+            Key=key,
+            UpdateExpression="SET owner_notice = :claimed",
+            ConditionExpression="#status = :confirmed AND token_hash = :token AND #ttl > :now AND attribute_not_exists(owner_notice)",
+            ExpressionAttributeNames={"#status": "status", "#ttl": "ttl"},
+            ExpressionAttributeValues={":claimed": "claimed", ":confirmed": "confirmed", ":token": token_hash, ":now": now},
+        )
+    except Exception as exc:
+        if not _conditional_failure(exc):
+            raise
+        previous = _signup_item(table, item["email_hash"])
+        return bool(previous and previous.get("token_hash") == token_hash
+                    and previous.get("status") == "confirmed" and previous.get("ttl", 0) > now
+                    and previous.get("owner_notice") == "delivered")
+
+    try:
+        # The owner receives only a random receipt; no address, hash, token or variant.
+        ses.send_email(
+            Source=SENDER_EMAIL, Destination={"ToAddresses": [RECIPIENT_EMAIL]},
+            Message={
+                "Subject": {"Data": "[모두의정책] 출시 안내 접수", "Charset": "UTF-8"},
+                "Body": {"Text": {"Data": f"접수 번호: {item['receipt_id']}", "Charset": "UTF-8"}},
+            },
+        )
+    except Exception:
+        # SES acceptance may be ambiguous. Do not auto-retry an already claimed send.
+        return False
+    try:
+        table.update_item(
+            Key=key,
+            UpdateExpression="SET owner_notice = :delivered",
+            ConditionExpression="#status = :confirmed AND token_hash = :token AND owner_notice = :claimed",
+            ExpressionAttributeNames={"#status": "status"},
+            ExpressionAttributeValues={":delivered": "delivered", ":claimed": "claimed",
+                                       ":confirmed": "confirmed", ":token": token_hash},
+        )
+    except Exception as exc:
+        if _conditional_failure(exc):
+            return False  # The address may have been withdrawn in the meantime.
+        raise
+    return True
+
+
+def _register_launch_notice(payload, origin):
+    """Double opt-in on one atomic item; permanently disabled until explicitly enabled."""
+    if os.environ.get("ENABLE_POLICYCOCK_SIGNUP") != "true":
+        return _response(503, {"error": "registration_not_available"}, origin)
+    if origin != "https://policycock.aws.shdkej.com" or payload.get("appId") != "policycock":
+        return _response(400, {"error": "invalid_request"}, origin)
+    action = payload.get("action")
+    if action == "request":
+        if payload.get("website"):
+            return _response(202, {"ok": True}, origin)
+        email = _clean_text(payload.get("replyEmail"), 200).lower()
+        if not email or not EMAIL_RE.fullmatch(email) or payload.get("consent") is not True:
+            return _response(400, {"error": "invalid_registration"}, origin)
+        now = int(datetime.now(timezone.utc).timestamp())
+        email_hash = hashlib.sha256(email.encode("utf-8")).hexdigest()
+        secret = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(secret.encode("ascii")).hexdigest()
+        item = {"email_hash": email_hash, "email": email, "token_hash": token_hash,
+                "status": "pending", "created_at": now, "token_expires_at": now + 7 * 86400,
+                "ttl": now + 365 * 86400,
+                "variant": payload.get("variant") if payload.get("variant") in ("A", "B") else "direct",
+                "consent": "launch-notice-v1", "receipt_id": uuid.uuid4().hex}
+        table = _signup_table()
+        try:
+            table.put_item(
+                Item=item,
+                ConditionExpression="attribute_not_exists(email_hash) OR (#status = :pending AND token_expires_at <= :now) OR #ttl <= :now",
+                ExpressionAttributeNames={"#status": "status", "#ttl": "ttl"},
+                ExpressionAttributeValues={":pending": "pending", ":now": now},
+            )
+        except Exception as exc:
+            if _conditional_failure(exc):
+                return _response(202, {"ok": True}, origin)
+            raise
+        try:
+            ses.send_email(
+                Source=SENDER_EMAIL, Destination={"ToAddresses": [email]},
+                Message={"Subject": {"Data": "[모두의정책] 출시 안내 신청 확인", "Charset": "UTF-8"},
+                         "Body": {"Text": {"Data": (
+                             "정책알리미 출시 시 1회 안내를 받으려면 아래 링크에서 이메일을 확인해 주세요.\n"
+                             f"https://policycock.aws.shdkej.com/#launch-confirm={email_hash}.{secret}\n"
+                             "확인 전에는 신청이 완료되지 않습니다. 같은 링크에서 신청 철회도 할 수 있습니다."
+                         ), "Charset": "UTF-8"}}},
+            )
+        except Exception:
+            # Delete only our own pending generation: a concurrent confirmation wins.
+            try:
+                table.delete_item(
+                    Key={"email_hash": email_hash},
+                    ConditionExpression="#status = :pending AND token_hash = :token",
+                    ExpressionAttributeNames={"#status": "status"},
+                    ExpressionAttributeValues={":pending": "pending", ":token": token_hash},
+                )
+            except Exception as exc:
+                if not _conditional_failure(exc):
+                    raise
+            return _response(503, {"error": "verification_unavailable"}, origin)
+        return _response(202, {"ok": True}, origin)
+
+    if action in ("confirm", "withdraw"):
+        token = payload.get("token")
+        match = TOKEN_RE.fullmatch(token) if isinstance(token, str) else None
+        if not match:
+            return _response(400, {"error": "invalid_token"}, origin)
+        email_hash, secret = match.groups()
+        token_hash = hashlib.sha256(secret.encode("ascii")).hexdigest()
+        table = _signup_table()
+        key = {"email_hash": email_hash}
+        if action == "withdraw":
+            try:
+                table.delete_item(
+                    Key=key,
+                    ConditionExpression="#status IN (:pending, :confirmed) AND token_hash = :token",
+                    ExpressionAttributeNames={"#status": "status"},
+                    ExpressionAttributeValues={":pending": "pending", ":confirmed": "confirmed", ":token": token_hash},
+                )
+            except Exception as exc:
+                if not _conditional_failure(exc):
+                    raise
+                existing = _signup_item(table, email_hash)
+                if existing and existing.get("token_hash") != token_hash:
+                    return _response(400, {"error": "invalid_token"}, origin)
+            # Both the address and its derived key are gone in the same atomic operation.
+            return _response(200, {"ok": True}, origin)
+
+        now = int(datetime.now(timezone.utc).timestamp())
+        try:
+            result = table.update_item(
+                Key=key,
+                UpdateExpression="SET #status = :confirmed",
+                ConditionExpression="#status = :pending AND token_hash = :token AND token_expires_at > :now AND #ttl > :now",
+                ExpressionAttributeNames={"#status": "status", "#ttl": "ttl"},
+                ExpressionAttributeValues={":pending": "pending", ":confirmed": "confirmed",
+                                           ":token": token_hash, ":now": now},
+                ReturnValues="ALL_NEW",
+            )
+            item = result["Attributes"]
+        except Exception as exc:
+            if not _conditional_failure(exc):
+                raise
+            item = _signup_item(table, email_hash)
+            if not item or item.get("status") != "confirmed" or item.get("token_hash") != token_hash or item.get("ttl", 0) <= now:
+                return _response(400, {"error": "invalid_or_expired_token"}, origin)
+        if not _notify_owner(table, item, now):
+            return _response(503, {"error": "notification_delayed"}, origin)
+        return _response(200, {"ok": True}, origin)
+
+    return _response(400, {"error": "invalid_action"}, origin)
+
 def handler(event, context):
     origin = _origin_for(event)
     if origin and ALLOWED_ORIGINS and origin not in ALLOWED_ORIGINS:
@@ -114,6 +289,11 @@ def handler(event, context):
         payload = _read_body(event)
     except Exception:
         return _response(400, {"error": "invalid_json"}, origin)
+
+    if not isinstance(payload, dict):
+        return _response(400, {"error": "invalid_json"}, origin)
+    if payload.get("type") == "launch-notice":
+        return _register_launch_notice(payload, origin)
 
     message = _clean_text(payload.get("message"), 3000)
     app_id = _clean_app_id(payload.get("appId"))

@@ -135,3 +135,30 @@ For a custom directory or custom domain, set `build_dir` or `domain_name` in
 the workflow dispatch inputs.
 
 For Lambda/API integration, put API Gateway or Lambda Function URL behind CloudFront by adding an entry to `api_origins`.
+
+## Policycock launch signup (not deployed or enabled)
+
+`app-feedback` keeps its existing feedback flow. The new launch-notice route
+uses a single DynamoDB item per normalized address with conditional state
+transitions; withdrawal atomically deletes the item. The table stores the
+address, opaque receipt, and numeric Unix-seconds TTL. Its Lambda flag is
+explicitly `ENABLE_POLICYCOCK_SIGNUP=false`. The owner notice contains the
+receipt only; the confirmation link goes to the requester. No landing signup
+UI or production collection is authorized by this code change.
+
+Run isolated local tests with `python -m venv <private-venv>`, install
+`lambda/requirements-test.txt`, then run
+`<private-venv>/bin/python -m unittest discover -s lambda -p test_app_feedback.py`.
+Tests use Moto and fake SES; they do not access AWS credentials or send mail.
+
+DynamoDB TTL is asynchronous and may delete items **days after** expiration.
+The application rejects expired confirmation and replaces expired records on
+re-request, but this alone does **not** prove physical removal by the promised
+one-year deadline. Do not activate signup until an independently verified
+retention/deletion mechanism and a launch-send-and-delete path are ready.
+SES and DynamoDB cannot guarantee exactly-once owner notification together:
+uncertain sends stay claimed for manual reconciliation rather than automatic
+retries. Before any AWS apply, verify the canonical state and private vars,
+obtain a least-privilege role, inspect the **whole** plan for out-of-scope
+changes and removals, and review on-demand DynamoDB and SES costs. No root
+credential is an approved deployment path.

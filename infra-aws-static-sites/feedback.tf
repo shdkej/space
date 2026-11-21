@@ -49,6 +49,38 @@ resource "aws_s3_bucket_lifecycle_configuration" "app_feedback" {
       days = 730
     }
   }
+
+
+}
+
+resource "aws_dynamodb_table" "policycock_signup" {
+  name                        = "policycock-launch-signups"
+  billing_mode                = "PAY_PER_REQUEST"
+  hash_key                    = "email_hash"
+  deletion_protection_enabled = true
+
+  attribute {
+    name = "email_hash"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+
+  server_side_encryption {
+    enabled = true
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  tags = merge(var.tags, {
+    app     = "policycock"
+    service = "launch-signup"
+  })
 }
 
 resource "aws_ses_email_identity" "app_feedback_sender" {
@@ -110,6 +142,11 @@ resource "aws_iam_role_policy" "app_feedback_lambda" {
         Resource = "${aws_s3_bucket.app_feedback.arn}/feedback/*"
       },
       {
+        Effect   = "Allow"
+        Action   = ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:UpdateItem", "dynamodb:DeleteItem"]
+        Resource = aws_dynamodb_table.policycock_signup.arn
+      },
+      {
         Effect = "Allow"
         Action = [
           "ses:SendEmail",
@@ -137,6 +174,8 @@ resource "aws_lambda_function" "app_feedback" {
       FEEDBACK_RECIPIENT_EMAIL = var.app_feedback_recipient_email
       FEEDBACK_SENDER_EMAIL    = var.app_feedback_sender_email
       ALLOWED_ORIGINS          = join(",", var.app_feedback_allowed_origins)
+      POLICYCOCK_SIGNUP_TABLE  = aws_dynamodb_table.policycock_signup.name
+      ENABLE_POLICYCOCK_SIGNUP = "false"
     }
   }
 

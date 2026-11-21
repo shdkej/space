@@ -82,8 +82,17 @@
   "emailSignup": {
     "publicStatus": "open",
     "sourceRepository": "https://github.com/shdkej/policycock-launch-signup",
-    "sourceCommit": "98becb029c061deb564c80d4cb227f503d102fe6",
-    "workflow": "https://github.com/shdkej/policycock-launch-signup/actions/runs/44882295384",
-    "tests": "8 isolated backend checks passed. Production mobile browser submitted and withdrew a synthetic registration. Same-request and new-browser duplicate checks yielded one registration email attempt in total. Both requests returned HTTP 200, SES accepted the two operator messages, and a consistent read confirmed deletion of the active signup. Shared app-feedback code and revision matched the pre-release snapshot."
+    "sourceCommit": "66597c3d6092e54d149c65744014a70f83a1c692",
+    "workflow": "https://github.com/shdkej/policycock-launch-signup/actions/runs/44885632403",
+    "tests": "8 isolated backend checks passed. Production mobile browser submitted and withdrew a synthetic registration. Same-request and new-browser duplicate checks yielded one registration email attempt in total. Both requests returned HTTP 200, SES accepted the two operator messages, and a consistent read confirmed deletion of the active signup. Shared app-feedback code and revision matched the pre-release snapshot.",
+    "quotaVerification": {
+      "verifiedAt": "2026-11-21T08:37:04.957966+00:00",
+      "registrationAttemptsPerUtcDay": 300,
+      "withdrawalAttemptsPerUtcDay": 25,
+      "accountRecipientsPerRolling24h": 200,
+      "requestedAccountLimit": 300,
+      "requestStatus": "PENDING",
+      "checks": "Nine isolated tests passed including the 300/301 registration boundary. Active Lambda code hash matched the tested package. Live endpoint verified open without sending mail."
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
-  "verifiedAt": "2026-11-21T07:33:53.263386+00:00",
+  "verifiedAt": "2026-11-21T08:00:35.556558+00:00",
   "url": "https://policycock.aws.shdkej.com",
-  "sourceCommit": "f30871bd76212e7dcf5b430ba9e24018d76c5bd7",
+  "sourceCommit": "4d7ba84897432595cebe09960de2efc40eb035e0",
   "status": "passed",
   "assets": [
     {
@@ -9,188 +9,188 @@
       "status": 200,
       "bytes": 17947,
       "contentType": "text/javascript",
-      "localSha256": "afbb7654de31d348e2d3a51eae89f28ca3282a681f163ffe1b089b92e7deb5ae",
       "remoteSha256": "afbb7654de31d348e2d3a51eae89f28ca3282a681f163ffe1b089b92e7deb5ae",
-      "matches": true
+      "matches": true,
+      "localSha256": "afbb7654de31d348e2d3a51eae89f28ca3282a681f163ffe1b089b92e7deb5ae"
     },
     {
       "file": "assets/OFL.txt",
       "status": 200,
       "bytes": 4815,
       "contentType": "text/plain",
-      "localSha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f",
       "remoteSha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f",
-      "matches": true
+      "matches": true,
+      "localSha256": "cc2582fa6dbd72ddfd229e709c0bae635f75a151ed1787adab9729a531b48a1f"
     },
     {
       "file": "assets/PretendardVariable.woff2",
       "status": 200,
       "bytes": 2057688,
       "contentType": "font/woff2",
-      "localSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
       "remoteSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
-      "matches": true
+      "matches": true,
+      "localSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4"
     },
     {
       "file": "assets/console-knob.glb",
       "status": 200,
       "bytes": 166956,
       "contentType": "model/gltf-binary",
-      "localSha256": "22802822a1c37a1c97a8b47a1260119ff012f31ee9a2d52db5f60d5a5bf56464",
       "remoteSha256": "22802822a1c37a1c97a8b47a1260119ff012f31ee9a2d52db5f60d5a5bf56464",
-      "matches": true
+      "matches": true,
+      "localSha256": "22802822a1c37a1c97a8b47a1260119ff012f31ee9a2d52db5f60d5a5bf56464"
     },
     {
       "file": "assets/favicon.svg",
       "status": 200,
       "bytes": 261,
       "contentType": "image/svg+xml",
-      "localSha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666",
       "remoteSha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666",
-      "matches": true
+      "matches": true,
+      "localSha256": "b9e9503f88b835da29b09c016acc619224fe308a94aadf51a04383dd384ad666"
     },
     {
       "file": "birth-grant-map.html",
       "status": 200,
       "bytes": 279019,
       "contentType": "text/html",
-      "localSha256": "5d08dd50be191d440904a8b8a045cddda0acd94698bdf834be5d53942a485f38",
       "remoteSha256": "5d08dd50be191d440904a8b8a045cddda0acd94698bdf834be5d53942a485f38",
-      "matches": true
+      "matches": true,
+      "localSha256": "5d08dd50be191d440904a8b8a045cddda0acd94698bdf834be5d53942a485f38"
     },
     {
       "file": "data.js",
       "status": 200,
       "bytes": 6898,
       "contentType": "text/javascript",
-      "localSha256": "ae242a36274a13f278580986a741224616da0c9b3c009a3ab03f06b902978742",
       "remoteSha256": "ae242a36274a13f278580986a741224616da0c9b3c009a3ab03f06b902978742",
-      "matches": true
+      "matches": true,
+      "localSha256": "ae242a36274a13f278580986a741224616da0c9b3c009a3ab03f06b902978742"
     },
     {
       "file": "index.css",
       "status": 200,
-      "bytes": 34471,
+      "bytes": 34807,
       "contentType": "text/css",
-      "localSha256": "3ee2552592b5c8d3f0e75c33fb557e7fc370f7db5a0680d5ee93ae45c90c3dce",
-      "remoteSha256": "3ee2552592b5c8d3f0e75c33fb557e7fc370f7db5a0680d5ee93ae45c90c3dce",
-      "matches": true
+      "remoteSha256": "627fda4725760fcf3b6d2846af1cd1428bc9e303d346d822ea7bcdc8f2f79fd3",
+      "matches": true,
+      "localSha256": "627fda4725760fcf3b6d2846af1cd1428bc9e303d346d822ea7bcdc8f2f79fd3"
     },
     {
       "file": "index.html",
       "status": 200,
-      "bytes": 39265,
+      "bytes": 39833,
       "contentType": "text/html",
-      "localSha256": "16bb846393f0989aefb2d30d50278c19a0972a4bcf7b49a48aeac899c7332f3d",
-      "remoteSha256": "16bb846393f0989aefb2d30d50278c19a0972a4bcf7b49a48aeac899c7332f3d",
-      "matches": true
+      "remoteSha256": "5d6f03eb9993363331b2d725a8a8ea52b2110596613eab2e1754ec4719d12d88",
+      "matches": true,
+      "localSha256": "5d6f03eb9993363331b2d725a8a8ea52b2110596613eab2e1754ec4719d12d88"
     },
     {
       "file": "institutions.js",
       "status": 200,
       "bytes": 9201,
       "contentType": "text/javascript",
-      "localSha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874",
       "remoteSha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874",
-      "matches": true
+      "matches": true,
+      "localSha256": "0884901d1d50db5b5ce849e3d258885e853d1e763f47baa97ef12e2d5c1dc874"
     },
     {
       "file": "institutions.json",
       "status": 200,
       "bytes": 11063,
       "contentType": "application/json",
-      "localSha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
       "remoteSha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
-      "matches": true
+      "matches": true,
+      "localSha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72"
     },
     {
       "file": "launch-config.js",
       "status": 200,
-      "bytes": 116,
+      "bytes": 213,
       "contentType": "text/javascript",
-      "remoteSha256": "eae3dc9270957dd74538557b327264a4b5df288d077a6f9d477061b175a09958",
+      "remoteSha256": "aee599239d21098e09061a2dcb74b319887b182b363ada4139681bdb8c0352b7",
       "releaseConfigValidated": true
     },
     {
       "file": "launch.js",
       "status": 200,
-      "bytes": 5676,
+      "bytes": 8736,
       "contentType": "text/javascript",
-      "localSha256": "65df8b644979f802624e32e73c96534193a0f394a70384a00792697a15a910a5",
-      "remoteSha256": "65df8b644979f802624e32e73c96534193a0f394a70384a00792697a15a910a5",
-      "matches": true
+      "remoteSha256": "74126b4c615716f32d979adfcf874ef1473df521eb19a3c6b99147ec6e8c0e13",
+      "matches": true,
+      "localSha256": "74126b4c615716f32d979adfcf874ef1473df521eb19a3c6b99147ec6e8c0e13"
     },
     {
       "file": "policy-scene.js",
       "status": 200,
       "bytes": 34395,
       "contentType": "text/javascript",
-      "localSha256": "124617d20fdb7c4b0d20898e81aa4cd398c3d499dd2ed90138914324d3aec948",
       "remoteSha256": "124617d20fdb7c4b0d20898e81aa4cd398c3d499dd2ed90138914324d3aec948",
-      "matches": true
+      "matches": true,
+      "localSha256": "124617d20fdb7c4b0d20898e81aa4cd398c3d499dd2ed90138914324d3aec948"
     },
     {
       "file": "sources.html",
       "status": 200,
       "bytes": 4213,
       "contentType": "text/html",
-      "localSha256": "3ea269b9fffea69768482e1412f608245a33dde84feb2937805530ad2dd46958",
       "remoteSha256": "3ea269b9fffea69768482e1412f608245a33dde84feb2937805530ad2dd46958",
-      "matches": true
+      "matches": true,
+      "localSha256": "3ea269b9fffea69768482e1412f608245a33dde84feb2937805530ad2dd46958"
     },
     {
       "file": "sources.js",
       "status": 200,
       "bytes": 892,
       "contentType": "text/javascript",
-      "localSha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0",
       "remoteSha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0",
-      "matches": true
+      "matches": true,
+      "localSha256": "dade8016d61feb33e281b04dec43a4967bf92e70743cb6d0317066e7621bf6b0"
     },
     {
       "file": "vendor/three/GLTFLoader.js",
       "status": 200,
       "bytes": 47870,
       "contentType": "text/javascript",
-      "localSha256": "e191250da2a6fbed37aec5dd9e5fef9269a0ad294a7a125707c1219e5216525d",
       "remoteSha256": "e191250da2a6fbed37aec5dd9e5fef9269a0ad294a7a125707c1219e5216525d",
-      "matches": true
+      "matches": true,
+      "localSha256": "e191250da2a6fbed37aec5dd9e5fef9269a0ad294a7a125707c1219e5216525d"
     },
     {
       "file": "vendor/three/LICENSE",
       "status": 200,
       "bytes": 1081,
       "contentType": "binary/octet-stream",
-      "localSha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
       "remoteSha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
-      "matches": true
+      "matches": true,
+      "localSha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
     },
     {
       "file": "vendor/three/OrbitControls.js",
       "status": 200,
       "bytes": 40918,
       "contentType": "text/javascript",
-      "localSha256": "e7fca2fe9e7670a828af9b28084669a5909445b7f36f1f26cee9bf8f2961c32c",
       "remoteSha256": "e7fca2fe9e7670a828af9b28084669a5909445b7f36f1f26cee9bf8f2961c32c",
-      "matches": true
+      "matches": true,
+      "localSha256": "e7fca2fe9e7670a828af9b28084669a5909445b7f36f1f26cee9bf8f2961c32c"
     },
     {
       "file": "vendor/three/RoomEnvironment.js",
       "status": 200,
       "bytes": 4960,
       "contentType": "text/javascript",
-      "localSha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4",
       "remoteSha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4",
-      "matches": true
+      "matches": true,
+      "localSha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4"
     },
     {
       "file": "vendor/three/three.module.js",
       "status": 200,
       "bytes": 748873,
       "contentType": "text/javascript",
-      "localSha256": "ea0b317604d082b1393cb2bbe5c6e5f97884a3b66eaa55cf55d89104f8779a2a",
       "remoteSha256": "ea0b317604d082b1393cb2bbe5c6e5f97884a3b66eaa55cf55d89104f8779a2a",
-      "matches": true
+      "matches": true,
+      "localSha256": "ea0b317604d082b1393cb2bbe5c6e5f97884a3b66eaa55cf55d89104f8779a2a"
     }
   ]
 }

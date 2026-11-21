@@ -1,27 +1,28 @@
 {
-  "verifiedAt": "2026-11-21T07:34:37.139385+00:00",
-  "status": "static-site-deployed-and-verified",
+  "verifiedAt": "2026-11-21T08:00:35.556558+00:00",
+  "status": "deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "f30871bd76212e7dcf5b430ba9e24018d76c5bd7",
+  "sourceCommit": "4d7ba84897432595cebe09960de2efc40eb035e0",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 44880573578,
-    "url": "https://github.com/shdkej/space/actions/runs/44880573578",
+    "runId": 44882661532,
+    "url": "https://github.com/shdkej/space/actions/runs/44882661532",
     "conclusion": "success",
-    "jobId": 136774817688,
+    "jobId": 136781172708,
     "steps": {
       "Sync S3": "success",
       "Invalidate CloudFront": "success"
     },
-    "completedAt": "2026-11-21T07:31:38Z"
+    "completedAt": "2026-11-21T07:59:09Z"
   },
   "infrastructure": {
-    "changed": false,
+    "changed": true,
     "s3Bucket": "static-policycock-aws-shdkej-com",
     "cloudfrontDistributionId": "E1IR9GXLCMQK6X",
-    "terraformApplied": false
+    "terraformApplied": false,
+    "backend": "Dedicated Seoul Lambda, DynamoDB table, 14-day log group, OIDC deploy and runtime roles"
   },
   "verification": {
     "localHtml": {
@@ -37,7 +38,7 @@
     "liveHtml": {
       "file": "qa/live-verification.json",
       "checks": 8,
-      "verifiedAt": "2026-11-21T07:32:24.310Z"
+      "verifiedAt": "2026-11-21T07:59:39.345Z"
     },
     "liveScene": {
       "file": "qa/live-scene-verification.json",
@@ -46,7 +47,7 @@
     },
     "assetHashes": "qa/live-assets.json",
     "byteMatchedDistFiles": 20,
-    "releaseConfig": "Verified live project key matches the authenticated US project 424014 and signup is closed.",
+    "releaseConfig": "Registration open. Verified dedicated Function URL, production HTTPS responses and ingestion into the shared US PostHog project.",
     "matchedRoutes": [
       "/",
       "/sources",
@@ -54,31 +55,35 @@
     ]
   },
   "rollback": {
-    "baseline": "c97b197a511f0c324baa8824bc3e6b18e465a841",
-    "scope": "Restore only this site dist in a new main commit; preserve later content and verify again."
+    "baseline": "b77d63a079898e033d83170bfe4d4377bb376a3d",
+    "scope": "Close new signups with the dedicated service workflow and the frontend flag. Retain the Function URL and withdrawal access for existing registrations."
   },
   "limits": [
-    "Email registration and delivery are not live. Verify the backend deployment, SES delivery, release mailing and retention before enabling the web form.",
-    "Browser tests use headless Chrome and mobile emulation. PostHog QA events represent synthetic traffic."
+    "Mailbox delivery and manual mailbox cleanup are outside the site verification. Launch mail will be sent individually by the operator.",
+    "Mobile layout used Chrome emulation. Test analytics are synthetic traffic."
   ],
   "previousDeploymentHistory": "Git history of qa/deployment.json before this revision",
   "posthog": {
     "projectId": 424014,
     "appId": "policycock",
     "trafficKind": "synthetic",
-    "qaRunId": "fc702728-fe10-45a9-a1f9-0c02176c8f63",
+    "qaRunId": "6b173ae6-a5cd-4082-aa01-3b6cbe24c9b9",
     "eventCounts": {
       "landing_viewed": 1,
       "case_list_viewed": 1,
       "case_opened": 1,
       "case_source_opened": 1,
-      "launch_cta_clicked": 1
+      "launch_cta_clicked": 2,
+      "signup_request_accepted": 1,
+      "signup_withdrawn": 1
     },
     "verifiedWith": "Project-scoped HogQL query by app, traffic kind and QA run ID"
   },
   "emailSignup": {
-    "publicStatus": "closed",
-    "serverDeployment": "pending",
-    "verification": "14 isolated backend tests with simulated SES/DynamoDB, browser request/confirm/withdraw scenarios and Terraform validation passed. No live applicant mail sent."
+    "publicStatus": "open",
+    "sourceRepository": "https://github.com/shdkej/policycock-launch-signup",
+    "sourceCommit": "98becb029c061deb564c80d4cb227f503d102fe6",
+    "workflow": "https://github.com/shdkej/policycock-launch-signup/actions/runs/44882295384",
+    "tests": "8 isolated backend checks passed. Production mobile browser submitted and withdrew a synthetic registration. Same-request and new-browser duplicate checks yielded one registration email attempt in total. Both requests returned HTTP 200, SES accepted the two operator messages, and a consistent read confirmed deletion of the active signup. Shared app-feedback code and revision matched the pre-release snapshot."
   }
 }

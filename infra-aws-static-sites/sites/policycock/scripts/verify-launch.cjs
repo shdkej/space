@@ -18,7 +18,8 @@ const server = createServer((request, response) => {
   let browser;
   try {
     browser = await chromium.launch({executablePath: process.env.CHROME_PATH || chromium.executablePath(), args: ['--no-sandbox']});
-    const page = await browser.newPage({viewport: {width: 375, height: 812}});
+    const context = await browser.newContext({viewport: {width: 375, height: 812}});
+    const page = await context.newPage();
     const url = 'http://127.0.0.1:' + server.address().port;
     const events = [], requests = [];
     const token = '1'.repeat(64) + '.' + 'a'.repeat(64);
@@ -37,6 +38,45 @@ const server = createServer((request, response) => {
       return route.fulfill({status: fail ? 503 : 200, json: fail ? {error: 'registration_pending'} : result});
     });
     await page.goto(url + '/?qa=1');
+    await page.waitForTimeout(150);
+    assert.equal(events.length, 0, 'no PostHog call before consent');
+    await page.getByRole('button', {name:'거부하고 계속'}).click();
+    await page.locator('.person').first().click();
+    assert.equal(events.length, 0, 'decline also blocks case events');
+    await page.locator('#policy-dialog button.dialog-close').click();
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
+    await page.getByRole('button', {name:'방문 분석 동의'}).click();
+    await page.waitForTimeout(150);
+    assert.equal(events.some(event => event.event === 'landing_viewed'), true, 'consent starts analytics');
+    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.consent.v1')), 'accepted');
+    const sibling = await context.newPage();
+    const siblingEvents = [];
+    await sibling.route('**/launch-config.js', route => route.fulfill({ contentType: 'application/javascript', body:
+      'window.policycockConfig=' + JSON.stringify({projectKey:'phc_Test', signupEnabled: false, signupEndpoint: url + '/signup'}) }));
+    await sibling.route('https://us.i.posthog.com/i/v0/e/', route => {
+      siblingEvents.push(route.request().postDataJSON());
+      return route.fulfill({json: {status: 1}});
+    });
+    await sibling.goto(url + '/?qa=1');
+    assert.equal(await sibling.evaluate(() => window.policycockAnalyticsConsent()), true);
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
+    await page.getByRole('button', {name:'거부하고 계속'}).click();
+    await sibling.waitForFunction(() => !window.policycockAnalyticsConsent());
+    const siblingBefore = siblingEvents.length;
+    await sibling.evaluate(() => window.policycockCapture('case_opened'));
+    await sibling.waitForTimeout(500);
+    assert.equal(siblingEvents.length, siblingBefore, 'cross-tab withdrawal blocks capture');
+    await sibling.getByRole('button', {name:'방문 분석 설정'}).click();
+    await sibling.getByRole('button', {name:'방문 분석 동의'}).click();
+    await page.waitForFunction(() => window.policycockAnalyticsConsent());
+    await sibling.getByRole('button', {name:'방문 분석 설정'}).click();
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
+    await page.getByRole('button', {name:'거부하고 계속'}).click();
+    await sibling.waitForFunction(() => document.activeElement?.id === 'analytics-settings');
+    assert.equal(await sibling.locator('#analytics-notice').isVisible(), false, 'cross-tab choice closes notice without losing focus');
+    await sibling.close();
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
+    await page.getByRole('button', {name:'방문 분석 동의'}).click();
     await page.getByRole('button', {name: '이메일 등록 준비 중'}).waitFor({timeout: 2500});
     assert.equal(await page.locator('#launch-pending button').isDisabled(), true);
     assert.equal(await page.locator('a[href^="mailto:"]').count(), 0);
@@ -68,6 +108,7 @@ const server = createServer((request, response) => {
     // A fresh browser obtains no withdrawal capability by submitting an existing address.
     await page.evaluate(() => localStorage.clear());
     await page.reload();
+    await page.getByRole('button', {name:'방문 분석 동의'}).click();
     duplicate = true;
     await page.locator('#launch-email').fill('qa-user@example.org');
     await page.locator('#launch-consent').check();
@@ -97,6 +138,12 @@ const server = createServer((request, response) => {
       assert.doesNotMatch(JSON.stringify(event), /qa-user|gmail|example\.org|청년기본소득|launch-withdraw|이재명/);
       assert.ok(!JSON.stringify(event).includes(token) && !JSON.stringify(event).includes(retry));
     }
+    const beforeRevoke = events.length;
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
+    await page.getByRole('button', {name:'거부하고 계속'}).click();
+    await page.evaluate(() => window.policycockCapture('case_opened'));
+    assert.equal(events.length, beforeRevoke, 'withdrawal blocks subsequent calls');
+    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.consent.v1')), 'declined');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     console.log('PASS mobile case reading, closed registration, direct signup, duplicate privacy, withdrawal and anonymous analytics');
   } finally {

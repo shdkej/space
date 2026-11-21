@@ -10,7 +10,7 @@
   const sessionId = window.crypto?.randomUUID?.();
   function capture(event) {
     if (!allowedEvents.has(event) || !sessionId || !/^phc_[A-Za-z0-9]+$/.test(config.projectKey)) return;
-    if (navigator.globalPrivacyControl || navigator.doNotTrack === '1') return;
+    if (!window.policycockAnalyticsConsent?.()) return;
     const properties = {app_id: 'policycock', traffic_kind: synthetic ? 'synthetic' : 'user',
       $process_person_profile: false, $geoip_disable: true};
     if (synthetic) properties.qa_run_id = sessionId;
@@ -19,6 +19,7 @@
       credentials: 'omit', referrerPolicy: 'no-referrer', body, keepalive: true}).catch(() => {});
   }
   window.policycockCapture = capture;
+  window.addEventListener('policycock:analytics-accepted', () => capture('landing_viewed'));
   capture('landing_viewed');
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {

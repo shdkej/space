@@ -21,18 +21,20 @@ const server = createServer((request, response) => {
     const page = await browser.newPage({viewport: {width: 375, height: 812}});
     const url = 'http://127.0.0.1:' + server.address().port;
     const events = [], requests = [];
-    const token = '1'.repeat(64) + '.' + 'a'.repeat(43);
-    let enabled = false, fail = false;
+    const token = '1'.repeat(64) + '.' + 'a'.repeat(64);
+    let enabled = false, fail = false, cleanupPending = true, duplicate = false;
     await page.route('**/policy-scene.js', route => route.abort());
     await page.route('**/launch-config.js', route => route.fulfill({ contentType: 'application/javascript', body:
-      'window.policycockConfig=' + JSON.stringify({ projectKey:'phc_Test', signupEndpoint: enabled ? url + '/signup' : '' }) }));
+      'window.policycockConfig=' + JSON.stringify({ projectKey:'phc_Test', signupEnabled: enabled, signupEndpoint: url + '/signup' }) }));
     await page.route('https://us.i.posthog.com/i/v0/e/', route => {
       events.push(route.request().postDataJSON());
       return route.fulfill({json: {status: 1}});
     });
     await page.route('**/signup', route => {
       requests.push(route.request().postDataJSON());
-      return route.fulfill({status: fail ? 503 : 200, json: {ok: !fail}});
+      const op = requests.at(-1).action;
+      const result = op === 'request' ? (duplicate ? {ok: true} : {ok: true, withdrawToken: token}) : {ok: true, cleanupPending};
+      return route.fulfill({status: fail ? 503 : 200, json: fail ? {error: 'registration_pending'} : result});
     });
     await page.goto(url + '/?qa=1');
     await page.getByRole('button', {name: '이메일 등록 준비 중'}).waitFor({timeout: 2500});
@@ -51,30 +53,52 @@ const server = createServer((request, response) => {
     await page.locator('#launch-consent').check();
     fail = true;
     await page.locator('#launch-form button').click();
-    await page.getByText(/신청 요청을 접수하지 못/).waitFor();
+    await page.getByText(/접수 결과를 확인할 수 없습니다/).waitFor();
+    const retry = requests.at(-1).requestId;
+    assert.match(retry, /^[a-f0-9]{64}$/);
     fail = false;
     await page.locator('#launch-form button').click();
-    await page.getByText(/받은편지함/).waitFor();
+    await page.getByText(/출시 알림 신청을 접수했습니다/).waitFor();
     assert.equal(requests.at(-1).replyEmail, 'qa-user@example.org');
-    assert.equal(requests.at(-1).consentVersion, 'launch-notice-v2');
-    await page.goto(url + '/?qa=1#launch-confirm=' + token);
-    await page.locator('#launch-confirm').click();
-    await page.getByText(/출시 알림 신청을 확인했습니다/).waitFor();
-    await page.locator('#launch-withdraw').click();
-    await page.getByText(/신청을 철회했습니다/).waitFor();
-    assert.deepEqual(requests.slice(-2).map(r => r.action), ['confirm','withdraw']);
+    assert.equal(requests.at(-1).requestId, retry);
+    assert.equal(requests.at(-1).consentVersion, 'launch-notice-v3');
+    assert.equal(requests.at(-1).consent, true);
+    assert.equal(requests.at(-1).website, '');
+    assert.doesNotMatch(await page.evaluate(() => JSON.stringify(localStorage)), /example\.org/);
+    // A fresh browser obtains no withdrawal capability by submitting an existing address.
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    duplicate = true;
+    await page.locator('#launch-email').fill('qa-user@example.org');
+    await page.locator('#launch-consent').check();
+    await page.locator('#launch-form button').click();
+    await page.getByText(/출시 알림 신청을 접수했습니다/).waitFor();
+    assert.equal(await page.locator('#launch-manage').isVisible(), false);
+    // Restoring the private link works even while new registrations are closed.
+    enabled = false;
+    await page.goto(url + '/?qa=1&restore=1#launch-withdraw=' + token);
+    assert.equal(await page.locator('#launch-form').isVisible(), false);
+    assert.equal(new URL(page.url()).hash, '#launch');
+    assert.equal(requests.filter(r => r.action === 'withdraw').length, 0);
+    await page.getByRole('button', {name:'신청 철회'}).click();
+    await page.getByText(/운영자 메일함 정리 통지는 대기/).waitFor();
+    cleanupPending = false;
+    await page.getByRole('button', {name:'신청 철회'}).click();
+    await page.getByText(/운영자에게 메일 정리를 요청/).waitFor();
+    assert.equal(await page.locator('#launch-manage').isVisible(), false);
     assert.equal(requests.at(-1).token, token);
-    assert.equal(events.some(e => e.event === 'case_opened'), true);
-    assert.equal(events.some(e => e.event === 'signup_confirmed'), true);
+    for (const name of ['case_opened','signup_request_accepted','signup_cleanup_pending','signup_withdrawn']) {
+      assert.equal(events.some(event => event.event === name), true, name);
+    }
     for (const event of events) {
       assert.equal(event.properties.app_id, 'policycock');
       assert.equal(event.properties.traffic_kind, 'synthetic');
       assert.deepEqual(Object.keys(event.properties).sort(), ['$geoip_disable','$process_person_profile','app_id','qa_run_id','traffic_kind'].sort());
-      assert.doesNotMatch(JSON.stringify(event), /qa-user|gmail|example\.org|청년기본소득|launch-confirm|이재명/);
-      assert.ok(!JSON.stringify(event).includes(token));
+      assert.doesNotMatch(JSON.stringify(event), /qa-user|gmail|example\.org|청년기본소득|launch-withdraw|이재명/);
+      assert.ok(!JSON.stringify(event).includes(token) && !JSON.stringify(event).includes(retry));
     }
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-    console.log('PASS mobile case reading, closed registration, gated signup, confirmation, withdrawal and anonymous analytics');
+    console.log('PASS mobile case reading, closed registration, direct signup, duplicate privacy, withdrawal and anonymous analytics');
   } finally {
     await browser?.close();
     await new Promise(resolve => server.close(resolve));

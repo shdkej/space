@@ -204,6 +204,7 @@ jobs:
         env:
           PROJECT_KEY: ${{ secrets.POSTHOG_MINIAPP_PROJECT_TOKEN }}
           SIGNUP_ENABLED: ${{ vars.POLICYCOCK_SIGNUP_ENABLED }}
+          SIGNUP_URL: ${{ vars.POLICYCOCK_SIGNUP_URL }}
           APP_DOMAIN: ${{ matrix.domain }}
           APP_DIRECTORY: ${{ matrix.build_dir }}
         run: |
@@ -216,8 +217,11 @@ jobs:
           key = os.environ["PROJECT_KEY"]
           if not re.fullmatch(r"phc_[A-Za-z0-9]+", key):
               raise SystemExit("Shared PostHog browser project key missing or malformed")
-          endpoint = "https://tm6ntnopmx3f724ekqttvugjwe0ldguj.lambda-url.ap-northeast-2.on.aws/"
-          config = {"projectKey": key, "signupEndpoint": endpoint if os.environ["SIGNUP_ENABLED"] == "true" else ""}
+          endpoint = os.environ["SIGNUP_URL"]
+          enabled = os.environ["SIGNUP_ENABLED"] == "true"
+          if (enabled or endpoint) and not re.fullmatch(r"https://[a-z0-9]{26,40}\.lambda-url\.ap-northeast-2\.on\.aws/", endpoint):
+              raise SystemExit("Expected the verified Seoul signup Function URL")
+          config = {"projectKey": key, "signupEnabled": enabled, "signupEndpoint": endpoint}
           (directory / "launch-config.js").write_text("window.policycockConfig = " + json.dumps(config) + ";\n")
           PYTHON
 

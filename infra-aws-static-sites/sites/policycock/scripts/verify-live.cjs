@@ -38,9 +38,15 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
         const match = /^window\.policycockConfig = (\{[^\n]+\});\n$/.exec(configText);
         assert.ok(match, 'production config format');
         const config = JSON.parse(match[1]);
-        assert.deepEqual(Object.keys(config).sort(), ['projectKey','signupEndpoint']);
+        assert.deepEqual(Object.keys(config).sort(), ['projectKey','signupEnabled','signupEndpoint']);
         assert.ok(/^phc_[A-Za-z0-9]+$/.test(config.projectKey), 'public project key present');
-        assert.ok(['', 'https://tm6ntnopmx3f724ekqttvugjwe0ldguj.lambda-url.ap-northeast-2.on.aws/'].includes(config.signupEndpoint));
+        assert.equal(typeof config.signupEnabled, 'boolean');
+        assert.ok(!config.signupEnabled || config.signupEndpoint);
+        assert.ok(config.signupEndpoint === '' || /^https:\/\/[a-z0-9]{26,40}\.lambda-url\.ap-northeast-2\.on\.aws\/$/.test(config.signupEndpoint), 'Seoul signup URL');
+        if (process.env.EXPECTED_SIGNUP_URL !== undefined) assert.equal(config.signupEndpoint, process.env.EXPECTED_SIGNUP_URL);
+        assert.equal(await page.locator('#launch-form').isVisible(), config.signupEnabled, 'live signup availability');
+        assert.equal(await page.locator('#launch-pending').isVisible(), !config.signupEnabled);
+        assert.match(await page.locator('.launch-agreement').innerText(), /운영자에게 바로 전달/);
       } else {
         assert.deepEqual(await asset.body(),fs.readFileSync(path.join(dist,relative)),`${relative} byte parity`);
       }

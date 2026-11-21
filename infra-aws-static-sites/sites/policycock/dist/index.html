@@ -123,12 +123,18 @@
     <form id="launch-form" hidden>
       <label for="launch-email">출시 소식을 받을 이메일</label>
       <input id="launch-email" type="email" autocomplete="email" maxlength="200" placeholder="name@example.com" required>
-      <label class="launch-agreement"><input id="launch-consent" type="checkbox" required><span>내 이메일 주소를 확인 후 모두의정책 운영자에게 전달하고, 정책알리미 출시 안내 1회 발송에 사용하는 데 동의합니다. 확인 메일의 링크에서 철회할 수 있습니다.</span></label>
+      <label class="launch-agreement"><input id="launch-consent" type="checkbox" required><span>내 이메일 주소를 모두의정책 운영자에게 바로 전달하고, 정책알리미 출시 소식을 한 번 받는 데 동의합니다. 신청 후 제공되는 개인 링크로 철회할 수 있습니다.</span></label>
+      <p class="launch-retention">신청은 최대 1년간 유효합니다. 철회·만료 또는 출시 안내 발송 후 운영자가 접수 메일을 삭제합니다.</p>
+      <label class="launch-trap" aria-hidden="true">Website<input id="launch-website" type="text" tabindex="-1" autocomplete="off"></label>
       <button class="launch-button" type="submit">이메일로 출시 알림 신청</button>
     </form>
     <div id="launch-manage" hidden><h3>출시 알림 신청 관리</h3>
-      <button id="launch-confirm" type="button" class="launch-button">이메일 확인하고 신청 완료</button>
-      <button id="launch-withdraw" type="button" class="text-btn">신청 철회</button>
+      <p>이 브라우저에서 다시 철회할 수 있습니다. 다른 기기에서도 철회하려면 개인 링크를 복사해 보관해 주세요.</p>
+      <ul id="launch-receipts"></ul>
+    </div>
+    <div id="launch-recovery" hidden><label for="launch-private-link">개인 철회 링크</label>
+      <input id="launch-private-link" readonly type="text" autocomplete="off">
+      <p>링크를 가진 사람은 신청을 철회할 수 있습니다.</p>
     </div>
     <p id="launch-status" role="status" aria-live="polite"></p>
   </div>

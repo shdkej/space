@@ -142,6 +142,16 @@ The image converter (`miniapp-image-tools`) and 모두의정책 (`policycock`) s
 
 ## Policycock launch signup
 
+The independent service source, tests, zip packaging and manual OIDC release workflow live in the private [Policycock signup repository](https://github.com/shdkej/policycock-launch-signup). Its workflow pins a commit of this repository and invokes `scripts/deploy-policycock-signup.py --package <zip>`. The deployment role trusts the service repository's `main` branch. Its ARN and owner/sender address are secrets in that repository.
+
+The CLI deployer owns the Seoul function `policycock-launch-signup`, its Function URL, log group with 14-day retention and the `policycock-launch-registrations` table. The existing execution role is `PolicycockSignupRuntime`. It deploys closed by default. Explicit mode open enables owner-only direct registration. Both modes verify the HTTPS response and CORS without sending email. Re-running the deployer checks the package hash and existing configuration. The shared feedback service and its Terraform table are separate.
+
+Before opening the web form, set the verified URL from the service workflow output as the Space repository variable `POLICYCOCK_SIGNUP_URL`. Set `POLICYCOCK_SIGNUP_ENABLED=true` and redeploy the site only after the service is accepting registrations. Use `EXPECTED_SIGNUP_URL` with the live browser verifier to check the exact endpoint.
+
+Launch registration uses v3 consent and sends the submitted address and receipt only to the verified operator mailbox. The database stores a normalized address hash, receipt, hashed capabilities, state and expiry. New-registration and withdrawal mail attempts are limited independently to 25 per UTC day. Withdrawal immediately removes the registration, even if operator notification is delayed. Mailbox and trash cleanup are performed manually. Before sending a one-time launch announcement by Gmail, look up the consistently read registration by the SHA-256 of the trimmed lowercase address and match its receipt, registered state and unexpired TTL. The private service README describes ambiguous SES sends, reconciliation, retry and deletion.
+
+### Existing shared feedback implementation
+
 `app-feedback` keeps its existing feedback flow. The new launch-notice route
 uses a single DynamoDB item per normalized address with conditional state
 transitions; withdrawal atomically deletes the item. The table stores the
@@ -155,14 +165,7 @@ The dashboard should use the currently confirmed database records when sending
 the launch notice. Reconcile the mailbox against current receipts and verify
 deletion from the mailbox (including trash) on withdrawal, expiry, or launch.
 
-The static site can serve cases and analytics independently. To open registration,
-verify the separate service deployment under a scoped non-root role, production
-SES delivery to ordinary addresses, the site origin in Lambda URL CORS, and
-withdrawal and retention across both the table and the mailbox. The server switch
-is `policycock_signup_enabled`; the repository variable
-`POLICYCOCK_SIGNUP_ENABLED=true` enables the form on the next site deploy.
-With the frontend switch off, the landing displays the current availability and
-collects no email addresses.
+This v2 path belongs to the shared Lambda. Its Terraform switch is independent of the v3 dedicated service. Do not enable the shared signup route to release the dedicated form.
 
 Run isolated local tests with `python -m venv <private-venv>`, install
 `lambda/requirements-test.txt`, then run

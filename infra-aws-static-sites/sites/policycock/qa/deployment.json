@@ -1,21 +1,21 @@
 {
-  "verifiedAt": "2026-11-18T12:37:14.528698+00:00",
-  "status": "deployed-and-verified",
+  "verifiedAt": "2026-11-21T07:34:37.139385+00:00",
+  "status": "static-site-deployed-and-verified",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "c0a0dba999d419d9a6f513c90e29ab3c3852e499",
+  "sourceCommit": "f30871bd76212e7dcf5b430ba9e24018d76c5bd7",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 44304316119,
-    "url": "https://github.com/shdkej/space/actions/runs/44304316119",
+    "runId": 44880573578,
+    "url": "https://github.com/shdkej/space/actions/runs/44880573578",
     "conclusion": "success",
-    "jobId": 134801904243,
+    "jobId": 136774817688,
     "steps": {
       "Sync S3": "success",
       "Invalidate CloudFront": "success"
     },
-    "completedAt": "2026-11-18T12:29:55Z"
+    "completedAt": "2026-11-21T07:31:38Z"
   },
   "infrastructure": {
     "changed": false,
@@ -27,51 +27,58 @@
     "localHtml": {
       "file": "qa/verification.json",
       "checks": 19,
-      "verifiedAt": "2026-11-18T12:17:26.403Z"
+      "verifiedAt": "2026-11-21T07:28:49.007Z"
     },
     "localScene": {
       "file": "qa/scene-verification.json",
       "checks": 14,
-      "verifiedAt": "2026-11-18T12:24:18.518Z"
+      "verifiedAt": "2026-11-21T07:29:55.318Z"
     },
     "liveHtml": {
       "file": "qa/live-verification.json",
       "checks": 8,
-      "verifiedAt": "2026-11-18T12:32:32.429Z"
+      "verifiedAt": "2026-11-21T07:32:24.310Z"
     },
     "liveScene": {
       "file": "qa/live-scene-verification.json",
       "checks": 14,
-      "verifiedAt": "2026-11-18T12:36:26.261Z"
+      "verifiedAt": "2026-11-21T07:33:56.256Z"
     },
     "assetHashes": "qa/live-assets.json",
-    "matchedDistFiles": 19,
+    "byteMatchedDistFiles": 20,
+    "releaseConfig": "Verified live project key matches the authenticated US project 424014 and signup is closed.",
     "matchedRoutes": [
       "/",
       "/sources",
       "/birth-grant-map"
-    ],
-    "birthGrantMapUnchangedFrom": "02bbf4821a8bbfc2b471e0a95164580fb1e37280",
-    "mobileControlLayout": "qa/mobile-controls-verification.json",
-    "blenderAsset": "qa/console-model.json",
-    "hallmarkAudit": "qa/hallmark-audit.json",
-    "visualReview": [
-      "1440px live actual WebGL console and loaded Blender GLB",
-      "390px live idle and selected states; toolbar above keys and readable full policy names",
-      "live expanded keycaps and console layers",
-      "local 320px and 390px selected controls without overlap"
     ]
   },
-  "review": "qa/review.json",
   "rollback": {
-    "baseline": "02bbf4821a8bbfc2b471e0a95164580fb1e37280",
+    "baseline": "c97b197a511f0c324baa8824bc3e6b18e465a841",
     "scope": "Restore only this site dist in a new main commit; preserve later content and verify again."
   },
   "limits": [
-    "Headless Chrome software WebGL and touch emulation; real mobile FPS, heat and battery are unmeasured.",
-    "Policy/agency data was preserved; current policy effects and final user aesthetic satisfaction were not established.",
-    "Hallmark audit retains its missing-stamp finding because the canonical audit-only profile prohibits product stamps.",
-    "OpenPencil skills were registered; app document was not connected, so no canvas editing was performed."
+    "Email registration and delivery are not live. Verify the backend deployment, SES delivery, release mailing and retention before enabling the web form.",
+    "Browser tests use headless Chrome and mobile emulation. PostHog QA events represent synthetic traffic."
   ],
-  "previousDeploymentHistory": "Git history of qa/deployment.json before this revision"
+  "previousDeploymentHistory": "Git history of qa/deployment.json before this revision",
+  "posthog": {
+    "projectId": 424014,
+    "appId": "policycock",
+    "trafficKind": "synthetic",
+    "qaRunId": "fc702728-fe10-45a9-a1f9-0c02176c8f63",
+    "eventCounts": {
+      "landing_viewed": 1,
+      "case_list_viewed": 1,
+      "case_opened": 1,
+      "case_source_opened": 1,
+      "launch_cta_clicked": 1
+    },
+    "verifiedWith": "Project-scoped HogQL query by app, traffic kind and QA run ID"
+  },
+  "emailSignup": {
+    "publicStatus": "closed",
+    "serverDeployment": "pending",
+    "verification": "14 isolated backend tests with simulated SES/DynamoDB, browser request/confirm/withdraw scenarios and Terraform validation passed. No live applicant mail sent."
+  }
 }

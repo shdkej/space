@@ -1,16 +1,16 @@
 {
-  "verifiedAt": "2026-11-18T12:32:09.807Z",
+  "verifiedAt": "2026-11-21T07:33:53.263386+00:00",
   "url": "https://policycock.aws.shdkej.com",
-  "sourceCommit": "c0a0dba999d419d9a6f513c90e29ab3c3852e499",
+  "sourceCommit": "f30871bd76212e7dcf5b430ba9e24018d76c5bd7",
   "status": "passed",
   "assets": [
     {
       "file": "app.js",
       "status": 200,
-      "bytes": 17905,
+      "bytes": 17947,
       "contentType": "text/javascript",
-      "localSha256": "c7a527b5e00a9af1db4ebd4a48b43093bf515cad6ad08c66b888abd80364451a",
-      "remoteSha256": "c7a527b5e00a9af1db4ebd4a48b43093bf515cad6ad08c66b888abd80364451a",
+      "localSha256": "afbb7654de31d348e2d3a51eae89f28ca3282a681f163ffe1b089b92e7deb5ae",
+      "remoteSha256": "afbb7654de31d348e2d3a51eae89f28ca3282a681f163ffe1b089b92e7deb5ae",
       "matches": true
     },
     {
@@ -70,19 +70,19 @@
     {
       "file": "index.css",
       "status": 200,
-      "bytes": 33229,
+      "bytes": 34471,
       "contentType": "text/css",
-      "localSha256": "010a329bf2a46a3f938db9d7039eec02109060d16e27a7135f779205370ab7f9",
-      "remoteSha256": "010a329bf2a46a3f938db9d7039eec02109060d16e27a7135f779205370ab7f9",
+      "localSha256": "3ee2552592b5c8d3f0e75c33fb557e7fc370f7db5a0680d5ee93ae45c90c3dce",
+      "remoteSha256": "3ee2552592b5c8d3f0e75c33fb557e7fc370f7db5a0680d5ee93ae45c90c3dce",
       "matches": true
     },
     {
       "file": "index.html",
       "status": 200,
-      "bytes": 37130,
+      "bytes": 39265,
       "contentType": "text/html",
-      "localSha256": "bd69883048d2a60f2f400668ca9b9d062ab52797a324b47e9f0dfb7d469b9ce3",
-      "remoteSha256": "bd69883048d2a60f2f400668ca9b9d062ab52797a324b47e9f0dfb7d469b9ce3",
+      "localSha256": "16bb846393f0989aefb2d30d50278c19a0972a4bcf7b49a48aeac899c7332f3d",
+      "remoteSha256": "16bb846393f0989aefb2d30d50278c19a0972a4bcf7b49a48aeac899c7332f3d",
       "matches": true
     },
     {
@@ -101,6 +101,23 @@
       "contentType": "application/json",
       "localSha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
       "remoteSha256": "f800032e64635b2e5126172d5a9762caee31b7d4f6c2fdc258d4d3076e300a72",
+      "matches": true
+    },
+    {
+      "file": "launch-config.js",
+      "status": 200,
+      "bytes": 116,
+      "contentType": "text/javascript",
+      "remoteSha256": "eae3dc9270957dd74538557b327264a4b5df288d077a6f9d477061b175a09958",
+      "releaseConfigValidated": true
+    },
+    {
+      "file": "launch.js",
+      "status": 200,
+      "bytes": 5676,
+      "contentType": "text/javascript",
+      "localSha256": "65df8b644979f802624e32e73c96534193a0f394a70384a00792697a15a910a5",
+      "remoteSha256": "65df8b644979f802624e32e73c96534193a0f394a70384a00792697a15a910a5",
       "matches": true
     },
     {

@@ -60,7 +60,7 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
     const birthResponse=await context.request.get(base+'/birth-grant-map.html');
     assert.equal(birthResponse.status(),200);
     assert.match(await birthResponse.text(),/<title>지역별 출산지원금 지도[^<]*모두의정책<\/title>/);
-    pass(`${fileChecks.length}개 dist 파일·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출`);
+    pass(`${fileChecks.length}개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출`);
     await page.evaluate(()=>document.fonts.ready);
     assert.equal(await page.locator('.person').count(),10);
     assert.equal(await page.locator('.agency-link').count(),44);

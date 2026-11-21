@@ -24,11 +24,17 @@ spec:
         kubernetes.io/hostname: oracle-arm-1
       containers:
         - name: app
-          image: ghcr.io/shdkej/video-automation:acb214e0b5729ea2d9922bcef22cf8127d429ae3
+          image: ghcr.io/shdkej/video-automation:3d434396fc9cc810fbce1d387f4be2fc9289ddbe
           imagePullPolicy: Always
           env:
             - name: VIDAUTO_STUDIO_IMAGE_MODEL
               value: "gpt-image-1.5"
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: reel-room-env
+                  key: GEMINI_API_KEY
+                  optional: true
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:

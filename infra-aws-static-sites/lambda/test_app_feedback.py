@@ -110,6 +110,27 @@ class RegistrationTests(unittest.TestCase):
         self.assertEqual(self.invoke(action="confirm", token=token)[0], 200)
         self.assertEqual(len(self.ses.sent), 2)
 
+    def test_confirmed_v2_registration_sends_address_only_to_configured_launch_owner(self):
+        with patch.dict(os.environ, {"POLICYCOCK_SIGNUP_OWNER_EMAIL": "launch-owner@example.org"}):
+            self.assertEqual(self.invoke(consentVersion="launch-notice-v2")[0], 202)
+            self.assertEqual(len(self.ses.sent), 1)
+            token = self.token()
+            self.assertEqual(self.invoke(action="confirm", token=token)[0], 200)
+            notice = self.ses.sent[-1]
+            self.assertEqual(notice["Destination"]["ToAddresses"], ["launch-owner@example.org"])
+            body = notice["Message"]["Body"]["Text"]["Data"]
+            self.assertIn("reader@example.org", body)
+            self.assertNotIn(token, body)
+            self.assertEqual(self.invoke(action="confirm", token=token)[0], 200)
+            self.assertEqual(len(self.ses.sent), 2)
+
+    def test_v2_requires_dedicated_owner_before_collecting_email(self):
+        with patch.dict(os.environ, {"POLICYCOCK_SIGNUP_OWNER_EMAIL": ""}):
+            self.assertEqual(self.invoke(consentVersion="launch-notice-v2")[0], 503)
+        self.assertEqual(self.invoke(consentVersion="unknown")[0], 400)
+        self.assertIsNone(self.item())
+        self.assertFalse(self.ses.sent)
+
     def test_withdraw_removes_item_atomically_and_old_token_cannot_revive(self):
         self.invoke()
         token = self.token()

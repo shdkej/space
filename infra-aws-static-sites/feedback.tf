@@ -170,12 +170,20 @@ resource "aws_lambda_function" "app_feedback" {
 
   environment {
     variables = {
-      FEEDBACK_BUCKET          = aws_s3_bucket.app_feedback.bucket
-      FEEDBACK_RECIPIENT_EMAIL = var.app_feedback_recipient_email
-      FEEDBACK_SENDER_EMAIL    = var.app_feedback_sender_email
-      ALLOWED_ORIGINS          = join(",", var.app_feedback_allowed_origins)
-      POLICYCOCK_SIGNUP_TABLE  = aws_dynamodb_table.policycock_signup.name
-      ENABLE_POLICYCOCK_SIGNUP = "false"
+      FEEDBACK_BUCKET               = aws_s3_bucket.app_feedback.bucket
+      FEEDBACK_RECIPIENT_EMAIL      = var.app_feedback_recipient_email
+      FEEDBACK_SENDER_EMAIL         = var.app_feedback_sender_email
+      ALLOWED_ORIGINS               = join(",", var.app_feedback_allowed_origins)
+      POLICYCOCK_SIGNUP_TABLE       = aws_dynamodb_table.policycock_signup.name
+      POLICYCOCK_SIGNUP_OWNER_EMAIL = var.policycock_signup_owner_email
+      ENABLE_POLICYCOCK_SIGNUP      = tostring(var.policycock_signup_enabled)
+    }
+  }
+
+  lifecycle {
+    precondition {
+      condition     = !var.policycock_signup_enabled || can(regex("^[^@[:space:]]+@[^@[:space:]]+\\.[^@[:space:]]+$", var.policycock_signup_owner_email))
+      error_message = "An operator mailbox is required to enable Policycock registration."
     }
   }
 

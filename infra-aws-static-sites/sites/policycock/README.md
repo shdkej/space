@@ -102,3 +102,21 @@ SITE_URL=http://127.0.0.1:4173 npm run test:scene
 3D 화면은 정책 발견과 선택을 돕는 표현입니다. 원본 영상의 전체 제작 과정·실제 사용 기술, 사용자 최종 미적 만족, 정책의 현재 효력과 고객 행동 성과는 검증되지 않았습니다. 저사양·WebGL 미지원 환경은 HTML 목록으로 이용하고, 모바일 실기기 성능은 후속 측정이 필요합니다. 외부 기관 페이지의 장애·차단·주소 변경도 별도입니다.
 
 프로젝트 방향·고객 검증 계획은 `/home/ubuntu/workspace/projects/policycock/docs/policy-map-plan.md`, 사용자 피드백 정본은 Knowledge Lab `source/openclaw-system/data/policycock-brief.md`를 따릅니다.
+
+## 사례 열람과 정책알리미 신청
+
+상단 ‘정책 사례’에서 목록으로 이동해 사례의 내용과 원문을 열 수 있습니다. 하단 CTA는 관심 정책·분야의 주요 변경을 알려줄 정책알리미의 출시 안내 1회를 신청하는 경로입니다. 자동 수신 경로를 검증하기 전까지 하단에 이메일 등록 준비 상태를 표시하고 주소 입력과 신청을 받지 않습니다.
+
+자동 모드에서는 방문자가 수신 주소를 입력하고 확인된 주소의 모두의정책 운영자 전달 및 출시 안내 1회 수신에 동의한 뒤 확인 메일을 요청합니다. 확인 링크의 토큰은 주소 표시줄에서 제거되며 이 페이지의 메모리에만 남습니다. 방문자가 확인 또는 철회를 눌러야 처리됩니다. 프런트 전환 변수와 백엔드 준비 조건은 [공용 운영 문서](../../README.md)를 참고하세요.
+
+이미지 작업대와 공용인 PostHog US Default 프로젝트 **424014**를 사용합니다. 운영 배포에서 기존 수집 키를 주입합니다. 속성은 `app_id=policycock`, `traffic_kind=user|synthetic`, 프로필·위치 보강 비활성 플래그, 합성 요청의 난수 `qa_run_id`로 제한합니다. 이메일·기관·인물·선택한 정책·검색어·메모·링크·확인 토큰은 계측하지 않습니다. 방문자 측 추적 차단 신호를 존중합니다.
+
+| 이벤트 | 집계 시점 |
+| --- | --- |
+| `landing_viewed`, `case_list_viewed` | 랜딩 로드, 목록 제목이 화면에 처음 보일 때 |
+| `case_opened`, `case_source_opened` | 사례 상세 열기, 상세 내 자료 링크 선택 |
+| `launch_cta_clicked` | 신청 섹션 바로가기 또는 폼 제출 |
+| `signup_request_accepted`, `signup_confirmed`, `signup_withdrawn` | 전용 API가 각각 요청·확인·철회에 성공 응답 |
+| `signup_failed` | 요청 처리 오류 또는 유효하지 않은 확인 토큰 |
+
+`node scripts/verify-launch.cjs`로 모바일 사례 모달·준비 중 상태·격리한 API 요청과 실패/확인/철회·PostHog 전송 속성을 확인합니다. 수집 검증은 실제 운영 주소에서 `?qa=1`로 연 뒤 동일한 `qa_run_id`를 프로젝트에서 조회합니다.

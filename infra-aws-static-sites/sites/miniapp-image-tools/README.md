@@ -12,7 +12,7 @@
 
 ## 계측 연결 경계
 
-코드에 허용된 이벤트는 `image_selected`, `transform_started`, `transform_succeeded`, `transform_failed`, `download_requested` 다섯 개뿐입니다. PostHog SDK, 자동 캡처, 페이지뷰, 식별, 세션 재생은 사용하지 않습니다. 사용자가 승인한 기존 US 조직의 Default project(424014) 공개 수집 토큰을 이 앱에만 연결합니다. 소스에는 토큰 대신 placeholder를 두고 수동 릴리스 workflow가 검증된 repository secret `POSTHOG_MINIAPP_PROJECT_TOKEN`을 배포 산출물에만 삽입합니다. 관리·조회용 개인 토큰은 절대로 브라우저나 GitHub에 넣지 않습니다. 수집 토큰은 게시된 브라우저 JS에서 공개되며 읽기 권한을 주지 않습니다. 이 설정은 계측 수집 자체의 성공 증거가 아닙니다.
+코드에 허용된 이벤트는 `image_selected`, `transform_started`, `transform_succeeded`, `transform_failed`, `download_requested` 다섯 개뿐입니다. PostHog SDK, 자동 캡처, 페이지뷰, 식별, 세션 재생은 사용하지 않습니다. 사용자가 승인한 기존 US 조직의 Default project(424014)는 이미지 작업대와 모두의정책이 공용으로 사용합니다. 각 앱은 고유한 `app_id`로 이벤트를 구분합니다. 소스에는 토큰 대신 placeholder를 두고 수동 릴리스 workflow가 검증된 repository secret `POSTHOG_MINIAPP_PROJECT_TOKEN`을 배포 산출물에만 삽입합니다. 관리·조회용 개인 토큰은 절대로 브라우저나 GitHub에 넣지 않습니다. 수집 토큰은 게시된 브라우저 JS에서 공개되며 읽기 권한을 주지 않습니다. 이 설정은 계측 수집 자체의 성공 증거가 아닙니다.
 
 전송 속성은 `app_id`, `build_revision`, `traffic_kind`, 합성 QA에서만 `qa_run_id`, 허용된 MIME·숫자 크기/시간·고정 오류 코드와 프로필 비활성화 플래그만 가능합니다. 파일명·이미지·EXIF·자유 텍스트 오류는 전송하지 않습니다. 브라우저 QA는 `?qa=1`로 열어 난수 `qa_run_id`와 `traffic_kind=synthetic`을 씁니다. 사용자 중심 쿼리는 `properties.app_id = 'miniapp-image-tools' AND properties.traffic_kind = 'user' AND properties.traffic_kind != 'synthetic'`을 명시적으로 적용하며 프로젝트 전체 수치를 앱 사용자로 오인하지 않습니다. `?qa=1`은 신뢰된 고객 인증이 아닙니다. PostHog가 처리하는 클라이언트 IP에 관해 무수집을 보장하지 않습니다. 이벤트 요청 성공과 같은 ID의 PostHog 쿼리 수집 결과는 서로 별도로 검증해야 합니다.
 

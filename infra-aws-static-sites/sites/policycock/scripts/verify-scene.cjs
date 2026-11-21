@@ -42,7 +42,7 @@ async function checkLayout(page,width){
   const context=await browser.newContext({viewport:{width:1440,height:900},hasTouch:true});
   const page=await context.newPage();page.setDefaultTimeout(45000);
   page.on('pageerror',e=>errors.push(e.message));
-  const started=Date.now();await page.goto(base);await page.evaluate(()=>document.fonts.ready);
+  const started=Date.now();await page.goto(base+'/?qa=1');await page.evaluate(()=>document.fonts.ready);
   await page.waitForSelector('#policy-scene[data-status="ready"]',{timeout:60000});
   const readyMs=Date.now()-started;
   assert.equal(await page.locator('#policy-scene canvas').count(),1);
@@ -187,7 +187,7 @@ async function checkLayout(page,width){
   assetPage.on('pageerror',e=>errors.push(e.message));
   let blockedModels=0;
   await assetPage.route('**/*.glb',route=>{blockedModels++;return route.abort();});
-  await assetPage.goto(base);
+  await assetPage.goto(base+'/?qa=1');
   await assetPage.waitForSelector('#policy-scene[data-status="ready"][data-model="fallback"]',{timeout:60000});
   assert.ok(blockedModels>0,'GLB failure test must intercept an actual model request');
   assert.equal(await assetPage.locator('#policy-scene canvas').count(),1);
@@ -204,7 +204,7 @@ async function checkLayout(page,width){
     p.on('pageerror',e=>errors.push(e.message));
     if(failure==='module')await p.route('**/policy-scene.js',r=>r.abort());
     else await p.addInitScript(mode=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(kind,...args){if((mode==='webgl'&&kind.startsWith('webgl'))||(mode==='partial'&&kind==='2d'))return null;return original.call(this,kind,...args);};},failure);
-    await p.goto(base);await p.waitForSelector('#policy-scene[data-status="fallback"]',{timeout:60000});
+    await p.goto(base+'/?qa=1');await p.waitForSelector('#policy-scene[data-status="fallback"]',{timeout:60000});
     assert.equal(await p.locator('#policy-scene canvas').count(),0);assert.equal(await p.evaluate(()=>typeof policyScene),'undefined');
     await p.locator('[data-policy="lee"]').click();assert.equal(await p.locator('#detail-title').textContent(),'청년기본소득');
     await ctx.close();

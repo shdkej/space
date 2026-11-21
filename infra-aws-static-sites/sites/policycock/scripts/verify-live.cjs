@@ -27,13 +27,23 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
     await context.route('**/policy-scene.js',route=>route.abort());
     const page=await context.newPage(), errors=[];
     page.on('pageerror',e=>errors.push(e.message));
-    const response=await page.goto(base,{waitUntil:'networkidle'});
+    const response=await page.goto(base+'/?qa=1',{waitUntil:'networkidle'});
     assert.equal(response.status(),200);
     const fileChecks=[];
     for(const relative of listFiles()){
       const asset=await context.request.get(base+'/'+relative);
       assert.equal(asset.status(),200,`${relative} HTTP status`);
-      assert.deepEqual(await asset.body(),fs.readFileSync(path.join(dist,relative)),`${relative} byte parity`);
+      if (relative === 'launch-config.js' && isProduction) {
+        const configText = await asset.text();
+        const match = /^window\.policycockConfig = (\{[^\n]+\});\n$/.exec(configText);
+        assert.ok(match, 'production config format');
+        const config = JSON.parse(match[1]);
+        assert.deepEqual(Object.keys(config).sort(), ['projectKey','signupEndpoint']);
+        assert.ok(/^phc_[A-Za-z0-9]+$/.test(config.projectKey), 'public project key present');
+        assert.ok(['', 'https://tm6ntnopmx3f724ekqttvugjwe0ldguj.lambda-url.ap-northeast-2.on.aws/'].includes(config.signupEndpoint));
+      } else {
+        assert.deepEqual(await asset.body(),fs.readFileSync(path.join(dist,relative)),`${relative} byte parity`);
+      }
       fileChecks.push(relative);
     }
     const matchedRoutes=['/',isProduction?'/sources':'/sources.html',isProduction?'/birth-grant-map':'/birth-grant-map.html'];

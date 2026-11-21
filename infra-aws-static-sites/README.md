@@ -136,15 +136,33 @@ the workflow dispatch inputs.
 
 For Lambda/API integration, put API Gateway or Lambda Function URL behind CloudFront by adding an entry to `api_origins`.
 
-## Policycock launch signup (not deployed or enabled)
+## Shared PostHog project
+
+The image converter (`miniapp-image-tools`) and 모두의정책 (`policycock`) share the US Default project **424014** and the existing public ingestion key provisioned through `POSTHOG_MINIAPP_PROJECT_TOKEN`. Filter product metrics by `properties.app_id` and `properties.traffic_kind = 'user'`. Synthetic QA uses `?qa=1` and a per-page `qa_run_id`. Query credentials belong outside the browser. The release workflow renders the public key into each app's deployable artifact.
+
+## Policycock launch signup
 
 `app-feedback` keeps its existing feedback flow. The new launch-notice route
 uses a single DynamoDB item per normalized address with conditional state
 transitions; withdrawal atomically deletes the item. The table stores the
-address, opaque receipt, and numeric Unix-seconds TTL. Its Lambda flag is
-explicitly `ENABLE_POLICYCOCK_SIGNUP=false`. The owner notice contains the
-receipt only; the confirmation link goes to the requester. No landing signup
-UI or production collection is authorized by this code change.
+address, opaque receipt, and numeric Unix-seconds TTL. Registration defaults
+to closed. The requester receives the confirmation link. For registrations
+that explicitly accept `launch-notice-v2`, confirmation sends the verified
+address and receipt to the private Terraform input
+`policycock_signup_owner_email`. Earlier consent versions retain receipt-only
+notifications. Keep the designated operator mailbox in private variables.
+The dashboard should use the currently confirmed database records when sending
+the launch notice. Reconcile the mailbox against current receipts and verify
+deletion from the mailbox (including trash) on withdrawal, expiry, or launch.
+
+The static site can serve cases and analytics independently. To open registration,
+verify the separate service deployment under a scoped non-root role, production
+SES delivery to ordinary addresses, the site origin in Lambda URL CORS, and
+withdrawal and retention across both the table and the mailbox. The server switch
+is `policycock_signup_enabled`; the repository variable
+`POLICYCOCK_SIGNUP_ENABLED=true` enables the form on the next site deploy.
+With the frontend switch off, the landing displays the current availability and
+collects no email addresses.
 
 Run isolated local tests with `python -m venv <private-venv>`, install
 `lambda/requirements-test.txt`, then run

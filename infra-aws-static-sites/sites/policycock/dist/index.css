@@ -177,3 +177,17 @@
   .scene-side-tools button+button{border-top:0;border-left:1px solid var(--stage-line)}
 }
 @media(max-width:520px){.scene-side-tools{top:170px;right:var(--gutter)}}
+
+.case-guide{margin:.5rem 0 1rem;color:#464b4d;font-size:1rem}
+.launch-section{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:clamp(2rem,7vw,8rem);padding-block:clamp(3rem,7vw,7rem);border-top:1px solid var(--ink)}
+.launch-intro h2{margin:0 0 1.3rem;font-size:clamp(2rem,3.4vw,3.5rem);line-height:1.14;letter-spacing:-.055em}
+.launch-intro p,.launch-actions p,.launch-agreement{line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
+.launch-actions .launch-button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 18px;border:1px solid #232626;border-radius:5px;background:#242829;color:white;font:inherit;font-weight:650;cursor:pointer;text-decoration:none}
+.launch-actions .launch-button:hover{background:#414846}
+.launch-actions form{display:grid;gap:12px}
+.launch-actions [hidden]{display:none}
+.launch-actions input[type=email]{box-sizing:border-box;width:100%;min-height:46px;border:1px solid #747878;border-radius:4px;padding:10px;font:inherit}
+.launch-agreement{display:flex;gap:8px;align-items:baseline}
+.launch-actions p{margin:.85rem 0 0}
+.launch-actions button:disabled{opacity:.6}
+@media(max-width:700px){.launch-section{grid-template-columns:1fr;gap:1.1rem}}

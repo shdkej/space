@@ -133,13 +133,18 @@ def _notify_owner(table, item, now):
                     and previous.get("status") == "confirmed" and previous.get("ttl", 0) > now
                     and previous.get("owner_notice") == "delivered")
 
+    recipient = RECIPIENT_EMAIL
+    body = f"접수 번호: {item['receipt_id']}"
+    if item.get("consent") == "launch-notice-v2":
+        recipient = os.environ.get("POLICYCOCK_SIGNUP_OWNER_EMAIL", "")
+        body += (f"\n확인된 이메일: {item['email']}\n"
+                 "정책알리미 출시 안내 1회에 동의했습니다. 발송 전 유효한 신청인지 확인해 주세요.")
     try:
-        # The owner receives only a random receipt; no address, hash, token or variant.
         ses.send_email(
-            Source=SENDER_EMAIL, Destination={"ToAddresses": [RECIPIENT_EMAIL]},
+            Source=SENDER_EMAIL, Destination={"ToAddresses": [recipient]},
             Message={
                 "Subject": {"Data": "[모두의정책] 출시 안내 접수", "Charset": "UTF-8"},
-                "Body": {"Text": {"Data": f"접수 번호: {item['receipt_id']}", "Charset": "UTF-8"}},
+                "Body": {"Text": {"Data": body, "Charset": "UTF-8"}},
             },
         )
     except Exception:
@@ -174,6 +179,11 @@ def _register_launch_notice(payload, origin):
         email = _clean_text(payload.get("replyEmail"), 200).lower()
         if not email or not EMAIL_RE.fullmatch(email) or payload.get("consent") is not True:
             return _response(400, {"error": "invalid_registration"}, origin)
+        consent_version = payload.get("consentVersion", "launch-notice-v1")
+        if consent_version not in ("launch-notice-v1", "launch-notice-v2"):
+            return _response(400, {"error": "invalid_consent_version"}, origin)
+        if consent_version == "launch-notice-v2" and not EMAIL_RE.fullmatch(os.environ.get("POLICYCOCK_SIGNUP_OWNER_EMAIL", "")):
+            return _response(503, {"error": "registration_not_available"}, origin)
         now = int(datetime.now(timezone.utc).timestamp())
         email_hash = hashlib.sha256(email.encode("utf-8")).hexdigest()
         secret = secrets.token_urlsafe(32)
@@ -182,7 +192,7 @@ def _register_launch_notice(payload, origin):
                 "status": "pending", "created_at": now, "token_expires_at": now + 7 * 86400,
                 "ttl": now + 365 * 86400,
                 "variant": payload.get("variant") if payload.get("variant") in ("A", "B") else "direct",
-                "consent": "launch-notice-v1", "receipt_id": uuid.uuid4().hex}
+                "consent": consent_version, "receipt_id": uuid.uuid4().hex}
         table = _signup_table()
         try:
             table.put_item(

@@ -199,6 +199,28 @@ jobs:
             --resolve-aws \
             --check
 
+      - name: Configure Policycock public collection settings
+        if: matrix.app == 'policycock'
+        env:
+          PROJECT_KEY: ${{ secrets.POSTHOG_MINIAPP_PROJECT_TOKEN }}
+          SIGNUP_ENABLED: ${{ vars.POLICYCOCK_SIGNUP_ENABLED }}
+          APP_DOMAIN: ${{ matrix.domain }}
+          APP_DIRECTORY: ${{ matrix.build_dir }}
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, re
+          from pathlib import Path
+          directory = Path("infra-aws-static-sites/sites/policycock/dist")
+          if os.environ["APP_DOMAIN"] != "policycock.aws.shdkej.com" or Path(os.environ["APP_DIRECTORY"]) != directory:
+              raise SystemExit("Unexpected Policycock release target")
+          key = os.environ["PROJECT_KEY"]
+          if not re.fullmatch(r"phc_[A-Za-z0-9]+", key):
+              raise SystemExit("Shared PostHog browser project key missing or malformed")
+          endpoint = "https://tm6ntnopmx3f724ekqttvugjwe0ldguj.lambda-url.ap-northeast-2.on.aws/"
+          config = {"projectKey": key, "signupEndpoint": endpoint if os.environ["SIGNUP_ENABLED"] == "true" else ""}
+          (directory / "launch-config.js").write_text("window.policycockConfig = " + json.dumps(config) + ";\n")
+          PYTHON
+
       - name: Sync S3
         shell: bash
         env:

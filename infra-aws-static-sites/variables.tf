@@ -29,6 +29,19 @@ variable "app_feedback_recipient_email" {
   type        = string
 }
 
+variable "policycock_signup_owner_email" {
+  description = "Private operator mailbox for confirmed Policycock launch registrations."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "policycock_signup_enabled" {
+  description = "Enable only after signup delivery and deletion have been verified."
+  type        = bool
+  default     = false
+}
+
 variable "app_feedback_allowed_origins" {
   description = "Allowed browser origins for the shared app feedback Lambda Function URL."
   type        = list(string)

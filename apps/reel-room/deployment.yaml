@@ -24,7 +24,7 @@ spec:
         kubernetes.io/hostname: oracle-arm-1
       containers:
         - name: app
-          image: ghcr.io/shdkej/video-automation:412b9a61561e94a08bce9d2a9ef044ae26a7781f
+          image: ghcr.io/shdkej/video-automation:acb214e0b5729ea2d9922bcef22cf8127d429ae3
           imagePullPolicy: Always
           env:
             - name: VIDAUTO_STUDIO_IMAGE_MODEL

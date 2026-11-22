@@ -1,6 +1,6 @@
 # Minimal Collector
 
-미니멀에 관심 있는 방문자가 운영자의 취향을 서랍 하나씩 열어 살펴보는 개인 랜딩페이지입니다. 도서관 목문을 클릭하거나 키보드로 열면 흰 스튜디오로 이동합니다. 오른쪽 이름표를 누르거나 각 서랍을 가로로 스크롤하면 주제별 카드가 보입니다. 서로 맞닿은 로즈우드 서랍 다섯 칸에 카드를 여덟 장씩 담았습니다. 세로 스크롤로 마지막 칸까지 이동합니다.
+미니멀에 관심 있는 방문자가 운영자의 취향을 서랍 하나씩 열어 살펴보는 개인 랜딩페이지입니다. 도서관 목문을 클릭하거나 키보드로 열면 흰 스튜디오로 이동합니다. 오른쪽의 작은 목제 손잡이를 누르거나 수평으로 당기면 다섯 칸의 앤티크 서랍이 개별적으로 열립니다. 각 칸의 정물 또는 건축 모형 여덟 점은 터치나 클릭으로 확대할 수 있습니다. 감상 창에서는 방향키로 앞뒤 작품을 보고 Escape로 돌아옵니다. 세로 스크롤로 마지막 칸까지 이동합니다.
 
 ## 실행과 편집
 
@@ -8,7 +8,7 @@
 
 ## 이미지
 
-입구의 [Biblioteca medicea laurenziana, vestibolo e scala di Michelangelo, 03](https://commons.wikimedia.org/wiki/File:Biblioteca_medicea_laurenziana,_vestibolo_e_scala_di_michelangelo,_03.jpg)는 Francesco Bini(Sailko)의 사진입니다. 화면 비율에 맞춰 크롭하고 WebP로 변환했습니다. 사진 및 목문을 겹친 편집 장면은 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)으로 제공합니다. 목문 레이어와 로즈우드 표면은 생성 이미지입니다.
+입구의 [Biblioteca medicea laurenziana, vestibolo e scala di Michelangelo, 03](https://commons.wikimedia.org/wiki/File:Biblioteca_medicea_laurenziana,_vestibolo_e_scala_di_michelangelo,_03.jpg)는 Francesco Bini(Sailko)의 사진입니다. 화면 비율에 맞춰 크롭하고 WebP로 변환했습니다. 사진 및 목문을 겹친 편집 장면은 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)으로 제공합니다. 목문 레이어와 목재 표면은 생성 이미지입니다. `dist/exhibits/`의 WebP 40개는 기존 수집 주제를 해석한 AI 정물·모형 이미지입니다. 작품 감상 창에 이미지 성격을 표기합니다. 첨부된 가구 사진은 디자인 참조로만 사용했습니다.
 
 ## 배포와 확인
 

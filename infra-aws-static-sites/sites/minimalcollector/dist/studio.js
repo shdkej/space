@@ -57,6 +57,46 @@ function element(tag, className, value) {
   if (value) node.textContent = value;
   return node;
 }
+const viewing = document.querySelector('.viewing');
+const imageSubjects = [
+  ['주황색 접이식 라디오', '작은 여행 기념 자석', '나무 의자', '둥근 오뚝이', '무지 표지 잡지', '필름 카메라', '나무 손잡이', '작은 목제 서랍'],
+  ['돌계단 모형', '흰 스튜디오 모형', '장서가 놓인 서가 모형', '지도와 열람대', '나무 난간과 서가 모형', '독서등과 긴 테이블', '흰 계단과 중정 모형', '인쇄기 모형'],
+  ['라디오 다이얼', '창 하나가 난 흰 벽 모형', '검은 관절형 램프', '경첩으로 연결된 두 면', '작은 여행 가방', '접힌 천', '도자기 그릇', '부채꼴 계단 모형'],
+  ['색인 상자', '만년필과 종이', '책갈피가 꽂힌 책', '지도와 수첩', '필름 조각', '천 표지 일기장', '교정지', '흑백 인화 사진'],
+  ['재료 견본', '회로 기판', '연필 스케치', '설계 도면과 자', '나무 도형', '종이 배치 모형', '색상 견본', '나무 모듈']
+];
+const studyTypes = ['형태 습작','공간 모형','인물에서 연상한 정물','기록 도구 습작','제작 습작'];
+const imagePath = (group, item) => 'exhibits/' + drawers[group][1].toLowerCase() + '-' + (item + 1) + '.webp';
+let currentGroup;
+let currentItem;
+function showPiece(group, item) {
+  currentGroup = group;
+  currentItem = item;
+  const [name, , items] = drawers[group];
+  const img = viewing.querySelector('img');
+  img.src = imagePath(group, item);
+  img.alt = imageSubjects[group][item];
+  viewing.querySelector('.category').textContent = name + ' / ' + studyTypes[group] + ' · AI 이미지';
+  viewing.querySelector('h2').textContent = items[item][0];
+  viewing.querySelector('.description').textContent = items[item][1];
+  viewing.querySelector('.position').textContent = (item + 1) + ' / ' + items.length;
+  viewing.querySelector('.previous').disabled = item === 0;
+  viewing.querySelector('.next').disabled = item === items.length - 1;
+  if (!viewing.open) viewing.showModal();
+}
+function stepPiece(delta) {
+  const next = currentItem + delta;
+  if (next >= 0 && next < drawers[currentGroup][2].length) showPiece(currentGroup, next);
+}
+viewing.querySelector('.close-view').onclick = () => viewing.close();
+viewing.querySelector('.previous').onclick = () => stepPiece(-1);
+viewing.querySelector('.next').onclick = () => stepPiece(1);
+viewing.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    stepPiece(e.key === 'ArrowLeft' ? -1 : 1);
+  }
+});
 for (const [index, [name, english, items]] of drawers.entries()) {
   const row = element('section', 'row');
   row.setAttribute('aria-label', name + ' 서랍');
@@ -71,9 +111,22 @@ for (const [index, [name, english, items]] of drawers.entries()) {
   const contents = element('div', 'contents');
   contents.id = 'drawer-' + index;
   handle.setAttribute('aria-controls', contents.id);
-  for (const [title, body] of items) {
+  for (const [item, [title]] of items.entries()) {
     const card = element('article', 'card');
-    card.append(element('h2', '', title), element('p', '', body));
+    const button = element('button', 'piece');
+    button.type = 'button';
+    button.setAttribute('aria-label', title + ' 작품 감상');
+    button.setAttribute('aria-haspopup', 'dialog');
+    const img = element('img', 'study');
+    img.alt = imageSubjects[index][item];
+    img.draggable = false;
+    img.loading = 'lazy';
+    img.dataset.src = imagePath(index, item);
+    const caption = element('span', 'caption');
+    caption.append(element('strong', '', title), element('small', '', studyTypes[index]));
+    button.append(img, caption);
+    button.onclick = () => showPiece(index, item);
+    card.append(button);
     contents.append(card);
   }
   tray.append(handle, contents);
@@ -82,13 +135,18 @@ for (const [index, [name, english, items]] of drawers.entries()) {
   const behavior = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
   const sync = () => {
     const opened = row.scrollLeft > 30;
+    contents.inert = !opened;
+    if (opened && !contents.dataset.loaded) {
+      contents.querySelectorAll('img').forEach(img => { img.src = img.dataset.src; });
+      contents.dataset.loaded = 'true';
+    }
     handle.setAttribute('aria-expanded', String(opened));
     handle.setAttribute('aria-label', name + ' 서랍 ' + (opened ? '닫기' : '열기'));
   };
   sync();
   row.addEventListener('scroll', sync, {passive:true});
   handle.addEventListener('click', () => row.scrollTo({
-    left: row.scrollLeft > 30 ? 0 : Math.min(row.scrollWidth - row.clientWidth, row.clientWidth * .73),
+    left: row.scrollLeft > 30 ? 0 : Math.min(row.scrollWidth - row.clientWidth, row.clientWidth - handle.offsetWidth),
     behavior: behavior()
   }));
   row.addEventListener('keydown', event => {
@@ -98,14 +156,28 @@ for (const [index, [name, english, items]] of drawers.entries()) {
     row.scrollTo({left:x, behavior:behavior()});
   });
   let drag;
+  let suppressClick = false;
   row.addEventListener('pointerdown', e => {
-    if (e.pointerType === 'mouse' && e.button === 0 && e.target.closest('.tray') && !e.target.closest('button')) {
+    suppressClick = false;
+    if (e.pointerType === 'mouse' && e.button === 0 && e.target.closest('.tray')) {
       drag = {start:e.clientX, left:row.scrollLeft};
-      row.setPointerCapture(e.pointerId);
     }
   });
   row.addEventListener('pointermove', e => {
-    if (drag) row.scrollLeft = drag.left + drag.start - e.clientX;
+    if (!drag || !e.buttons) { drag = null; return; }
+    const delta = drag.start - e.clientX;
+    if (!suppressClick && Math.abs(delta) < 5) return;
+    suppressClick = true;
+    row.setPointerCapture(e.pointerId);
+    row.scrollLeft = drag.left + delta;
   });
-  row.addEventListener('lostpointercapture', () => { drag = null; });
+  row.addEventListener('click', e => {
+    if (suppressClick && e.detail) {
+      e.preventDefault();
+      e.stopPropagation();
+      suppressClick = false;
+    }
+  }, true);
+  row.addEventListener('pointerup', () => { drag = null; });
+  row.addEventListener('pointercancel', () => { drag = null; });
 }

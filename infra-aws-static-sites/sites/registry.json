@@ -143,6 +143,15 @@
       "spa_fallback": false
     },
     {
+      "app": "minimalcollector",
+      "name": "Minimal Collector",
+      "domain_name": "minimalcollector.com",
+      "hosting": "dedicated-cloudfront",
+      "kind": "landing",
+      "detail": "도서관 입구와 원목 서랍으로 탐색하는 개인 취향 아카이브",
+      "deployment_name": "Minimal Collector"
+    },
+    {
       "app": "policycock",
       "name": "모두의정책",
       "domain_name": "policycock.aws.shdkej.com",

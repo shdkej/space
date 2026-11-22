@@ -36,6 +36,23 @@ async function verifyLabels(page) {
   return policies;
 }
 
+async function verifyFirstScreen(page) {
+  const bounds=await page.evaluate(()=>{
+    const hero=document.querySelector('#atlas').getBoundingClientRect();
+    const header=document.querySelector('.site-header').getBoundingClientRect();
+    const next=document.querySelector('.ledger-overview').getBoundingClientRect();
+    const links=document.querySelector('.galaxy-links').getBoundingClientRect();
+    const title=document.querySelector('.galaxy-intro-copy').getBoundingClientRect();
+    const targets=[...document.querySelectorAll('#atlas [data-galaxy-policy]')].map(a=>a.getBoundingClientRect());
+    const overlap=targets.some(r=>r.bottom>links.top+1 ||
+      (r.top<title.bottom && r.bottom>title.top && r.left<title.right && r.right>title.left));
+    return {height:innerHeight,first:header.top,top:hero.top,headerBottom:header.bottom,bottom:hero.bottom,next:next.top,overlap};
+  });
+  assert.ok(Math.abs(bounds.first)<=1 && Math.abs(bounds.top-bounds.headerBottom)<=1 &&
+    Math.abs(bounds.bottom-bounds.height)<=1 && bounds.next>=bounds.height-1 && !bounds.overlap,
+    'first screen must fit its header, hero, policy links and footer: '+JSON.stringify(bounds));
+}
+
 async function openAndClose(page, policy, method) {
   const target = page.locator('#atlas [data-galaxy-policy="' + policy.id + '"]');
   if (method === 'keyboard') {
@@ -129,6 +146,7 @@ async function main() {
     await page.locator('#atlas[data-renderer="webgl"]').waitFor({timeout:45000});
     await page.evaluate(()=>document.fonts.ready);
     if(await page.locator('#analytics-decline').isVisible())await page.locator('#analytics-decline').click();
+    await verifyFirstScreen(page);
     await verifyCanvas(page);
     const motion=page.locator('#galaxy-motion');
     await motion.click();
@@ -146,14 +164,16 @@ async function main() {
     await mobile.locator('#atlas:is([data-renderer="webgl"],[data-renderer="fallback"])').waitFor();
     await mobile.evaluate(()=>document.fonts.ready);
     if(await mobile.locator('#analytics-decline').isVisible())await mobile.locator('#analytics-decline').click();
-    for (const width of [320,375,768]) {
-      await mobile.setViewportSize({width,height:812});
+    for (const [width,height] of [[320,568],[375,667],[768,812],[844,390],[1920,1200]]) {
+      await mobile.setViewportSize({width,height});
       await mobile.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+      await verifyFirstScreen(mobile);
       await verifyLabels(mobile);
       await checkMotion(mobile);
       assert.ok(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
       if(width===375) await snapshot(mobile,'mobile');
     }
+    await mobile.setViewportSize({width:375,height:812});
     await openAndClose(mobile,policies[0],'touch');
     await openAndClose(mobile,policies.at(-1),'keyboard');
 

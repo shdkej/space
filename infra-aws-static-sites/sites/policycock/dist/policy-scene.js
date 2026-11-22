@@ -63,7 +63,7 @@ function makeGraph(roots,w,h){
   const cx=w*.51,cy=h*.54;
   for(const [i,p] of roots.entries())hubs.push(node(p.x,p.y,6,palette[i%5],i));
   // Uneven, nested clusters give the network its silhouette.
-  for(let i=0;i<56;i++){
+  for(let i=0;i<43;i++){
     const a=random()*tau,r=Math.pow(random(),.72);
     hubs.push(node(cx+Math.cos(a)*r*w*.41,cy+Math.sin(a)*r*h*.39,
       2+4*random(),palette[i%5]));
@@ -71,7 +71,7 @@ function makeGraph(roots,w,h){
   for(const [i,id] of hubs.entries()){
     const hub=nodes[id],tint=hub.tint;
     const radius=(i<10?79:24+random()*60)*scale;
-    const turns=i<10?28:8+Math.floor(random()*16);
+    const turns=i<10?23:7+Math.floor(random()*14);
     const slant=random()*tau;
     for(let j=0;j<turns;j++){
       const angle=random()*tau;
@@ -91,7 +91,7 @@ function makeGraph(roots,w,h){
   // A broad central web binds the smaller trees into one continuous constellation.
   const core=node(cx,cy,6,[.94,.61,.60]);
   const inner=[];
-  for(let i=0;i<190;i++){
+  for(let i=0;i<140;i++){
     const a=random()*tau,r=Math.sqrt(random());
     const id=node(cx+Math.cos(a)*r*w*.22,cy+Math.sin(a)*r*h*.29,
       1.6+random()*2.8,random()<.5?[.93,.57,.58]:palette[i%5]);
@@ -109,7 +109,7 @@ function makeGraph(roots,w,h){
     inner.push(id);
   }
   // Broken outer filaments extend beyond the dense core.
-  for(let i=0;i<30;i++){
+  for(let i=0;i<23;i++){
     const start=random()*tau,r=.82+.28*random();
     let prev=-1;
     for(let j=0;j<5+Math.floor(random()*11);j++){
@@ -159,7 +159,7 @@ function start(){
   const viewport=gl.getUniformLocation(program,'viewport'), density=gl.getUniformLocation(program,'density');
   const drawingNodes=gl.getUniformLocation(program,'drawingNodes');
   let graph,lineData,pointData,positions,w,h,frame=0,last=0,t=0,visible=true,active=-1,paused=reduced.matches;
-  const flowCount=170,dx=new Float32Array(10),dy=new Float32Array(10);
+  const flowCount=110,dx=new Float32Array(10),dy=new Float32Array(10);
   function layout(){
     const bounds=canvas.getBoundingClientRect();w=bounds.width;h=bounds.height;
     if(!w||!h)return;

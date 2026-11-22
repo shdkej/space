@@ -8,7 +8,17 @@ document.querySelectorAll('.threshold, .enter').forEach(link => {
     if (navigating) return;
     navigating = true;
     foyer.classList.add('opening');
-    setTimeout(() => location.assign(link.href), 1250);
+    // Navigate once the light has filled the viewport, even if animations are disabled mid-flight.
+    const finish = () => {
+      clearTimeout(fallback);
+      foyer.removeEventListener('animationend', onEnd);
+      location.assign(link.href);
+    };
+    const onEnd = e => {
+      if (e.target === foyer && e.animationName === 'fill-room') finish();
+    };
+    const fallback = setTimeout(finish, 1750);
+    foyer.addEventListener('animationend', onEnd);
   });
 });
 window.addEventListener('pageshow', () => {

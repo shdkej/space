@@ -22,8 +22,8 @@
 .local-pair h4 {margin:.2em 0 .45em;font-size:1.4cqw;color:#534e42}
 .local-pair>div {position:relative;gap:.65cqw}
 .local-pair .state-node strong {font-size:1.65cqw}
-.state-people {display:flex;align-items:center;gap:2cqw;padding:.55cqw 0}
-.state-people h3 {flex:none;margin:0;font-size:2.5cqw;line-height:1.2;letter-spacing:-.045em;white-space:nowrap}
+.state-people {display:flex;flex-direction:column;align-items:center;gap:.4cqw;padding:.4cqw 0;text-align:center}
+.state-people h3 {flex:none;margin:0;padding:.1em .85em;background:#fff;border:1px solid #aaa394;font-size:2.5cqw;line-height:1.2;letter-spacing:-.045em;white-space:nowrap}
 .people-invite {min-width:0}
 .people-invite strong {display:block;font-size:1.55cqw;letter-spacing:-.04em;line-height:1.25}
 .people-invite p {margin:.25em 0;font-size:1.24cqw;line-height:1.4;word-break:keep-all}
@@ -47,7 +47,7 @@
  .state-node {min-height:54px;padding:5px 2px}.state-node span{font-size:10px}.state-node strong,.local-pair .state-node strong{font-size:14px}
  .state-node small {display:none}.state-independent{width:90%}
  .state-local-grid {gap:8px}.local-pair h4{font-size:12px}.local-pair>div{grid-template-columns:1fr;gap:4px}
- .local-pair .state-node{min-height:42px}.state-people{gap:12px;padding:6px 0}.state-people h3{font-size:21px}.people-invite strong{font-size:15px}.people-invite p,.people-invite a{font-size:12px}
+ .local-pair .state-node{min-height:42px}.state-people{gap:4px;padding:4px 0}.state-people h3{font-size:21px}.people-invite strong{font-size:15px}.people-invite p,.people-invite a{font-size:12px}
 }
 .state-relations {display:flex;justify-content:center;flex-wrap:wrap;gap:.35em 1.4em;margin:0;font-size:1.05cqw;text-align:center}.state-relations b {color:#724932}
 @media screen and (max-width:760px){.state-relations {font-size:10px;gap:2px 8px}}
@@ -61,6 +61,6 @@
 .state-branches {display:flex;flex-direction:column;gap:1.45cqw}
 .state-relations {width:100%;max-width:none;align-self:center}
 @media screen and (max-width:760px){.state-branches{gap:12px}}
-@media screen and (max-width:380px){.state-sheet{gap:4px;padding-block:7px}.state-people{gap:8px;padding:4px 0}.people-invite strong{font-size:13px}.state-node{min-height:44px}.state-charter{padding-block:3px}.state-local h3{font-size:16px}}
+@media screen and (max-width:380px){.state-sheet{gap:4px;padding-block:7px}.state-people{gap:3px;padding:1px 0}.people-invite strong{font-size:13px}.state-node{min-height:44px}.state-charter{padding-block:3px}.state-local h3{font-size:16px}}
 
 @media print {.people-invite a {display:none}}

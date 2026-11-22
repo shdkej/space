@@ -1,9 +1,9 @@
 {
-  "verifiedAt": "2026-11-22T04:45:41.359Z",
-  "url": "https://policycock.aws.shdkej.com/",
+  "verifiedAt": "2026-11-22T07:23:59.144Z",
+  "url": "https://policy.minimalcollector.com/",
   "status": "passed",
   "checks": [
-    "24개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
+    "25개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
     "HTTPS 200·새 CSS·정책 10·기관 44·의회 18·국회 링크",
     "1440×900 탐색 히어로·10/44 범위·3D 로딩 실패 시 정책 목록 접근",
     "정책 10건·기관 44곳 상세와 원문 링크 전수",
@@ -40,6 +40,7 @@
     "assets/favicon.svg",
     "birth-grant-map.html",
     "data.js",
+    "domain-move.js",
     "ga4-consent.js",
     "index.css",
     "index.html",

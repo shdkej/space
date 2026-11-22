@@ -26,6 +26,7 @@
     notice.hidden = true;
     (openedFromSettings ? settings : document.querySelector('.site-header .wordmark')).focus();
     openedFromSettings = false;
+    window.dispatchEvent(new Event('policycock:posthog-choice'));
   };
   document.getElementById('analytics-accept').addEventListener('click', () => {
     if (blocked()) { save('declined'); return; }
@@ -48,6 +49,7 @@
       (openedFromSettings ? settings : document.querySelector('.site-header .wordmark')).focus();
       openedFromSettings = false;
     }
+    window.dispatchEvent(new Event('policycock:posthog-choice'));
   });
   if (choice === null && !blocked()) show();
 })();

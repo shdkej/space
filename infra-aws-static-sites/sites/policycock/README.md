@@ -113,7 +113,9 @@ SITE_URL=http://127.0.0.1:4173 npm run test:scene
 
 이미지 작업대와 공용인 PostHog US Default 프로젝트 **424014**를 사용합니다. 운영 배포에서 기존 수집 키를 주입합니다. 속성은 `app_id=policycock`, `traffic_kind=user|synthetic`, 프로필·위치 보강 비활성 플래그, 합성 요청의 난수 `qa_run_id`로 제한합니다. 이메일·기관·인물·선택한 정책·검색어·메모·링크·철회 토큰은 계측하지 않습니다. 방문자 측 추적 차단 신호를 존중합니다.
 
-방문 분석은 별도 선택 동의(`policycock.analytics.consent.v1`)가 있을 때만 전송합니다. 거부·미선택·GPC/DNT 상태에서는 PostHog 호출이 없으며, 하단 `방문 분석 설정`에서 철회할 수 있습니다. 이메일 출시 알림 신청 동의와 분리합니다. 브라우저 저장소가 막힌 경우 선택은 탭에서만 유지됩니다. GA4 태그·측정 ID는 아직 연결하지 않았습니다. 연결 시 안내·동의 버전을 갱신하고 유입 외 자동 수집 및 민감한 URL·검색어·정책 정보 전송을 막아야 합니다. 기존 PostHog 프로젝트의 IP 보관 설정은 별도 운영 확인이 필요합니다.
+PostHog 방문 분석은 별도 선택 동의(`policycock.analytics.consent.v1`)가 있을 때만 전송합니다. 거부·미선택·GPC/DNT 상태에서는 PostHog 호출이 없으며, 하단 `PostHog 분석 설정`에서 철회할 수 있습니다. 이메일 출시 알림 신청 동의와 분리합니다. 브라우저 저장소가 막힌 경우 PostHog 선택은 탭에서만 유지됩니다. 기존 PostHog 프로젝트의 IP 보관 설정은 별도 운영 확인이 필요합니다.
+
+GA4 유입 분석은 **PostHog를 유지한 채 추가할 별도 선택 항목**입니다. `dist/ga4-consent.js`는 `policycock.ga4.consent.v1`을 사용하며 기존 PostHog 동의를 GA4로 승계하지 않습니다. 확인된 `ga4MeasurementId`가 `window.policycockConfig`에 없으면 GA4 선택 UI·Google 태그는 모두 비활성입니다(현재 운영 설정). ID가 있어도 GA4 선택 전·거부·GPC/DNT 상태에서는 태그를 로드하지 않으며, 저장소 접근 실패 시 수집하지 않습니다. 동의 후 고정된 사이트 첫 화면 URL·제목으로 수동 `page_view` 1건만 전송합니다. 원본 쿼리·해시·검색어·관심 정책·메모·이메일·외부 신청 클릭은 GA4 이벤트에 넣지 않고, 검색엔진 referrer는 승인한 도메인 이름으로만 정규화합니다. 탭 간 철회 시 이미 로드된 태그를 내려놓기 위해 해당 탭을 다시 로드합니다. GA4 실제 수집은 **새 Analytics 계정 약관 수락, 속성/스트림·측정 ID 확인, 향상된 측정 비활성화, 사용자·이벤트 2개월 보유 설정, 개인정보처리방침 게시, 네트워크 페이로드와 GA4 수신 검증 전까지 활성화하지 않습니다.** 운영자 표기와 공개 문의처는 사용자 제공 `SAM` / `shdkej@gmail.com`입니다. Search Console 연결은 별도 승인 없이는 변경하지 않습니다.
 
 | 이벤트 | 집계 시점 |
 | --- | --- |
@@ -123,4 +125,4 @@ SITE_URL=http://127.0.0.1:4173 npm run test:scene
 | `signup_request_accepted`, `signup_withdrawn`, `signup_cleanup_pending` | 전용 API가 접수 성공(중복 포함), 철회와 정리 통지 수락, 철회와 정리 통지 대기에 응답 |
 | `signup_failed` | 요청 처리 오류 또는 유효하지 않은 철회 요청 |
 
-`node scripts/verify-launch.cjs`로 모바일 사례 모달·준비 중 상태·격리한 API 요청과 실패/중복/철회·PostHog 전송 속성을 확인합니다. 수집 검증은 실제 운영 주소에서 `?qa=1`로 연 뒤 동일한 `qa_run_id`를 프로젝트에서 조회합니다.
+`node scripts/verify-launch.cjs`로 모바일 사례 모달·준비 중 상태·격리한 API 요청과 실패/중복/철회·PostHog 전송 속성을 확인합니다. `node scripts/verify-ga4.cjs`는 **모의 Google 전송**으로 무설정·거부·GPC·탭 간 철회·민감 URL 제거를 확인합니다. 모의 응답은 GA4의 실제 수신 증거가 아닙니다. PostHog 수집은 실제 운영 주소에서 `?qa=1`로 연 뒤 동일한 `qa_run_id`를 프로젝트에서 조회합니다. GA4는 전용 스트림 활성화 후 별도 운영 브라우저와 GA4 실시간 보고서에서 확인해야 합니다.

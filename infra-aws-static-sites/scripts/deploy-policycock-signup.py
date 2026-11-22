@@ -18,9 +18,9 @@ REGION = "ap-northeast-2"
 FUNCTION = "policycock-launch-signup"
 TABLE = "policycock-launch-registrations"
 GROUP = "/aws/lambda/" + FUNCTION
-ORIGIN = "https://policycock.aws.shdkej.com"
+ORIGINS = ["https://policycock.aws.shdkej.com", "https://policy.minimalcollector.com"]
 HANDLER = "policycock_signup.handler"
-CORS = {"AllowOrigins": [ORIGIN], "AllowMethods": ["POST"], "AllowHeaders": ["content-type"], "MaxAge": 600}
+CORS = {"AllowOrigins": ORIGINS, "AllowMethods": ["POST"], "AllowHeaders": ["content-type"], "MaxAge": 600}
 
 
 def aws(service, operation, *options, absent=()):
@@ -154,10 +154,10 @@ def prepare_url(function_arn):
     return config["FunctionUrl"]
 
 
-def verify_api(url, mode):
-    preflight = Request(url, method="OPTIONS", headers={"Origin": ORIGIN,
+def verify_api(url, mode, origin):
+    preflight = Request(url, method="OPTIONS", headers={"Origin": origin,
                         "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type"})
-    request = Request(url, method="POST", headers={"Origin": ORIGIN, "Content-Type": "application/json"},
+    request = Request(url, method="POST", headers={"Origin": origin, "Content-Type": "application/json"},
                       data=json.dumps({"appId": "policycock", "type": "launch-notice", "action": "request",
                                        "consentVersion": "launch-notice-v3"}).encode())
     for _ in range(12):
@@ -165,14 +165,14 @@ def verify_api(url, mode):
             with urlopen(preflight, timeout=10) as reply:
                 methods = {v.strip().upper() for v in reply.headers.get("Access-Control-Allow-Methods", "").split(",")}
                 headers = {v.strip().lower() for v in reply.headers.get("Access-Control-Allow-Headers", "").split(",")}
-                require(reply.headers.get("Access-Control-Allow-Origin") == ORIGIN and "POST" in methods
+                require(reply.headers.get("Access-Control-Allow-Origin") == origin and "POST" in methods
                         and "content-type" in headers, "Incorrect preflight response")
             try:
                 with urlopen(request, timeout=10):
                     raise RuntimeError("API accepted a request without an email address")
             except HTTPError as error:
                 expected = (400, "invalid_registration") if mode == "open" else (503, "registration_not_available")
-                if error.code == expected[0] and error.headers.get("Access-Control-Allow-Origin") == ORIGIN:
+                if error.code == expected[0] and error.headers.get("Access-Control-Allow-Origin") == origin:
                     if json.loads(error.read()).get("error") == expected[1]:
                         return
         except HTTPError as error:
@@ -216,7 +216,8 @@ def main():
         function_arn = prepare_function(role, owner, Path(temp), package, args.mode)
     require(function_arn == f"arn:aws:lambda:{REGION}:{account}:function:{FUNCTION}", "Unexpected dedicated function ARN")
     url = prepare_url(function_arn)
-    verify_api(url, args.mode)
+    for origin in ORIGINS:
+        verify_api(url, args.mode, origin)
     with open(os.environ["GITHUB_OUTPUT"], "a") as output:
         print("url=" + url, file=output)
     print(f"Verified {args.mode} registration, dedicated deployment, CORS and public HTTPS endpoint:", url)

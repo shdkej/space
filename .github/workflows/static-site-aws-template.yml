@@ -205,6 +205,7 @@ jobs:
           PROJECT_KEY: ${{ secrets.POSTHOG_MINIAPP_PROJECT_TOKEN }}
           SIGNUP_ENABLED: ${{ vars.POLICYCOCK_SIGNUP_ENABLED }}
           SIGNUP_URL: ${{ vars.POLICYCOCK_SIGNUP_URL }}
+          GA4_MEASUREMENT_ID: ${{ vars.POLICYCOCK_GA4_MEASUREMENT_ID }}
           APP_DOMAIN: ${{ matrix.domain }}
           APP_DIRECTORY: ${{ matrix.build_dir }}
         run: |
@@ -219,9 +220,13 @@ jobs:
               raise SystemExit("Shared PostHog browser project key missing or malformed")
           endpoint = os.environ["SIGNUP_URL"]
           enabled = os.environ["SIGNUP_ENABLED"] == "true"
+          ga4_id = os.environ["GA4_MEASUREMENT_ID"]
+          if ga4_id and ga4_id != "G-BT1FX0ZMCD":
+              raise SystemExit("Unexpected Policycock GA4 measurement ID or property")
           if (enabled or endpoint) and not re.fullmatch(r"https://[a-z0-9]{26,40}\.lambda-url\.ap-northeast-2\.on\.aws/", endpoint):
               raise SystemExit("Expected the verified Seoul signup Function URL")
-          config = {"projectKey": key, "signupEnabled": enabled, "signupEndpoint": endpoint}
+          config = {"projectKey": key, "signupEnabled": enabled, "signupEndpoint": endpoint,
+                    "ga4MeasurementId": ga4_id}
           (directory / "launch-config.js").write_text("window.policycockConfig = " + json.dumps(config) + ";\n")
           PYTHON
 

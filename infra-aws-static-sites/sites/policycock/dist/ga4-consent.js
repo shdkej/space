@@ -2,8 +2,13 @@
   'use strict';
   // GA4 is a distinct recipient; PostHog v1 choices never authorize it.
   const key = 'policycock.ga4.consent.v1';
+  const handoffKey = 'policycock.ga4.clean-navigation.v1';
+  const withdrawalVisit = location.hash.startsWith('#launch-withdraw=');
   const id = window.policycockConfig?.ga4MeasurementId;
   if (!/^G-[A-Z0-9]{8,}$/.test(id || '')) return;
+  // The signup withdrawal fragment is an access capability. Let launch.js
+  // consume it without a GA4 reload, choice prompt or tag on this page.
+  if (withdrawalVisit) return;
   const notice = document.getElementById('ga4-notice');
   const settings = document.getElementById('ga4-settings');
   const status = document.getElementById('ga4-status');
@@ -33,19 +38,50 @@
   }
   function start() {
     if (!allowed() || started) return;
+    let handoff;
+    try {
+      const saved = sessionStorage.getItem(handoffKey);
+      sessionStorage.removeItem(handoffKey);
+      if (saved) handoff = JSON.parse(saved);
+    } catch { status.textContent = '브라우저 설정 때문에 GA4를 실행하지 않습니다.'; return; }
+    let referrer = '';
+    let cleanPage;
+    if (handoff) {
+      if (handoff.url !== location.href || document.referrer ||
+          (handoff.referrer && !/^https:\/\/(google\.com|naver\.com|bing\.com|daum\.net|duckduckgo\.com)\/$/.test(handoff.referrer))) {
+        status.textContent = '주소를 보호할 수 없어 GA4를 실행하지 않습니다.';
+        return;
+      }
+      cleanPage = new URL(handoff.url);
+      referrer = handoff.referrer || '';
+    } else {
+      referrer = safeReferrer();
+      cleanPage = new URL('/', location.origin);
+      if (referrer) {
+        cleanPage.searchParams.set('utm_source', new URL(referrer).hostname.split('.')[0]);
+        cleanPage.searchParams.set('utm_medium', 'organic');
+      }
+      // The actual Google tag may ignore URL/referrer overrides. A fresh
+      // no-referrer document removes both originals before the tag can run.
+      if (location.href !== cleanPage.href || document.referrer) {
+        try {
+          sessionStorage.setItem(handoffKey, JSON.stringify({url: cleanPage.href, referrer}));
+          location.replace(cleanPage.href);
+        } catch { status.textContent = '주소를 보호할 수 없어 GA4를 실행하지 않습니다.'; }
+        return;
+      }
+    }
     started = true;
-    const cleanPage = location.origin + '/';
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied',
       ad_user_data: 'denied', ad_personalization: 'denied'});
     window.gtag('js', new Date());
     window.gtag('config', id, {send_page_view: false, allow_google_signals: false,
-      allow_ad_personalization_signals: false, page_location: cleanPage,
-      page_referrer: safeReferrer(), page_title: '모두의정책'});
-    // A single allowlisted page view; no policy, search, signup or outbound-click events.
-    if (allowed()) window.gtag('event', 'page_view', {page_location: cleanPage,
-      page_referrer: safeReferrer(), page_title: '모두의정책'});
+      allow_ad_personalization_signals: false, page_location: cleanPage.href,
+      page_referrer: referrer, page_title: '모두의정책'});
+    if (allowed()) window.gtag('event', 'page_view', {page_location: cleanPage.href,
+      page_referrer: referrer, page_title: '모두의정책'});
     if (!allowed()) { location.reload(); return; }
     const script = document.createElement('script');
     script.async = true;
@@ -89,6 +125,7 @@
     if (!allowed() && started) location.reload();
   });
   window.addEventListener('focus', () => { if (blocked() && started) location.reload(); });
+
   render();
   start();
 })();

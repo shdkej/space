@@ -38,8 +38,10 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
         const match = /^window\.policycockConfig = (\{[^\n]+\});\n$/.exec(configText);
         assert.ok(match, 'production config format');
         const config = JSON.parse(match[1]);
-        assert.deepEqual(Object.keys(config).sort(), ['projectKey','signupEnabled','signupEndpoint']);
+        assert.deepEqual(Object.keys(config).sort(), ['ga4MeasurementId','projectKey','signupEnabled','signupEndpoint']);
         assert.ok(/^phc_[A-Za-z0-9]+$/.test(config.projectKey), 'public project key present');
+        assert.ok(config.ga4MeasurementId === '' || config.ga4MeasurementId === 'G-BT1FX0ZMCD', 'GA4 ID absent or the verified Policycock stream');
+        if (process.env.EXPECTED_GA4_ID !== undefined) assert.equal(config.ga4MeasurementId, process.env.EXPECTED_GA4_ID);
         assert.equal(typeof config.signupEnabled, 'boolean');
         assert.ok(!config.signupEnabled || config.signupEndpoint);
         assert.ok(config.signupEndpoint === '' || /^https:\/\/[a-z0-9]{26,40}\.lambda-url\.ap-northeast-2\.on\.aws\/$/.test(config.signupEndpoint), 'Seoul signup URL');
@@ -52,8 +54,8 @@ const agencies=JSON.parse(fs.readFileSync(path.join(root,'dist/institutions.json
       }
       fileChecks.push(relative);
     }
-    const matchedRoutes=['/',isProduction?'/sources':'/sources.html',isProduction?'/birth-grant-map':'/birth-grant-map.html'];
-    for(const [route,file] of [[matchedRoutes[0],'index.html'],[matchedRoutes[1],'sources.html'],[matchedRoutes[2],'birth-grant-map.html']]){
+    const matchedRoutes=['/',isProduction?'/sources':'/sources.html',isProduction?'/birth-grant-map':'/birth-grant-map.html',isProduction?'/privacy':'/privacy.html'];
+    for(const [route,file] of [[matchedRoutes[0],'index.html'],[matchedRoutes[1],'sources.html'],[matchedRoutes[2],'birth-grant-map.html'],[matchedRoutes[3],'privacy.html']]){
       const routeResponse=await context.request.get(base+route);
       assert.equal(routeResponse.status(),200,`${route} HTTP status`);
       assert.deepEqual(await routeResponse.body(),fs.readFileSync(path.join(dist,file)),`${route} byte parity`);

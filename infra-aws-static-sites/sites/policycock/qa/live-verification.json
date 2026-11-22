@@ -1,9 +1,11 @@
 {
-  "verifiedAt": "2026-11-21T07:59:39.345Z",
+  "verifiedAt": "2026-11-22T00:09:05.935Z",
+  "sourceCommit": "a4f777ace0103b9bf5f0788291521c066e3db18f",
+  "deploymentRun": 44965099337,
   "url": "https://policycock.aws.shdkej.com/",
   "status": "passed",
   "checks": [
-    "21개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
+    "23개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
     "HTTPS 200·새 CSS·정책 10·기관 44·의회 18·국회 링크",
     "1440×900 탐색 히어로·10/44 범위·3D 로딩 실패 시 정책 목록 접근",
     "정책 10건·기관 44곳 상세와 원문 링크 전수",
@@ -32,6 +34,7 @@
     "clipped": []
   },
   "matchedDistFiles": [
+    "analytics-consent.js",
     "app.js",
     "assets/OFL.txt",
     "assets/PretendardVariable.woff2",
@@ -39,6 +42,7 @@
     "assets/favicon.svg",
     "birth-grant-map.html",
     "data.js",
+    "ga4-consent.js",
     "index.css",
     "index.html",
     "institutions.js",

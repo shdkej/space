@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const {chromium} = require('playwright-core');
-const origin = 'https://policycock.aws.shdkej.com';
+const origin = 'https://policy.minimalcollector.com';
 const dist = path.join(__dirname, '../dist');
 const staged = process.env.GA4_PREVIEW === '1';
 (async () => {

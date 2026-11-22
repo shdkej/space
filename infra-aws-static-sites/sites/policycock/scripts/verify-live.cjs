@@ -4,8 +4,8 @@ const fs=require('node:fs');
 const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.join(__dirname,'..');
-const base=(process.env.SITE_URL||'https://policycock.aws.shdkej.com').replace(/\/$/,'');
-const isProduction=base==='https://policycock.aws.shdkej.com';
+const base=(process.env.SITE_URL||'https://policy.minimalcollector.com').replace(/\/$/,'');
+const isProduction=base==='https://policy.minimalcollector.com';
 const dist=path.join(root,'dist');
 function listFiles(dir=dist,prefix=''){
   return fs.readdirSync(dir,{withFileTypes:true}).flatMap(item=>{

@@ -6,7 +6,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const base=(process.env.SITE_URL||'http://127.0.0.1:4193').replace(/\/$/,'');
-const live=base==='https://policycock.aws.shdkej.com';
+const live=base==='https://policy.minimalcollector.com';
 const server=process.env.SITE_URL?null:spawn('python3',['-m','http.server','4193','--directory',path.join(root,'dist'),'--bind','127.0.0.1'],{stdio:'ignore'});
 const checks=[], errors=[];
 const pass=name=>{checks.push(name);console.log('PASS '+name)};

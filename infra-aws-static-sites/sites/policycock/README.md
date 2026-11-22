@@ -86,16 +86,17 @@ SITE_URL=http://127.0.0.1:4173 npm run test:scene
 
 ## 배포와 복구
 
-소스 정본은 [Space main의 이 디렉터리](https://github.com/shdkej/space/tree/main/infra-aws-static-sites/sites/policycock)이며, 공개 주소는 **https://policycock.aws.shdkej.com/** 입니다. 런타임은 비공개 S3 origin → CloudFront HTTPS → Route53입니다. 기존 standalone `apps/policycock-landing`과 Sites 버전은 초기 보관본으로 수정·배포 출발점이 아닙니다.
+소스 정본은 [Space main의 이 디렉터리](https://github.com/shdkej/space/tree/main/infra-aws-static-sites/sites/policycock)이며, 대표 주소는 **https://policy.minimalcollector.com/** 입니다. Cloudflare DNS가 기존 CloudFront 배포를 가리키며, 콘텐츠는 비공개 S3 버킷에서 제공합니다. 기존 standalone `apps/policycock-landing`과 Sites 버전은 초기 보관본으로 수정·배포 출발점이 아닙니다.
 
 새 대표 주소로 지정한 `policy.minimalcollector.com`은 같은 CloudFront 배포의 추가 별칭이다. 전환 시 미국 동부(버지니아 북부) ACM에서 두 주소가 포함된 인증서를 요청하고, 새 주소의 검증 CNAME은 Cloudflare에 DNS 전용으로 등록한다. 인증서 발급과 CloudFront 배포 완료 후 Cloudflare의 `policy` CNAME을 해당 배포 호스트에 DNS 전용으로 연결한다. 기존 Route 53 레코드와 S3 배포 대상은 유지한다.
 
-전환 확인에는 새 주소의 HTTPS, 신청 API의 CORS 사전 요청과 이메일 없는 요청을 사용한다. 관심 정책·메모와 수신 철회 토큰은 브라우저의 출처별 저장소에 있으므로 기존 이용자가 내보내기와 철회를 계속 사용할 수 있어야 한다. 이 경로를 검증하기 전에는 기존 주소 전체에 영구 리디렉션을 적용하지 않는다.
+이전 주소 `policycock.aws.shdkej.com`에서 일반 방문은 경로·쿼리·해시를 유지한 채 새 주소로 이동한다. 관심·메모, 신청 철회·재시도 데이터 또는 철회 링크가 있는 브라우저와 저장소에 접근할 수 없는 브라우저는 기존 화면을 계속 사용한다. 새 주소의 HTTPS와 신청 폼은 이메일을 비워 둔 요청으로 검증한다.
 
+2026-11-22 전환에서는 기존 배포의 설정을 읽고 두 주소가 포함된 ACM 인증서와 별칭만 갱신했다. 공유 Terraform state는 별도로 관리한다. 다음 인프라 적용 전 정본 state의 `module.app_static_sites["policycock"].aws_acm_certificate.site`가 배포에 연결된 인증서를 추적하는지 확인하고, 필요하면 새 인증서를 import한 뒤 계획을 검토한다.
 
 1. 위 검사를 통과한 사이트 변경과 `dist/vendor/`를 검토하고 해당 경로만 main에 commit/push합니다.
 2. `.github/workflows/static-site-aws-template.yml`의 `policycock` 잡에서 S3 동기화와 CloudFront 무효화 완료를 확인합니다. `dist/` 변경만 배포 대상으로 잡히며, 기존 `birth-grant-map.html`도 함께 보존돼야 합니다.
-3. `CHROME_PATH=/opt/google/chrome/chrome node scripts/verify-live.cjs`로 공개 사이트의 기능·자산 바이트·경로를 검증하고, `SITE_URL=https://policycock.aws.shdkej.com npm run test:scene`으로 공개 3D 장면을 확인합니다.
+3. `CHROME_PATH=/opt/google/chrome/chrome node scripts/verify-live.cjs`로 공개 사이트의 기능·자산 바이트·경로를 검증하고, `SITE_URL=https://policy.minimalcollector.com npm run test:scene`으로 공개 3D 장면을 확인합니다.
 4. 실제 라이브 화면을 살피고 소스 SHA, Actions run, 검증 결과와 남은 한계를 `qa/deployment.json`에 기록합니다. 로컬 HEAD와 원격 main SHA도 대조합니다.
 
 배포는 S3 `static-policycock-aws-shdkej-com`과 CloudFront `E1IR9GXLCMQK6X`를 사용합니다. 자산 캐시는 60초이며 workflow가 전체 경로 무효화를 기다립니다. 이번 화면 변경에는 Terraform apply가 필요하지 않습니다. 인프라 정본과 초기 상태 이전 기록은 `../../README.md`, `qa/{infra-plan,state-transfer}.json`에 있고, 공유 Terraform state는 별도 승인 없이 변경하지 않습니다.

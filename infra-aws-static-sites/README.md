@@ -7,7 +7,7 @@ Default targets:
 - Status board: `status.aws.shdkej.com`
 - Travel Ops board: `travel.aws.shdkej.com`
 - Card News Library: `library.aws.shdkej.com`
-- 모두의정책 policy map: `policycock.aws.shdkej.com` ([source and deployment guide](sites/policycock/README.md))
+- 모두의정책 policy map: `policy.minimalcollector.com` ([source and deployment guide](sites/policycock/README.md))
 - S3 region: `ap-northeast-2`
 - ACM certificate region for CloudFront: `us-east-1`
 - DNS: Route53 hosted zone `aws.shdkej.com`

@@ -89,7 +89,7 @@ def build_status(registry, outputs, resolve_aws=False, check=False, timeout=5):
     for site in registry["sites"]:
         app = site["app"]
         domain = site["domain_name"]
-        url = "https://" + domain
+        url = "https://" + site.get("public_domain", domain)
         output = outputs.get(app, {})
         hosting = site.get("hosting", "s3 cloudfront")
         static_hosting = hosting == "s3 cloudfront"

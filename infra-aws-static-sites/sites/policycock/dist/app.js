@@ -8,7 +8,7 @@ if(typeof POLICY_DATA!=='undefined'){
 const STORAGE_KEY='modu-policy-map-v1';
 const $=s=>document.querySelector(s);
 let selectedId='lee', saved={}, storageAvailable=true, toastTimer;
-let sceneSelectedId=null;
+
 const safeIds=new Set(POLICY_DATA.map(p=>p.id));
 function readSaved(){
   const parsed=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'), result={};
@@ -119,64 +119,21 @@ function openPolicy(id,trigger){selectPolicy(id);renderTimeline(id);dialogOpener
 {const dialog=policyDialog;dialog.querySelector('.dialog-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{let target=dialogOpener;if(dialogPolicyId&&(!target||!target.isConnected))target=document.querySelector(`.person[data-policy="${dialogPolicyId}"]`);if(target?.isConnected)target.focus({preventScroll:true});dialogOpener=null;dialogPolicyId=null;});}
 function toggleSavedPolicy(id){const next={...saved},wasSaved=!!next[id];if(wasSaved)delete next[id];else next[id]={note:''};if(persist(next)){renderSaved();renderPeople();selectPolicy(id);notify(wasSaved?'내 지도에서 뺐어요.':'내 지도에 담았어요. 관심 이유도 남겨보세요.');}}
 $('#save-policy').addEventListener('click',()=>toggleSavedPolicy(selectedId));
-function renderSaved(){syncSceneSaved();const items=POLICY_DATA.filter(p=>saved[p.id]);$('#saved-count').textContent=items.length;$('#export-map').disabled=!items.length;const categories=new Map();items.forEach(p=>categories.set(p.category,(categories.get(p.category)||0)+1));const cats=$('#category-map');cats.replaceChildren();for(const [name,count] of categories){const chip=el('div','category-chip',name);chip.append(el('span','',String(count)));cats.append(chip);}const list=$('#saved-policies');list.replaceChildren();if(!items.length){const empty=el('div','empty-map');empty.append(el('span','empty-icon','⌖'),el('h3','','나에게 중요한 정책 하나부터.'),el('p','','위 사례에서 정책을 고르고 저장해보세요.\n선택한 정책이 여기에 모입니다.'));const a=el('a','','정책 사례에서 시작하기 ↑');a.href='#policies';empty.append(a);list.append(empty);return;}for(const p of items){const row=el('article','saved-row');const title=el('div');const link=el('a','saved-policy-name',p.policy);link.href='#policies';link.addEventListener('click',event=>{event.preventDefault();openPolicy(p.id,link);});title.append(link,el('span','saved-policy-meta',`${p.name} / ${p.category}`));const field=el('div','note-field');const label=el('label','','다시 보고 싶은 이유');label.htmlFor='note-'+p.id;const input=el('textarea');input.id='note-'+p.id;input.maxLength=240;input.rows=2;input.placeholder='예: 출퇴근 교통비와 연결되는 정책이에요.';input.value=saved[p.id].note;input.addEventListener('input',()=>persist({...saved,[p.id]:{note:input.value.slice(0,240)}}));input.addEventListener('change',()=>{if(storageAvailable)notify('관심 이유를 저장했어요.');});field.append(label,input);const remove=el('button','remove-btn','삭제');remove.type='button';remove.setAttribute('aria-label',p.policy+' 저장 삭제');remove.addEventListener('click',()=>{const next={...saved};delete next[p.id];if(persist(next)){renderSaved();renderPeople();selectPolicy(selectedId);notify('내 지도에서 뺐어요.');$('#my-map-title').setAttribute('tabindex','-1');$('#my-map-title').focus({preventScroll:true});}});row.append(title,field,remove);list.append(row);}}
+function renderSaved(){const items=POLICY_DATA.filter(p=>saved[p.id]);$('#saved-count').textContent=items.length;$('#export-map').disabled=!items.length;const categories=new Map();items.forEach(p=>categories.set(p.category,(categories.get(p.category)||0)+1));const cats=$('#category-map');cats.replaceChildren();for(const [name,count] of categories){const chip=el('div','category-chip',name);chip.append(el('span','',String(count)));cats.append(chip);}const list=$('#saved-policies');list.replaceChildren();if(!items.length){const empty=el('div','empty-map');empty.append(el('span','empty-icon','⌖'),el('h3','','나에게 중요한 정책 하나부터.'),el('p','','위 사례에서 정책을 고르고 저장해보세요.\n선택한 정책이 여기에 모입니다.'));const a=el('a','','정책 사례에서 시작하기 ↑');a.href='#policies';empty.append(a);list.append(empty);return;}for(const p of items){const row=el('article','saved-row');const title=el('div');const link=el('a','saved-policy-name',p.policy);link.href='#policies';link.addEventListener('click',event=>{event.preventDefault();openPolicy(p.id,link);});title.append(link,el('span','saved-policy-meta',`${p.name} / ${p.category}`));const field=el('div','note-field');const label=el('label','','다시 보고 싶은 이유');label.htmlFor='note-'+p.id;const input=el('textarea');input.id='note-'+p.id;input.maxLength=240;input.rows=2;input.placeholder='예: 출퇴근 교통비와 연결되는 정책이에요.';input.value=saved[p.id].note;input.addEventListener('input',()=>persist({...saved,[p.id]:{note:input.value.slice(0,240)}}));input.addEventListener('change',()=>{if(storageAvailable)notify('관심 이유를 저장했어요.');});field.append(label,input);const remove=el('button','remove-btn','삭제');remove.type='button';remove.setAttribute('aria-label',p.policy+' 저장 삭제');remove.addEventListener('click',()=>{const next={...saved};delete next[p.id];if(persist(next)){renderSaved();renderPeople();selectPolicy(selectedId);notify('내 지도에서 뺐어요.');$('#my-map-title').setAttribute('tabindex','-1');$('#my-map-title').focus({preventScroll:true});}});row.append(title,field,remove);list.append(row);}}
 for(const filter of document.querySelectorAll('[data-filter]'))filter.addEventListener('click',()=>{const group=filter.dataset.filter;document.querySelectorAll('[data-filter]').forEach(n=>{const active=n===filter;n.classList.toggle('active',active);n.setAttribute('aria-pressed',String(active));});for(const name of ['democratic','conservative']){const dimmed=group!=='all'&&group!==name;$('.'+name+'-column').classList.toggle('is-dimmed',dimmed);document.querySelectorAll('.'+name+'-column .person').forEach(n=>n.classList.toggle('is-dimmed',dimmed));}if(group!=='all'&&POLICY_DATA.find(p=>p.id===selectedId).group!==group)selectPolicy(POLICY_DATA.find(p=>p.group===group).id);});
 $('#export-map').addEventListener('click',()=>{const data={title:'모두의정책 / 내 활성 지도',exportedAt:new Date().toISOString(),policies:POLICY_DATA.filter(p=>saved[p.id]).map(p=>({id:p.id,name:p.name,policy:p.policy,year:p.year,source:p.source,note:saved[p.id].note}))};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='나의-정책지도.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);notify('내 정책 지도를 파일로 내보냈어요.');});
 renderPeople();renderSaved();selectPolicy(selectedId);updateStorageNote();
 
-// The 3D scene progressively enhances the existing HTML archive.
-function syncSceneSaved(){
-  document.querySelectorAll('[data-scene-policy]').forEach(n=>n.classList.toggle('is-saved',!!saved[n.dataset.scenePolicy]));
-  const button=$('#scene-save');if(!button||!sceneSelectedId)return;
-  button.textContent=saved[sceneSelectedId]?'저장됨 ✓':'관심 저장 +';
-  button.setAttribute('aria-pressed',String(!!saved[sceneSelectedId]));
+for(const link of document.querySelectorAll('[data-galaxy-policy]')){
+  link.setAttribute('aria-haspopup','dialog');
+  link.setAttribute('aria-controls','policy-dialog');
+  link.addEventListener('click',event=>{
+    if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    event.preventDefault();
+    openPolicy(link.dataset.galaxyPolicy,link);
+  });
 }
-function resetSceneDetail(){
-  syncSceneSaved();
-  sceneSelectedId=null;$('#scene-detail').hidden=true;$('#atlas').classList.remove('has-selection');
-  $('#scene-announcement').textContent='전체 정책을 보고 있습니다.';
-  const enabled=$('#policy-scene').dataset.rotation==='true';$('#scene-touch').setAttribute('aria-pressed',String(enabled));$('#scene-touch .tool-label').textContent=enabled?'스크롤':'돌려보기';
-}
-function sceneUnavailable(){
-  $('#policy-scene').dataset.status='fallback';
-  $('#scene-load-message').textContent='목록에서 정책을 살펴보세요.';
-  document.querySelectorAll('.scene-settings button,.scene-side-tools button,#scene-start').forEach(b=>b.disabled=true);
-  resetSceneDetail();
-}
-document.addEventListener('policy-scene-select',event=>{
-  const p=POLICY_DATA.find(p=>p.id===event.detail?.id);if(!p)return;
-  sceneSelectedId=p.id;$('#scene-detail-category').textContent=p.category;
-  $('#scene-detail-title').textContent=p.policy;
-  $('#scene-detail-meta').textContent=`${p.name} · ${p.year} · ${p.stage}`;
-  $('#scene-detail-summary').textContent=p.summary;
-  $('#scene-detail').hidden=false;$('#atlas').classList.add('has-selection');syncSceneSaved();
-  $('#scene-announcement').textContent=`${p.policy} 선택. ${p.year}, ${p.stage}. 아래 내용과 출처 버튼에서 자세히 볼 수 있습니다.`;
-});
-document.addEventListener('policy-scene-reset',resetSceneDetail);
-document.addEventListener('policy-scene-ready',()=>{syncSceneSaved();document.querySelectorAll('.scene-settings button,.scene-side-tools button,#scene-start').forEach(b=>b.disabled=false);});
-document.addEventListener('policy-scene-unavailable',sceneUnavailable);
-document.addEventListener('policy-scene-lighting',event=>{const lighting=event.detail?.lighting;if(!['day','evening'].includes(lighting))return;$('#atlas').dataset.light=lighting;$('#scene-day').setAttribute('aria-pressed',String(lighting==='day'));$('#scene-evening').setAttribute('aria-pressed',String(lighting==='evening'));});
-$('#scene-start').addEventListener('click',()=>{window.policyScene?.select(POLICY_DATA[0].id);});
-$('#scene-read').addEventListener('click',()=>{if(sceneSelectedId)openPolicy(sceneSelectedId,$('#scene-read'));});
-$('#scene-save').addEventListener('click',()=>{if(sceneSelectedId)toggleSavedPolicy(sceneSelectedId);});
-for(const id of ['scene-reset','scene-back'])$('#'+id).addEventListener('click',()=>{window.policyScene?.reset();resetSceneDetail();});
-for(const [id,expanded] of [['scene-assemble',false],['scene-expand',true]])$('#'+id).addEventListener('click',()=>{
-  window.policyScene?.setExpanded(expanded);
-  $('#scene-assemble').setAttribute('aria-pressed',String(!expanded));$('#scene-expand').setAttribute('aria-pressed',String(expanded));
-});
-for(const [id,lighting] of [['scene-day','day'],['scene-evening','evening']])$('#'+id).addEventListener('click',()=>{
-  window.policyScene?.setLighting(lighting);$('#atlas').dataset.light=lighting;
-  $('#scene-day').setAttribute('aria-pressed',String(lighting==='day'));$('#scene-evening').setAttribute('aria-pressed',String(lighting==='evening'));
-});
-$('#scene-touch').addEventListener('click',()=>{
-  const enabled=$('#scene-touch').getAttribute('aria-pressed')!=='true';
-  $('#scene-touch').setAttribute('aria-pressed',String(enabled));window.policyScene?.setRotationEnabled(enabled);
-  $('#scene-touch .tool-label').textContent=enabled?'스크롤':'돌려보기';
-  $('#scene-announcement').textContent=enabled?'장면을 드래그해 돌릴 수 있습니다. 스크롤 버튼을 누르면 페이지를 스크롤합니다.':'페이지를 스크롤할 수 있습니다.';
-});
-document.querySelectorAll('.scene-settings button,.scene-side-tools button,#scene-start').forEach(b=>b.disabled=true);
-window.POLICY_ATLAS_DATA=POLICY_DATA;
-import('./policy-scene.js').catch(sceneUnavailable);
+import('./policy-scene.js').catch(()=>{});
 
 window.addEventListener('storage',event=>{
   if(event.key!==STORAGE_KEY&&event.key!==null)return;

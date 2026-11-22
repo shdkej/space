@@ -80,7 +80,7 @@ function listFiles(dir=dist,prefix=''){
     assert.equal(await national.count(),1);
     assert.match(new URL(await national.getAttribute('href'),base).hostname,/(^|\.)assembly\.go\.kr$/);
     assert.equal(await page.locator('#agencies,#agency-dialog,.agency-link,#agency-search,#council-links').count(),0);
-    for(const area of ['.site-header nav','.atlas-scope']){
+    for(const area of ['.site-header nav','.galaxy-links']){
       assert.equal(await page.locator(area+' a[href="#council-map"]').isVisible(),true);
     }
     pass('국회 공식 링크·광역 16곳·기초 227곳·헤더와 소개에서 의회 지도 진입');
@@ -88,28 +88,25 @@ function listFiles(dir=dist,prefix=''){
     assert.equal(await page.locator('link[href="ledger.css"],link[href="styles.css"]').count(),0);
     pass('HTTPS 200·새 CSS·정책 10건·의회 지도');
 
-    await page.waitForSelector('#policy-scene[data-status="fallback"]');
-    assert.equal(await page.locator('.scene-fallback a[href="#policies"]').isVisible(),true);
-    assert.equal(await page.locator('.scene-list-link[href="#policies"]').isVisible(),true);
-    const fold=await page.evaluate(()=>({
-      atlasTop:document.querySelector('#atlas').getBoundingClientRect().top,
-      atlasBottom:document.querySelector('#atlas').getBoundingClientRect().bottom,
-      sceneTop:document.querySelector('#policy-scene').getBoundingClientRect().top,
-      sceneBottom:document.querySelector('#policy-scene').getBoundingClientRect().bottom,
-      scope:document.querySelector('.atlas-scope').textContent,
-      scopeBottom:document.querySelector('.atlas-scope').getBoundingClientRect().bottom,
-      policyBottom:Math.max(...[...document.querySelectorAll('.person')].map(n=>n.getBoundingClientRect().bottom)),
-      width:document.documentElement.scrollWidth
-    }));
-    assert.ok(fold.atlasTop>=0&&fold.atlasBottom<=901&&fold.sceneTop>=fold.atlasTop&&fold.sceneBottom<=fold.atlasBottom&&fold.sceneBottom>fold.sceneTop,`atlas outside 1440×900: ${JSON.stringify(fold)}`);
-    assert.ok(fold.scopeBottom<=901);
-    assert.match(fold.scope,/정책 사례\s*10/);
+    await page.waitForSelector('#atlas[data-renderer="fallback"]');
+    assert.equal(await page.locator('#galaxy-canvas').count(),1);
+    const fallbackLinks=page.locator('#atlas a[data-galaxy-policy]');
+    const ids=await page.evaluate(()=>POLICY_DATA.map(policy=>policy.id).sort());
+    assert.deepEqual(await fallbackLinks.evaluateAll(links=>links.map(a=>a.dataset.galaxyPolicy).sort()),ids);
+    const galaxyLinks=page.locator('.galaxy-links');
+    assert.match(await galaxyLinks.locator('a[href="#policies"]').innerText(),/정책 사례 목록/);
+    assert.match(await galaxyLinks.locator('a[href="#council-map"]').innerText(),/우리 의회 지도/);
+    const fold=await page.locator('#atlas').evaluate(atlas=>{
+      const rect=atlas.getBoundingClientRect();
+      return {atlasTop:rect.top,atlasBottom:rect.bottom,width:document.documentElement.scrollWidth};
+    });
+    assert.ok(fold.atlasTop>=0&&fold.atlasTop<900&&fold.atlasBottom>fold.atlasTop);
     assert.ok(fold.width<=1440);
     if(isProduction)await page.screenshot({path:path.join(root,'qa/live-atlas-fallback-1440.png')});
-    await page.locator('.scene-fallback a[href="#policies"]').click();
+    await page.locator('.galaxy-links a[href="#policies"]').click();
     assert.equal(await page.evaluate(()=>location.hash),'#policies');
     await page.waitForFunction(()=>{const top=document.querySelector('#policies').getBoundingClientRect().top;return top>=0&&top<innerHeight},null,{timeout:3000});
-    pass('1440×900 탐색 히어로·정책 사례 범위·3D 로딩 실패 시 정책 목록 접근');
+    pass('1440×900 탐색 히어로·정책 사례 범위·은하 렌더러 로딩 실패 시 정책 목록 접근');
 
     const policies=await page.evaluate(()=>POLICY_DATA.map(p=>({id:p.id,title:p.policy,source:p.source})));
     for(const p of policies){
@@ -132,8 +129,11 @@ function listFiles(dir=dist,prefix=''){
     const staticPage=await nojs.newPage();await staticPage.goto(base);
     assert.equal(await staticPage.locator('a.person').count(),10);
     assert.deepEqual(await staticPage.locator('#council-map li.council-local').allTextContents(),localNames);
-    assert.equal(await staticPage.locator('#scene-start').isVisible(),false,'no-JS start action must not remain inert');
-    assert.equal(await staticPage.locator('.scene-fallback a[href="#policies"]').isVisible(),true);
+    const staticGalaxy=staticPage.locator('#atlas a[data-galaxy-policy]');
+    assert.equal(await staticGalaxy.count(),10);
+    assert.deepEqual(await staticGalaxy.evaluateAll(links=>links.map(a=>a.dataset.galaxyPolicy).sort()),ids);
+    assert.equal(await staticPage.locator('.galaxy-links a[href="#council-map"]').isVisible(),true);
+    assert.equal(await staticPage.locator('.galaxy-links a[href="#policies"]').isVisible(),true);
     await nojs.close();
     pass('무스크립트 정책 10건 및 전체 기초의회 지도');
 
@@ -153,12 +153,10 @@ function listFiles(dir=dist,prefix=''){
         assert.equal(await page.locator('#atlas').isVisible(),true);
         const title=await page.locator('#hero-title').boundingBox();
         assert.ok(title&&title.y>=0&&title.y+title.height<=height,`${width}px first-fold title: ${JSON.stringify(title)}`);
-        assert.equal(await page.locator('.atlas-scope').isVisible(),true);
-        const scope=await page.locator('.atlas-scope').textContent();
-        assert.match(scope,/정책 사례\s*10/);
-        const scopeShortcut=page.locator('.atlas-scope a[href="#council-map"]');
+        assert.equal(await page.locator('.galaxy-links').isVisible(),true);
+        const scopeShortcut=page.locator('.galaxy-links a[href="#council-map"]');
         assert.equal(await scopeShortcut.isVisible(),true);
-        const policyShortcut=page.locator('.scene-fallback a[href="#policies"]');
+        const policyShortcut=page.locator('.galaxy-links a[href="#policies"]');
         assert.equal(await policyShortcut.isVisible(),true);
         if(width===375&&isProduction){
           await page.waitForFunction(()=>!document.querySelector('#toast').classList.contains('visible'),null,{timeout:5000});

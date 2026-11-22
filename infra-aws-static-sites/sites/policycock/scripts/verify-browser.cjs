@@ -37,7 +37,7 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
     assert.equal(await national.count(),1);
     assert.match(new URL(await national.getAttribute('href'),base).hostname,/(^|\.)assembly\.go\.kr$/);
     assert.equal(await page.locator('#agencies,#agency-dialog,.agency-link,#agency-search,#council-links').count(),0);
-    for(const area of ['.site-header nav','.atlas-scope']){
+    for(const area of ['.site-header nav','.galaxy-links']){
       assert.equal(await page.locator(area+' a[href="#council-map"]').isVisible(),true);
     }
     pass('국회 공식 링크·광역 16곳·기초 227곳·헤더와 소개에서 의회 지도 진입');
@@ -57,7 +57,7 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
     await page.emulateMedia({media:'screen'});
     pass('데스크톱 A4 비율과 국회·지방의회 A4 한 장 인쇄');
 
-    const sceneFallback=page.locator('#policy-scene[data-status="fallback"]');
+    const sceneFallback=page.locator('#atlas[data-renderer="fallback"]');
     await sceneFallback.waitFor();
     assert.equal(await sceneFallback.locator('a[href="#policies"]').isVisible(),true);
     pass('3D 모듈 실패 시 정책 목록 진입');
@@ -78,7 +78,8 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       assert.equal(await page.locator('#change-overview').isVisible(),true);
       assert.equal(await page.locator('#timeline-prev').isDisabled(),true);
       assert.equal(await page.locator('#timeline-next').isEnabled(),true);
-      assert.equal(await cards.last().locator('strong').textContent(),'2026.11.22 기준');
+      assert.doesNotMatch(await cards.last().locator('strong').textContent(),/기준/);
+      assert.equal(await page.locator('#change-latest-date').textContent(),await cards.last().locator('strong').textContent());
       const urls=await cards.locator('a').evaluateAll(links=>links.map(a=>a.href));
       assert.equal(urls.length,await cards.count());
       assert.ok(urls.every(url=>url.startsWith('https://')));
@@ -147,8 +148,8 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
     const nojs=await nojsContext.newPage();await nojs.goto(base);
     assert.equal(await nojs.locator('a.person').count(),10);
     assert.equal(await nojs.locator('#council-map .council-region').count(),16);
-    assert.equal(await nojs.locator('#scene-start').isVisible(),false,'no-JS start action must not remain inert');
-    assert.equal(await nojs.locator('.scene-fallback a[href="#policies"]').isVisible(),true);
+    assert.equal(await nojs.locator('#atlas a[data-galaxy-policy][href]').count(),10);
+    assert.equal(await nojs.locator('.galaxy-links a[href="#policies"]').isVisible(),true);
     assert.deepEqual((await nojs.locator('a.person').evaluateAll(a=>a.map(n=>n.href))).sort(),policies.map(p=>p.source).sort());
     assert.deepEqual(await nojs.locator('#council-map li.council-local').allTextContents(),localNames);
     await nojsContext.close();

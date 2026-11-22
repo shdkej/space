@@ -28,13 +28,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-02",
       "label": "2026년 4분기 신청을 열었습니다. 접수 마감은 12월 1일 오후 6시입니다.",
-      "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=71859"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "경기도 4분기 신청 기간입니다. 생년월일과 거주 요건, 참여 시·군을 공고에서 확인할 수 있습니다.",
       "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=71859",
-      "summary": "참여 시·군에서 2026년 4분기 신청을 12월 1일 오후 6시까지 받습니다."
+      "summary": "경기도가 2026년 4분기 청년기본소득 신청을 시작했습니다."
     }
   ],
   "kim-dongyeon": [
@@ -62,13 +57,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-10-15",
       "label": "2차분 지급을 요구하는 도민 청원이 접수됐습니다. 청원은 11월 14일 종료됐습니다.",
-      "url": "https://petitions.gg.go.kr/view/?bs=3&uid=28983"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "올해 신청은 마감됐습니다. 2차분은 지급 요구 청원까지 확인됐으며, 실제 지급 여부는 확인되지 않았습니다.",
       "url": "https://petitions.gg.go.kr/view/?bs=3&uid=28983",
-      "summary": "28개 시·군에서 신청을 받았습니다. 2차분 지급 요구가 있었고, 실제 지급 여부는 확인되지 않았습니다."
+      "summary": "예술인 기회소득 2차분 지급을 요구하는 도민 청원이 접수됐습니다."
     }
   ],
   "kim-kyungsoo": [
@@ -91,13 +81,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-09-08",
       "label": "세 시도지사가 초광역 협력 공동선언을 채택하고 상설 협의체 가동에 합의했습니다.",
-      "url": "https://www.busan.go.kr/nbtnewsBU/1753328"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "특별연합 규약은 폐지됐습니다. 이후 세 시도는 초광역 협력 공동선언을 통해 협력 과제를 논의하고 있습니다.",
       "url": "https://www.busan.go.kr/nbtnewsBU/1753328",
-      "summary": "특별연합 규약은 폐지됐습니다. 세 시도는 2026년 새 공동선언을 채택하고 상설 협의체를 가동하기로 했습니다."
+      "summary": "세 시도지사가 초광역 협력 공동선언을 채택하고 상설 협의체 가동에 합의했습니다."
     }
   ],
   "park": [
@@ -125,13 +110,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-12",
       "label": "새 법안의 국회 입법예고가 시작됐습니다. 의견 접수 기간은 11월 26일까지입니다.",
-      "url": "https://likms.assembly.go.kr/bill/bi/billDetailPage.do?billId=PRC_6488C0BAE93D4272946C7A6127C151"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "21대 법안은 폐기됐고, 22대에 새로 발의된 법안은 입법예고 중입니다.",
       "url": "https://likms.assembly.go.kr/bill/bi/billDetailPage.do?billId=PRC_6488C0BAE93D4272946C7A6127C151",
-      "summary": "21대 법안은 임기 만료로 폐기됐습니다. 22대에 새로 발의한 법안은 11월 26일까지 입법예고 중입니다."
+      "summary": "21대 법안 폐기 후 22대에 새로 발의한 평등법안의 입법예고가 시작됐습니다."
     }
   ],
   "moon": [
@@ -154,13 +134,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-04",
       "label": "확대된 아동수당 지급을 시작하면서 1월분부터 소급 적용했습니다.",
-      "url": "https://www.mohw.go.kr/menu.es?mid=a10716030000"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "2026년에는 만 9세 미만 아동이 지급 대상입니다. 거주 지역에 따른 추가 지급 기준도 적용됩니다.",
       "url": "https://www.mohw.go.kr/menu.es?mid=a10716030000",
-      "summary": "2026년에는 만 9세 미만까지 지급합니다. 비수도권·인구감소지역에는 추가 지급 기준이 적용됩니다."
+      "summary": "만 9세 미만으로 확대한 아동수당을 지급하면서 1월분부터 소급 적용했습니다."
     }
   ],
   "oh": [
@@ -183,13 +158,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-10-01",
       "label": "30일권 운영과 후불카드 할인 혜택이 종료됐습니다. 1~7일 단기권은 계속 운영합니다.",
-      "url": "https://news.seoul.go.kr/traffic/archives/517640?listPage=1"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "서울시 기후동행카드는 1~7일 단기권을 운영합니다. 기존 30일권과 후불 할인은 종료됐습니다.",
       "url": "https://news.seoul.go.kr/traffic/archives/517640?listPage=1",
-      "summary": "30일권과 후불 할인은 종료됐고, 1~7일 단기권은 계속 이용할 수 있습니다."
+      "summary": "서울시가 30일권과 후불카드 할인을 종료하고 1~7일 단기권은 유지했습니다."
     }
   ],
   "hong": [
@@ -207,13 +177,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026",
       "label": "조례의 연도별 기준에 따라 시내버스·수요응답형 교통은 만 72세 이상, 도시철도·광역철도는 만 68세 이상이 대상입니다.",
-      "url": "https://council.daegu.go.kr/attach/bbs/legislation/90a55576ce1f9c1b113e61781af3df32.pdf"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "버스는 만 72세부터, 도시철도는 만 68세부터 적용됩니다. 이용할 교통수단에 따라 연령 기준이 다릅니다.",
       "url": "https://council.daegu.go.kr/attach/bbs/legislation/90a55576ce1f9c1b113e61781af3df32.pdf",
-      "summary": "시내버스 기준은 만 72세로 낮아지고, 도시철도 기준은 만 68세로 높아졌습니다."
+      "summary": "무임교통 연령이 시내버스는 만 72세, 도시철도는 만 68세부터로 적용됐습니다."
     }
   ],
   "yoo": [
@@ -231,13 +196,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-08-20",
       "label": "자녀의 방학이나 질병 등으로 돌봄이 필요할 때 육아휴직을 1주 또는 2주 단위로 사용할 수 있게 됐습니다.",
-      "url": "https://www.law.go.kr/LSW/lsInfoP.do?ancNo=21373&ancYd=20260219&efYd=20260820&lsiSeq=283455"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "민간 근로자의 법정 육아휴직은 기본 1년이며, 법에서 정한 요건을 충족하면 최대 1년 6개월입니다.",
       "url": "https://www.law.go.kr/LSW/lsInfoP.do?ancNo=21373&ancYd=20260219&efYd=20260820&lsiSeq=283455",
-      "summary": "별도로 개정된 법에 따른 육아휴직은 기본 1년이며, 요건을 충족하면 최대 1년 6개월입니다."
+      "summary": "민간 육아휴직 제도에서 자녀의 방학·질병 등에는 1주 또는 2주 단위 사용이 가능해졌습니다."
     }
   ],
   "na": [
@@ -255,13 +215,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2024-08-21",
       "label": "국토교통위원회가 법안을 상정하고 토론을 거쳐 소위원회로 넘겼습니다.",
-      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "의안정보에 표시된 마지막 단계는 소위원회 회부입니다. 이 법안의 대출·출산 지원은 제안 단계입니다.",
       "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP",
-      "summary": "국토교통위원회가 법안을 소위원회로 넘겼습니다. 이 법안에 담긴 지원은 아직 제안 단계입니다."
+      "summary": "국회 국토교통위원회가 개정안을 심사할 소위원회로 넘겼습니다."
     }
   ],
   "han": [
@@ -279,13 +234,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2025-01-01",
       "label": "개정 소득세법이 시행돼 금융투자소득세 도입이 취소되고 기존 양도소득세 체계가 유지됐습니다.",
-      "url": "https://www.law.go.kr/lsRvsRsnListP.do?lsId=003956"
-    },
-    {
-      "date": "2026-11-22 기준",
-      "label": "금융투자소득세는 시행 전에 폐지됐습니다. 주식 양도소득세 등 기존 과세 제도는 별도로 적용됩니다.",
       "url": "https://www.law.go.kr/lsRvsRsnListP.do?lsId=003956",
-      "summary": "소득세법 개정으로 금융투자소득세는 시행 전에 폐지됐습니다. 기존 주식 양도소득세 제도는 유지됐습니다."
+      "summary": "개정 소득세법이 시행되면서 금융투자소득세 도입이 취소됐습니다."
     }
   ]
 };

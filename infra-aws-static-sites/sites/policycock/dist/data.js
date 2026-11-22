@@ -17,7 +17,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2018-12-04",
       "label": "경기도가 성남의 청년배당을 도 전역으로 확대할 계획을 공개했습니다.",
-      "url": "https://gnews.gg.go.kr/news/news_detail.do?number=201812041024027055C059&s_code=C059"
+      "url": "https://gnews.gg.go.kr/news/news_detail.do?number=201812041024027055C059&s_code=C059",
+      "summary": "경기도가 성남 청년배당을 도 전역으로 넓히겠다고 발표했습니다."
     },
     {
       "date": "2019-04-08",
@@ -32,14 +33,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "경기도 4분기 신청 기간입니다. 생년월일과 거주 요건, 참여 시·군을 공고에서 확인할 수 있습니다.",
-      "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=71859"
+      "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=71859",
+      "summary": "참여 시·군에서 2026년 4분기 신청을 12월 1일 오후 6시까지 받습니다."
     }
   ],
   "kim-dongyeon": [
     {
       "date": "2022-12-17",
       "label": "경기도가 예술인 기회소득을 포함한 2023년도 예산 확정을 발표했습니다.",
-      "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=55553"
+      "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=55553",
+      "summary": "경기도가 2023년 예산에 예술인 기회소득을 반영했습니다."
     },
     {
       "date": "2023-06-30",
@@ -64,14 +67,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "올해 신청은 마감됐습니다. 2차분은 지급 요구 청원까지 확인됐으며, 실제 지급 여부는 확인되지 않았습니다.",
-      "url": "https://petitions.gg.go.kr/view/?bs=3&uid=28983"
+      "url": "https://petitions.gg.go.kr/view/?bs=3&uid=28983",
+      "summary": "28개 시·군에서 신청을 받았습니다. 2차분 지급 요구가 있었고, 실제 지급 여부는 확인되지 않았습니다."
     }
   ],
   "kim-kyungsoo": [
     {
       "date": "2021-02-25",
       "label": "부산·울산·경남이 동남권 메가시티 구축 전략을 발표했습니다.",
-      "url": "https://www.motir.go.kr/kor/article/ATCL3f49a5a8c/165516/view"
+      "url": "https://www.motir.go.kr/kor/article/ATCL3f49a5a8c/165516/view",
+      "summary": "부산·울산·경남이 메가시티 구축 전략을 발표했습니다."
     },
     {
       "date": "2022-04-18",
@@ -91,14 +96,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "특별연합 규약은 폐지됐습니다. 이후 세 시도는 초광역 협력 공동선언을 통해 협력 과제를 논의하고 있습니다.",
-      "url": "https://www.busan.go.kr/nbtnewsBU/1753328"
+      "url": "https://www.busan.go.kr/nbtnewsBU/1753328",
+      "summary": "특별연합 규약은 폐지됐습니다. 세 시도는 2026년 새 공동선언을 채택하고 상설 협의체를 가동하기로 했습니다."
     }
   ],
   "park": [
     {
       "date": "2021-08-09",
       "label": "박주민 의원 등 13명이 평등에 관한 법률안(제2111964호)을 발의했습니다.",
-      "url": "https://likms.assembly.go.kr/bill/bi/billDetailPage.do?billId=PRC_D2S1N0F8X0O9W1T6U3A4N5W6I2X5A3"
+      "url": "https://likms.assembly.go.kr/bill/bi/billDetailPage.do?billId=PRC_D2S1N0F8X0O9W1T6U3A4N5W6I2X5A3",
+      "summary": "박주민 의원 등이 21대 국회에 평등법안을 발의했습니다."
     },
     {
       "date": "2022-05",
@@ -123,14 +130,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "21대 법안은 폐기됐고, 22대에 새로 발의된 법안은 입법예고 중입니다.",
-      "url": "https://likms.assembly.go.kr/bill/bi/billDetailPage.do?billId=PRC_6488C0BAE93D4272946C7A6127C151"
+      "url": "https://likms.assembly.go.kr/bill/bi/billDetailPage.do?billId=PRC_6488C0BAE93D4272946C7A6127C151",
+      "summary": "21대 법안은 임기 만료로 폐기됐습니다. 22대에 새로 발의한 법안은 11월 26일까지 입법예고 중입니다."
     }
   ],
   "moon": [
     {
       "date": "2017-04",
       "label": "문재인 후보가 양육 가구에 아동수당을 지급하겠다고 공약했습니다.",
-      "url": "https://www.newsis.com/view/NISX20170414_0014831376"
+      "url": "https://www.newsis.com/view/NISX20170414_0014831376",
+      "summary": "문재인 후보가 양육 가구에 아동수당을 지급하겠다고 공약했습니다."
     },
     {
       "date": "2018-09",
@@ -150,14 +159,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "2026년에는 만 9세 미만 아동이 지급 대상입니다. 거주 지역에 따른 추가 지급 기준도 적용됩니다.",
-      "url": "https://www.mohw.go.kr/menu.es?mid=a10716030000"
+      "url": "https://www.mohw.go.kr/menu.es?mid=a10716030000",
+      "summary": "2026년에는 만 9세 미만까지 지급합니다. 비수도권·인구감소지역에는 추가 지급 기준이 적용됩니다."
     }
   ],
   "oh": [
     {
       "date": "2023-09-11",
       "label": "서울시가 버스·지하철·따릉이를 한 장으로 이용하는 정기권 구상을 발표했습니다.",
-      "url": "https://mediahub.seoul.go.kr/archives/2009034"
+      "url": "https://mediahub.seoul.go.kr/archives/2009034",
+      "summary": "서울시가 버스·지하철·따릉이를 한 달간 무제한으로 이용하는 정기권을 제안했습니다."
     },
     {
       "date": "2024-01-27",
@@ -177,14 +188,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "서울시 기후동행카드는 1~7일 단기권을 운영합니다. 기존 30일권과 후불 할인은 종료됐습니다.",
-      "url": "https://news.seoul.go.kr/traffic/archives/517640?listPage=1"
+      "url": "https://news.seoul.go.kr/traffic/archives/517640?listPage=1",
+      "summary": "30일권과 후불 할인은 종료됐고, 1~7일 단기권은 계속 이용할 수 있습니다."
     }
   ],
   "hong": [
     {
       "date": "2023-07-01",
       "label": "대구시가 어르신 통합 무임교통 지원을 시작했습니다.",
-      "url": "https://www.gaok.or.kr/T_Newsletter_2021/2023_11/1/Vol111.pdf"
+      "url": "https://www.gaok.or.kr/T_Newsletter_2021/2023_11/1/Vol111.pdf",
+      "summary": "도입 당시 시내버스는 만 75세부터, 도시철도는 만 65세부터 무료였습니다."
     },
     {
       "date": "2024-10-30",
@@ -199,14 +212,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "버스는 만 72세부터, 도시철도는 만 68세부터 적용됩니다. 이용할 교통수단에 따라 연령 기준이 다릅니다.",
-      "url": "https://council.daegu.go.kr/attach/bbs/legislation/90a55576ce1f9c1b113e61781af3df32.pdf"
+      "url": "https://council.daegu.go.kr/attach/bbs/legislation/90a55576ce1f9c1b113e61781af3df32.pdf",
+      "summary": "시내버스 기준은 만 72세로 낮아지고, 도시철도 기준은 만 68세로 높아졌습니다."
     }
   ],
   "yoo": [
     {
       "date": "2021-08-05",
       "label": "유승민은 민간 근로자의 육아휴직을 3년까지 늘리겠다고 공약했습니다.",
-      "url": "https://www.yna.co.kr/view/AKR20210805037800001"
+      "url": "https://www.yna.co.kr/view/AKR20210805037800001",
+      "summary": "유승민 후보가 민간 근로자의 육아휴직을 3년으로 늘리겠다고 공약했습니다."
     },
     {
       "date": "2025-02-23",
@@ -221,14 +236,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "민간 근로자의 법정 육아휴직은 기본 1년이며, 법에서 정한 요건을 충족하면 최대 1년 6개월입니다.",
-      "url": "https://www.law.go.kr/LSW/lsInfoP.do?ancNo=21373&ancYd=20260219&efYd=20260820&lsiSeq=283455"
+      "url": "https://www.law.go.kr/LSW/lsInfoP.do?ancNo=21373&ancYd=20260219&efYd=20260820&lsiSeq=283455",
+      "summary": "별도로 개정된 법에 따른 육아휴직은 기본 1년이며, 요건을 충족하면 최대 1년 6개월입니다."
     }
   ],
   "na": [
     {
       "date": "2024-05-31",
       "label": "나경원 의원 등 18인이 신혼부부 주택자금 저리 대출과 출산에 따른 원리금 지원을 담은 주거기본법 개정안을 발의했습니다.",
-      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP"
+      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP",
+      "summary": "신혼부부 저리 대출과 출산 시 원리금 지원을 담은 법안이 발의됐습니다."
     },
     {
       "date": "2024-06-11",
@@ -243,14 +260,16 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "의안정보에 표시된 마지막 단계는 소위원회 회부입니다. 이 법안의 대출·출산 지원은 제안 단계입니다.",
-      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP"
+      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP",
+      "summary": "국토교통위원회가 법안을 소위원회로 넘겼습니다. 이 법안에 담긴 지원은 아직 제안 단계입니다."
     }
   ],
   "han": [
     {
       "date": "2024-08-07",
       "label": "한동훈 국민의힘 대표가 국회에서 금융투자소득세 폐지를 주장했습니다.",
-      "url": "https://imnews.imbc.com/news/2024/politics/article/6624859_36431.html"
+      "url": "https://imnews.imbc.com/news/2024/politics/article/6624859_36431.html",
+      "summary": "한동훈 대표가 금융투자소득세 폐지를 주장했습니다."
     },
     {
       "date": "2024-12-31",
@@ -265,7 +284,8 @@ const POLICY_TIMELINES = {
     {
       "date": "2026-11-22 기준",
       "label": "금융투자소득세는 시행 전에 폐지됐습니다. 주식 양도소득세 등 기존 과세 제도는 별도로 적용됩니다.",
-      "url": "https://www.law.go.kr/lsRvsRsnListP.do?lsId=003956"
+      "url": "https://www.law.go.kr/lsRvsRsnListP.do?lsId=003956",
+      "summary": "소득세법 개정으로 금융투자소득세는 시행 전에 폐지됐습니다. 기존 주식 양도소득세 제도는 유지됐습니다."
     }
   ]
 };

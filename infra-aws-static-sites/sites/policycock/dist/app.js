@@ -35,6 +35,10 @@ function persist(next){
 function updateStorageNote(){const n=$('#storage-note');n.textContent=storageAvailable?'저장 내용은 이 브라우저에만 남습니다. 브라우저 데이터를 지우면 함께 삭제됩니다.':'브라우저 저장 내용을 읽거나 저장하지 못했어요. 정책 탐색은 계속할 수 있습니다.';}
 function el(tag,className,text){const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=text;return n;}
 function outLink(text,url){const a=el('a','',text);a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a;}
+function policyTimeline(id){
+  return typeof POLICY_TIMELINES==='undefined'?[]:POLICY_TIMELINES[id]||[];
+}
+
 function renderPeople(){
   for(const group of ['democratic','conservative']){
     const container=$('#'+group+'-list');container.replaceChildren();
@@ -51,6 +55,15 @@ function renderPeople(){
       svg.append(path,dot);lead.append(svg);
       const avatar=el('span','avatar',p.name.slice(1));avatar.setAttribute('aria-hidden','true');
       const copy=el('span','person-copy');copy.append(el('span','person-name',p.name),el('span','person-policy',p.policy),el('span','person-stage',`${p.year} / ${p.stage}`));
+      const events=policyTimeline(p.id);
+      if(events.length){
+        const track=el('span','case-dots');
+        track.setAttribute('aria-hidden','true');
+        events.forEach(()=>track.append(el('i','case-dot')));
+        track.append(el('span','case-card-count',events.length+'장'));
+        copy.append(track);
+        button.setAttribute('aria-label',p.name+' / '+p.policy+' 정책 보기, 타임라인 '+events.length+'장');
+      }
       button.append(lead,avatar,copy);
       if(saved[p.id]){const mark=el('span','saved-indicator');mark.setAttribute('aria-label','내 지도에 저장됨');button.append(mark);}
       button.addEventListener('click',()=>openPolicy(p.id,button));container.append(button);
@@ -65,7 +78,15 @@ const timelinePrev=$('#timeline-prev');
 const timelineNext=$('#timeline-next');
 
 function renderTimeline(id){
-  const events=typeof POLICY_TIMELINES==='undefined'?[]:POLICY_TIMELINES[id]||[];
+  const events=policyTimeline(id);
+  const overview=$('#change-overview');
+  overview.hidden=!events.length;
+  if(events.length){
+    for(const [name,event] of [['first',events[0]],['latest',events.at(-1)]]){
+      $('#change-'+name+'-date').textContent=event.date.replaceAll('-','.').replace(' 기준','');
+      $('#change-'+name).textContent=event.summary||event.label;
+    }
+  }
   timelineList.closest('section').hidden=events.length===0;
   const cards=events.map(({date,label,url})=>{
     const card=el('li','timeline-event');

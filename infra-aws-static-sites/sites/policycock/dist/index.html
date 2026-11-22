@@ -12,7 +12,7 @@
 <div class="site-header"><a class="wordmark" href="#"><span class="brand-symbol" aria-hidden="true">◒</span> 모두의정책</a><nav aria-label="주 메뉴"><a href="#policies">정책 사례</a><a href="#state-map">국가 지도</a></nav><a class="nav-cta" href="#my-map">내 관심 정책 <span id="saved-count">0</span><span aria-hidden="true">↗</span></a></div>
 <section id="atlas" class="galaxy-hero-sky" data-renderer="fallback" aria-labelledby="hero-title">
   <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
-  <div class="galaxy-intro-copy"><h1 id="hero-title">그때 그 정책,<br>어디까지 왔을까?</h1><p>정책 이름을 눌러 처음과 지금을 비교해 보세요.</p></div>
+  <div class="galaxy-intro-copy"><h1 id="hero-title">그때 그 정책,<br>어디까지 왔을까?</h1><p>정책을 눌러 정부와 정치인의 약속을 함께 추적해요.</p></div>
   <div class="galaxy-orbits" aria-label="정책 사례 10개"><div class="galaxy-bank">
   <a data-galaxy-policy="lee" href="https://gnews.gg.go.kr/news/news_detail.do?number=201812041024027055C059&amp;s_code=C059"><span class="orbit-label"><i aria-hidden="true"><img class="policy-portrait" src="assets/portraits/lee.jpg" width="32" height="32" alt=""></i><span class="orbit-caption">청년기본소득<small>이재명</small></span></span></a>
   <a data-galaxy-policy="kim-dongyeon" href="https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&amp;number=55553"><span class="orbit-label"><i aria-hidden="true"><img class="policy-portrait" src="assets/portraits/kim-dongyeon.jpg" width="32" height="32" alt=""></i><span class="orbit-caption">예술인 기회소득<small>김동연</small></span></span></a>
@@ -58,13 +58,16 @@
 <section id="state-map" aria-labelledby="state-title">
 <span id="council-map" aria-hidden="true"></span>
 <article class="state-sheet">
-<header class="state-heading"><h2 id="state-title">대한민국 국가 지도</h2><p>기관을 누르면 그곳에서 다룬 주요 정책과 제도를 볼 수 있습니다.</p></header>
+<header class="state-heading"><h2 id="state-title">대한민국 국가 지도</h2><p>기관을 눌러 어떤 결정을 내렸는지 살펴보세요.</p></header>
 <div class="state-branches"><div class="state-charter">대한민국헌법</div>
 <div class="state-national" aria-label="국가기관"><a class="state-node" data-state="assembly" href="#cases-assembly"><span>입법</span><strong>국회</strong><small>법률 제정 · 예산 심의</small></a><a class="state-node" data-state="executive" href="#cases-executive"><span>행정</span><strong>대통령·정부</strong><small>국무총리 · 국무회의 · 행정각부</small></a><a class="state-node" data-state="court" href="#cases-court"><span>사법</span><strong>법원</strong><small>대법원 · 각급 법원</small></a></div>
 </div><div class="state-independent" aria-label="헌법재판과 선거관리"><a class="state-node" data-state="constitutional" href="#cases-constitutional"><span>헌법재판</span><strong>헌법재판소</strong><small>위헌법률심판 · 헌법소원</small></a><a class="state-node" data-state="election" href="#cases-election"><span>선거관리</span><strong>선거관리위원회</strong><small>선거 · 국민투표 관리</small></a></div>
-<p class="state-relations"><span><b>국회 → 정부</b> 예산 심의·확정</span><span><b>정부 → 국회</b> 법률안 제출</span><span><b>법원 → 헌법재판소</b> 위헌법률심판 제청</span></p>
+<p class="state-relations"><span><b>국회 → 정부</b> 예산 심의·확정</span><span><b>정부 → 국회</b> 법률안 제출</span><span><b>법원 → 헌법재판소</b> 위헌법률심판 제청</span><span><b>국민 → 선출</b> 대통령·국회의원·지방의원·단체장</span></p>
 <section class="state-local"><h3>지방자치</h3><div class="state-local-grid"><div class="local-pair"><h4>광역 · 시·도</h4><div><a class="state-node" data-state="provinceCouncil" href="#cases-provinceCouncil"><span>의결</span><strong>광역의회</strong><small>시·도 조례와 예산</small></a><a class="state-node" data-state="provinceExecutive" href="#cases-provinceExecutive"><span>집행</span><strong>시·도지사</strong><small>시·도 정책과 사업</small></a></div></div><div class="local-pair"><h4>기초 · 시·군·구</h4><div><a class="state-node" data-state="localCouncil" href="#cases-localCouncil"><span>의결</span><strong>기초의회</strong><small>시·군·자치구 조례와 예산</small></a><a class="state-node" data-state="localExecutive" href="#cases-localExecutive"><span>집행</span><strong>시장·군수·구청장</strong><small>시·군·자치구의 생활 행정</small></a></div></div></div></section>
-<div class="state-people"><strong>국민</strong><span>대통령과 국회의원, 지방의원과 지방자치단체장을 선거로 뽑습니다.</span></div>
+<section class="state-people" aria-labelledby="people-title">
+<h3 id="people-title">국민</h3><div class="people-invite"><strong>시민의 참여가 나라를 받칩니다.</strong>
+<p>정부의 결정을 감시하고, 발표한 정책이 어떻게 집행되는지 함께 추적해요.</p>
+<a href="#policies">정책 함께 추적하기 <span aria-hidden="true">↑</span></a></div></section>
 <footer><a href="sources.html#state-sources">지도 출처 ↗</a><button type="button" id="print-state-map" hidden>A4 인쇄</button></footer>
 </article>
 <section class="state-case-group" id="cases-assembly"><h3>국회 <small>법안과 입법 사례</small></h3><article class="state-policy-case"><h4>신혼부부 주거 지원 법안</h4><p>2024년 주택자금 저리 대출과 출산 연계 지원을 담은 주거기본법 개정안이 발의됐습니다.</p><a href="https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP" target="_blank" rel="noopener noreferrer">공식 자료 보기 ↗</a></article><article class="state-policy-case"><h4>금융투자소득세 폐지</h4><p>소득세법 개정으로 2025년 시행 예정이던 금융투자소득세 도입이 취소됐습니다.</p><a href="https://www.law.go.kr/lsRvsRsnListP.do?lsId=003956" target="_blank" rel="noopener noreferrer">공식 자료 보기 ↗</a></article><a class="state-return" href="#state-map">국가 지도로 돌아가기 ↑</a></section>

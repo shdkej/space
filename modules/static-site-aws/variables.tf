@@ -3,6 +3,12 @@ variable "domain_name" {
   type        = string
 }
 
+variable "external_aliases" {
+  description = "Additional hostnames with DNS and ACM validation managed outside Route 53."
+  type        = set(string)
+  default     = []
+}
+
 variable "route53_zone_name" {
   description = "Route53 hosted zone name that owns domain_name."
   type        = string

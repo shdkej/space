@@ -2,11 +2,12 @@ locals {
   site_registry = jsondecode(file("${path.module}/sites/registry.json"))
   app_sites = {
     for site in local.site_registry.sites : site.app => {
-      domain_name  = site.domain_name
-      bucket_name  = try(site.bucket_name, null)
-      api_origins  = try(site.api_origins, [])
-      spa_fallback = try(site.spa_fallback, true)
-      tags         = try(site.tags, {})
+      external_aliases = try(site.external_aliases, [])
+      domain_name      = site.domain_name
+      bucket_name      = try(site.bucket_name, null)
+      api_origins      = try(site.api_origins, [])
+      spa_fallback     = try(site.spa_fallback, true)
+      tags             = try(site.tags, {})
     } if try(site.hosting, "aws-static-site") == "aws-static-site"
   }
 }
@@ -20,6 +21,7 @@ module "app_static_sites" {
     aws.us_east_1 = aws.us_east_1
   }
 
+  external_aliases  = each.value.external_aliases
   domain_name       = each.value.domain_name
   route53_zone_name = var.route53_zone_name
   bucket_name       = try(each.value.bucket_name, null)

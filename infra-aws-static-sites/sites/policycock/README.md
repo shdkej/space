@@ -88,6 +88,11 @@ SITE_URL=http://127.0.0.1:4173 npm run test:scene
 
 소스 정본은 [Space main의 이 디렉터리](https://github.com/shdkej/space/tree/main/infra-aws-static-sites/sites/policycock)이며, 공개 주소는 **https://policycock.aws.shdkej.com/** 입니다. 런타임은 비공개 S3 origin → CloudFront HTTPS → Route53입니다. 기존 standalone `apps/policycock-landing`과 Sites 버전은 초기 보관본으로 수정·배포 출발점이 아닙니다.
 
+새 대표 주소로 지정한 `policy.minimalcollector.com`은 같은 CloudFront 배포의 추가 별칭이다. 전환 시 미국 동부(버지니아 북부) ACM에서 두 주소가 포함된 인증서를 요청하고, 새 주소의 검증 CNAME은 Cloudflare에 DNS 전용으로 등록한다. 인증서 발급과 CloudFront 배포 완료 후 Cloudflare의 `policy` CNAME을 해당 배포 호스트에 DNS 전용으로 연결한다. 기존 Route 53 레코드와 S3 배포 대상은 유지한다.
+
+전환 확인에는 새 주소의 HTTPS, 신청 API의 CORS 사전 요청과 이메일 없는 요청을 사용한다. 관심 정책·메모와 수신 철회 토큰은 브라우저의 출처별 저장소에 있으므로 기존 이용자가 내보내기와 철회를 계속 사용할 수 있어야 한다. 이 경로를 검증하기 전에는 기존 주소 전체에 영구 리디렉션을 적용하지 않는다.
+
+
 1. 위 검사를 통과한 사이트 변경과 `dist/vendor/`를 검토하고 해당 경로만 main에 commit/push합니다.
 2. `.github/workflows/static-site-aws-template.yml`의 `policycock` 잡에서 S3 동기화와 CloudFront 무효화 완료를 확인합니다. `dist/` 변경만 배포 대상으로 잡히며, 기존 `birth-grant-map.html`도 함께 보존돼야 합니다.
 3. `CHROME_PATH=/opt/google/chrome/chrome node scripts/verify-live.cjs`로 공개 사이트의 기능·자산 바이트·경로를 검증하고, `SITE_URL=https://policycock.aws.shdkej.com npm run test:scene`으로 공개 3D 장면을 확인합니다.

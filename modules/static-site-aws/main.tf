@@ -59,10 +59,11 @@ resource "aws_cloudfront_origin_access_control" "site" {
 }
 
 resource "aws_acm_certificate" "site" {
-  provider          = aws.us_east_1
-  domain_name       = var.domain_name
-  validation_method = "DNS"
-  tags              = var.tags
+  provider                  = aws.us_east_1
+  domain_name               = var.domain_name
+  subject_alternative_names = var.external_aliases
+  validation_method         = "DNS"
+  tags                      = var.tags
 
   lifecycle {
     create_before_destroy = true
@@ -75,7 +76,7 @@ resource "aws_route53_record" "cert_validation" {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
-    }
+    } if dvo.domain_name == var.domain_name
   }
 
   zone_id = data.aws_route53_zone.site.zone_id
@@ -86,16 +87,19 @@ resource "aws_route53_record" "cert_validation" {
 }
 
 resource "aws_acm_certificate_validation" "site" {
-  provider                = aws.us_east_1
-  certificate_arn         = aws_acm_certificate.site.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+  provider        = aws.us_east_1
+  certificate_arn = aws_acm_certificate.site.arn
+  validation_record_fqdns = concat(
+    [for record in aws_route53_record.cert_validation : record.fqdn],
+    [for dvo in aws_acm_certificate.site.domain_validation_options : dvo.resource_record_name if contains(var.external_aliases, dvo.domain_name)]
+  )
 }
 
 resource "aws_cloudfront_distribution" "site" {
   enabled             = true
   is_ipv6_enabled     = true
   comment             = var.domain_name
-  aliases             = [var.domain_name]
+  aliases             = concat([var.domain_name], sort(tolist(var.external_aliases)))
   default_root_object = var.index_document
   price_class         = var.price_class
 

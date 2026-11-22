@@ -1,34 +1,35 @@
 {
-  "verifiedAt": "2026-11-22T03:16:05Z",
+  "verifiedAt": "2026-11-22T04:47:50Z",
   "status": "deployed-network-verified-ga4-receipt-unconfirmed",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "a48bf8a4035af7c19be4a9b6eff3d575ee652a37",
+  "sourceCommit": "dd5dd77e91c116e9cb767394b5714bb27d392cbc",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 44979287372,
+    "runId": 44986328678,
     "conclusion": "success",
     "jobs": {"detect": "success", "deploy (policycock)": "success"},
     "steps": {"Sync S3": "success", "Invalidate CloudFront": "success"}
   },
   "verification": {
-    "local": "npm run check and npm test passed after the private-link regression fix and the duplicate page-view correction",
-    "realTagIntercepted": "Local and live: pre-consent 0, sanitized page_view 1, after withdrawal 0. Google collection was not forwarded in these checks.",
-    "liveHtml": {"file": "qa/live-verification.json", "matchedDistFiles": 24, "matchedRoutes": ["/", "/sources", "/birth-grant-map", "/privacy"], "result": "passed"},
+    "local": "npm run check, npm test, and GA4_PREVIEW=1 real-tag intercepted transport passed after the combined-consent and private-link changes; 320/375/768/1440px consent screenshots had visible 44px actions and no horizontal overflow.",
+    "realTagIntercepted": "After the merged consent deployment: pre-consent 0, sanitized page_view 1, after withdrawal 0. Google collection was not forwarded in this check.",
+    "liveHtml": {"file": "qa/live-verification.json", "matchedDistFiles": 24, "matchedRoutes": ["/", "/sources", "/birth-grant-map", "/privacy"], "result": "passed on 2026-11-22T04:45:41Z"},
     "liveScene": {"file": "qa/live-scene-verification.json", "result": "passed"},
-    "privacy": "Public /privacy and /privacy.html returned the committed document; 320, 375, 768 and 1440px local layout had no horizontal overflow.",
-    "realGoogleTransport": {"preConsent": 0, "postConsentPageViewRequests": 1, "responseStatus": 204, "measurementId": "G-BT1FX0ZMCD", "pageLocation": "https://policycock.aws.shdkej.com/", "afterWithdrawalAdditionalRequests": 0, "posthogChoice": "declined", "note": "Test browser deliberately opted in; Google received a QA visit. HTTP 204 does not prove Analytics property ingestion."},
+    "privacy": "Public /privacy and /privacy.html matched the committed document. One visible analytics notice and one footer setting were confirmed in ego lite; decline hid the notice without loading Google tag.",
+    "realGoogleTransport": {"preConsent": 0, "postConsentPageViewRequests": 1, "responseStatus": 204, "measurementId": "G-BT1FX0ZMCD", "pageLocation": "https://policycock.aws.shdkej.com/", "afterWithdrawalAdditionalRequests": 0, "posthogRequestsIntercepted": 2, "note": "After the combined-consent deployment a QA browser explicitly opted in; Google received one sanitized page_view. PostHog requests were intercepted, not forwarded. HTTP 204 does not prove Analytics property ingestion."},
     "analyticsUI": "At 2026-11-22T03:16Z the Policycock GA4 Realtime report still displayed 0 active users and no events. Stream settings also said no data received in the last 48h. Ingestion is unconfirmed.",
     "searchConsole": "No configuration was changed; the earlier index request was accepted, not proven indexed."
   },
   "configuration": {
-    "posthog": "Existing optional recipient and signup consent kept separate",
+    "posthog": "Optional PostHog and GA4 combined in one visitor choice; email signup consent remains separate",
     "ga4": "Dedicated Policycock stream; enhanced measurement off; user and event retention each 2 months per prior UI recheck",
     "githubVariable": "POLICYCOCK_GA4_MEASUREMENT_ID=G-BT1FX0ZMCD",
     "emailSignup": "Existing signup and withdrawal kept; private #launch-withdraw= link tested with a mocked withdrawal API; operator mailbox deletion remains manual"
   },
   "rollback": "Unset POLICYCOCK_GA4_MEASUREMENT_ID and dispatch the static-site workflow for app=policycock to hide GA4 without removing PostHog, privacy or email withdrawal. A source rollback must be a new main commit; never force-push.",
-  "limits": ["GA4 Analytics UI receipt has not been observed; do not report it as confirmed.", "Public traffic or Search Console indexing success is not established.", "Mobile layout was browser emulation, not a physical device."],
+  "limits": ["GA4 Analytics UI receipt has not been observed; do not report it as confirmed.", "Already-open tabs running older JavaScript cannot be retroactively updated; the new private link forces a fresh document, and old same-path links are intercepted in newly loaded code.", "Public traffic or Search Console indexing success is not established.", "Mobile layout was browser emulation, not a physical device."],
+  "consentMerge": {"key": "policycock.analytics.combined.v1", "oldChoicesMigrated": false, "scope": "One optional decision activates PostHog and configured GA4 together; old vendor-specific choices do not authorize the new decision.", "qa": "Legacy migration, no pre-consent requests, one sanitized page_view, private-link same-tab and fresh-tab paths, cross-tab withdrawal, GPC and storage-write failure passed. Independent final code reviewer PASS.", "workflowRun": 44986328678},
   "previousDeploymentHistory": "Git history of qa/deployment.json before this revision"
 }

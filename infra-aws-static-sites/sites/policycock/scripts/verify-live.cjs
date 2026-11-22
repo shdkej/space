@@ -70,23 +70,43 @@ function listFiles(dir=dist,prefix=''){
     pass(`${fileChecks.length}개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출`);
     await page.evaluate(()=>document.fonts.ready);
     assert.equal(await page.locator('.person').count(),10);
-    const sheet=page.locator('#council-map .council-sheet');
+    const sheet=page.locator('#state-map .state-sheet');
+    const nodes=sheet.locator('.state-node[data-state]');
+    const stateDialog=page.locator('#state-policy-dialog');
     assert.equal(await sheet.count(),1);
-    assert.equal(await sheet.locator('.council-region').count(),16);
-    assert.equal(await sheet.locator('.council-region li.council-local').count(),227);
-    const localNames=await sheet.locator('li.council-local').allTextContents();
-    assert.ok(localNames.every(name=>name.trim().length>0));
-    const national=sheet.locator('a.council-national, .council-national a');
-    assert.equal(await national.count(),1);
-    assert.match(new URL(await national.getAttribute('href'),base).hostname,/(^|\.)assembly\.go\.kr$/);
-    assert.equal(await page.locator('#agencies,#agency-dialog,.agency-link,#agency-search,#council-links').count(),0);
-    for(const area of ['.site-header nav','.galaxy-links']){
-      assert.equal(await page.locator(area+' a[href="#council-map"]').isVisible(),true);
+    const stateIds=await nodes.evaluateAll(items=>items.map(n=>n.dataset.state));
+    assert.ok(stateIds.length>=9);
+    assert.equal(new Set(stateIds).size,stateIds.length,'unique state nodes');
+    const stateNames=await nodes.locator('strong').allInnerTexts();
+    assert.ok(stateNames.every(name=>name.trim()));
+    const stateCases=[];
+    for(let i=0;i<stateIds.length;i++){
+      const node=nodes.nth(i);
+      if(i===0){
+        await node.focus();await page.keyboard.press('Enter');
+      }else{
+        await node.click();
+      }
+      await stateDialog.waitFor({state:'visible'});
+      const cases=stateDialog.locator('.state-policy-case:visible');
+      const count=await cases.count();
+      assert.ok(count>=2 && count<=3,stateIds[i]+' policy case count: '+count);
+      const caseTitles=await cases.locator('h4').allInnerTexts();
+      assert.equal(caseTitles.length,count);
+      assert.ok(caseTitles.every(title=>title.trim().length>0));
+      stateCases.push(caseTitles);
+      await page.keyboard.press('Escape');
+      await stateDialog.waitFor({state:'hidden'});
+      assert.ok(await node.evaluate(n=>n===document.activeElement),'restore focus '+stateIds[i]);
     }
-    pass('국회 공식 링크·광역 16곳·기초 227곳·헤더와 소개에서 의회 지도 진입');
+    for(const area of ['.site-header nav','.galaxy-links']){
+      assert.equal(await page.locator(area+' a[href="#state-map"]').isVisible(),true);
+    }
+    await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+    pass('국가 지도 기관별 정책 사례 2~3개·키보드 열기·Escape·포커스 복귀');
     assert.equal(await page.locator('link[href="index.css"]').count(),1);
     assert.equal(await page.locator('link[href="ledger.css"],link[href="styles.css"]').count(),0);
-    pass('HTTPS 200·새 CSS·정책 10건·의회 지도');
+    pass('HTTPS 200·새 CSS·정책 10건·국가 지도');
 
     await page.waitForSelector('#atlas[data-renderer="fallback"]');
     assert.equal(await page.locator('#galaxy-canvas').count(),1);
@@ -95,7 +115,7 @@ function listFiles(dir=dist,prefix=''){
     assert.deepEqual(await fallbackLinks.evaluateAll(links=>links.map(a=>a.dataset.galaxyPolicy).sort()),ids);
     const galaxyLinks=page.locator('.galaxy-links');
     assert.match(await galaxyLinks.locator('a[href="#policies"]').innerText(),/정책 사례 목록/);
-    assert.match(await galaxyLinks.locator('a[href="#council-map"]').innerText(),/우리 의회 지도/);
+    assert.ok((await galaxyLinks.locator('a[href="#state-map"]').innerText()).trim());
     const fold=await page.locator('#atlas').evaluate(atlas=>{
       const rect=atlas.getBoundingClientRect();
       return {atlasTop:rect.top,atlasBottom:rect.bottom,width:document.documentElement.scrollWidth};
@@ -128,33 +148,49 @@ function listFiles(dir=dist,prefix=''){
     const nojs=await browser.newContext({javaScriptEnabled:false});
     const staticPage=await nojs.newPage();await staticPage.goto(base);
     assert.equal(await staticPage.locator('a.person').count(),10);
-    assert.deepEqual(await staticPage.locator('#council-map li.council-local').allTextContents(),localNames);
+    const staticSheet=staticPage.locator('#state-map .state-sheet');
+    assert.equal(await staticSheet.isVisible(),true);
+    const staticNodes=staticSheet.locator('.state-node[data-state]');
+    assert.deepEqual(await staticNodes.locator('strong').allInnerTexts(),stateNames);
+    for(let i=0;i<stateIds.length;i++){
+      await staticNodes.nth(i).click();
+      const visibleGroup=staticPage.locator('#state-map .state-case-group:target');
+      assert.equal(await visibleGroup.isVisible(),true,'no-JS state '+stateIds[i]);
+      assert.deepEqual(await visibleGroup.locator('.state-policy-case:visible h4').allInnerTexts(),stateCases[i]);
+    }
+
     const staticGalaxy=staticPage.locator('#atlas a[data-galaxy-policy]');
     assert.equal(await staticGalaxy.count(),10);
     assert.deepEqual(await staticGalaxy.evaluateAll(links=>links.map(a=>a.dataset.galaxyPolicy).sort()),ids);
-    assert.equal(await staticPage.locator('.galaxy-links a[href="#council-map"]').isVisible(),true);
+    assert.equal(await staticPage.locator('.galaxy-links a[href="#state-map"]').isVisible(),true);
     assert.equal(await staticPage.locator('.galaxy-links a[href="#policies"]').isVisible(),true);
     await nojs.close();
-    pass('무스크립트 정책 10건 및 전체 기초의회 지도');
+    pass('무스크립트 정책 10건 및 국가 지도');
 
     for(const [width,height] of [[320,568],[375,667],[768,900],[1280,800]]){
       await page.setViewportSize({width,height});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px overflow`);
       assert.equal(await page.locator('.person').count(),10);
-      assert.equal(await sheet.locator('.council-local:visible').count(),227);
-      const clipped=await sheet.locator('.council-region, .council-local').evaluateAll(nodes=>nodes.filter(n=>{
-        const rect=n.getBoundingClientRect();
-        return rect.left < -1 || rect.right > innerWidth+1 || n.scrollWidth>n.clientWidth+2;
-      }).map(n=>n.textContent.trim().slice(0,40)));
-      assert.deepEqual(clipped,[],width+'px 의회 지도 너비·의회명 잘림');
+      assert.equal(await sheet.locator('.state-node[data-state]:visible').count(),stateIds.length);
+      const measured=await sheet.evaluate(el=>{
+        const map=el.getBoundingClientRect();
+        const items=[...el.querySelectorAll('.state-node[data-state]')].map(n=>n.getBoundingClientRect());
+        return {width:map.width,height:map.height,viewport:innerHeight,
+          inside:items.every(r=>r.width>0 && r.height>0 && r.left>=map.left-1 && r.right<=map.right+1 &&
+            r.top>=map.top-1 && r.bottom<=map.bottom+1)};
+      });
+      assert.ok(measured.inside,width+'px state nodes within map');
+      if(width===320){
+        assert.ok(measured.width<=321 && measured.height<=measured.viewport+1,'320px entire map fits one viewport');
+      }
       if(width<=375){
-        const shortcut=page.locator('.site-header nav a[href="#council-map"]');
+        const shortcut=page.locator('.site-header nav a[href="#state-map"]');
         assert.equal(await shortcut.isVisible(),true);
         assert.equal(await page.locator('#atlas').isVisible(),true);
         const title=await page.locator('#hero-title').boundingBox();
         assert.ok(title&&title.y>=0&&title.y+title.height<=height,`${width}px first-fold title: ${JSON.stringify(title)}`);
         assert.equal(await page.locator('.galaxy-links').isVisible(),true);
-        const scopeShortcut=page.locator('.galaxy-links a[href="#council-map"]');
+        const scopeShortcut=page.locator('.galaxy-links a[href="#state-map"]');
         assert.equal(await scopeShortcut.isVisible(),true);
         const policyShortcut=page.locator('.galaxy-links a[href="#policies"]');
         assert.equal(await policyShortcut.isVisible(),true);
@@ -166,28 +202,28 @@ function listFiles(dir=dist,prefix=''){
         assert.equal(await page.evaluate(()=>location.hash),'#policies');
         await page.waitForFunction(()=>{const top=document.querySelector('#policies').getBoundingClientRect().top;return top>=0&&top<innerHeight},null,{timeout:3000});
         await scopeShortcut.click();
-        assert.equal(await page.evaluate(()=>location.hash),'#council-map');
-        await page.waitForFunction(()=>{const top=document.querySelector('#council-map').getBoundingClientRect().top;return top>=0&&top<innerHeight},null,{timeout:3000});
+        assert.equal(await page.evaluate(()=>location.hash),'#state-map');
+        await page.waitForFunction(()=>{const top=document.querySelector('#state-map').getBoundingClientRect().top;return top>=0&&top<innerHeight},null,{timeout:3000});
         await page.evaluate(()=>{history.replaceState(null,'',location.pathname);scrollTo({top:0,behavior:'instant'})});
         await shortcut.click();
-        assert.equal(await page.evaluate(()=>location.hash),'#council-map');
+        assert.equal(await page.evaluate(()=>location.hash),'#state-map');
         await page.evaluate(()=>{history.replaceState(null,'',location.pathname);scrollTo({top:0,behavior:'instant'})});
       }
       await page.locator('[data-policy=lee]').click();
       assert.equal(await page.locator('#policy-dialog').evaluate(n=>n.open),true);
       await page.keyboard.press('Escape');
-      const last=sheet.locator('.council-local').last();
+      const last=nodes.last();
       await last.scrollIntoViewIfNeeded();
       assert.ok(await last.evaluate(n=>{
         const r=n.getBoundingClientRect();
         return r.top>=0&&r.bottom<=innerHeight&&r.left>=0&&r.right<=innerWidth;
-      }),width+'px 마지막 기초의회에 접근');
+      }),width+'px 마지막 기관에 접근');
     }
-    pass('320–1280px: 탐색 표제·정책 목록·의회 지도 바로가기·화면 너비와 마지막 기초의회 접근');
+    pass('320–1280px: 탐색 표제·정책 목록·국가 지도 바로가기·화면 너비와 마지막 기관 접근');
     const sourceResponse=await page.goto(base+'/sources.html');
     assert.equal(sourceResponse.status(),200);
     assert.equal(await page.locator('.source-item').count(),10);
-    assert.match(await page.locator('.source-page').textContent(),/우리 의회 지도/);
+    assert.match(await page.locator('#state-sources').textContent(),/대한민국 국가 지도/);
     assert.deepEqual(errors,[]);
     pass('출처 페이지 설명 10건·HTML 대체 탐색 스크립트 오류 없음');
     if(isProduction)fs.writeFileSync(path.join(root,'qa/live-verification.json'),JSON.stringify({verifiedAt:new Date().toISOString(),url:base+'/',status:'passed',checks,fold,matchedDistFiles:fileChecks,matchedRoutes,retiredAssets:['styles.css','ledger.css','assets/ledger-relief.png']},null,2)+'\n');

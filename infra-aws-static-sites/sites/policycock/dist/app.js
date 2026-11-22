@@ -1,7 +1,28 @@
 'use strict';
-const printCouncilMap=document.getElementById('print-council-map');
-printCouncilMap.hidden=false;
-printCouncilMap.addEventListener('click',()=>window.print());
+const printStateMap=document.getElementById('print-state-map');
+printStateMap.hidden=false;
+printStateMap.addEventListener('click',()=>window.print());
+
+const stateDialog=document.querySelector('#state-policy-dialog');
+for(const node of document.querySelectorAll('.state-node')){
+  node.setAttribute('aria-haspopup','dialog');
+  node.setAttribute('aria-controls',stateDialog.id);
+  node.addEventListener('click',event=>{
+    if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+    const source=document.getElementById(node.hash.slice(1));
+    if(!source)return;
+    event.preventDefault();
+    const body=stateDialog.querySelector('.state-dialog-body');
+    body.replaceChildren(...Array.from(source.children).filter(n=>!n.matches('.state-return')).map(n=>n.cloneNode(true)));
+    body.querySelector('h3').id='state-dialog-title';
+    stateDialog.showModal();
+    stateDialog.scrollTop=0;
+    stateDialog.querySelector('.dialog-close').focus();
+    stateDialog.addEventListener('close',()=>node.focus({preventScroll:true}),{once:true});
+  });
+}
+stateDialog.querySelector('.dialog-close').addEventListener('click',()=>stateDialog.close());
+stateDialog.addEventListener('click',event=>{if(event.target===stateDialog)stateDialog.close();});
 
 // Keep the server-rendered source links if the policy registry fails to load.
 if(typeof POLICY_DATA!=='undefined'){

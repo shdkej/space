@@ -49,3 +49,10 @@
  .galaxy-bank a:nth-child(n) {left:0}
  .galaxy-links {padding:3px 0}
 }
+
+.orbit-label i {width:34px;height:34px;background:#313135;box-shadow:0 0 0 1px var(--node),0 0 0 3px #111b}
+.orbit-label .policy-portrait {display:block;width:100%;height:100%}
+.orbit-caption {display:flex;flex-direction:column;gap:2px;white-space:normal;word-break:keep-all}
+.orbit-caption small {color:#ddd2cc;font-size:11px;font-weight:450}
+.galaxy-bank:last-child .orbit-caption {text-align:right}
+@media(max-width:900px){.orbit-label i {width:29px;height:29px}.orbit-caption small{font-size:10px}}

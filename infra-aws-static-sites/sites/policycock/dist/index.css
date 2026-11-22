@@ -239,3 +239,9 @@
 .change-pair dt span {font-size:11px;color:#4d5b53;font-weight:500;font-variant-numeric:tabular-nums}
 .change-pair dd {margin:7px 0 0;color:#192a20;font-size:15px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
 @media(max-width:520px){.change-pair{grid-template-columns:1fr}.change-pair div{padding:9px 12px}.change-pair dd{margin-top:3px}}
+
+.policy-portrait {display:inline-block;width:32px;height:32px;flex:none;object-fit:cover;border-radius:50%;background:#dedbd5}
+.person-name {display:inline-flex;align-items:center;gap:6px}
+.person-name .policy-portrait {width:26px;height:26px}
+#detail-person .policy-portrait {vertical-align:middle;margin-right:8px}
+.case-card-count {white-space:nowrap}

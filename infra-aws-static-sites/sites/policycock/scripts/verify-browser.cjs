@@ -63,6 +63,12 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
     pass('3D 모듈 실패 시 정책 목록 진입');
 
     const policies=await page.evaluate(()=>POLICY_DATA.map(p=>({id:p.id,title:p.policy,source:p.source})));
+    for(const selector of ['.person-name img','.orbit-label img']){
+      const images=page.locator(selector);
+      assert.equal(await images.count(),10);
+      await images.evaluateAll(nodes=>Promise.all(nodes.map(n=>n.decode())));
+    }
+    assert.deepEqual(await page.locator('.filters button').allTextContents(),['전체','진보','보수']);
     for(const policy of policies){
       await page.locator(`[data-policy="${policy.id}"]`).click();
       assert.equal(await page.locator('#detail-title').textContent(),policy.title);
@@ -72,6 +78,8 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       assert.ok(await cards.count()>=3,policy.id+' timeline history');
       const dots=page.locator('[data-policy="'+policy.id+'"] .case-dot');
       assert.equal(await dots.count(),await cards.count());
+      assert.equal(await page.locator('[data-policy="'+policy.id+'"] .case-card-count').textContent(),'추적 '+await cards.count()+'건');
+      assert.ok((await page.locator('#detail-person img').getAttribute('src')).endsWith('/'+policy.id+'.jpg'));
       const summaries=await page.evaluate(id=>[POLICY_TIMELINES[id][0].summary,POLICY_TIMELINES[id].at(-1).summary],policy.id);
       assert.ok(summaries.every(Boolean));
       assert.deepEqual(await page.locator('#change-overview dd').allTextContents(),summaries);

@@ -39,6 +39,12 @@ function policyTimeline(id){
   return typeof POLICY_TIMELINES==='undefined'?[]:POLICY_TIMELINES[id]||[];
 }
 
+function portrait(id){
+  const image=el('img','policy-portrait');
+  image.src='assets/portraits/'+id+'.jpg';
+  image.width=32;image.height=32;image.alt='';
+  return image;
+}
 function renderPeople(){
   for(const group of ['democratic','conservative']){
     const container=$('#'+group+'-list');container.replaceChildren();
@@ -53,24 +59,24 @@ function renderPeople(){
       const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M7 8 62 38');
       const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('cx','7');dot.setAttribute('cy','8');dot.setAttribute('r','4');
       svg.append(path,dot);lead.append(svg);
-      const avatar=el('span','avatar',p.name.slice(1));avatar.setAttribute('aria-hidden','true');
-      const copy=el('span','person-copy');copy.append(el('span','person-name',p.name),el('span','person-policy',p.policy),el('span','person-stage',`${p.year} / ${p.stage}`));
+      const name=el('span','person-name');name.append(portrait(p.id),p.name);
+      const copy=el('span','person-copy');copy.append(name,el('span','person-policy',p.policy),el('span','person-stage',`${p.year} / ${p.stage}`));
       const events=policyTimeline(p.id);
       if(events.length){
         const track=el('span','case-dots');
         track.setAttribute('aria-hidden','true');
         events.forEach(()=>track.append(el('i','case-dot')));
-        track.append(el('span','case-card-count',events.length+'장'));
+        track.append(el('span','case-card-count','추적 '+events.length+'건'));
         copy.append(track);
-        button.setAttribute('aria-label',p.name+' / '+p.policy+' 정책 보기, 타임라인 '+events.length+'장');
+        button.setAttribute('aria-label',p.name+' / '+p.policy+ ' 정책 보기, 추적 '+events.length+'건');
       }
-      button.append(lead,avatar,copy);
+      button.append(lead,copy);
       if(saved[p.id]){const mark=el('span','saved-indicator');mark.setAttribute('aria-label','내 지도에 저장됨');button.append(mark);}
       button.addEventListener('click',()=>openPolicy(p.id,button));container.append(button);
     }
   }
 }
-function selectPolicy(id){const p=POLICY_DATA.find(p=>p.id===id);if(!p)return;selectedId=id;const person=$('#detail-person');person.replaceChildren(document.createTextNode(p.name),el('span','',p.party));$('#detail-meta').textContent=`${p.year} / ${p.stage} / ${p.region}`;$('#detail-title').textContent=p.policy;$('#detail-summary').textContent=p.summary;$('#detail-links').replaceChildren(outLink(p.sourceLabel+' ↗',p.source),outLink('관련 뉴스 ↗',p.news),outLink('관련 법령 검색 ↗','https://www.law.go.kr/LSW/unSc.do?query='+encodeURIComponent(p.law)));$('#source-note').textContent='위 링크는 발표 당시 자료입니다.'+(p.sourceNote?' '+p.sourceNote:'');const btn=$('#save-policy');btn.textContent=saved[id]?'내 지도에서 빼기 −':'내 지도에 저장 +';btn.setAttribute('aria-pressed',String(!!saved[id]));}
+function selectPolicy(id){const p=POLICY_DATA.find(p=>p.id===id);if(!p)return;selectedId=id;const person=$('#detail-person');person.replaceChildren(portrait(id),document.createTextNode(p.name),el('span','',p.party));$('#detail-meta').textContent=`${p.year} / ${p.stage} / ${p.region}`;$('#detail-title').textContent=p.policy;$('#detail-summary').textContent=p.summary;$('#detail-links').replaceChildren(outLink(p.sourceLabel+' ↗',p.source),outLink('관련 뉴스 ↗',p.news),outLink('관련 법령 검색 ↗','https://www.law.go.kr/LSW/unSc.do?query='+encodeURIComponent(p.law)));$('#source-note').textContent='위 링크는 발표 당시 자료입니다.'+(p.sourceNote?' '+p.sourceNote:'');const btn=$('#save-policy');btn.textContent=saved[id]?'내 지도에서 빼기 −':'내 지도에 저장 +';btn.setAttribute('aria-pressed',String(!!saved[id]));}
 const policyDialog=$('#policy-dialog');
 let dialogOpener=null,dialogPolicyId=null;
 const timelineList=$('#timeline-events');

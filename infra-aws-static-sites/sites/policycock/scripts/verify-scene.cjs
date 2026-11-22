@@ -178,7 +178,9 @@ async function checkLayout(page,width){
   await page.evaluate(()=>document.querySelector('#policy-scene canvas').getContext('webgl2').getExtension('WEBGL_lose_context').loseContext());
   await page.waitForSelector('#policy-scene[data-status="fallback"]');
   assert.equal(await page.locator('#policy-scene canvas').count(),0);assert.equal(await page.evaluate(()=>typeof policyScene),'undefined');
-  assert.equal(await page.locator('.person').count(),10);assert.equal(await page.locator('.agency-link').count(),44);
+  assert.equal(await page.locator('.person').count(),10);
+  assert.equal(await page.locator('#council-map .council-region').count(),16);
+  assert.equal(await page.locator('#council-map li.council-local').count(),227);
   pass('WebGL 실행 중 손실 시 자원 정리·HTML 탐색 유지');
   await context.close();
 

@@ -117,6 +117,8 @@ PostHog 방문 분석은 별도 선택 동의(`policycock.analytics.consent.v1`)
 
 GA4 유입 분석은 **PostHog를 유지한 채 추가하는 별도 선택 항목**입니다. `dist/ga4-consent.js`는 `policycock.ga4.consent.v1`을 사용하며 기존 PostHog 동의를 GA4로 승계하지 않습니다. 확인된 `ga4MeasurementId`가 `window.policycockConfig`에 없으면 GA4 선택 UI·Google 태그는 모두 비활성입니다. ID가 있어도 GA4 선택 전·거부·GPC/DNT 상태에서는 태그를 로드하지 않으며, 저장소 접근 실패 시 수집하지 않습니다. 동의 후 원본 URL·이전 주소를 보호하기 위해 no-referrer 문서로 다시 이동한 뒤, 고정된 사이트 첫 화면 주소와 검색엔진 출처의 allowlist UTM만 사용해 페이지 조회를 전송합니다. 개인 이메일 철회 링크(`#launch-withdraw=` 조각)에서는 GA4가 태그를 로드하거나 주소를 정리하지 않고 `launch.js`가 토큰을 처리합니다. 원본 쿼리·해시·검색어·관심 정책·메모·이메일·외부 신청 클릭은 GA4 이벤트에 넣지 않고, 검색엔진 referrer는 승인한 도메인 이름으로만 정규화합니다. 탭 간 철회 시 이미 로드된 태그를 내려놓기 위해 해당 탭을 다시 로드합니다. GA4 별도 계정 `모두의정책 Policycock`(417124324), 속성 `모두의정책 웹사이트`(565383231) 및 `모두의정책 웹` 스트림(16389777294)을 계정 UI에서 확인했습니다. 향상된 측정은 껐고, 속성의 사용자·이벤트 보관을 각각 2개월, 새 활동 시 재설정을 끈 뒤 재조회했습니다. `dist/privacy.html`은 PostHog의 미국 리전·이벤트 보관 1년, 이메일 접수 경로와 수동 메일 정리, GA4의 조건부 처리 사항을 안내합니다. 배포 workflow는 `POLICYCOCK_GA4_MEASUREMENT_ID` GitHub 변수에 확인된 `G-BT1FX0ZMCD`만 주입하고, 값이 없으면 GA4 선택 UI·태그를 숨깁니다. `node scripts/verify-ga4-transport.cjs`는 실제 Google 태그의 수집 요청을 가로채 민감값 없는 전송을 확인하지만 Google에 전달하지 않으므로 실제 수신 증거가 아닙니다. 운영 배포 뒤 별도 방문자의 명시적 동의→Google 실전송과 GA4 실시간/DebugView의 수신을 구분하여 검증합니다. 운영자 표기와 공개 문의처는 사용자 제공 `SAM` / `shdkej@gmail.com`입니다. Search Console 연결은 별도 승인 없이는 변경하지 않습니다.
 
+운영 배포 기록은 `qa/deployment.json`에 남깁니다. Google 전송 HTTP 204와 Analytics 속성의 실제 집계는 별개입니다. GA4 실시간/DebugView가 0이거나 스트림에 수신 데이터가 없다고 표시되면 수신 완료로 판정하지 않습니다. 측정이 확인될 때까지 Search Console 색인 요청도 완료 색인으로 표현하지 않습니다.
+
 | 이벤트 | 집계 시점 |
 | --- | --- |
 | `landing_viewed`, `case_list_viewed` | 랜딩 로드, 목록 제목이 화면에 처음 보일 때 |

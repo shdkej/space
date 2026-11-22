@@ -1,5 +1,5 @@
 {
-  "verifiedAt": "2026-11-21T07:33:56.256Z",
+  "verifiedAt": "2026-11-22T03:12:27.296Z",
   "url": "https://policycock.aws.shdkej.com",
   "status": "passed",
   "checks": [
@@ -18,7 +18,7 @@
     "모듈 실패·WebGL 미지원·초기화 도중 실패 시 정리와 정책 상세 유지",
     "처리되지 않은 브라우저 스크립트 오류 없음"
   ],
-  "desktopReadyMs": 3063,
+  "desktopReadyMs": 3372,
   "browser": "159.0.8154.6",
   "performanceBoundary": "Headless Chrome software WebGL; real device FPS/battery not measured",
   "visualBoundary": "Automated interaction checks do not judge mesh-surface text readability or visual quality; inspect the screenshots separately",

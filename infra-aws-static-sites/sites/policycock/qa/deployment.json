@@ -1,98 +1,34 @@
 {
-  "verifiedAt": "2026-11-21T08:00:35.556558+00:00",
-  "status": "deployed-and-verified",
+  "verifiedAt": "2026-11-22T03:16:05Z",
+  "status": "deployed-network-verified-ga4-receipt-unconfirmed",
   "url": "https://policycock.aws.shdkej.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "4d7ba84897432595cebe09960de2efc40eb035e0",
+  "sourceCommit": "a48bf8a4035af7c19be4a9b6eff3d575ee652a37",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 44882661532,
-    "url": "https://github.com/shdkej/space/actions/runs/44882661532",
+    "runId": 44979287372,
     "conclusion": "success",
-    "jobId": 136781172708,
-    "steps": {
-      "Sync S3": "success",
-      "Invalidate CloudFront": "success"
-    },
-    "completedAt": "2026-11-21T07:59:09Z"
-  },
-  "infrastructure": {
-    "changed": true,
-    "s3Bucket": "static-policycock-aws-shdkej-com",
-    "cloudfrontDistributionId": "E1IR9GXLCMQK6X",
-    "terraformApplied": false,
-    "backend": "Dedicated Seoul Lambda, DynamoDB table, 14-day log group, OIDC deploy and runtime roles"
+    "jobs": {"detect": "success", "deploy (policycock)": "success"},
+    "steps": {"Sync S3": "success", "Invalidate CloudFront": "success"}
   },
   "verification": {
-    "localHtml": {
-      "file": "qa/verification.json",
-      "checks": 19,
-      "verifiedAt": "2026-11-21T07:28:49.007Z"
-    },
-    "localScene": {
-      "file": "qa/scene-verification.json",
-      "checks": 14,
-      "verifiedAt": "2026-11-21T07:29:55.318Z"
-    },
-    "liveHtml": {
-      "file": "qa/live-verification.json",
-      "checks": 8,
-      "verifiedAt": "2026-11-21T07:59:39.345Z"
-    },
-    "liveScene": {
-      "file": "qa/live-scene-verification.json",
-      "checks": 14,
-      "verifiedAt": "2026-11-21T07:33:56.256Z"
-    },
-    "assetHashes": "qa/live-assets.json",
-    "byteMatchedDistFiles": 20,
-    "releaseConfig": "Registration open. Verified dedicated Function URL, production HTTPS responses and ingestion into the shared US PostHog project.",
-    "matchedRoutes": [
-      "/",
-      "/sources",
-      "/birth-grant-map"
-    ]
+    "local": "npm run check and npm test passed after the private-link regression fix and the duplicate page-view correction",
+    "realTagIntercepted": "Local and live: pre-consent 0, sanitized page_view 1, after withdrawal 0. Google collection was not forwarded in these checks.",
+    "liveHtml": {"file": "qa/live-verification.json", "matchedDistFiles": 24, "matchedRoutes": ["/", "/sources", "/birth-grant-map", "/privacy"], "result": "passed"},
+    "liveScene": {"file": "qa/live-scene-verification.json", "result": "passed"},
+    "privacy": "Public /privacy and /privacy.html returned the committed document; 320, 375, 768 and 1440px local layout had no horizontal overflow.",
+    "realGoogleTransport": {"preConsent": 0, "postConsentPageViewRequests": 1, "responseStatus": 204, "measurementId": "G-BT1FX0ZMCD", "pageLocation": "https://policycock.aws.shdkej.com/", "afterWithdrawalAdditionalRequests": 0, "posthogChoice": "declined", "note": "Test browser deliberately opted in; Google received a QA visit. HTTP 204 does not prove Analytics property ingestion."},
+    "analyticsUI": "At 2026-11-22T03:16Z the Policycock GA4 Realtime report still displayed 0 active users and no events. Stream settings also said no data received in the last 48h. Ingestion is unconfirmed.",
+    "searchConsole": "No configuration was changed; the earlier index request was accepted, not proven indexed."
   },
-  "rollback": {
-    "baseline": "b77d63a079898e033d83170bfe4d4377bb376a3d",
-    "scope": "Close new signups with the dedicated service workflow and the frontend flag. Retain the Function URL and withdrawal access for existing registrations."
+  "configuration": {
+    "posthog": "Existing optional recipient and signup consent kept separate",
+    "ga4": "Dedicated Policycock stream; enhanced measurement off; user and event retention each 2 months per prior UI recheck",
+    "githubVariable": "POLICYCOCK_GA4_MEASUREMENT_ID=G-BT1FX0ZMCD",
+    "emailSignup": "Existing signup and withdrawal kept; private #launch-withdraw= link tested with a mocked withdrawal API; operator mailbox deletion remains manual"
   },
-  "limits": [
-    "Mailbox delivery and manual mailbox cleanup are outside the site verification. Launch mail will be sent individually by the operator.",
-    "Mobile layout used Chrome emulation. Test analytics are synthetic traffic."
-  ],
-  "previousDeploymentHistory": "Git history of qa/deployment.json before this revision",
-  "posthog": {
-    "projectId": 424014,
-    "appId": "policycock",
-    "trafficKind": "synthetic",
-    "qaRunId": "6b173ae6-a5cd-4082-aa01-3b6cbe24c9b9",
-    "eventCounts": {
-      "landing_viewed": 1,
-      "case_list_viewed": 1,
-      "case_opened": 1,
-      "case_source_opened": 1,
-      "launch_cta_clicked": 2,
-      "signup_request_accepted": 1,
-      "signup_withdrawn": 1
-    },
-    "verifiedWith": "Project-scoped HogQL query by app, traffic kind and QA run ID"
-  },
-  "emailSignup": {
-    "publicStatus": "open",
-    "sourceRepository": "https://github.com/shdkej/policycock-launch-signup",
-    "sourceCommit": "66597c3d6092e54d149c65744014a70f83a1c692",
-    "workflow": "https://github.com/shdkej/policycock-launch-signup/actions/runs/44885632403",
-    "tests": "8 isolated backend checks passed. Production mobile browser submitted and withdrew a synthetic registration. Same-request and new-browser duplicate checks yielded one registration email attempt in total. Both requests returned HTTP 200, SES accepted the two operator messages, and a consistent read confirmed deletion of the active signup. Shared app-feedback code and revision matched the pre-release snapshot.",
-    "quotaVerification": {
-      "verifiedAt": "2026-11-21T08:37:04.957966+00:00",
-      "registrationAttemptsPerUtcDay": 300,
-      "withdrawalAttemptsPerUtcDay": 25,
-      "accountRecipientsPerRolling24h": 200,
-      "requestedAccountLimit": 300,
-      "requestStatus": "PENDING",
-      "checks": "Nine isolated tests passed including the 300/301 registration boundary. Active Lambda code hash matched the tested package. Live endpoint verified open without sending mail."
-    }
-  }
+  "rollback": "Unset POLICYCOCK_GA4_MEASUREMENT_ID and dispatch the static-site workflow for app=policycock to hide GA4 without removing PostHog, privacy or email withdrawal. A source rollback must be a new main commit; never force-push.",
+  "limits": ["GA4 Analytics UI receipt has not been observed; do not report it as confirmed.", "Public traffic or Search Console indexing success is not established.", "Mobile layout was browser emulation, not a physical device."],
+  "previousDeploymentHistory": "Git history of qa/deployment.json before this revision"
 }

@@ -240,6 +240,7 @@ jobs:
           exclusions=(
             --exclude "agents-live.json"
             --exclude "office-live.json"
+            --exclude "metrics-history.json"
             --exclude "runtime-map-config.js"
           )
           if [ "$DOMAIN_NAME" = "images.aws.shdkej.com" ]; then

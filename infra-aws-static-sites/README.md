@@ -80,9 +80,11 @@ Deploy the status board manually:
 
 ```bash
 python3 scripts/build-status-json.py --resolve-aws --check
-# agents-live.json은 system-dashboard 수집기가 올리는 라이브 피드 — 배포가 지우면 안 된다
+# agents-live.json, office-live.json, metrics-history.json은 수집기가 올리는 라이브 피드 — 배포가 지우면 안 된다
 aws s3 sync sites/status/dist/ s3://static-status-aws-shdkej-com --delete \
-  --exclude "agents-live.json"
+  --exclude "agents-live.json" \
+  --exclude "office-live.json" \
+  --exclude "metrics-history.json"
 aws cloudfront create-invalidation --distribution-id <status_distribution_id> --paths "/*"
 ```
 

@@ -44,11 +44,11 @@ const server = createServer((request, response) => {
     await page.locator('.person').first().click();
     assert.equal(events.length, 0, 'decline also blocks case events');
     await page.locator('#policy-dialog button.dialog-close').click();
-    await page.getByRole('button', {name:'PostHog 분석 설정'}).click();
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
     await page.getByRole('button', {name:'방문 분석 동의'}).click();
     await page.waitForTimeout(150);
     assert.equal(events.some(event => event.event === 'landing_viewed'), true, 'consent starts analytics');
-    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.consent.v1')), 'accepted');
+    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.posthog-only.v1')), 'accepted');
     const sibling = await context.newPage();
     const siblingEvents = [];
     await sibling.route('**/launch-config.js', route => route.fulfill({ contentType: 'application/javascript', body:
@@ -59,23 +59,23 @@ const server = createServer((request, response) => {
     });
     await sibling.goto(url + '/?qa=1');
     assert.equal(await sibling.evaluate(() => window.policycockAnalyticsConsent()), true);
-    await page.getByRole('button', {name:'PostHog 분석 설정'}).click();
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
     await page.getByRole('button', {name:'거부하고 계속'}).click();
     await sibling.waitForFunction(() => !window.policycockAnalyticsConsent());
     const siblingBefore = siblingEvents.length;
     await sibling.evaluate(() => window.policycockCapture('case_opened'));
     await sibling.waitForTimeout(500);
     assert.equal(siblingEvents.length, siblingBefore, 'cross-tab withdrawal blocks capture');
-    await sibling.getByRole('button', {name:'PostHog 분석 설정'}).click();
+    await sibling.getByRole('button', {name:'방문 분석 설정'}).click();
     await sibling.getByRole('button', {name:'방문 분석 동의'}).click();
     await page.waitForFunction(() => window.policycockAnalyticsConsent());
-    await sibling.getByRole('button', {name:'PostHog 분석 설정'}).click();
-    await page.getByRole('button', {name:'PostHog 분석 설정'}).click();
+    await sibling.getByRole('button', {name:'방문 분석 설정'}).click();
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
     await page.getByRole('button', {name:'거부하고 계속'}).click();
     await sibling.waitForFunction(() => document.activeElement?.id === 'analytics-settings');
     assert.equal(await sibling.locator('#analytics-notice').isVisible(), false, 'cross-tab choice closes notice without losing focus');
     await sibling.close();
-    await page.getByRole('button', {name:'PostHog 분석 설정'}).click();
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
     await page.getByRole('button', {name:'방문 분석 동의'}).click();
     await page.getByRole('button', {name: '이메일 등록 준비 중'}).waitFor({timeout: 2500});
     assert.equal(await page.locator('#launch-pending button').isDisabled(), true);
@@ -104,6 +104,11 @@ const server = createServer((request, response) => {
     assert.equal(requests.at(-1).consentVersion, 'launch-notice-v3');
     assert.equal(requests.at(-1).consent, true);
     assert.equal(requests.at(-1).website, '');
+    await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', {value:{writeText:() => Promise.reject(new Error('blocked'))}}));
+    await page.locator('#launch-receipts button').filter({hasText:'철회 링크 복사'}).first().click();
+    await page.locator('#launch-private-link').waitFor({state:'visible'});
+    const link = await page.locator('#launch-private-link').inputValue();
+    assert.notEqual(new URL(link).pathname, new URL(page.url()).pathname, 'private link forces a new document');
     assert.doesNotMatch(await page.evaluate(() => JSON.stringify(localStorage)), /example\.org/);
     // A fresh browser obtains no withdrawal capability by submitting an existing address.
     await page.evaluate(() => localStorage.clear());
@@ -128,9 +133,11 @@ const server = createServer((request, response) => {
     await page.getByText(/운영자에게 메일 정리를 요청/).waitFor();
     assert.equal(await page.locator('#launch-manage').isVisible(), false);
     assert.equal(requests.at(-1).token, token);
-    for (const name of ['case_opened','signup_request_accepted','signup_cleanup_pending','signup_withdrawn']) {
+    // Private withdrawal-link visits have no analytics, including success/failure events.
+    for (const name of ['case_opened','signup_request_accepted']) {
       assert.equal(events.some(event => event.event === name), true, name);
     }
+    assert.equal(events.some(event => ['signup_cleanup_pending','signup_withdrawn'].includes(event.event)), false);
     for (const event of events) {
       assert.equal(event.properties.app_id, 'policycock');
       assert.equal(event.properties.traffic_kind, 'synthetic');
@@ -139,7 +146,7 @@ const server = createServer((request, response) => {
       assert.ok(!JSON.stringify(event).includes(token) && !JSON.stringify(event).includes(retry));
     }
     const beforeRevoke = events.length;
-    await page.getByRole('button', {name:'PostHog 분석 설정'}).click();
+    await page.getByRole('button', {name:'방문 분석 설정'}).click();
     await page.getByRole('button', {name:'거부하고 계속'}).click();
     await page.evaluate(() => window.policycockCapture('case_opened'));
     assert.equal(events.length, beforeRevoke, 'withdrawal blocks subsequent calls');

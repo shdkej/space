@@ -14,9 +14,10 @@ const staged = process.env.GA4_PREVIEW === '1';
     const requests = [], tags = [];
     await context.route('**/policy-scene.js', route => route.abort());
     if (staged) {
-      for (const file of ['index.html', 'ga4-consent.js']) {
+      for (const file of ['index.html', 'analytics-consent.js', 'ga4-consent.js', 'index.css', 'privacy.html']) {
         const url = file === 'index.html' ? origin + '/?*' : '**/' + file;
-        await context.route(url, route => route.fulfill({contentType:file.endsWith('.html')?'text/html':'application/javascript',body:fs.readFileSync(path.join(dist,file))}));
+        const contentType = file.endsWith('.html')?'text/html':file.endsWith('.css')?'text/css':'application/javascript';
+        await context.route(url, route => route.fulfill({contentType,body:fs.readFileSync(path.join(dist,file))}));
       }
       await context.route('**/launch-config.js', route => route.fulfill({contentType:'application/javascript',body:
         "window.policycockConfig={projectKey:'',signupEnabled:false,signupEndpoint:'',ga4MeasurementId:'G-BT1FX0ZMCD'};"}));
@@ -31,8 +32,7 @@ const staged = process.env.GA4_PREVIEW === '1';
     await page.goto(origin+'/?search='+secret+'#policy='+secret,{referer:'https://www.google.com/search?q='+secret});
     await page.waitForTimeout(800);
     assert.deepEqual([tags.length,requests.length],[0,0],'no Google tag or hit before GA4 consent');
-    await page.locator('#analytics-decline').click();
-    await page.locator('#ga4-accept').click();
+    await page.locator('#analytics-accept').click();
     await page.waitForURL(origin+'/?utm_source=google&utm_medium=organic');
     await page.waitForTimeout(4000);
     assert.equal(await page.evaluate(()=>document.referrer),'','original referrer removed by clean navigation');
@@ -44,7 +44,7 @@ const staged = process.env.GA4_PREVIEW === '1';
     assert.equal(hit.searchParams.get('dl'),origin+'/?utm_source=google&utm_medium=organic');
     assert.ok(!hit.searchParams.get('dr') || hit.searchParams.get('dr')==='https://google.com/');
     assert.doesNotMatch(JSON.stringify({tags,requests}),new RegExp(secret));
-    await page.locator('#ga4-settings').click();await page.locator('#ga4-decline').click();
+    await page.locator('#analytics-settings').click();await page.locator('#analytics-decline').click();
     await page.waitForTimeout(800);
     assert.equal(requests.length,1,'no additional hit after withdrawal');
     console.log(`PASS ${staged?'STAGED':'LIVE'} real Google tag intercepted: pre-consent 0, sanitized page_view 1, after withdrawal 0; no collection forwarded`);

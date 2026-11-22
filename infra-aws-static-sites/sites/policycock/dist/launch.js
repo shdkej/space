@@ -61,7 +61,10 @@
   byId('launch-pending').hidden = Boolean(endpoint && config.signupEnabled);
   form.hidden = !endpoint || !config.signupEnabled;
   function privateLink(token) {
-    return location.origin + location.pathname + '#launch-withdraw=' + token;
+    // Always use a different document path. A hash-only navigation in an
+    // already-open tab could otherwise expose the capability to a loaded tag.
+    const safePath = location.pathname === '/index.html' ? '/' : '/index.html';
+    return location.origin + safePath + '#launch-withdraw=' + token;
   }
   function showLink(token) {
     byId('launch-private-link').value = privateLink(token);

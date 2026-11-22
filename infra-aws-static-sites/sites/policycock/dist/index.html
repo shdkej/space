@@ -5,13 +5,8 @@
 <a class="skip" href="#policies">정책 사례로 건너뛰기</a>
 <section id="analytics-notice" class="analytics-notice" aria-labelledby="analytics-title" hidden>
   <div class="analytics-notice-copy"><p class="analytics-kicker">선택 항목 · 방문 분석</p><h2 id="analytics-title">방문 분석에 동의하시겠어요?</h2>
-    <p>동의하면 PostHog(미국)로 임시 방문 ID와 방문·이용 이벤트를 보내 사이트 사용을 살펴봅니다. IP 주소도 처리될 수 있습니다. 정책명·검색어·메모·이메일은 이벤트에 넣지 않습니다. GA4는 별도 동의를 받고 연결합니다. 거부해도 사이트를 이용할 수 있고 아래 설정에서 언제든 철회할 수 있습니다. 이메일 출시 알림 신청 동의와는 별개입니다. <a href="privacy.html">개인정보 처리방침</a></p></div>
-  <div class="analytics-notice-actions"><button type="button" id="analytics-decline">거부하고 계속</button><button type="button" id="analytics-accept">방문 분석 동의</button></div>
-</section>
-<section id="ga4-notice" class="analytics-notice" aria-labelledby="ga4-title" hidden>
-  <div class="analytics-notice-copy"><p class="analytics-kicker">선택 항목 · 유입 분석</p><h2 id="ga4-title">GA4 유입 분석에 동의하시겠어요?</h2>
-    <p>동의하면 Google Analytics(GA4)가 방문·유입 통계를 위해 쿠키 식별자, 브라우저 정보와 IP 주소 등을 처리할 수 있습니다. 고정된 첫 화면 주소와 검색엔진 출처 분류값만 보내고 원본 경로·검색어·관심 정책·메모·이메일은 전송하지 않습니다. 거부해도 사이트를 이용할 수 있고 하단 설정에서 철회할 수 있습니다. PostHog·이메일 신청 동의와 별개입니다. <a href="privacy.html">개인정보 처리방침</a> · 운영자: SAM (<a href="mailto:shdkej@gmail.com">shdkej@gmail.com</a>).</p></div>
-  <div class="analytics-notice-actions"><button type="button" id="ga4-decline">거부하고 계속</button><button type="button" id="ga4-accept">GA4 분석 동의</button><p id="ga4-status" role="status" aria-live="polite"></p></div>
+    <p>동의 시 PostHog(미국)<span id="analytics-google-copy">와 Google Analytics(GA4)</span>가 방문·유입 분석을 위해 방문 ID·기기 정보·IP를 처리할 수 있습니다. 정책명·검색어·메모·이메일은 분석 이벤트에 보내지 않습니다. 거부해도 이용할 수 있고 하단에서 언제든 바꿀 수 있습니다. 이메일 신청과는 별개입니다. <a href="privacy.html">개인정보 처리방침</a></p></div>
+  <div class="analytics-notice-actions"><button type="button" id="analytics-decline">거부하고 계속</button><button type="button" id="analytics-accept">방문 분석 동의</button><p id="analytics-status" role="status" aria-live="polite"></p></div>
 </section>
 <header class="site-header"><a class="wordmark" href="#"><span class="brand-symbol" aria-hidden="true">◒</span> 모두의정책</a><nav aria-label="주 메뉴"><a href="#policies">정책 사례</a><a href="#agencies">중앙행정기관</a></nav><a class="nav-cta" href="#my-map">내 관심 정책 <span id="saved-count">0</span><span aria-hidden="true">↗</span></a></header>
 <main>
@@ -150,7 +145,7 @@
   </div>
 </section>
 </main>
-<footer class="site-footer section-wrap"><div><a class="wordmark" href="#">모두의정책</a><p>기관의 공식 정보와 발표 당시 정책 사례를 찾아봅니다.</p></div><div><p>정적 시제품 / 정책 사례 확인 2026.11.14</p><a href="sources.html">자료 출처와 화면 안내 ↗</a><a href="privacy.html">개인정보 처리방침</a><button type="button" id="analytics-settings">PostHog 분석 설정</button><button type="button" id="ga4-settings" hidden>GA4 분석 설정</button></div></footer>
+<footer class="site-footer section-wrap"><div><a class="wordmark" href="#">모두의정책</a><p>기관의 공식 정보와 발표 당시 정책 사례를 찾아봅니다.</p></div><div><p>정적 시제품 / 정책 사례 확인 2026.11.14</p><a href="sources.html">자료 출처와 화면 안내 ↗</a><a href="privacy.html">개인정보 처리방침</a><button type="button" id="analytics-settings">방문 분석 설정</button></div></footer>
 <div id="toast" role="status" aria-live="polite"></div>
 <noscript><p class="noscript">정책 사례 10개와 중앙행정기관 44개 이름은 JavaScript 없이도 각각 사례 출처와 기관 공식 정보로 이동합니다. 정책·기관 상세 모달, 검색과 브라우저 저장에는 JavaScript가 필요합니다.</p></noscript>
 </body></html>

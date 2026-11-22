@@ -67,9 +67,20 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       await page.locator(`[data-policy="${policy.id}"]`).click();
       assert.equal(await page.locator('#detail-title').textContent(),policy.title);
       assert.equal(await page.locator('#detail-links a').first().getAttribute('href'),policy.source);
+      const timeline=page.locator('#timeline-events');
+      const cards=timeline.locator('li');
+      assert.ok(await cards.count()>=3,policy.id+' timeline history');
+      assert.equal(await page.locator('#timeline-prev').isDisabled(),true);
+      assert.equal(await page.locator('#timeline-next').isEnabled(),true);
+      assert.equal(await cards.last().locator('strong').textContent(),'2026.11.22 기준');
+      const urls=await cards.locator('a').evaluateAll(links=>links.map(a=>a.href));
+      assert.equal(urls.length,await cards.count());
+      assert.ok(urls.every(url=>url.startsWith('https://')));
+      await page.locator('#timeline-next').click();
+      await page.waitForFunction(()=>document.querySelector('#timeline-events').scrollLeft>5);
       await page.keyboard.press('Escape');
     }
-    pass('정책 10건 모달 제목·출처 전수 검증');
+    pass('정책 10건의 상세·출처·가로 타임라인 전수 검증');
 
     await page.locator('[data-policy="lee"]').click();
     await page.locator('#save-policy').click();

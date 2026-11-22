@@ -57,10 +57,44 @@ function renderPeople(){
     }
   }
 }
-function selectPolicy(id){const p=POLICY_DATA.find(p=>p.id===id);if(!p)return;selectedId=id;const person=$('#detail-person');person.replaceChildren(document.createTextNode(p.name),el('span','',p.party));$('#detail-meta').textContent=`${p.year} / ${p.stage} / ${p.region}`;$('#detail-title').textContent=p.policy;$('#detail-summary').textContent=p.summary;$('#detail-links').replaceChildren(outLink(p.sourceLabel+' ↗',p.source),outLink('관련 뉴스 ↗',p.news),outLink('관련 법령 검색 ↗','https://www.law.go.kr/LSW/unSc.do?query='+encodeURIComponent(p.law)));$('#source-note').textContent='발표 당시 기록입니다. 현재 시행 여부·대상·조건은 이 화면에서 확인하지 않습니다.'+(p.sourceNote?' '+p.sourceNote:'');const btn=$('#save-policy');btn.textContent=saved[id]?'내 지도에서 빼기 −':'내 지도에 저장 +';btn.setAttribute('aria-pressed',String(!!saved[id]));}
+function selectPolicy(id){const p=POLICY_DATA.find(p=>p.id===id);if(!p)return;selectedId=id;const person=$('#detail-person');person.replaceChildren(document.createTextNode(p.name),el('span','',p.party));$('#detail-meta').textContent=`${p.year} / ${p.stage} / ${p.region}`;$('#detail-title').textContent=p.policy;$('#detail-summary').textContent=p.summary;$('#detail-links').replaceChildren(outLink(p.sourceLabel+' ↗',p.source),outLink('관련 뉴스 ↗',p.news),outLink('관련 법령 검색 ↗','https://www.law.go.kr/LSW/unSc.do?query='+encodeURIComponent(p.law)));$('#source-note').textContent='위 링크는 발표 당시 자료입니다.'+(p.sourceNote?' '+p.sourceNote:'');const btn=$('#save-policy');btn.textContent=saved[id]?'내 지도에서 빼기 −':'내 지도에 저장 +';btn.setAttribute('aria-pressed',String(!!saved[id]));}
 const policyDialog=$('#policy-dialog');
 let dialogOpener=null,dialogPolicyId=null;
-function openPolicy(id,trigger){selectPolicy(id);dialogOpener=trigger;dialogPolicyId=id;policyDialog.showModal();window.policycockCapture?.('case_opened');policyDialog.querySelector('.dialog-close').focus();}
+const timelineList=$('#timeline-events');
+const timelinePrev=$('#timeline-prev');
+const timelineNext=$('#timeline-next');
+
+function renderTimeline(id){
+  const events=typeof POLICY_TIMELINES==='undefined'?[]:POLICY_TIMELINES[id]||[];
+  timelineList.closest('section').hidden=events.length===0;
+  const cards=events.map(({date,label,url})=>{
+    const card=el('li','timeline-event');
+    const source=outLink('출처 보기 ↗',url);
+    source.setAttribute('aria-label',date+' '+label+' 출처 보기');
+    card.append(el('strong','timeline-date',date.replaceAll('-','.')),el('p','',label),source);
+    return card;
+  });
+  timelineList.replaceChildren(...cards);
+}
+
+function updateTimelineControls(){
+  timelinePrev.disabled=timelineList.scrollLeft<=1;
+  timelineNext.disabled=timelineList.scrollLeft+timelineList.clientWidth>=timelineList.scrollWidth-1;
+}
+
+function moveTimeline(direction){
+  const cards=timelineList.children;
+  if(cards.length<2)return;
+  const step=cards[1].offsetLeft-cards[0].offsetLeft;
+  const index=direction>0?Math.floor((timelineList.scrollLeft+1)/step)+1:Math.ceil((timelineList.scrollLeft-1)/step)-1;
+  timelineList.scrollTo({left:step*index,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+}
+
+timelinePrev.addEventListener('click',()=>moveTimeline(-1));
+timelineNext.addEventListener('click',()=>moveTimeline(1));
+timelineList.addEventListener('scroll',updateTimelineControls,{passive:true});
+new ResizeObserver(updateTimelineControls).observe(timelineList);
+function openPolicy(id,trigger){selectPolicy(id);renderTimeline(id);dialogOpener=trigger;dialogPolicyId=id;policyDialog.showModal();policyDialog.scrollTop=0;timelineList.scrollLeft=0;updateTimelineControls();window.policycockCapture?.('case_opened');policyDialog.querySelector('.dialog-close').focus();}
 {const dialog=policyDialog;dialog.querySelector('.dialog-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{let target=dialogOpener;if(dialogPolicyId&&(!target||!target.isConnected))target=document.querySelector(`.person[data-policy="${dialogPolicyId}"]`);if(target?.isConnected)target.focus({preventScroll:true});dialogOpener=null;dialogPolicyId=null;});}
 function toggleSavedPolicy(id){const next={...saved},wasSaved=!!next[id];if(wasSaved)delete next[id];else next[id]={note:''};if(persist(next)){renderSaved();renderPeople();selectPolicy(id);notify(wasSaved?'내 지도에서 뺐어요.':'내 지도에 담았어요. 관심 이유도 남겨보세요.');}}
 $('#save-policy').addEventListener('click',()=>toggleSavedPolicy(selectedId));

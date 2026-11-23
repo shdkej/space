@@ -47,19 +47,13 @@ jobs:
               raise SystemExit('Both the existing sorter and new converter links are required')
           PY
           aws cloudfront list-distributions --output json > "$RUNNER_TEMP/distributions.json"
-          python3 - "$RUNNER_TEMP/distributions.json" <<'PY' > "$RUNNER_TEMP/image-distribution-id"
+          python3 - "$RUNNER_TEMP/distributions.json" <<'PY' >> "$GITHUB_OUTPUT"
           import json, sys
           items = json.load(open(sys.argv[1]))['DistributionList'].get('Items', [])
           matches = [d for d in items if 'images.aws.shdkej.com' in d.get('Aliases', {}).get('Items', [])]
           if len(matches) != 1:
               raise SystemExit('Expected exactly one image distribution')
-          print(matches[0]['Id'])
-          PY
-          distribution_id="$(cat "$RUNNER_TEMP/image-distribution-id")"
-          aws cloudfront get-distribution-config --id "$distribution_id" --query DistributionConfig --output json > "$RUNNER_TEMP/distribution-config.json"
-          python3 - "$RUNNER_TEMP/distribution-config.json" "$distribution_id" <<'PY' >> "$GITHUB_OUTPUT"
-          import json, sys
-          distribution = json.load(open(sys.argv[1]))
+          distribution = matches[0]
           bucket = 'static-images-aws-shdkej-com'
           origins = {o['Id']: o for o in distribution['Origins']['Items']}
           behaviors = distribution.get('CacheBehaviors', {}).get('Items', [])
@@ -73,10 +67,8 @@ jobs:
               origin = origin_for(path)
               if origin['DomainName'] != bucket + '.s3.ap-northeast-2.amazonaws.com' or origin.get('OriginPath'):
                   raise SystemExit('Unexpected origin for ' + path)
-          if distribution.get('DefaultRootObject') != 'index.html':
-              raise SystemExit('Unexpected default root object')
           print('bucket=' + bucket)
-          print('distribution_id=' + sys.argv[2])
+          print('distribution_id=' + distribution['Id'])
           PY
           bucket=static-images-aws-shdkej-com
           for key in index.html styles.css sort/ tools/image-converter/; do
@@ -92,6 +84,10 @@ jobs:
           base=infra-aws-static-sites/sites/image-annotator/dist
           aws s3api get-object --bucket "$BUCKET" --key index.html "$RUNNER_TEMP/old-index.html" > /dev/null
           aws s3api get-object --bucket "$BUCKET" --key styles.css "$RUNNER_TEMP/old-styles.css" > /dev/null
+          curl -fsSL https://images.aws.shdkej.com/ -o "$RUNNER_TEMP/old-live-index.html"
+          curl -fsSL https://images.aws.shdkej.com/styles.css -o "$RUNNER_TEMP/old-live-styles.css"
+          cmp "$RUNNER_TEMP/old-index.html" "$RUNNER_TEMP/old-live-index.html"
+          cmp "$RUNNER_TEMP/old-styles.css" "$RUNNER_TEMP/old-live-styles.css"
           old_index_type="$(aws s3api head-object --bucket "$BUCKET" --key index.html --query ContentType --output text)"
           old_styles_type="$(aws s3api head-object --bucket "$BUCKET" --key styles.css --query ContentType --output text)"
           old_index_cache="$(aws s3api head-object --bucket "$BUCKET" --key index.html --query CacheControl --output text)"

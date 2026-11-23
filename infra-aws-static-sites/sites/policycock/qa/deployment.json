@@ -1,21 +1,22 @@
 {
-  "verifiedAt": "2026-11-23T13:10:13.497674+00:00",
+  "verifiedAt": "2026-11-23T13:31:13.367Z",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "f08f69ae35c1ff66ff3c70db3251bbfbc06c71ab",
+  "sourceCommit": "72223eb19bdeb4c1ad6ae90d4c370a1bed9fea55",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45180522054,
+    "runId": 45184213050,
     "conclusion": "success"
   },
   "verification": {
-    "search": "Verified that 14 live sitemap URLs match the expected HTML, canonicals and JSON-LD, and that 10 policy pages expose 42 source links without JavaScript.",
-    "google": "Verified URL-prefix ownership and a successful sitemap read with 14 discovered pages. Individually inspected home, moon, lee and oh. All four were discovered and not yet indexed on 2026-11-23.",
-    "naver": "Verified ownership in Search Advisor. Rechecked the submitted sitemap.xml listing dated 2026-11-23 22:14:15 KST. Home, moon, lee and oh returned 200 with crawling allowed in URL checks. The separate index status check returned no result for each of the four URLs. Search exposure and click reports have no data yet.",
-    "dns": "Used homepage verification tags on the exact service URL. No DNS changes."
+    "pixel": "Meta Events Manager showed dedicated dataset 모두의정책, ID 1824168211816282. Automatic advanced matching was off.",
+    "transport": "On the live homepage, a fresh Chromium session made zero Meta requests before explicit advertising consent, then one PageView to facebook.com/tr with HTTP 200. Only id, ev, fixed homepage dl and noscript were included; no Cookie or Referer header. After revocation, reload and policy detail navigation produced no further request.",
+    "signup": "Local Chromium tests with intercepted Meta and signup endpoints checked opt-in, valid new signup, duplicate, failure, retry, cross-tab opt-out and tracking protection. No production signup or synthetic production Lead was submitted.",
+    "reporting": "The Meta overview for 2026-11-23 showed no received activity at verification time. Event counts, real-user Lead receipt and campaign attribution remain unconfirmed.",
+    "browserChecks": "qa/live-verification.json"
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/cad89493ffb2c08fc36f56422e3c1508697121a2/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/dbe05aeed0e57198fdcdcc41fa6dd7625d0f221b/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

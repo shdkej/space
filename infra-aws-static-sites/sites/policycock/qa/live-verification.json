@@ -1,9 +1,9 @@
 {
-  "verifiedAt": "2026-11-23T12:10:47.329Z",
+  "verifiedAt": "2026-11-23T13:31:13.367Z",
   "url": "https://policy.minimalcollector.com/",
   "status": "passed",
   "checks": [
-    "51개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
+    "52개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
     "국가 지도 기관별 정책 사례 2~3개·키보드 열기·Escape·포커스 복귀",
     "HTTPS 200·새 CSS·정책 10건·국가 지도",
     "1440×900 탐색 히어로·정책 사례 범위·은하 렌더러 로딩 실패 시 정책 목록 접근",
@@ -48,6 +48,7 @@
     "institutions.json",
     "launch-config.js",
     "launch.js",
+    "meta-consent.js",
     "policies/han.html",
     "policies/hong.html",
     "policies/kim-dongyeon.html",

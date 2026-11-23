@@ -1,22 +1,22 @@
 {
-  "verifiedAt": "2026-11-23T11:57:54.037Z",
+  "verifiedAt": "2026-11-23T12:10:47.329Z",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "ca3fe5b49976f87432f02bffe66ae6bba0579a9a",
+  "sourceCommit": "cd5dcc0ee6b254ee78fe2fe4239b096884cbcbfe",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45169695743,
+    "runId": 45171570216,
     "conclusion": "success"
   },
   "verification": {
-    "search": "Verified robots.txt and sitemap.xml changed from HTTP 403 to 200. All 14 sitemap URLs returned the expected HTML, canonical, page title and matching JSON-LD.",
+    "search": "All 14 sitemap URLs returned the expected HTML, canonical and JSON-LD after updating three policy pages. Verified scoped answers and links to the applicable statute, Gyeonggi notice and Seoul FAQ.",
     "policyRecords": "Verified all 42 dated source links on 10 policy histories with JavaScript disabled at 375px, and navigation from the interactive child allowance dialog.",
     "assets": "51개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
     "browserChecks": "qa/live-verification.json",
-    "outcome": "Search engine indexing, rankings and AI citations have not been measured."
+    "outcome": "Deployment and rendering verified. Search console measurements are tracked separately."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/348b9f4ba5659e4a66332950f00911d45ead0ef6/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/b9cb7c2e1caa3783d8da841bee908d29dfd8a89b/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

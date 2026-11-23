@@ -47,13 +47,19 @@ jobs:
               raise SystemExit('Both the existing sorter and new converter links are required')
           PY
           aws cloudfront list-distributions --output json > "$RUNNER_TEMP/distributions.json"
-          python3 - "$RUNNER_TEMP/distributions.json" <<'PY' >> "$GITHUB_OUTPUT"
+          python3 - "$RUNNER_TEMP/distributions.json" <<'PY' > "$RUNNER_TEMP/image-distribution-id"
           import json, sys
           items = json.load(open(sys.argv[1]))['DistributionList'].get('Items', [])
           matches = [d for d in items if 'images.aws.shdkej.com' in d.get('Aliases', {}).get('Items', [])]
           if len(matches) != 1:
               raise SystemExit('Expected exactly one image distribution')
-          distribution = matches[0]
+          print(matches[0]['Id'])
+          PY
+          distribution_id="$(cat "$RUNNER_TEMP/image-distribution-id")"
+          aws cloudfront get-distribution-config --id "$distribution_id" --query DistributionConfig --output json > "$RUNNER_TEMP/distribution-config.json"
+          python3 - "$RUNNER_TEMP/distribution-config.json" "$distribution_id" <<'PY' >> "$GITHUB_OUTPUT"
+          import json, sys
+          distribution = json.load(open(sys.argv[1]))
           bucket = 'static-images-aws-shdkej-com'
           origins = {o['Id']: o for o in distribution['Origins']['Items']}
           behaviors = distribution.get('CacheBehaviors', {}).get('Items', [])
@@ -70,7 +76,7 @@ jobs:
           if distribution.get('DefaultRootObject') != 'index.html':
               raise SystemExit('Unexpected default root object')
           print('bucket=' + bucket)
-          print('distribution_id=' + distribution['Id'])
+          print('distribution_id=' + sys.argv[2])
           PY
           bucket=static-images-aws-shdkej-com
           for key in index.html styles.css sort/ tools/image-converter/; do

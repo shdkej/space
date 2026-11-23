@@ -97,19 +97,28 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       assert.equal(await dots.count(),await cards.count());
       assert.equal(await page.locator('[data-policy="'+policy.id+'"] .case-card-count').textContent(),'추적 '+await cards.count()+'건');
       assert.ok((await page.locator('#detail-person img').getAttribute('src')).endsWith('/'+policy.id+'.jpg'));
-      const summaries=await page.evaluate(id=>[POLICY_TIMELINES[id][0].summary,POLICY_TIMELINES[id].at(-1).summary],policy.id);
+      const events=await page.evaluate(id=>POLICY_TIMELINES[id],policy.id);
+      const latest=events.findLastIndex(event=>!event.scheduled);
+      const summaries=[events[0].summary,events[latest].summary];
       assert.ok(summaries.every(Boolean));
       assert.deepEqual(await page.locator('#change-overview dd').allTextContents(),summaries);
       assert.equal(await page.locator('#change-overview').isVisible(),true);
-      const events=await page.evaluate(id=>POLICY_TIMELINES[id],policy.id);
-      const difference=events.at(-1).changeSinceFirst;
+      const difference=events[latest].changeSinceFirst;
       assert.ok(difference && !summaries.includes(difference));
       const stars=timeline.getByRole('button');
-      assert.equal(await stars.last().getAttribute('aria-pressed'),'true');
-      assert.equal(await page.locator('#timeline-next').isDisabled(),true);
+      assert.equal(await stars.nth(latest).getAttribute('aria-pressed'),'true');
+      assert.equal(await page.locator('#timeline-next').isDisabled(),latest===events.length-1);
       await page.locator('#timeline-prev').click();
-      assert.equal(await stars.nth(events.length-2).getAttribute('aria-pressed'),'true');
+      assert.equal(await stars.nth(latest-1).getAttribute('aria-pressed'),'true');
       await page.locator('#timeline-next').click();
+      if(policy.id==='moon'){
+        assert.equal(await page.locator('#event-date').innerText(),'2026.04');
+        assert.equal(await page.locator('#event-kind').innerText(),'최근 기록');
+        await page.locator('#timeline-next').click();
+        assert.equal(await stars.last().locator('.timeline-date').innerText(),'2027 · 예정');
+        assert.equal(await page.locator('#event-kind').innerText(),'시행 확정');
+        assert.match(await page.locator('#event-label').innerText(),/만 10세 미만/);
+      }
       for(const [index,event] of events.entries()){
         await stars.nth(index).click();
         assert.equal(await stars.nth(index).getAttribute('aria-pressed'),'true');

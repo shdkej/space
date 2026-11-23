@@ -107,12 +107,14 @@ const timelineNext=$('#timeline-next');
 function renderTimeline(id){
   const events=policyTimeline(id);
   const overview=$('#change-overview');
-  overview.hidden=!events.length;
+  const latestIndex=events.findLastIndex(event=>!event.scheduled);
+  const latest=events[latestIndex];
+  overview.hidden=!latest;
   const difference=$('#change-difference');
-  difference.textContent=events.at(-1)?.changeSinceFirst||'';
+  difference.textContent=latest?.changeSinceFirst||'';
   difference.hidden=!difference.textContent;
-  if(events.length){
-    for(const [name,event] of [['first',events[0]],['latest',events.at(-1)]]){
+  if(latest){
+    for(const [name,event] of [['first',events[0]],['latest',latest]]){
       $('#change-'+name+'-date').textContent=event.date.replaceAll('-','.').replace(' 기준','');
       $('#change-'+name).textContent=event.summary||event.label;
     }
@@ -121,7 +123,8 @@ function renderTimeline(id){
   const stars=events.map((event,index)=>{
     const item=el('li','timeline-event');
     const star=el('button','timeline-star');
-    star.append(el('span','timeline-date',event.date.replaceAll('-','.')),
+    const date=event.date.replaceAll('-','.');
+    star.append(el('span','timeline-date',event.scheduled?date+' · 예정':date),
       el('span','timeline-title',event.title||event.label));
     star.type='button';
     star.setAttribute('aria-controls','event-label');
@@ -130,7 +133,7 @@ function renderTimeline(id){
     return item;
   });
   timelineList.replaceChildren(...stars);
-  let selected=events.length-1;
+  let selected=Math.max(0,latestIndex);
   function selectEvent(index){
     const event=events[index];
     if(!event)return;
@@ -140,10 +143,14 @@ function renderTimeline(id){
     }
     const star=stars[index];
     // Keep the date visible without scrolling the surrounding modal.
-    timelineList.scrollLeft=star.offsetLeft+(star.offsetWidth-timelineList.clientWidth)/2;
+    const centered=star.offsetLeft+(star.offsetWidth-timelineList.clientWidth)/2;
+    const upcoming=events[index+1]?.scheduled && stars[index+1];
+    timelineList.scrollLeft=upcoming
+      ? Math.max(centered,upcoming.offsetLeft+upcoming.offsetWidth-timelineList.clientWidth)
+      : centered;
     timelinePrev.disabled=index===0;
     timelineNext.disabled=index===events.length-1;
-    $('#event-kind').textContent=index===events.length-1?'최근 기록':index===0?'최초 기록':'변경 기록';
+    $('#event-kind').textContent=event.scheduled?'시행 확정':index===latestIndex?'최근 기록':index===0?'최초 기록':'변경 기록';
     $('#event-date').textContent=event.date.replaceAll('-','.');
     $('#event-label').textContent=event.label;
     $('#event-source').href=event.url;

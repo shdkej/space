@@ -23,7 +23,7 @@
 .local-pair>div {position:relative;gap:.65cqw}
 .local-pair .state-node strong {font-size:1.65cqw}
 .state-people {display:flex;flex-direction:column;align-items:center;gap:.4cqw;padding:.4cqw 0;text-align:center}
-.state-people h3 {box-sizing:border-box;display:grid;place-items:center;flex:none;width:40%;min-height:5.3cqw;margin:0;padding:.1em .85em;background:#fff;border:1px solid #aaa394;font-size:2.5cqw;line-height:1.2;letter-spacing:-.045em;white-space:nowrap}
+.state-people h3 {box-sizing:border-box;display:grid;place-items:center;flex:none;width:40%;min-height:5.3cqw;margin:0;padding:.1em .85em;background:#fffdf5;border:1px solid #aaa394;font-size:2.5cqw;line-height:1.2;letter-spacing:-.045em;white-space:nowrap}
 .people-invite {min-width:0}
 .people-invite strong {display:block;font-size:1.55cqw;letter-spacing:-.04em;line-height:1.25}
 .people-invite p {margin:.25em 0;font-size:1.24cqw;line-height:1.4;word-break:keep-all}

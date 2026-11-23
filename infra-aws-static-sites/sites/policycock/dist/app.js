@@ -108,6 +108,9 @@ function renderTimeline(id){
   const events=policyTimeline(id);
   const overview=$('#change-overview');
   overview.hidden=!events.length;
+  const difference=$('#change-difference');
+  difference.textContent=events.at(-1)?.changeSinceFirst||'';
+  difference.hidden=!difference.textContent;
   if(events.length){
     for(const [name,event] of [['first',events[0]],['latest',events.at(-1)]]){
       $('#change-'+name+'-date').textContent=event.date.replaceAll('-','.').replace(' 기준','');
@@ -117,10 +120,11 @@ function renderTimeline(id){
   timelineList.closest('section').hidden=events.length===0;
   const stars=events.map((event,index)=>{
     const item=el('li','timeline-event');
-    const star=el('button','timeline-star',event.date.replaceAll('-','.'));
+    const star=el('button','timeline-star');
+    star.append(el('span','timeline-date',event.date.replaceAll('-','.')),
+      el('span','timeline-title',event.title||event.label));
     star.type='button';
     star.setAttribute('aria-controls','event-label');
-    star.setAttribute('aria-label',event.date+' 기록 보기');
     star.addEventListener('click',()=>selectEvent(index));
     item.append(star);
     return item;
@@ -141,14 +145,7 @@ function renderTimeline(id){
     timelineNext.disabled=index===events.length-1;
     $('#event-kind').textContent=index===events.length-1?'최근 기록':index===0?'최초 기록':'변경 기록';
     $('#event-date').textContent=event.date.replaceAll('-','.');
-    const label=$('#event-label');
-    const start=event.highlight?event.label.indexOf(event.highlight):-1;
-    if(start<0){
-      label.textContent=event.label;
-    }else{
-      label.replaceChildren(event.label.slice(0,start),el('strong','',event.highlight),
-        event.label.slice(start+event.highlight.length));
-    }
+    $('#event-label').textContent=event.label;
     $('#event-source').href=event.url;
   }
   timelinePrev.onclick=()=>selectEvent(selected-1);

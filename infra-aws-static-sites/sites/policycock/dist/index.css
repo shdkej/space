@@ -235,18 +235,20 @@
 .timeline-controls button:enabled:hover,#policy-dialog .dialog-close:hover {background:var(--quiet)}
 .timeline-controls button:disabled {opacity:.35;cursor:default}
 #timeline-events {display:flex;position:relative;overflow-x:auto;overscroll-behavior-x:contain;margin:8px 0 20px;padding:3px 0 8px;list-style:none;scrollbar-width:thin}
-.timeline-event {position:relative;flex:1 0 6.4rem;text-align:center}
+.timeline-event {position:relative;flex:1 0 7.25rem;text-align:center}
 .timeline-event:not(:last-child)::before {content:"";position:absolute;top:24px;left:50%;width:100%;height:1px;background:#616a67;pointer-events:none}
 .timeline-star {position:relative;width:100%;min-height:64px;border:0;background:transparent;color:var(--soft);font:inherit;font-size:var(--caption);font-variant-numeric:tabular-nums;cursor:pointer;padding:39px 0 4px}
+.timeline-date,.timeline-title {display:block}
+.timeline-title {margin:4px 4px 0;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
 .timeline-star::before {content:"✦";position:absolute;top:24px;left:50%;transform:translate(-50%,-50%);color:#b7c4be;font-size:14px;line-height:1}
 .timeline-star[aria-pressed=true] {color:var(--ink);font-weight:650}
 .timeline-star[aria-pressed=true]::before {color:#f0ece3;font-size:21px}
 .timeline-star[aria-pressed=true]::after {content:"";position:absolute;left:50%;top:24px;width:26px;height:26px;border:1px solid #909491;border-radius:50%;transform:translate(-50%,-50%)}
 .timeline-star:focus-visible {outline:2px solid white;outline-offset:-3px;border-radius:6px}
-.event-detail {padding:20px;background:#212a27;border-radius:6px}
+.event-detail {padding:20px;background:#232729;border-radius:6px}
 .event-meta {margin:0;color:var(--soft);font-size:var(--caption);font-variant-numeric:tabular-nums}
 #event-label {margin:10px 0 16px;font-size:var(--body);line-height:1.75;word-break:keep-all;overflow-wrap:anywhere}
-#event-label strong {color:#64eea0;font-weight:700}
+#change-difference {margin:12px 0 24px;color:#64eea0;font-size:var(--body);font-weight:650;line-height:1.75;word-break:keep-all;overflow-wrap:anywhere}
 #event-source {color:var(--signal);font-size:var(--caption);text-decoration:underline;text-underline-offset:3px}
 
 .case-dots {order:4;display:flex;align-items:center;gap:4px;margin-top:4px;width:max-content;color:#436457}

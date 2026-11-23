@@ -102,6 +102,8 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       assert.deepEqual(await page.locator('#change-overview dd').allTextContents(),summaries);
       assert.equal(await page.locator('#change-overview').isVisible(),true);
       const events=await page.evaluate(id=>POLICY_TIMELINES[id],policy.id);
+      const difference=events.at(-1).changeSinceFirst;
+      assert.ok(difference && !summaries.includes(difference));
       const stars=timeline.getByRole('button');
       assert.equal(await stars.last().getAttribute('aria-pressed'),'true');
       assert.equal(await page.locator('#timeline-next').isDisabled(),true);
@@ -113,15 +115,15 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
         assert.equal(await stars.nth(index).getAttribute('aria-pressed'),'true');
         assert.equal(await page.locator('#event-date').textContent(),event.date.replaceAll('-','.'));
         assert.equal(await page.locator('#event-label').textContent(),event.label);
-        assert.ok(event.highlight && event.label.includes(event.highlight));
-        assert.equal(await page.locator('#event-label strong').textContent(),event.highlight);
+        assert.equal(await stars.nth(index).locator('.timeline-title').textContent(),event.title);
+        assert.equal(await page.locator('#change-difference').innerText(),difference);
         assert.equal(await page.locator('#event-source').getAttribute('href'),event.url);
         assert.equal(await page.locator('#timeline-prev').isDisabled(),index===0);
         assert.deepEqual(await page.locator('#change-overview dd').allTextContents(),summaries);
       }
       await page.keyboard.press('Escape');
     }
-    pass('정책 10건의 별 선택·변경 구절·출처·고정 비교 검증');
+    pass('정책 10건의 시점 제목·본문·출처·처음과 마지막 차이 검증');
 
     await page.locator('[data-policy="lee"]').click();
     await page.locator('#save-policy').click();

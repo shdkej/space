@@ -1,22 +1,22 @@
 {
-  "verifiedAt": "2026-11-23T08:06:58.226Z",
+  "verifiedAt": "2026-11-23T11:57:54.037Z",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "189c2575f04a146074dace576485514f1cef8b41",
+  "sourceCommit": "ca3fe5b49976f87432f02bffe66ae6bba0579a9a",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45135819981,
+    "runId": 45169695743,
     "conclusion": "success"
   },
   "verification": {
-    "landing": "Verified future Daegu transport eligibility and Gyeonggi youth income dates in production at 375px and 1280px.",
-    "assets": "Verified 39 dist assets, including deployment-injected configuration.",
-    "scene": "Production WebGL and fallback checks passed.",
+    "search": "Verified robots.txt and sitemap.xml changed from HTTP 403 to 200. All 14 sitemap URLs returned the expected HTML, canonical, page title and matching JSON-LD.",
+    "policyRecords": "Verified all 42 dated source links on 10 policy histories with JavaScript disabled at 375px, and navigation from the interactive child allowance dialog.",
+    "assets": "51개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
     "browserChecks": "qa/live-verification.json",
-    "signup": "Production form with intercepted responses: optional feedback included when entered and omitted when blank; 24px withdrawal panel gap. Verified privacy contact. Backend workflow 45135579594 passed unit tests and its address-free smoke check."
+    "outcome": "Search engine indexing, rankings and AI citations have not been measured."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/54f9525f245b10ae93f3a2cb9929e019dc8be9a2/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/348b9f4ba5659e4a66332950f00911d45ead0ef6/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

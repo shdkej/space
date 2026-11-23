@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const questions = require('./policy-questions.json');
 const dist = path.resolve(__dirname, '../dist');
 const origin = 'https://policy.minimalcollector.com';
 const brand = '모두의정책';
@@ -70,20 +71,33 @@ ${p.sourceNote ? '<p>'+escape(p.sourceNote)+'</p>' : ''}</section>`);
 for (const p of policies) {
   const events = timelines[p.id];
   const last = events.filter(e => !e.scheduled).at(-1);
-  const description = last.changeSinceFirst || last.summary || last.label;
-  const title = p.policy + ' 변경 이력 | ' + brand;
+  const summary = last.changeSinceFirst || last.summary || last.label;
+  const question = questions[p.id];
+  const heading = question?.question || p.policy + ' 변경 이력';
+  const description = question?.answer || summary;
+  const title = heading + ' | ' + brand;
+  const citations = events.map(e => e.url);
+  let introduction = '';
+  if (question) {
+    citations.push(question.source);
+    introduction = [
+      '<p>' + escape(question.answer) + '</p>',
+      question.detail && '<p>' + escape(question.detail) + '</p>',
+      '<p>' + link(question.source, question.sourceLabel) + '</p>'
+    ].filter(Boolean).join('\n') + '\n';
+  }
   const records = events.map(e => `<li><strong>${escape(e.date)} · ${escape(e.title || '정책 기록')}</strong>${e.scheduled ? ' (' + escape(e.scheduleKind || '시행 예정') + ')' : ''}
 <p>${escape(e.label)} ${link(e.url,'이 기록의 출처 ↗')}</p></li>`).join('\n');
   save(route(p).slice(1), `<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-${head(route(p), title, description, 'WebPage', events.map(e => e.url))}
+${head(route(p), title, description, 'WebPage', citations)}
 <link rel="stylesheet" href="/index.css"><script src="/domain-move.js"></script></head>
 <body><main class="source-page">
 <nav aria-label="탐색">${link('/',brand)} · ${link('/sources.html','정책별 기록과 자료 출처')}</nav>
-<h1>${escape(p.policy)} 변경 이력</h1>
-<p>${escape([p.name,p.party,p.year,p.stage].join(' / '))} (발표 당시 기준)</p>
+<h1>${escape(heading)}</h1>
+${introduction}<p>${escape([p.name,p.party,p.year,p.stage].join(' / '))} (발표 당시 기준)</p>
 <h2>처음 발표된 뒤 무엇이 달라졌나요?</h2>
-<p>${escape(last.date)} 기록 기준 · ${escape(description)}</p>
+<p>${escape(last.date)} 기록 기준 · ${escape(summary)}</p>
 <h2>시점별 기록과 출처</h2>
 <ol>${records}</ol>
 ${p.sourceNote ? '<p>'+escape(p.sourceNote)+'</p>' : ''}

@@ -91,6 +91,8 @@ const server = createServer((request, response) => {
     await page.reload();
     await page.locator('#launch-email').fill('qa-user@example.org');
     await page.locator('#launch-consent').check();
+    const feedback = '<b>신청 기한도 알려 주세요</b>';
+    await page.locator('#launch-feedback').fill(feedback);
     fail = true;
     await page.locator('#launch-form button').click();
     await page.getByText(/접수 결과를 확인할 수 없습니다/).waitFor();
@@ -101,7 +103,11 @@ const server = createServer((request, response) => {
     await page.getByText(/출시 알림 신청을 접수했습니다/).waitFor();
     assert.equal(requests.at(-1).replyEmail, 'qa-user@example.org');
     assert.equal(requests.at(-1).requestId, retry);
-    assert.equal(requests.at(-1).consentVersion, 'launch-notice-v3');
+    assert.equal(requests.at(-1).consentVersion, 'launch-notice-v4');
+    assert.equal(requests.at(-1).feedback,feedback);
+    assert.equal(requests.at(-2).feedback,feedback);
+    assert.equal(await page.locator('#launch-feedback').inputValue(),'');
+    assert.ok(!(await page.evaluate(() => JSON.stringify(localStorage))).includes(feedback));
     assert.equal(requests.at(-1).consent, true);
     assert.equal(requests.at(-1).website, '');
     await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', {value:{writeText:() => Promise.reject(new Error('blocked'))}}));
@@ -120,6 +126,7 @@ const server = createServer((request, response) => {
     await page.locator('#launch-form button').click();
     await page.getByText(/출시 알림 신청을 접수했습니다/).waitFor();
     assert.equal(await page.locator('#launch-manage').isVisible(), false);
+    assert.ok(!('feedback' in requests.at(-1)));
     // Restoring the private link works even while new registrations are closed.
     enabled = false;
     await page.goto(url + '/?qa=1&restore=1#launch-withdraw=' + token);
@@ -143,6 +150,7 @@ const server = createServer((request, response) => {
       assert.equal(event.properties.traffic_kind, 'synthetic');
       assert.deepEqual(Object.keys(event.properties).sort(), ['$geoip_disable','$process_person_profile','app_id','qa_run_id','traffic_kind'].sort());
       assert.doesNotMatch(JSON.stringify(event), /qa-user|gmail|example\.org|청년기본소득|launch-withdraw|이재명/);
+      assert.ok(!JSON.stringify(event).includes(feedback));
       assert.ok(!JSON.stringify(event).includes(token) && !JSON.stringify(event).includes(retry));
     }
     const beforeRevoke = events.length;

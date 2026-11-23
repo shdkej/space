@@ -8,7 +8,7 @@ const POLICY_DATA = [
 {id:'oh',name:'오세훈',group:'conservative',party:'국민의힘',year:'2024',stage:'시행 사례',policy:'기후동행카드',category:'기후·교통',region:'서울',summary:'서울 대중교통을 정액으로 이용할 수 있도록 만든 통합 이용권 정책입니다.',source:'https://www.seoul.go.kr/news/news_report.do?nttNo=414644&tr_code=snews',sourceLabel:'서울시 공식 보도자료',news:'https://www.yna.co.kr/view/AKR20240129086000004',law:'대중교통의 육성 및 이용촉진에 관한 법률'},
 {id:'hong',name:'홍준표',group:'conservative',party:'국민의힘',year:'2023',stage:'시행 사례',policy:'어르신 통합 무임교통',category:'교통·복지',region:'대구',summary:'대구 어르신의 이동을 돕기 위해 버스와 도시철도 이용을 지원한 정책입니다.',source:'https://www.gaok.or.kr/T_Newsletter_2021/2023_11/1/Vol111.pdf',sourceLabel:'시도지사협의회 정책 자료',news:'https://www.newsis.com/view/NISX20231227_0002572679',law:'대구광역시 어르신 무임교통 지원에 관한 조례'},
 {id:'yoo',name:'유승민',group:'conservative',party:'국민의힘',year:'2021',stage:'공약',policy:'육아휴직 3년',category:'돌봄·노동',region:'전국',summary:'민간 부문 육아휴직 기간을 늘리고 휴직 급여를 지원하자는 공약입니다. 시행 여부와 구분해 살펴보세요.',source:'https://www.yna.co.kr/view/AKR20210805037800001',sourceLabel:'공약 발표 보도',news:'https://www.ytn.co.kr/_ln/0101_202108050906381757',law:'남녀고용평등과 일·가정 양립 지원에 관한 법률'},
-{id:'na',name:'나경원',group:'conservative',party:'국민의힘',year:'2024',stage:'법안 발의',policy:'신혼부부 주거 지원',category:'주거·돌봄',region:'전국',summary:'신혼부부의 주택자금 저리 대출과 출산에 연계한 지원을 제안한 주거기본법 개정안입니다.',source:'https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP',sourceLabel:'주거기본법 개정안 · 의안 2200054',news:'https://www.newsis.com/view/NISX20240531_0002757021',law:'주거기본법'},
+{id:'na',name:'나경원',group:'conservative',party:'국민의힘',year:'2024',stage:'법안 발의',policy:'신혼부부 주거 지원',category:'주거·돌봄',region:'전국',summary:'신혼부부의 주택자금 저리 대출과 출산에 연계한 지원을 제안한 주거기본법 개정안입니다.',source:'https://likms.assembly.go.kr/bill/billDetail.do?billId=PRC_A2Z4O0U5R3E0L1H1P2U4S1R1Q8X4W8',sourceLabel:'주거기본법 개정안 · 의안 2200054',news:'https://www.newsis.com/view/NISX20240531_0002757021',law:'주거기본법'},
 {id:'han',name:'한동훈',group:'conservative',party:'국민의힘',year:'2024',stage:'정책 주장',policy:'금융투자소득세 폐지',category:'경제·세제',region:'전국',summary:'금융투자소득세 도입을 폐지하자는 당시의 정책 주장입니다. 현재 세제 안내와는 구분됩니다.',source:'https://www.peoplepowerparty.kr/news/comment_view/BBSDD0001/102690',sourceLabel:'국민의힘 공식 발표',news:'https://imnews.imbc.com/news/2024/politics/article/6624859_36431.html',law:'소득세법'}
 ];
 
@@ -34,6 +34,22 @@ const POLICY_TIMELINES = {
       "summary": "경기도가 2026년 4분기 청년기본소득 신청을 시작했습니다.",
       "title": "4분기 신청 시작",
       "changeSinceFirst": "성남의 청년배당을 경기도 전역으로 넓히겠다는 계획이 실제 분기별 신청으로 이어졌습니다. 마지막 기록은 2026년 4분기 접수입니다."
+    },
+    {
+      "date": "2026-12-01",
+      "scheduled": true,
+      "scheduleKind": "접수 일정",
+      "title": "4분기 신청 마감",
+      "label": "12월 1일 오후 6시에 4분기 청년기본소득 신청이 마감됩니다.",
+      "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=71859"
+    },
+    {
+      "date": "2026-12-20",
+      "scheduled": true,
+      "scheduleKind": "공고된 지급 일정",
+      "title": "4분기 지급 개시 예정",
+      "label": "경기도는 심사에서 선정된 청년에게 12월 20일부터 25만 원을 지역화폐로 지급할 계획입니다.",
+      "url": "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?BS_CODE=s017&number=71859"
     }
   ],
   "kim-dongyeon": [
@@ -221,6 +237,20 @@ const POLICY_TIMELINES = {
       "summary": "무임교통 연령이 시내버스는 만 72세, 도시철도는 만 68세부터로 적용됐습니다.",
       "title": "2026년 연령 기준",
       "changeSinceFirst": "통합 무임교통 지원을 시작한 뒤, 2026년에는 시내버스·수요응답형 교통은 만 72세 이상, 도시철도·광역철도는 만 68세 이상으로 이용 기준이 나뉘었습니다."
+    },
+    {
+      "date": "2027",
+      "scheduled": true,
+      "title": "버스 71세·철도 69세",
+      "label": "조례에 따라 2027년에는 시내버스·수요응답형 교통은 만 71세 이상, 도시철도·광역철도는 만 69세 이상부터 무임교통을 이용할 수 있습니다.",
+      "url": "https://www.law.go.kr/LSW/ordinInfoP.do?ordinId=2222962"
+    },
+    {
+      "date": "2028",
+      "scheduled": true,
+      "title": "버스·철도 모두 70세",
+      "label": "2028년에는 시내버스·수요응답형 교통과 도시철도·광역철도의 무임교통 연령 기준이 만 70세 이상으로 같아집니다.",
+      "url": "https://www.law.go.kr/LSW/ordinInfoP.do?ordinId=2222962"
     }
   ],
   "yoo": [
@@ -250,20 +280,20 @@ const POLICY_TIMELINES = {
     {
       "date": "2024-05-31",
       "label": "나경원 의원 등 18인이 신혼부부 주택자금 저리 대출과 출산에 따른 원리금 지원을 담은 주거기본법 개정안을 발의했습니다.",
-      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP",
+      "url": "https://likms.assembly.go.kr/bill/billDetail.do?billId=PRC_A2Z4O0U5R3E0L1H1P2U4S1R1Q8X4W8",
       "summary": "신혼부부 저리 대출과 출산 시 원리금 지원을 담은 법안이 발의됐습니다.",
       "title": "개정안 발의"
     },
     {
       "date": "2024-06-11",
       "label": "법안이 국회 국토교통위원회에 회부됐습니다.",
-      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP",
+      "url": "https://likms.assembly.go.kr/bill/billDetail.do?billId=PRC_A2Z4O0U5R3E0L1H1P2U4S1R1Q8X4W8",
       "title": "상임위 회부"
     },
     {
       "date": "2024-08-21",
       "label": "국토교통위원회가 법안을 상정하고 토론을 거쳐 소위원회로 넘겼습니다.",
-      "url": "https://opinion.lawmaking.go.kr/gcom/nsmLmSts/out/2200054/detailRP",
+      "url": "https://likms.assembly.go.kr/bill/billDetail.do?billId=PRC_A2Z4O0U5R3E0L1H1P2U4S1R1Q8X4W8",
       "summary": "국회 국토교통위원회가 개정안을 심사할 소위원회로 넘겼습니다.",
       "title": "소위원회 회부",
       "changeSinceFirst": "신혼부부 주거 지원을 담은 개정안이 발의된 뒤, 마지막 기록에서는 상임위 토론을 거쳐 소위원회 심사 단계로 넘어갔습니다."

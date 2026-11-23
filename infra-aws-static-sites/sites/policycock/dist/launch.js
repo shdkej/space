@@ -132,8 +132,9 @@
     if (!/^[a-f0-9]{64}$/.test(requestId || '')) requestId = newRequestId();
     write(pendingKey, requestId);
     try {
+      const feedback = byId('launch-feedback').value.trim();
       const result = await api('request', {replyEmail: byId('launch-email').value.trim(), consent: byId('launch-consent').checked,
-        consentVersion: 'launch-notice-v3', requestId, website: byId('launch-website').value});
+        consentVersion: 'launch-notice-v4', ...(feedback ? {feedback} : {}), requestId, website: byId('launch-website').value});
       const token = result.withdrawToken;
       if (token && !tokenPattern.test(token)) throw new Error('invalid_response');
       status.textContent = '출시 알림 신청을 접수했습니다. 출시할 때 운영자가 이메일로 한 번 알려드립니다.';

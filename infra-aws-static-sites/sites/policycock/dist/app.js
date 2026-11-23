@@ -150,7 +150,7 @@ function renderTimeline(id){
       : centered;
     timelinePrev.disabled=index===0;
     timelineNext.disabled=index===events.length-1;
-    $('#event-kind').textContent=event.scheduled?'시행 확정':index===latestIndex?'최근 기록':index===0?'최초 기록':'변경 기록';
+    $('#event-kind').textContent=event.scheduled?(event.scheduleKind||'시행 확정'):index===latestIndex?'최근 기록':index===0?'최초 기록':'변경 기록';
     $('#event-date').textContent=event.date.replaceAll('-','.');
     $('#event-label').textContent=event.label;
     $('#event-source').href=event.url;

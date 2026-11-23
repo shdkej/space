@@ -186,9 +186,13 @@
 .launch-actions .launch-button:hover{background:#414846}
 .launch-actions form{display:grid;gap:12px}
 .launch-actions [hidden]{display:none}
-.launch-actions input[type=email]{box-sizing:border-box;width:100%;min-height:46px;border:1px solid #747878;border-radius:4px;padding:10px;font:inherit}
+.launch-actions input[type=email],.launch-actions textarea{box-sizing:border-box;width:100%;min-height:46px;border:1px solid #747878;border-radius:4px;padding:10px;font:inherit}
 .launch-agreement{display:flex;gap:8px;align-items:baseline}
 .launch-actions p{margin:.85rem 0 0}
+.launch-actions textarea{resize:vertical}
+.launch-actions #launch-feedback-help{margin:0;font-size:.875rem}
+.launch-actions .launch-retention{margin:.5rem 0 .75rem}
+#launch-manage,#launch-recovery{margin-top:1.5rem}
 .launch-actions button:disabled{opacity:.6}
 @media(max-width:700px){.launch-section{grid-template-columns:1fr;gap:1.1rem}}
 

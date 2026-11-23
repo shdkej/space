@@ -13,7 +13,7 @@
   "verification": {
     "search": "Verified that 14 live sitemap URLs match the expected HTML, canonicals and JSON-LD, and that 10 policy pages expose 42 source links without JavaScript.",
     "google": "Verified URL-prefix ownership and a successful sitemap read with 14 discovered pages. Individually inspected home, moon, lee and oh. All four were discovered and not yet indexed on 2026-11-23.",
-    "naver": "The authenticated console accepted the registration URL and presented a human verification challenge during ownership verification. The homepage contains the console-issued meta tag.",
+    "naver": "Verified ownership in Search Advisor. Rechecked the submitted sitemap.xml listing dated 2026-11-23 22:14:15 KST. Home, moon, lee and oh returned 200 with crawling allowed in URL checks. The separate index status check returned no result for each of the four URLs. Search exposure and click reports have no data yet.",
     "dns": "Used homepage verification tags on the exact service URL. No DNS changes."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",

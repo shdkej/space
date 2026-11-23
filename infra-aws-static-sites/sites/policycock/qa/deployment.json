@@ -1,21 +1,22 @@
 {
-  "verifiedAt": "2026-11-23T07:51:47.497Z",
+  "verifiedAt": "2026-11-23T08:06:58.226Z",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "a8c940342bc7afec2cdc301c96696f6aa4150284",
+  "sourceCommit": "189c2575f04a146074dace576485514f1cef8b41",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45133991954,
+    "runId": 45135819981,
     "conclusion": "success"
   },
   "verification": {
-    "landing": "Verified the production child allowance timeline initially selects the April 2026 payment record. Selecting 2027 shows the confirmed under-10 change and the Ministry of Health and Welfare source.",
+    "landing": "Verified future Daegu transport eligibility and Gyeonggi youth income dates in production at 375px and 1280px.",
     "assets": "Verified 39 dist assets, including deployment-injected configuration.",
     "scene": "Production WebGL and fallback checks passed.",
-    "browserChecks": "qa/live-verification.json"
+    "browserChecks": "qa/live-verification.json",
+    "signup": "Production form with intercepted responses: optional feedback included when entered and omitted when blank; 24px withdrawal panel gap. Verified privacy contact. Backend workflow 45135579594 passed unit tests and its address-free smoke check."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/4fbb777c4a956a264a85aebec02142b9bced36b9/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/54f9525f245b10ae93f3a2cb9929e019dc8be9a2/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

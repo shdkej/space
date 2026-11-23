@@ -47,7 +47,8 @@ function listFiles(dir=dist,prefix=''){
         if (process.env.EXPECTED_SIGNUP_URL !== undefined) assert.equal(config.signupEndpoint, process.env.EXPECTED_SIGNUP_URL);
         assert.equal(await page.locator('#launch-form').isVisible(), config.signupEnabled, 'live signup availability');
         assert.equal(await page.locator('#launch-pending').isVisible(), !config.signupEnabled);
-        assert.match(await page.locator('.launch-agreement').innerText(), /운영자에게 바로 전달/);
+        assert.match(await page.locator('.launch-agreement').innerText(), /이메일 주소를 모두의정책 운영자에게 전달/);
+        assert.equal(await page.locator('#launch-feedback').evaluate(field => field.required), false);
       } else {
         assert.deepEqual(await asset.body(),fs.readFileSync(path.join(dist,relative)),`${relative} byte parity`);
       }

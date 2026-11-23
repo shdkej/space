@@ -162,6 +162,7 @@ function openPolicy(id,trigger){
   dialogPolicyId=id;
   policyDialog.showModal();
   renderTimeline(id);
+  window.policycockCapture?.("case_opened");
   policyDialog.scrollTop=0;
   policyDialog.querySelector('.dialog-close').focus();
 }

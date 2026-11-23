@@ -69,14 +69,13 @@ Vite 개발 서버와 빌드 결과의 경로는 `/sort/`입니다. 로컬 Vite�
 1. 서비스 테스트 후 source commit을 push하고 `scripts/package.py`로 SHA 기반 ZIP을 만듭니다. 비공개 S3 artifact 버킷에 덮어쓰기 없이 올립니다.
 2. Space release JSON을 갱신하고 AWS Terraform plan의 변경 범위를 확인해 적용합니다. Clef 토큰·계정은 `image-annotator/cloudflare-clef` Secrets Manager에만 저장합니다. 기존 OpenAI secret과 Lambda 환경 설정은 유지합니다.
 3. 업로드 Worker 변경은 `infra-cloudflare-images`의 기존 Terraform 원격 backend로 배포합니다.
-4. 프런트 소스와 `dist/`는 Space `main`이 정본입니다. 빌드 후 main에 push하면 변경된 사이트가 배포됩니다. workflow는 `sites/registry.json`의 실제 도메인을 사용하므로 앱 ID `image-annotator`도 `images.aws.shdkej.com`으로 배포됩니다. 수동 재배포는 아래 명령을 사용합니다.
+4. 프런트 소스와 `dist/`는 Space `main`이 정본입니다. 첫 화면 `index.html`/`styles.css`만 변경할 때는 전용 수동 Action을 사용합니다. 이 Action은 기존 버킷·CloudFront alias와 `/sort/`·변환기 객체를 확인하고 두 객체만 덮어쓴 뒤 CDN 무효화·라이브 내용 일치를 검사합니다. 실패하면 실행 중 저장한 이전 두 객체의 복원을 시도합니다.
 
 ```bash
-gh workflow run static-site-aws-template.yml --repo shdkej/space \
-  --ref main -f app=image-annotator -f domain_name=images.aws.shdkej.com
+gh workflow run image-annotator-home-release.yml --repo shdkej/space --ref main
 ```
 
-workflow는 기존 S3 버킷에 `dist/`를 동기화하고 `sort/` 경로용 HTML object를 게시한 뒤 CloudFront 무효화를 기다립니다. 다른 사이트의 배포는 필요하지 않습니다.
+전체 `dist/`와 `/sort/`를 변경하는 경우에만 `static-site-aws-template.yml`을 사용합니다. 이 workflow는 S3에 `sync --delete`를 실행하므로 버킷의 다른 작성자 소유 객체·제외 필터·공유 concurrency를 먼저 대조해야 합니다. 새 첫 화면 링크만 게시하려고 전체 배포를 실행하지 않습니다. 변경된 사이트 자동 감지는 `sites/registry.json`의 실제 도메인을 사용합니다. 다른 사이트의 배포는 필요하지 않습니다.
 
 5. `/api/health`, `/api/sort/health`의 revision, 업로드·분류·태그 재조회·새로고침·모바일/데스크톱 실제 렌더를 확인합니다. 검증 기록은 [DEPLOYMENT.md](DEPLOYMENT.md)에 남깁니다.
 

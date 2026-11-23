@@ -115,34 +115,56 @@ function renderTimeline(id){
     }
   }
   timelineList.closest('section').hidden=events.length===0;
-  const cards=events.map(({date,label,url})=>{
-    const card=el('li','timeline-event');
-    const source=outLink('출처 보기 ↗',url);
-    source.setAttribute('aria-label',date+' '+label+' 출처 보기');
-    card.append(el('strong','timeline-date',date.replaceAll('-','.')),el('p','',label),source);
-    return card;
+  const stars=events.map((event,index)=>{
+    const item=el('li','timeline-event');
+    const star=el('button','timeline-star',event.date.replaceAll('-','.'));
+    star.type='button';
+    star.setAttribute('aria-controls','event-label');
+    star.setAttribute('aria-label',event.date+' 기록 보기');
+    star.addEventListener('click',()=>selectEvent(index));
+    item.append(star);
+    return item;
   });
-  timelineList.replaceChildren(...cards);
+  timelineList.replaceChildren(...stars);
+  let selected=events.length-1;
+  function selectEvent(index){
+    const event=events[index];
+    if(!event)return;
+    selected=index;
+    for(const [i,item] of stars.entries()){
+      item.firstChild.setAttribute('aria-pressed',String(i===index));
+    }
+    const star=stars[index];
+    // Keep the date visible without scrolling the surrounding modal.
+    timelineList.scrollLeft=star.offsetLeft+(star.offsetWidth-timelineList.clientWidth)/2;
+    timelinePrev.disabled=index===0;
+    timelineNext.disabled=index===events.length-1;
+    $('#event-kind').textContent=index===events.length-1?'최근 기록':index===0?'최초 기록':'변경 기록';
+    $('#event-date').textContent=event.date.replaceAll('-','.');
+    const label=$('#event-label');
+    const start=event.highlight?event.label.indexOf(event.highlight):-1;
+    if(start<0){
+      label.textContent=event.label;
+    }else{
+      label.replaceChildren(event.label.slice(0,start),el('strong','',event.highlight),
+        event.label.slice(start+event.highlight.length));
+    }
+    $('#event-source').href=event.url;
+  }
+  timelinePrev.onclick=()=>selectEvent(selected-1);
+  timelineNext.onclick=()=>selectEvent(selected+1);
+  selectEvent(selected);
 }
 
-function updateTimelineControls(){
-  timelinePrev.disabled=timelineList.scrollLeft<=1;
-  timelineNext.disabled=timelineList.scrollLeft+timelineList.clientWidth>=timelineList.scrollWidth-1;
+function openPolicy(id,trigger){
+  selectPolicy(id);
+  dialogOpener=trigger;
+  dialogPolicyId=id;
+  policyDialog.showModal();
+  renderTimeline(id);
+  policyDialog.scrollTop=0;
+  policyDialog.querySelector('.dialog-close').focus();
 }
-
-function moveTimeline(direction){
-  const cards=timelineList.children;
-  if(cards.length<2)return;
-  const step=cards[1].offsetLeft-cards[0].offsetLeft;
-  const index=direction>0?Math.floor((timelineList.scrollLeft+1)/step)+1:Math.ceil((timelineList.scrollLeft-1)/step)-1;
-  timelineList.scrollTo({left:step*index,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
-}
-
-timelinePrev.addEventListener('click',()=>moveTimeline(-1));
-timelineNext.addEventListener('click',()=>moveTimeline(1));
-timelineList.addEventListener('scroll',updateTimelineControls,{passive:true});
-new ResizeObserver(updateTimelineControls).observe(timelineList);
-function openPolicy(id,trigger){selectPolicy(id);renderTimeline(id);dialogOpener=trigger;dialogPolicyId=id;policyDialog.showModal();policyDialog.scrollTop=0;timelineList.scrollLeft=0;updateTimelineControls();window.policycockCapture?.('case_opened');policyDialog.querySelector('.dialog-close').focus();}
 {const dialog=policyDialog;dialog.querySelector('.dialog-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{let target=dialogOpener;if(dialogPolicyId&&(!target||!target.isConnected))target=document.querySelector(`.person[data-policy="${dialogPolicyId}"]`);if(target?.isConnected)target.focus({preventScroll:true});dialogOpener=null;dialogPolicyId=null;});}
 function toggleSavedPolicy(id){const next={...saved},wasSaved=!!next[id];if(wasSaved)delete next[id];else next[id]={note:''};if(persist(next)){renderSaved();renderPeople();selectPolicy(id);notify(wasSaved?'내 지도에서 뺐어요.':'내 지도에 담았어요. 관심 이유도 남겨보세요.');}}
 $('#save-policy').addEventListener('click',()=>toggleSavedPolicy(selectedId));

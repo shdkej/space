@@ -41,18 +41,23 @@
   </div><p class="galaxy-caption">타임라인 확인일 · 2026.11.22 / 목록에는 발표 당시 단계를 표시합니다.</p>
 </section>
  </div>
-<dialog id="policy-dialog" class="detail-dialog" aria-labelledby="detail-title"><div class="dialog-top"><span>발표 당시 정책 사례</span><button class="dialog-close" type="button" aria-label="정책 상세 닫기">닫기 ×</button></div><section class="policy-detail" id="policy-detail" aria-labelledby="detail-title"><div class="detail-identity"><span class="section-index">선택한 정책 사례</span><p id="detail-person"></p><div id="detail-meta"></div></div><div class="detail-main"><h2 id="detail-title"></h2><section id="change-overview" aria-labelledby="change-heading" hidden>
-<h3 id="change-heading">무엇이 달라졌나요?</h3>
-<dl class="change-pair">
-<div><dt>처음 <span id="change-first-date"></span></dt><dd id="change-first"></dd></div>
-<div><dt>마지막 변경 <span id="change-latest-date"></span></dt><dd id="change-latest"></dd></div>
-</dl></section><p id="detail-summary"></p><section class="policy-timeline" aria-labelledby="timeline-title">
+<dialog id="policy-dialog" class="detail-dialog" aria-labelledby="detail-title"><div class="dialog-top"><span>발표 당시 정책 사례</span><button class="dialog-close" type="button" aria-label="정책 상세 닫기">닫기 ×</button></div><section class="policy-detail" id="policy-detail" aria-labelledby="detail-title"><div class="detail-identity"><span class="section-index">선택한 정책 사례</span><p id="detail-person"></p><div id="detail-meta"></div></div><div class="detail-main"><h2 id="detail-title"></h2><section class="policy-timeline" aria-labelledby="timeline-title">
   <header><h3 id="timeline-title">정책 타임라인</h3><div class="timeline-controls">
     <button type="button" id="timeline-prev" aria-label="이전 시점" aria-controls="timeline-events">←</button>
     <button type="button" id="timeline-next" aria-label="다음 시점" aria-controls="timeline-events">→</button>
   </div></header>
-  <ol id="timeline-events" tabindex="0" aria-label="시간순 정책 기록"></ol>
-</section><div id="detail-links" class="source-links"></div><p class="source-note" id="source-note"></p></div><div class="detail-action"><button class="primary-btn" id="save-policy"></button><p>이 브라우저에 저장됩니다</p><a href="#launch" class="case-launch-link">정책알리미 출시 소식 받기 ↓</a></div></section></dialog>
+  <ol id="timeline-events" aria-label="시간순 정책 기록"></ol>
+  <div class="event-detail" aria-live="polite" aria-atomic="true">
+    <p class="event-meta"><span id="event-kind"></span> · <span id="event-date"></span></p>
+    <p id="event-label"></p>
+    <a id="event-source" target="_blank" rel="noopener noreferrer">이 기록의 출처 ↗</a>
+  </div>
+</section><section id="change-overview" aria-labelledby="change-heading" hidden>
+<h3 id="change-heading">최초 발표와 마지막 기록</h3>
+<dl class="change-pair">
+<div><dt>처음 <span id="change-first-date"></span></dt><dd id="change-first"></dd></div>
+<div><dt>마지막 변경 <span id="change-latest-date"></span></dt><dd id="change-latest"></dd></div>
+</dl></section><p id="detail-summary"></p><div id="detail-links" class="source-links"></div><p class="source-note" id="source-note"></p></div><div class="detail-action"><button class="primary-btn" id="save-policy"></button><p>이 브라우저에 저장됩니다</p><a href="#launch" class="case-launch-link">정책알리미 출시 소식 받기 ↓</a></div></section></dialog>
 <section class="purpose section-wrap" id="how"><div><h2>발표 당시의 기록을<br>원문과 함께 살펴보세요.</h2></div><div class="purpose-body"><p class="purpose-lead">정책 사례를 선택하고 출처를 확인한 뒤<br>관심 있는 항목을 이 브라우저에 저장할 수 있습니다.</p><p>10개 사례마다 발표 이후의 주요 변화를 시간순으로 정리했습니다. 각 시점의 원문에서 어떤 결정이 있었는지 확인할 수 있습니다.</p><div class="policy-journey"><span><i>01</i>사례 발견</span><b>→</b><span><i>02</i>출처 확인</span><b>→</b><span><i>03</i>관심 정책 저장</span></div><p class="upcoming"><span>다음 단계</span><a href="#launch">정책알리미 출시 소식 받기 ↓</a></p></div></section>
 <section class="my-map-section" id="my-map" aria-labelledby="my-map-title"><div class="section-wrap"><div class="saved-heading"><div><h2 id="my-map-title">내 관심 정책</h2><p>선택한 정책과 다시 볼 이유가 이 브라우저에 남습니다.</p></div><button id="export-map" class="text-btn">관심 정책 내보내기 <span aria-hidden="true">↗</span></button></div><div id="category-map" class="category-map" aria-label="저장한 정책 카테고리"></div><div id="saved-policies"></div><p class="storage-note" id="storage-note">저장 내용은 이 브라우저에만 남습니다. 브라우저 데이터를 지우면 함께 삭제됩니다.</p></div></section>
 <section id="state-map" aria-labelledby="state-title">

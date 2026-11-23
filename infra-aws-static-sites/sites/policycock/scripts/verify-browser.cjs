@@ -101,18 +101,27 @@ const pass=label=>{results.push(label);console.log('PASS',label)};
       assert.ok(summaries.every(Boolean));
       assert.deepEqual(await page.locator('#change-overview dd').allTextContents(),summaries);
       assert.equal(await page.locator('#change-overview').isVisible(),true);
-      assert.equal(await page.locator('#timeline-prev').isDisabled(),true);
-      assert.equal(await page.locator('#timeline-next').isEnabled(),true);
-      assert.doesNotMatch(await cards.last().locator('strong').textContent(),/기준/);
-      assert.equal(await page.locator('#change-latest-date').textContent(),await cards.last().locator('strong').textContent());
-      const urls=await cards.locator('a').evaluateAll(links=>links.map(a=>a.href));
-      assert.equal(urls.length,await cards.count());
-      assert.ok(urls.every(url=>url.startsWith('https://')));
+      const events=await page.evaluate(id=>POLICY_TIMELINES[id],policy.id);
+      const stars=timeline.getByRole('button');
+      assert.equal(await stars.last().getAttribute('aria-pressed'),'true');
+      assert.equal(await page.locator('#timeline-next').isDisabled(),true);
+      await page.locator('#timeline-prev').click();
+      assert.equal(await stars.nth(events.length-2).getAttribute('aria-pressed'),'true');
       await page.locator('#timeline-next').click();
-      await page.waitForFunction(()=>document.querySelector('#timeline-events').scrollLeft>5);
+      for(const [index,event] of events.entries()){
+        await stars.nth(index).click();
+        assert.equal(await stars.nth(index).getAttribute('aria-pressed'),'true');
+        assert.equal(await page.locator('#event-date').textContent(),event.date.replaceAll('-','.'));
+        assert.equal(await page.locator('#event-label').textContent(),event.label);
+        assert.ok(event.highlight && event.label.includes(event.highlight));
+        assert.equal(await page.locator('#event-label strong').textContent(),event.highlight);
+        assert.equal(await page.locator('#event-source').getAttribute('href'),event.url);
+        assert.equal(await page.locator('#timeline-prev').isDisabled(),index===0);
+        assert.deepEqual(await page.locator('#change-overview dd').allTextContents(),summaries);
+      }
       await page.keyboard.press('Escape');
     }
-    pass('정책 10건의 상세·출처·가로 타임라인 전수 검증');
+    pass('정책 10건의 별 선택·변경 구절·출처·고정 비교 검증');
 
     await page.locator('[data-policy="lee"]').click();
     await page.locator('#save-policy').click();

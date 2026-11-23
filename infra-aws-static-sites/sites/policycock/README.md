@@ -138,3 +138,9 @@ GA4 유입 분석은 PostHog와 같은 방문 분석 선택에 묶여 있지만 
 | `signup_failed` | 요청 처리 오류 또는 유효하지 않은 철회 요청 |
 
 `node scripts/verify-launch.cjs`로 모바일 사례 모달·준비 중 상태·격리한 API 요청과 실패/중복/철회·PostHog 전송 속성을 확인합니다. `node scripts/verify-ga4.cjs`는 **모의 Google 전송**으로 무설정·거부·GPC·탭 간 철회·민감 URL 제거를 확인합니다. 모의 응답은 GA4의 실제 수신 증거가 아닙니다. PostHog 수집은 실제 운영 주소에서 `?qa=1`로 연 뒤 동일한 `qa_run_id`를 프로젝트에서 조회합니다. GA4는 전용 스트림 활성화 후 별도 운영 브라우저와 GA4 실시간 보고서에서 확인해야 합니다.
+
+## 검색에 공개하는 정책 기록
+
+홈의 정책 상세에서 ‘전체 변경 이력 읽기’를 누르거나 자료 출처 목록을 열면 정책별 고유 주소로 이동합니다. 각 기록 페이지는 JavaScript 없이도 발표 당시 단계, 변경 이력, 예정 일정과 시점별 출처를 제공합니다.
+
+`dist/data.js`의 정책이나 타임라인을 수정한 뒤 `npm run search:build`를 실행하고 생성된 페이지와 사이트맵을 함께 커밋합니다. `npm run check`가 데이터와 생성 결과의 일치를 검사합니다. 대표 주소는 `https://policy.minimalcollector.com/`이며 사이트맵은 `/sitemap.xml`입니다.

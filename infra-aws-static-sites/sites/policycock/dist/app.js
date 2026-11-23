@@ -164,6 +164,7 @@ function openPolicy(id,trigger){
   selectPolicy(id);
   dialogOpener=trigger;
   dialogPolicyId=id;
+  document.getElementById('policy-record-link').href='/policies/'+id+'.html';
   policyDialog.showModal();
   renderTimeline(id);
   window.policycockCapture?.("case_opened");

@@ -60,3 +60,10 @@
 - main 원격·로컬 SHA 일치를 대상 경로 검증 스크립트로 확인했다. 기존 무관한 system-dashboard 변경·office-live.json은 보존했다.
 - 남은 검증 경계: 이번 변경에서 실제 새 사진 업로드·유료 AI 재호출은 하지 않았다. 저장→분류 요청 경로는 브라우저 fixture로 검증했고 운영 API는 읽기만 확인했다. 기존 API 동작은 2026-11-11 검증 기록을 참조한다.
 - 복구: 화면만 되돌릴 때 `23ba51d`의 `sites/image-annotator/dist/`를 별도 worktree에서 가져와 main의 같은 경로에 복원·재배포한다. Lambda·Worker·사진 데이터는 건드리지 않는다.
+
+## 첫 화면 변환기 링크 운영 반영 · 2026-11-23
+
+- 사용자 위임에 따라 기존 `/sort/` 진입을 유지하면서 `이미지 크기·형식 바꾸기` 링크를 첫 화면에 게시했다. 소스 링크 커밋 `d5aad0004a772a4c5edb01f500edd945a2ad6216`; 최신 배포 소스 `02b94a7004671e2cfdce3dfe10f9425560e1cc7e`.
+- 기존 전체 이미지 사이트 workflow의 `s3 sync --delete`는 다른 작성자 소유 객체를 삭제할 위험이 있어 실행하지 않았다. 대신 `image-annotator-home-release.yml`이 CloudFront alias·원본, 기존 `/sort/`·변환기 객체와 공개 루트의 현재 내용을 확인한 뒤 `index.html`·`styles.css` 두 객체만 업로드한다. 기존 두 객체를 실행 중 보관하고 오류 시 복원·재조회·무효화를 시도하며, 공유 concurrency `images-image-converter-release`를 사용한다.
+- 전용 [Action 45139835636](https://github.com/shdkej/space/actions/runs/45139835636)은 성공했고 CloudFront 무효화가 끝난 뒤 운영 HTML/CSS가 소스와 byte 단위로 일치했다. `/`, `/sort/`, `/tools/image-converter/` 모두 HTTP 200. 실제 ego lite 브라우저의 900px·390px 첫 화면에서 두 링크가 표시되고 가로 넘침 없이 각각 클릭해 대상 화면의 URL·제목을 확인했다.
+- 새로운 방문자 수·사용자 전환율은 측정하지 않았다. 두 차례 사전 검증 Action은 쓰기 전에 각각 요약 API의 루트 객체 정보 부재와 기존 역할의 `GetDistributionConfig` 권한 부재로 멈췄으며 권한을 확대하지 않았다. 롤백 경로는 코드 검토만 했고 실제 장애 복구 실행은 시험하지 않았다.

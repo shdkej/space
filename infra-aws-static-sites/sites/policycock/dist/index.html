@@ -14,12 +14,12 @@
 <meta property="og:title" content="모두의정책 | 정책 공약·시행과 변경 이력">
 <meta property="og:description" content="아동수당, 청년기본소득 등 정책 10건이 처음 발표된 뒤 어떻게 달라졌는지 살펴보세요. 시점별 출처와 대한민국 국가기관의 역할을 확인할 수 있습니다.">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://policy.minimalcollector.com/#website","url":"https://policy.minimalcollector.com/","name":"모두의정책","inLanguage":"ko"},{"@type":"CollectionPage","@id":"https://policy.minimalcollector.com/#page","url":"https://policy.minimalcollector.com/","name":"모두의정책 | 정책 공약·시행과 변경 이력","description":"아동수당, 청년기본소득 등 정책 10건이 처음 발표된 뒤 어떻게 달라졌는지 살펴보세요. 시점별 출처와 대한민국 국가기관의 역할을 확인할 수 있습니다.","inLanguage":"ko","isPartOf":{"@id":"https://policy.minimalcollector.com/#website"}}]}</script>
-<!-- /search metadata --><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="index.css"><link rel="stylesheet" href="state-map.css"><link rel="stylesheet" href="galaxy.css"><script src="data.js" defer></script><script src="launch-config.js" defer></script><script src="analytics-consent.js" defer></script><script src="ga4-consent.js" defer></script><script src="launch.js" defer></script><script src="app.js" defer></script></head>
+<!-- /search metadata --><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="index.css"><link rel="stylesheet" href="state-map.css"><link rel="stylesheet" href="galaxy.css"><script src="data.js" defer></script><script src="launch-config.js" defer></script><script src="analytics-consent.js" defer></script><script src="meta-consent.js" defer></script><script src="ga4-consent.js" defer></script><script src="launch.js" defer></script><script src="app.js" defer></script></head>
 <body class="console-page">
 <a class="skip" href="#policies">정책 사례로 건너뛰기</a>
 <section id="analytics-notice" class="analytics-notice" aria-labelledby="analytics-title" hidden>
   <div class="analytics-notice-copy"><p class="analytics-kicker">선택 항목 · 방문 분석</p><h2 id="analytics-title">방문 분석에 동의하시겠어요?</h2>
-    <p>동의 시 PostHog(미국)<span id="analytics-google-copy">와 Google Analytics(GA4)</span>가 방문·유입 분석을 위해 방문 ID·기기 정보·IP를 처리할 수 있습니다. 정책명·검색어·메모·이메일은 분석 이벤트에 보내지 않습니다. 거부해도 이용할 수 있고 하단에서 언제든 바꿀 수 있습니다. 이메일 신청과는 별개입니다. <a href="privacy.html">개인정보 처리방침</a></p></div>
+    <p>동의 시 PostHog(미국)<span id="analytics-google-copy">와 Google Analytics(GA4)</span>가 방문·유입 분석을 위해 방문 ID·기기 정보·IP를 처리할 수 있습니다. 정책명·검색어·메모·이메일은 분석 이벤트에 보내지 않습니다. 거부해도 이용할 수 있고 하단에서 언제든 바꿀 수 있습니다. 이메일 신청과는 별개입니다. <a href="privacy.html">개인정보 처리방침</a> <span id="meta-notice" hidden>광고 측정은 별도 선택입니다. <button type="button" class="meta-settings-link" aria-haspopup="dialog">광고 측정 설정</button></span></p></div>
   <div class="analytics-notice-actions"><button type="button" id="analytics-decline">거부하고 계속</button><button type="button" id="analytics-accept">방문 분석 동의</button><p id="analytics-status" role="status" aria-live="polite"></p></div>
 </section>
 <header class="landing-opening">
@@ -136,7 +136,15 @@
   </div>
 </section>
 </main>
-<footer class="site-footer section-wrap"><div><a class="wordmark" href="#">모두의정책</a><p>정책 사례와 국가기관의 역할을 찾아봅니다.</p></div><div><p>정책 타임라인 확인 2026.11.23</p><a href="sources.html">정책별 변경 이력과 자료 출처 ↗</a><a href="birth-grant-map.html">지역별 출산지원금 지도</a><a href="privacy.html">개인정보 처리방침</a><button type="button" id="analytics-settings">방문 분석 설정</button></div></footer>
+<footer class="site-footer section-wrap"><div><a class="wordmark" href="#">모두의정책</a><p>정책 사례와 국가기관의 역할을 찾아봅니다.</p></div><div><p>정책 타임라인 확인 2026.11.23</p><a href="sources.html">정책별 변경 이력과 자료 출처 ↗</a><a href="birth-grant-map.html">지역별 출산지원금 지도</a><a href="privacy.html">개인정보 처리방침</a><button type="button" id="analytics-settings">방문 분석 설정</button>
+<button class="meta-settings-link" type="button" hidden aria-haspopup="dialog">광고 성과 측정 설정</button></div></footer>
+<dialog id="meta-settings" class="detail-dialog" aria-labelledby="meta-title">
+<div class="dialog-top"><h2 id="meta-title">광고 성과 측정 설정</h2><form method="dialog"><button class="dialog-close" aria-label="닫기">닫기</button></form></div>
+<div class="meta-settings-body">
+<p>선택에 동의하면 미국 Meta Platforms, Inc.에 홈페이지 방문과 신규 출시 알림 신청 여부, 접속 IP와 브라우저 정보가 전송됩니다. <a href="privacy.html#meta-measurement">처리 내용 보기</a></p>
+<p id="meta-choice" role="status"></p>
+<button type="button" id="meta-accept">광고 측정 동의</button>
+<button type="button" id="meta-decline">거부 또는 철회</button></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 <noscript><p class="noscript">정책 사례의 원문과 대한민국 국가 지도는 JavaScript 없이도 볼 수 있습니다.</p></noscript>
 </body></html>

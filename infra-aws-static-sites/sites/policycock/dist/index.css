@@ -279,3 +279,11 @@
 .person-name .policy-portrait {width:26px;height:26px}
 #detail-person .policy-portrait {vertical-align:middle;margin-right:8px}
 .case-card-count {white-space:nowrap}
+
+.analytics-notice .meta-settings-link {padding:0 3px;min-height:24px;border:0;text-decoration:underline;text-underline-offset:3px}
+#meta-settings {width:min(32rem,calc(100% - 24px))}
+#meta-settings h2 {font-size:1.15rem;color:var(--ink)}
+.meta-settings-body {padding:20px 24px 24px;line-height:1.65}
+.meta-settings-body a {text-decoration:underline}
+.meta-settings-body p {margin-bottom:16px}
+.meta-settings-body button {padding:9px 14px;min-height:44px;border:1px solid var(--line);border-radius:4px}

@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "python3 -m http.server 4173 --directory dist --bind 127.0.0.1",
-    "check": "node --check dist/app.js && node --check dist/data.js && node --check dist/institutions.js && node --check dist/sources.js && node --check dist/policy-scene.js && node --check dist/launch.js && node --check dist/launch-config.js && node --check dist/analytics-consent.js && node --check dist/ga4-consent.js && node scripts/render-search.cjs --check",
-    "test": "node scripts/verify-browser.cjs && node scripts/verify-scene.cjs && node scripts/verify-launch.cjs && node scripts/verify-ga4.cjs",
+    "check": "node --check dist/app.js && node --check dist/data.js && node --check dist/institutions.js && node --check dist/sources.js && node --check dist/policy-scene.js && node --check dist/launch.js && node --check dist/launch-config.js && node --check dist/analytics-consent.js && node --check dist/ga4-consent.js && node --check dist/meta-consent.js && node scripts/render-search.cjs --check",
+    "test": "node scripts/verify-browser.cjs && node scripts/verify-scene.cjs && node scripts/verify-launch.cjs && node scripts/verify-ga4.cjs && node scripts/verify-meta.cjs",
     "vendor": "node scripts/vendor-three.cjs",
     "test:scene": "node scripts/verify-scene.cjs",
     "search:build": "node scripts/render-search.cjs"

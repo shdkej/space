@@ -1,0 +1,93 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const {chromium} = require('playwright-core');
+const dist = path.resolve(__dirname, '../dist');
+const site = 'https://policy.minimalcollector.com';
+const token = 'a'.repeat(64) + '.' + 'b'.repeat(64);
+(async () => {
+  const browser = await chromium.launch({executablePath:process.env.CHROME_PATH || chromium.executablePath(), args:['--no-sandbox']});
+  try {
+    const context = await browser.newContext();
+    const hits = [];
+    let registration = {ok:true, withdrawToken:token};
+    await context.route('**/*', async route => {
+      const req = route.request(), url = new URL(req.url());
+      if (url.origin === 'https://www.facebook.com') {
+        const headers = await req.allHeaders();
+        assert.equal(url.pathname, '/tr');
+        assert.equal(req.method(), 'GET');
+        assert.equal(headers.referer, undefined);
+        assert.equal(headers.cookie, undefined);
+        assert.deepEqual([...url.searchParams.keys()].sort(), ['dl','ev','id','noscript']);
+        assert.equal(url.searchParams.get('dl'), site + '/');
+        assert.equal(url.searchParams.get('id'), '1824168211816282');
+        hits.push(url.searchParams.get('ev'));
+        return route.fulfill({status:200, body:''});
+      }
+      if (url.origin !== site) throw Error('Unexpected third party ' + url.origin);
+      if (url.pathname === '/signup') return route.fulfill({json:registration});
+      if (url.pathname === '/launch-config.js') return route.fulfill({contentType:'application/javascript',body:'window.policycockConfig={signupEnabled:true,signupEndpoint:"/signup"};'});
+      const file = path.join(dist,url.pathname === '/' ? 'index.html' : url.pathname);
+      if (!fs.existsSync(file) || url.pathname.includes('/vendor/')) return route.abort();
+      return route.fulfill({path:file});
+    });
+    await context.addCookies([{name:'privacy-test',value:'private-cookie',domain:'.facebook.com',path:'/',sameSite:'None',secure:true}]);
+    const page = await context.newPage();
+    await page.setViewportSize({width:375,height:667});
+    page.setDefaultTimeout(3500);
+    await page.goto(site+'/?utm_source=private#/sensitive',{referer:'https://example.org/private'});
+    assert.equal(await page.locator('#meta-settings').count(), 1, 'independent ad consent control');
+    assert.deepEqual(hits, [], 'no request before consent');
+    await page.locator('#meta-notice button').click();
+    assert.equal(await page.locator('#meta-settings').isVisible(),true);
+    assert.deepEqual(hits, [], 'opening ad settings is not consent');
+    await page.locator('#meta-accept').click();
+    assert.equal(await page.locator('#analytics-notice').isVisible(),true);
+    await page.locator('#analytics-decline').click();
+    assert.deepEqual(hits, [], 'unrecognized page fragments never count as homepage views');
+    await page.goto(site+'/?utm_source=private',{referer:'https://example.org/private'});
+    await page.waitForTimeout(150);
+    assert.deepEqual(hits,['PageView']);
+    async function submit(target) {
+      await target.locator('#launch-email').fill('not-a-person@example.invalid');
+      await target.locator('#launch-consent').check();
+      await target.locator('#launch-form button[type=submit]').click();
+      await target.waitForFunction(()=>!document.querySelector('#launch-form button').disabled);
+    }
+    await submit(page);
+    assert.deepEqual(hits,['PageView','Lead']);
+    registration = {ok:true};
+    await submit(page);
+    registration = {ok:false,error:'daily_limit'};
+    await submit(page);
+    registration = {ok:true, withdrawToken:token};
+    await submit(page);
+    assert.deepEqual(hits,['PageView','Lead'], 'duplicate, failure and retry suppressed');
+    await page.goto(site+'/policies/moon.html');
+    await page.waitForTimeout(100);
+    assert.deepEqual(hits,['PageView','Lead'], 'policy pages do not load the pixel');
+    await page.goBack();
+    const beforeSibling = hits.length;
+    const sibling = await context.newPage();
+    await sibling.goto(site+'/');
+    await sibling.locator('footer .meta-settings-link').click();
+    await sibling.locator('#meta-decline').click();
+    await page.waitForTimeout(100);
+    registration = {ok:true,withdrawToken:'c'.repeat(64)+'.'+'d'.repeat(64)};
+    await submit(page);
+    assert.equal(hits.length,beforeSibling + 1, 'revocation across tabs');
+    await sibling.locator('footer .meta-settings-link').click();
+    await sibling.locator('#meta-accept').click();
+    const before = hits.length;
+    await sibling.goto(site+'/#launch-withdraw='+token);
+    await sibling.waitForTimeout(200);
+    assert.equal(hits.length,before);
+    await context.addInitScript(()=>Object.defineProperty(navigator,'globalPrivacyControl',{get:()=>true}));
+    await sibling.goto(site+'/');
+    await sibling.waitForTimeout(100);
+    assert.equal(hits.length,before, 'GPC overrides stored consent');
+    console.log('Meta request isolation, grant, withdrawal, GPC and registration paths verified');
+  } finally { await browser.close(); }
+})().catch(error=>{console.error(error);process.exitCode=1;});

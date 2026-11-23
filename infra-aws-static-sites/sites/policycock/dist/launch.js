@@ -129,7 +129,9 @@
     capture('launch_cta_clicked');
     setBusy(true);
     status.textContent = '신청을 보내고 있습니다.';
-    if (!/^[a-f0-9]{64}$/.test(requestId || '')) requestId = newRequestId();
+    const firstAttempt = !/^[a-f0-9]{64}$/.test(requestId || '');
+    const measureLead = firstAttempt && window.policycockMetaAllowed?.();
+    if (firstAttempt) requestId = newRequestId();
     write(pendingKey, requestId);
     try {
       const feedback = byId('launch-feedback').value.trim();
@@ -138,12 +140,14 @@
       const token = result.withdrawToken;
       if (token && !tokenPattern.test(token)) throw new Error('invalid_response');
       status.textContent = '출시 알림 신청을 접수했습니다. 출시할 때 운영자가 이메일로 한 번 알려드립니다.';
+      const newReceipt = token && !tokens.has(token) && !storedTokens().includes(token);
       if (token) {
         tokens = new Set([...storedTokens(), ...tokens, token]);
         const saved = write(receiptKey, JSON.stringify([...tokens]));
         if (!saved) { showLink(token); status.textContent += ' 브라우저 저장이 꺼져 있어 개인 철회 링크를 직접 보관해 주세요.'; }
       }
       requestId = null; write(pendingKey, null); form.reset(); capture('signup_request_accepted');
+      if (measureLead && newReceipt) window.dispatchEvent(new Event('policycock:new-signup'));
     } catch (error) {
       if (error.message === 'request_withdrawn') { requestId = null; write(pendingKey, null); }
       status.textContent = error.message === 'daily_limit' ? '오늘 접수 한도에 도달했습니다. 다음 날 오전 9시(한국시간) 이후 다시 신청해 주세요.' :

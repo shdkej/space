@@ -1,22 +1,21 @@
 {
-  "verifiedAt": "2026-11-23T12:10:47.329Z",
+  "verifiedAt": "2026-11-23T13:10:13.497674+00:00",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "cd5dcc0ee6b254ee78fe2fe4239b096884cbcbfe",
+  "sourceCommit": "f08f69ae35c1ff66ff3c70db3251bbfbc06c71ab",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45171570216,
+    "runId": 45180522054,
     "conclusion": "success"
   },
   "verification": {
-    "search": "All 14 sitemap URLs returned the expected HTML, canonical and JSON-LD after updating three policy pages. Verified scoped answers and links to the applicable statute, Gyeonggi notice and Seoul FAQ.",
-    "policyRecords": "Verified all 42 dated source links on 10 policy histories with JavaScript disabled at 375px, and navigation from the interactive child allowance dialog.",
-    "assets": "51개 dist 파일 검증(배포 시 주입한 설정 포함)·세 경로 바이트 일치·출산지원금 지도 접근·구형 자산 3개 비노출",
-    "browserChecks": "qa/live-verification.json",
-    "outcome": "Deployment and rendering verified. Search console measurements are tracked separately."
+    "search": "Verified that 14 live sitemap URLs match the expected HTML, canonicals and JSON-LD, and that 10 policy pages expose 42 source links without JavaScript.",
+    "google": "Verified URL-prefix ownership and a successful sitemap read with 14 discovered pages. Individually inspected home, moon, lee and oh. All four were discovered and not yet indexed on 2026-11-23.",
+    "naver": "The authenticated console accepted the registration URL and presented a human verification challenge during ownership verification. The homepage contains the console-issued meta tag.",
+    "dns": "Used homepage verification tags on the exact service URL. No DNS changes."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/b9cb7c2e1caa3783d8da841bee908d29dfd8a89b/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/cad89493ffb2c08fc36f56422e3c1508697121a2/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

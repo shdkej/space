@@ -58,6 +58,7 @@
 @media(max-width:900px){.orbit-label i {width:29px;height:29px}.orbit-caption small{font-size:10px}}
 
 @media (max-width:600px) and (orientation:portrait) {
+  html {background:#0b0c0d}
   .galaxy-hero-sky {
     display:grid;
     grid-template-rows:auto minmax(220px,1fr) auto;
@@ -67,4 +68,13 @@
   .galaxy-intro-copy {max-width:none}
   .galaxy-intro-copy p {margin-bottom:0}
   .galaxy-orbits {margin:8px 0}
+  .galaxy-links {padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .landing-opening > .site-header {padding-top:calc(14px + env(safe-area-inset-top,0px))}
+}
+
+@media (orientation:landscape) and (max-height:480px) {
+  .landing-opening {
+    padding-inline:env(safe-area-inset-left,0px) env(safe-area-inset-right,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
 }

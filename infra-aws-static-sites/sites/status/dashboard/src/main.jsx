@@ -1,4 +1,4 @@
-import ChannelAnalytics from "./ChannelAnalytics.jsx";
+import { AppMeasurements, useAnalyticsFeed } from "./AppMeasurements.jsx";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -39,8 +39,8 @@ const monitoringCatalog = [
   },
   {
     layer: "고객 · 마케팅", uid: "layer-customer", metrics: [
-      ["customer.new_users", "신규 사용자 수", "7일 집계는 상단 GA4 카드에서 확인 · 시계열 미연결", "none"],
-      ["customer.sessions", "세션 수", "PostHog exporter · 공용 프로젝트 424014 시계열", "ok"],
+      ["customer.new_users", "신규 사용자 수", "GA4 · 속성별 최근 7일 신규 사용자", "ok"],
+      ["customer.sessions", "세션 수", "GA4 속성별 세션 · PostHog 공용 프로젝트 시계열", "ok"],
       ["customer.channels", "채널별 유입", "GA4 채널 보고서 시계열 미연결", "none"],
       ["customer.campaign_conversion", "캠페인 전환율", "시계열은 있으나 원천 이벤트·GA4 key event 정의 확인 필요", "warn"],
       ["customer.funnel_dropoff", "핵심 퍼널 이탈률", "시계열 일부 연결 · 분모·이벤트 범위 확인 필요", "warn"],
@@ -57,7 +57,7 @@ const monitoringCatalog = [
       ["product.web_vitals", "Core Web Vitals", "PostHog exporter · LCP/INP 일부 연결, CLS 시계열 없음", "warn"],
       ["product.login_success", "로그인 성공률", "입력 필요 · 로그인 시도·성공 이벤트", "none"],
       ["product.payment_success", "결제 성공률", "입력 필요 · 결제 시도·성공·실패 이벤트", "none"],
-      ["product.sessions", "제품 세션 수", "PostHog exporter · 공용 프로젝트 424014 시계열", "ok"],
+      ["product.sessions", "제품 세션 수", "PostHog 앱별 고유 세션 · 공용 프로젝트 시계열", "ok"],
       ["product.task_completion", "핵심 작업 완료율", "부분 연결 · virtue 퍼널만 구성, 앱별 핵심 이벤트 정의 필요", "warn"],
     ],
   },
@@ -232,37 +232,22 @@ function HistoryChart({ metric, row, range }) {
   </div>;
 }
 
-function HistoryItem({ row, metric, range, index }) {
+function HistoryItem({ row, metric, range, index, children, showChart = true }) {
   return <details className="history-item" key={`${row.metricId || row.name}-${index}`}>
     <summary className="history-item-summary"><StatusDot state={row.state} /><span className="history-item-copy"><strong>{row.name}</strong><small>{row.detail || "실시간 상태 변화"}</small></span><span className="row-state">{row.readiness || stateText[row.state] || "확인 대기"}</span><ChevronDown className="history-item-chevron" size={16} aria-hidden="true" /></summary>
-    <div className="history-item-body"><HistoryChart metric={metric} row={row} range={range} />{row.url && <a className="history-grafana-link" href={row.url} target="_blank" rel="noreferrer">Grafana에서 원본 보기 <ExternalLink size={14} /></a>}</div>
+    <div className="history-item-body">{children}{showChart && <HistoryChart metric={metric} row={row} range={range} />}{row.url && <a className="history-grafana-link" href={row.url} target="_blank" rel="noreferrer">Grafana에서 원본 보기 <ExternalLink size={14} /></a>}</div>
   </details>;
-}
-
-function PostHogOverview({ history }) {
-  const metrics = [["customer.sessions", "최근 7일 고유 세션", "회"],
-    ["customer.retention", "직전 7일 활성 사용자의 7일 재방문율", "%"]];
-  return <section className="channel-analytics" aria-label="PostHog 실측"><header><h3>PostHog · 프로젝트 424014 전체</h3></header>
-    {metrics.map(([key, label, unit]) => {
-      const series = history?.metrics?.[key]?.series;
-      const points = Array.isArray(series) ? series.find((s) => s?.name === "virtue")?.points : null;
-      let latest = null;
-      for (const point of Array.isArray(points) ? points : []) {
-        if (!Array.isArray(point)) continue;
-        const [seconds, value] = point;
-        if (Number.isSafeInteger(seconds) && seconds > 0 && seconds <= 253402300799 &&
-            Number.isFinite(value) && (!latest || seconds > latest[0])) latest = point;
-      }
-      return <div className="channel-scope" key={key}><h4>{label}</h4>
-        <p>{latest ? latest[1].toLocaleString("ko-KR") + unit : "측정값 없음"}</p>
-        {latest && <small>관측 {new Date(latest[0] * 1000).toLocaleString("ko-KR")}{Date.now() - latest[0] * 1000 > 3600000 && " · 1시간 이상 경과"}</small>}
-      </div>;
-    })}
-  </section>;
 }
 
 function App() {
   const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [history, setHistory] = React.useState(null); const [range, setRange] = React.useState("day"); const [view, setView] = React.useState("home"); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
+  const ga4 = useAnalyticsFeed("ga4", view === "monitoring");
+  const posthog = useAnalyticsFeed("posthog", view === "monitoring");
+  const measurements = {
+    "customer.new_users": { feed: ga4, metricKey: "newUsers", label: "GA4 신규 사용자", unit: "명" },
+    "customer.sessions": { feed: ga4, metricKey: "sessions", label: "GA4 세션", unit: "회" },
+    "product.sessions": { feed: posthog, metricKey: "sessions", label: "PostHog 고유 세션", unit: "회" },
+  };
   const load = React.useCallback(async () => { setLoading(true); const [a, b, c] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json()), fetch("./metrics-history.json", { cache: "no-store" }).then((r) => r.ok ? r.json() : null)]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setHistory(c.status === "fulfilled" ? c.value : null); setLoading(false); }, []);
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
   const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks });
@@ -309,14 +294,22 @@ function App() {
     <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
     </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `시계열 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong><small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small></button>)}</div></div>}
-      {view === "monitoring" && <div className="channel-grid">
-        <PostHogOverview history={history} />
-        <ChannelAnalytics source="posthog" url="/analytics-posthog.json" />
-        <ChannelAnalytics source="ga4" url="/analytics-ga4.json" />
-        <ChannelAnalytics source="instagram" url="/analytics-instagram.json" />
-      </div>}
       {view === "monitoring" && <p className="monitoring-note">4개 레이어를 펼쳐 지표를 확인하세요. 항목을 열면 일·주·월 그래프가 표시됩니다. 측정값이 없는 항목은 0으로 바꾸지 않고 비워 둡니다.</p>}
-      <div className={clsx("detail-list", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={groupIndex * 8 + index} key={`${group.uid}-${row.name}`} />)}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={`${row.metricId}-${row.seriesName || row.name}-${i}`} />) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+      <div className={clsx("detail-list", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => {
+        const measurement = measurements[row.metricId];
+        const metric = chartMetric(row);
+        let displayed = row;
+        if (measurement && !metric?.series?.length) {
+          const rows = measurement.feed.rows;
+          const hasValue = rows.some(item => Number.isFinite(item.values?.[measurement.metricKey]));
+          const hasFailure = measurement.feed.failed || rows.some(item => item.status === "unavailable");
+          const state = hasFailure ? "warn" : hasValue ? "ok" : "none";
+          displayed = { ...row, state, readiness: hasFailure ? "확인 필요" : hasValue ? "연결됨" : "측정값 없음" };
+        }
+        return <HistoryItem key={row.metricId} row={displayed} metric={metric} range={range} index={groupIndex * 8 + index} showChart={!measurement || !!metric?.series?.length}>
+          {measurement && <AppMeasurements {...measurement} />}
+        </HistoryItem>;
+      })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={`${row.metricId}-${row.seriesName || row.name}-${i}`} />) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

@@ -51,3 +51,11 @@
 Status 릴리스 `44e7a4f`의 Monitoring 화면과 Metrics 운영 Pod의 조회 코드가 같은 공개 집계 3개를 읽었습니다. PostHog 앱/호스트 5개 및 미지정, GA4 속성 4개, Instagram 계정 1개입니다. 운영 Metrics 데이터 API는 인증 없는 요청에 401을 반환했습니다. 원천 수집·범위·게시 명령은 [Status README](../../infra-aws-static-sites/sites/status/README.md)에 있습니다.
 
 실행 기록은 부모 `/root`와 종료된 임시 역할 `/root/planner`, `/root/developer`, `/root/marketer`, `/root/operator`입니다. 범위·구현·지표 정의·배포를 각자 검토한 뒤 공개 집계와 사용자별 연결의 분리, 원천의 관측 시각, 앱 식별 방법을 대조했습니다. 프로젝트 안에 여러 앱이 있는 것을 직접 확인해 앱 ID와 서비스 호스트를 우선순위대로 적용했습니다.
+
+### 2026-11-24 기존 지표 연결 및 자동 갱신
+
+Metrics 이미지 `fd96aab453981ca5b0c7a7adf0975021faf4ee46` (Actions `45398113599`)를 Space manifest `41b0edd`로 배포했습니다. 고객실 ‘유입 확인’에 이미 저장된 ‘인스타그램 조회수’ 정의의 소스를 `analytics:instagram:minimal_collector`로 연결했습니다. 운영 DB에서 해당 칸의 `views`, 7일, 단위 ‘회’, 0회 관측 및 원천 시각을 재확인했습니다. Status `d5d2e14`는 4개 그룹 32개 행으로 표시되며, 390·1440px에서 고객 신규 사용자/세션 각 4속성과 제품 세션 6범주를 확인했습니다.
+
+SAM-PC의 Windows 예약 작업 `Status Metrics Analytics Refresh`는 매일 10:15 KST에 실행됩니다. 21:55 KST에 같은 예약 작업을 호출해 종료 코드 0, 원천 3개 11행 모두 성공, 다음 실행 11월 25일 10:15를 확인했습니다. 수집기 릴리스는 `f7d856b`입니다. 로그인된 Windows 사용자와 Egolite 인증이 필요합니다. 예약 작업이 실패하면 재시도 설정과 [Status 운영 절차](../../infra-aws-static-sites/sites/status/README.md)를 확인합니다.
+
+임시 역할 `autoplanner`, `autodev`, `automarketer`, `autooperator`의 검토를 통합해 수집 기간, 지표 의미, 데이터 소스 연결, Windows 로그인 조건을 대조했습니다. 부모는 운영 지표 바인딩과 배포 revision, 예약 작업의 종료 코드, 공개 피드 및 렌더를 직접 확인했습니다.

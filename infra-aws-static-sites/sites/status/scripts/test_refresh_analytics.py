@@ -24,6 +24,36 @@ class RefreshTests(unittest.TestCase):
     def merged(self):
         return refresh.merge("ga4", self.feed, self.old, self.inventory, self.start)
 
+    def test_exporter_cache_preserves_observation_and_rejects_stale_or_partial_snapshots(self):
+        from calendar_periods import calendar_windows
+        from zoneinfo import ZoneInfo
+        self.start = datetime.now(timezone.utc).replace(hour=3, minute=30, second=0, microsecond=0)
+        observed = self.start - timedelta(minutes=10)
+        clock = patch.object(refresh, "datetime", wraps=datetime)
+        mocked = clock.start()
+        self.addCleanup(clock.stop)
+        mocked.now.return_value = self.start
+        periods = {"day": [], "week": [], "month": []}
+        values = {"events": 14, "sessions": 0, "pageviews": 0}
+        for window in calendar_windows(observed.astimezone(ZoneInfo("Asia/Seoul")).date()):
+            kind = window.pop("kind")
+            periods[kind].append({**window, "timeZone": "Asia/Seoul", "values": values,
+                                  "observedAt": observed.isoformat(), "eventsWithSessionId": 0})
+        today = self.start.date()
+        row = {"scope": "a", "values": values, "eventsWithSessionId": 0, "timeZone": "UTC",
+               "observedAt": observed.isoformat(), "status": "ok", "periods": periods,
+               "periodStart": (today - timedelta(days=7)).isoformat(),
+               "periodEnd": (today - timedelta(days=1)).isoformat()}
+        result = {"schemaVersion": 1, "source": "posthog", "rows": [row], "observedAt": row["observedAt"]}
+        args = ("posthog", result, {}, {"posthog": {"a": {}}}, self.start)
+        feed, complete = refresh.merge(*args)
+        self.assertTrue(complete)
+        self.assertEqual(feed["rows"][0]["observedAt"], observed.isoformat())
+        for change in ({"eventsWithSessionId": 15}, {"periods": {}},
+                       {"observedAt": (observed - timedelta(hours=1)).isoformat()}):
+            with self.subTest(change=change), patch.dict(row, change), self.assertRaises(ValueError):
+                refresh.merge(*args)
+
     def test_partial_failure_preserves_observation(self):
         result, complete = self.merged()
         self.assertFalse(complete)

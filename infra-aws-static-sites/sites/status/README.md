@@ -109,7 +109,7 @@ Windows 예약 작업은 기존 사용자 로그온 세션에서 다음 명령�
 wsl.exe -d Ubuntu -u sam --exec /usr/bin/env PYTHONPATH=/home/sam/.local/share/dashboard-analytics/python /usr/bin/python3 /home/sam/.local/share/dashboard-analytics/current/refresh-analytics.py
 ```
 
-예약 실행은 PostHog를 읽기 전용 API로, GA4 4개 속성과 Instagram을 로그인된 한국어 Egolite에서 읽습니다. 코드는 PostHog 토큰 파일과 AWS 자격 파일을 필요한 키만 읽고 브라우저의 원문 출력을 운영 로그에 기록하지 않습니다. 수집기는 이전 S3 객체의 ETag로 조건부 게시한 뒤 같은 버전을 다시 읽어 본문을 검증합니다. 다른 실행이 진행 중이면 중복 실행을 건너뜁니다. 일부 속성만 실패하면 그 행의 직전 값·관측 시각을 유지하며 실패 상태를 붙입니다. 한 원천이 모두 실패하면 해당 S3 객체를 보존하고 나머지 원천을 계속 처리합니다. 부분 실패와 전체 실패는 종료 코드 1이며 원천별 결과를 표준 출력에서 확인할 수 있습니다. 브라우저 로그인이 만료되면 해당 사이트에 다시 로그인한 후 예약 작업을 재실행합니다.
+예약 실행은 Kubernetes API의 서비스 프록시로 `monitoring/posthog-exporter`의 `/analytics-posthog.json`을 읽고, GA4 4개 속성과 Instagram을 로그인된 한국어 Egolite에서 읽습니다. PostHog API 조회는 클러스터의 exporter가 수행합니다. 게시기는 PATH 또는 `~/.local/bin/kubectl` 및 기존 KUBECONFIG 또는 `~/.local/share/dashboard-analytics/kubeconfig` 연결을 사용합니다. 45분 이내에 관측된 완전한 스냅샷을 받아 세션 ID가 있는 이벤트 수와 달력 구간을 검증합니다. 코드는 AWS 자격 파일에서 필요한 키만 읽고 브라우저의 원문 출력을 운영 로그에 기록하지 않습니다. 수집기는 이전 S3 객체의 ETag로 조건부 게시한 뒤 같은 버전을 다시 읽어 본문을 검증합니다. 다른 실행이 진행 중이면 중복 실행을 건너뜁니다. 일부 속성만 실패하면 그 행의 직전 값·관측 시각을 유지하며 실패 상태를 붙입니다. 한 원천이 모두 실패하면 해당 S3 객체를 보존하고 나머지 원천을 계속 처리합니다. 부분 실패와 전체 실패는 종료 코드 1이며 원천별 결과를 표준 출력에서 확인할 수 있습니다. 브라우저 로그인이 만료되면 해당 사이트에 다시 로그인한 후 예약 작업을 재실행합니다.
 
 수동 원천 점검용 수집 명령은 고정된 원천에만 접속합니다. GA4는 읽기 권한의 `GA4_ACCESS_TOKEN` 또는 Google Application Default Credentials(Python google-auth 및 requests 필요), PostHog는 projects query 읽기 권한의 `POSTHOG_ACCESS_TOKEN` 또는 `POSTHOG_PERSONAL_API_KEY` 및 선택적인 `POSTHOG_HOST`, Instagram은 프로페셔널 계정의 Insights 권한을 가진 `INSTAGRAM_ACCESS_TOKEN`과 선택적인 `INSTAGRAM_ACCOUNT_ID`를 실행 환경에서 사용합니다. Instagram 응답 username을 확인한 뒤 계정 전체의 집계만 발행합니다. 토큰을 명령행 인수로 전달하지 마세요.
 

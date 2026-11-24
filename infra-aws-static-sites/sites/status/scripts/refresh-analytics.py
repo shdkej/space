@@ -2,18 +2,17 @@
 """Refresh the three public aggregate objects shared by Status and Metrics."""
 import argparse
 import configparser
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import fcntl
 import json
 import os
 from pathlib import Path
-import re
+import shutil
 import subprocess
 import sys
-import tempfile
 
 from analytics_history import attach_history
-from calendar_periods import TIME_ZONES, merge_periods, requested_periods
+from calendar_periods import TIME_ZONES, merge_periods, requested_periods, validate_session_events
 
 BASE = Path(__file__).resolve().parent
 BUCKET = "static-status-aws-shdkej-com"
@@ -61,28 +60,17 @@ def s3_client():
                                       retries={"total_max_attempts": 3, "mode": "standard"}))
 
 
-def posthog_token():
-    if os.environ.get("POSTHOG_ACCESS_TOKEN"):
-        return os.environ["POSTHOG_ACCESS_TOKEN"]
-    with (Path.home() / ".env").open() as lines:
-        for line in lines:
-            match = re.fullmatch(r"\s*(?:export\s+)?POSTHOG_ACCESS_TOKEN\s*=\s*(.*?)\s*", line)
-            if match and match[1]:
-                return match[1].strip("'\"")
-    raise ValueError("Missing PostHog read credential")
-
-
 def collect(source, previous):
     if source == "posthog":
-        with tempfile.TemporaryDirectory() as tmp:
-            feed = Path(tmp) / "analytics-posthog.json"
-            feed.write_text(json.dumps(previous))
-            env = dict(os.environ, POSTHOG_ACCESS_TOKEN=posthog_token())
-            env.pop("POSTHOG_PERSONAL_API_KEY", None)
-            subprocess.run([sys.executable, str(BASE / "collect-analytics.py"), source,
-                            "--output-dir", tmp], env=env, check=True, timeout=220,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return json.loads(feed.read_text())
+        kubectl = shutil.which("kubectl") or str(Path.home() / ".local/bin/kubectl")
+        local_config = Path.home() / ".local/share/dashboard-analytics/kubeconfig"
+        command = [kubectl, "--request-timeout=20s"]
+        if "KUBECONFIG" not in os.environ and local_config.exists():
+            command.extend(["--kubeconfig", str(local_config)])
+        endpoint = "/api/v1/namespaces/monitoring/services/http:posthog-exporter:metrics/proxy/analytics-posthog.json"
+        result = subprocess.run([*command, "get", "--raw", endpoint], check=True,
+                                capture_output=True, timeout=30)
+        return json.loads(result.stdout)
     script = BASE / f"read-{source}-insights.mjs"
     # On Windows builds Ego writes console.log to stderr. Never expose browser
     # output; the only accepted result is the structured public aggregate.
@@ -120,6 +108,8 @@ def merge(source, result, previous, inventory, started):
     for row in rows:
         scope = row["scope"]
         if row.get("status") == "unavailable":
+            if source == "posthog":
+                raise ValueError("Incomplete exporter snapshot")
             merged.append({**old.get(scope, {"scope": scope}), "status": "unavailable"})
             continue
         if row.get("status") != "ok" or set(row["values"]) != FIELDS[source]:
@@ -127,15 +117,34 @@ def merge(source, result, previous, inventory, started):
         if any(type(v) is not int or not 0 <= v < 2**53 for v in row["values"].values()):
             raise ValueError("Invalid metric")
         at = datetime.fromisoformat(row["observedAt"].replace("Z", "+00:00"))
-        if at < started or at.timestamp() > datetime.now(timezone.utc).timestamp() + 60:
+        earliest = started
+        allowed_fields = {"history", "periods", "periodStatus", "scope", "values", "status", "observedAt",
+                          "method", "timeZone", "periodStart", "periodEnd", "periodLabel"}
+        if source == "posthog":
+            earliest = started - timedelta(minutes=45)
+            allowed_fields.add("eventsWithSessionId")
+            validate_session_events(row)
+            prior_observation = old.get(scope, {}).get("observedAt")
+            if prior_observation:
+                earliest = max(earliest, datetime.fromisoformat(prior_observation.replace("Z", "+00:00")))
+            today = started.astimezone(timezone.utc).date()
+            if (row["timeZone"] != "UTC" or row["periodStart"] != (today - timedelta(days=7)).isoformat()
+                    or row["periodEnd"] != (today - timedelta(days=1)).isoformat()
+                    or row["observedAt"] != result["observedAt"]):
+                raise ValueError("Unexpected exporter snapshot period")
+        if at < earliest or at.timestamp() > datetime.now(timezone.utc).timestamp() + 60:
             raise ValueError("Stale observation")
-        if set(row) - {"history", "periods", "periodStatus", "scope", "values", "status", "observedAt", "method", "timeZone",
-                       "periodStart", "periodEnd", "periodLabel"}:
+        if set(row) - allowed_fields:
             raise ValueError("Unexpected public field")
         measurement = {k: v for k, v in row.items() if k not in {"history", "periods", "periodStatus"}}
         if source in TIME_ZONES:
             periods, done = merge_periods(source, old.get(scope, {}).get("periods", {}),
                                           row.get("periods", {}), datetime.now(timezone.utc))
+            if source == "posthog" and (not done or any(
+                sample.get("eventsWithSessionId") is None or sample["observedAt"] != row["observedAt"]
+                for group in periods.values() for sample in group
+            )):
+                raise ValueError("Incomplete exporter snapshot")
             measurement.update(periods=periods, periodStatus="ok" if done else "partial")
             calendar_complete = calendar_complete and done
         merged.append(measurement)

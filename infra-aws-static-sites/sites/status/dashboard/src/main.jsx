@@ -251,7 +251,7 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
         ? "세션 ID 없음"
         : latest && latest[1] !== null ? displayValue(latest[1], metric?.unit, metric?.kind) : "—";
       return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{sharedPosthog && entry.name === "virtue" ? "PostHog 공용 프로젝트 전체" : entry.name}<strong>{value}</strong>
-        {hasEventCount && <small>수신 이벤트 {bucket.events.toLocaleString("ko-KR")}건</small>}
+        {hasEventCount && <small>수신 이벤트 {bucket.events.toLocaleString("ko-KR")}건{Number.isInteger(bucket.eventsWithSessionId) && ` · 세션 ID 포함 ${bucket.eventsWithSessionId.toLocaleString("ko-KR")}건`}</small>}
         {metric?.calendar && <small>{[bucket && `마지막 ${selectedRange.label} 집계 · ${bucket.period}`, latest && `조회 ${chartDate(latest[2].observed)}`, entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>;
     })}</div>
     <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · {metric?.calendar ? { day: "하루 집계", week: "월요일부터 일요일까지의 주간 집계", month: "달력 월별 집계" }[selectedRange.id] : "최근 값 기준으로 표시합니다"}</small>

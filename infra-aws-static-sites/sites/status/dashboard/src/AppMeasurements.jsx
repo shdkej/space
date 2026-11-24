@@ -36,7 +36,7 @@ export function appMeasurementSeries({ feed, metricKey, unit, label }, range) {
       const dates = sample.periodStart === sample.periodEnd ? sample.periodStart : `${sample.periodStart} – ${sample.periodEnd}`;
       const period = sample.timeZone ? `${dates} (${sample.timeZone})` : dates;
       const value = sample.values?.[metricKey];
-      buckets.set(end, [end, Number.isSafeInteger(value) && value >= 0 ? value : null, { start, period, observed, events: sample.values?.events }]);
+      buckets.set(end, [end, Number.isSafeInteger(value) && value >= 0 ? value : null, { start, period, observed, events: sample.values?.events, eventsWithSessionId: sample.eventsWithSessionId }]);
     }
     return { name: row.scope, points: [...buckets.values()].sort((a, b) => a[0] - b[0]),
       failed: feed.failed || row.status === "unavailable" || row.periodStatus === "partial" };

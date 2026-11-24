@@ -28,6 +28,12 @@ def as_key(kind, point):
     return kind, point["periodStart"], point["periodEnd"]
 
 
+def validate_session_events(point):
+    count = point.get("eventsWithSessionId")
+    if type(count) is not int or not point["values"]["sessions"] <= count <= point["values"]["events"]:
+        raise ValueError("Invalid session ID coverage")
+
+
 def index_periods(source, periods, windows, now):
     expected = {as_key(w["kind"], w) for w in windows}
     points = {}
@@ -38,7 +44,11 @@ def index_periods(source, periods, windows, now):
             key = as_key(kind, point)
             if key not in expected:  # Discard buckets older than the current retention window.
                 continue
-            if set(point) != {"periodStart", "periodEnd", "observedAt", "timeZone", "values"}:
+            fields = {"periodStart", "periodEnd", "observedAt", "timeZone", "values"}
+            if source == "posthog" and "eventsWithSessionId" in point:
+                fields.add("eventsWithSessionId")
+                validate_session_events(point)
+            if set(point) != fields:
                 raise ValueError("Unexpected calendar fields")
             if point["timeZone"] != TIME_ZONES[source] or set(point["values"]) != KEYS[source]:
                 raise ValueError("Unexpected calendar source definition")

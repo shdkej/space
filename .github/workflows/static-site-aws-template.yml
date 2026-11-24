@@ -248,9 +248,14 @@ jobs:
             # route object and every object below this prefix.
             exclusions+=(--exclude "tools/image-converter/" --exclude "tools/image-converter/*")
           fi
+          sync_options=(--delete)
+          if [ "$DOMAIN_NAME" = "status.aws.shdkej.com" ]; then
+            sync_options=()
+            exclusions+=(--exclude "analytics-posthog.json" --exclude "analytics-ga4.json" --exclude "analytics-instagram.json")
+          fi
           aws s3 sync "${{ matrix.build_dir }}/" \
             "s3://${{ steps.target.outputs.bucket }}" \
-            --delete \
+            "${sync_options[@]}" \
             "${exclusions[@]}" \
             --cache-control "public,max-age=60"
 

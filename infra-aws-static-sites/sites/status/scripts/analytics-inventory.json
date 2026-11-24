@@ -1,0 +1,37 @@
+{
+  "ga4": {
+    "blog": "252603434",
+    "afzma": "523848883",
+    "policycock": "565383231",
+    "purple-place-bb6ce": "376243766"
+  },
+  "posthog": {
+    "policycock": {
+      "project": "424014",
+      "app_id": "policycock"
+    },
+    "miniapp-image-tools": {
+      "project": "424014",
+      "app_id": "miniapp-image-tools"
+    },
+    "Infinity": {
+      "project": "424014",
+      "app_id": null,
+      "host": "infinity.aws.shdkej.com"
+    },
+    "shdkej.com": {
+      "project": "424014",
+      "app_id": null,
+      "host": "shdkej.com"
+    },
+    "Virtue": {
+      "project": "424014",
+      "app_id": null,
+      "host": "virtue.oracle.shdkej.com"
+    },
+    "앱 미지정": {
+      "project": "424014",
+      "app_id": null
+    }
+  }
+}

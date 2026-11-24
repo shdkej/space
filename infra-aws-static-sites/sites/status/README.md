@@ -91,3 +91,23 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 2026-10-30 보완: 상세 모달의 닫기 버튼이 `Dialog.Content` 바깥에 있어 Radix가 모달 외부 요소를 `aria-hidden`·`pointer-events: none`으로 격리하는 문제를 수정했습니다. 버튼을 콘텐츠 내부로 옮기고 패널의 중앙 배치를 transform 없이 유지해 닫기 버튼의 화면 하단 고정을 보존합니다. 모바일 터치 영역은 56×56px입니다.
 
 2026-11-13: `infra-aws-static-sites/sites/status/dashboard`의 긴 크론 상세는 내부 `.cron-dialog-scroll`만 스크롤하도록 분리했습니다. `Dialog.Content`의 overflow 클리핑이 닫기 버튼에 적용되지 않게 해 X 버튼의 뷰포트 하단 중앙 고정과 Radix 접근성 경계, 모바일 safe-area·터치 영역을 유지합니다.
+
+## 채널별 7일 실측
+
+Monitoring 상단에서 앱별 PostHog 이벤트·고유 세션·페이지뷰, GA4 속성별 신규 사용자·세션, Instagram `@minimal_collector` 조회수와 원천에서 확인된 계정 지표을 확인합니다. 기존 PostHog exporter의 공용 프로젝트 424014 전체 세션과 재방문율은 관측 시점 직전 7일 기준입니다. 별도 프로젝트·채널 피드는 완료한 7개 날짜를 표시합니다. 원천에 행이 없으면 측정값 없음으로 표시합니다. 등록된 앱의 이름과 공개 식별자는 `scripts/analytics-inventory.json`에 관리합니다. PostHog는 프로젝트 내 승인된 app_id를 각각 조회하고 app_id가 없는 이벤트는 등록된 호스트별로 구분하고 나머지는 앱 미지정으로 표시합니다. traffic_kind=synthetic 이벤트를 앱별 집계에서 제외합니다.
+
+수집 명령은 고정된 원천에만 접속합니다. GA4는 읽기 권한의 `GA4_ACCESS_TOKEN` 또는 Google Application Default Credentials(Python google-auth 및 requests 필요), PostHog는 projects query 읽기 권한의 `POSTHOG_ACCESS_TOKEN` 또는 `POSTHOG_PERSONAL_API_KEY` 및 선택적인 `POSTHOG_HOST`, Instagram은 프로페셔널 계정의 Insights 권한을 가진 `INSTAGRAM_ACCESS_TOKEN`과 선택적인 `INSTAGRAM_ACCOUNT_ID`를 실행 환경에서 사용합니다. Instagram 응답 username을 확인한 뒤 계정 전체의 집계만 발행합니다. 토큰을 명령행 인수로 전달하지 마세요.
+
+동일한 운영 출력 디렉터리에서 다음처럼 원천별로 실행합니다. `STATE_DIR`은 수집기 전용으로 지정한 디렉터리입니다. 다른 호스트에서 인계할 경우 기존 **해당 피드만** 먼저 내려받고, 마지막 성공값을 보존합니다. 같은 원천의 게시자는 한 번에 하나만 실행합니다.
+
+```bash
+source_name=ga4  # posthog, instagram도 같은 방식
+key="analytics-${source_name}.json"
+python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
+  aws s3 cp "$STATE_DIR/$key" "s3://static-status-aws-shdkej-com/$key" \
+    --content-type application/json --cache-control 'public,max-age=60'
+```
+
+정적 사이트 배포는 수집기 소유 객체를 제외하며 Status 버킷의 다른 파일을 삭제하지 않습니다. 집계 파일의 rows에는 승인된 범위 이름, 집계 기간·시간대, 조회 시각, 숫자와 수집 상태만 포함합니다. 최신 수집 전체가 실패하면 종료 코드 1을 반환하고 이전 파일을 유지합니다. 일부 앱이 실패하면 해당 앱의 마지막 성공 시각·값과 실패 상태를 함께 내보냅니다. 게시 후 해당 HTTPS 피드의 scope·기간·관측 시각·값을 원천과 대조하고, Status Monitoring과 Metrics 지도에서 동일한지 확인합니다.
+
+브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 API 권한이 없는 속성은 해당 속성의 GA4 홈에서 ‘지난 7일’ 날짜와 ‘새 사용자 수’·‘세션수’를 확인해 같은 GA4 피드의 해당 행에 원천, 기간, 조회 시각과 함께 반영합니다. API·브라우저 집계 갱신은 운영자가 실행할 때 이루어지며 화면의 새로고침은 최근 게시된 피드를 읽습니다.

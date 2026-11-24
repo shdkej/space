@@ -1,21 +1,21 @@
 {
-  "verifiedAt": "2026-11-24T03:28:24.559Z",
+  "verifiedAt": "2026-11-24T03:46:53.193Z",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "c97eef488e48da2ce33bce25d3ab82b4cdc5290c",
+  "sourceCommit": "681d0c6b5cd0ec06a78cef0970cb9176997e06e3",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45319573478,
+    "runId": 45321686965,
     "conclusion": "success"
   },
   "verification": {
     "browserChecks": "qa/live-verification.json",
-    "mobile": "iPhone 15 geometry in Chromium with 393×852 screen and 59px top inset. Reproduced next section at y=694 on the previous deployment. Live next section now starts at y=793 in both 694px and 793px viewports. At 694px, sampled document rows 700, 740 and 792 are #0b0c0d; row 800 is the next section. Physical Safari toolbar compositing unverified.",
+    "mobile": "Chromium iPhone 15 emulation (393×852 screen, 694px viewport, 59px top inset): the interactive canvas and next section meet at document y=793, below the simulated toolbar. The live render shows a continuous graph and a plum-to-slate tint across the former solid strip. Link access, reduced motion and fallback passed. Physical Safari not tested.",
     "scene": "Passed WebGL, fallback, ten policy targets, touch, keyboard and reduced motion. At 393×700 with identical anchors, graph nodes decreased from 4098 to 2816 and edges from 4355 to 2913.",
-    "review": "Native reviews completed: /root/planner and /root/developer checked document flow and toolbar coverage, /root/marketer checked link placement and spacing, /root/operator checked deployment verification and device-test limits. /root verified the public render."
+    "review": "All four native roles completed independent and cross-review. /root/planner and /root/developer verified retaining the interactive layout while extending the canvas. /root/marketer and /root/operator reviewed the gradient, sampled colors, and link accessibility. /root checked the live render and scene tests."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/6b0e715/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/2cc3240/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

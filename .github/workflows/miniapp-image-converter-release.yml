@@ -91,7 +91,7 @@ jobs:
           RELEASE_MODE: ${{ inputs.mode }}
         run: |
           set -euo pipefail
-          git show 3b9faeef227d97e48b3dfe42b71894ee0d738e7b:infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html > "$RUNNER_TEMP/baseline-source.html"
+          git show b8ee2e45f638dc7809ea9f57fa2c4c02372a4d49:infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html > "$RUNNER_TEMP/baseline-source.html"
           python3 - "$RUNNER_TEMP" <<'PY'
           import hashlib,json,os,re,sys
           from pathlib import Path
@@ -101,17 +101,25 @@ jobs:
           marker='__POSTHOG_MINIAPP_PROJECT_TOKEN__'
           if source.count(marker)!=1: raise SystemExit('Baseline placeholder count mismatch')
           baseline=source.replace(marker,token).encode()
-          expected='054deb7b1acfae3e54424651208168720b3dfe850b22a5138e014e1b8563de3f'
+          expected='3636ab22d9b66ea11797430ea056ec7166864ca6447d7e8f4ac17bbbfd3e09c9'
           if hashlib.sha256(baseline).hexdigest()!=expected: raise SystemExit('Immutable baseline reconstruction hash mismatch')
+          candidate_source=Path('infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html').read_text()
+          if candidate_source.count(marker)!=1: raise SystemExit('Release placeholder count mismatch')
+          candidate_hash=hashlib.sha256(candidate_source.replace(marker,token).encode()).hexdigest()
           for label in ('index','slash'):
               d=root/('converter-'+label)
               head=json.loads((d/'head.json').read_text())
+              got=json.loads((d/'get.json').read_text())
               current=(d/'current.html').read_bytes()
-              if os.environ['RELEASE_MODE']!='restore' and hashlib.sha256(current).hexdigest()!=expected: raise SystemExit('Current object is not baseline: '+label)
+              current_hash=hashlib.sha256(current).hexdigest()
+              allowed={expected,candidate_hash} if os.environ['RELEASE_MODE']=='restore' else {expected}
+              if current_hash not in allowed: raise SystemExit('Current object is neither approved baseline nor this release: '+label)
+              if len(current)!=head.get('ContentLength') or len(current)!=got.get('ContentLength') or head.get('VersionId')!=got.get('VersionId'):
+                  raise SystemExit('Current HEAD/GET mismatch: '+label)
               if head.get('ContentType')!='text/html' or head.get('CacheControl')!='public,max-age=60' or head.get('Metadata')!={} or head.get('ServerSideEncryption')!='AES256':
                   raise SystemExit('Unexpected metadata; cannot reproduce exactly: '+label)
           (root/'baseline.html').write_bytes(baseline)
-          print('Immutable baseline reconstructed; both target restore headers verified; baseline-current equality required except in restore mode')
+          print('Immutable b8 baseline reconstructed; both exact-key HEAD/GET bodies, lengths, hashes and restore headers verified; restore accepts only baseline or this release body')
           PY
       - name: Rehearse or restore baseline on both exact keys and read back
         if: ${{ inputs.mode == 'rehearse' || inputs.mode == 'restore' }}
@@ -219,4 +227,4 @@ jobs:
             cmp "$file" "$RUNNER_TEMP/live-$label.html"
           done
           rollback_needed=0
-          echo "Exact two-path release and invalidation $id verified; source file from $GITHUB_SHA (b8ee2e45 content)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Exact two-path release and invalidation $id verified; source file from $GITHUB_SHA (rollback to immutable b8ee2e45 content)" >> "$GITHUB_STEP_SUMMARY"

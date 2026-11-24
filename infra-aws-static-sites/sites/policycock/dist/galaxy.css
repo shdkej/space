@@ -80,15 +80,19 @@
 }
 
 @media screen and (max-width:600px) and (orientation:portrait) and (pointer:coarse) and (display-mode:browser) {
+  .landing-backdrop {min-height:100svh}
   .landing-opening {
-    --scene-height:max(100dvh,100lvh,calc(var(--screen-height,100lvh + 104px) - env(safe-area-inset-top,0px)));
+    --scene-height:max(var(--content-height,100svh),calc(var(--screen-height,100lvh + 104px) - env(safe-area-inset-top,0px)));
     min-height:var(--scene-height);
   }
   .galaxy-hero-sky {
     border-bottom:0;
     /* The canvas covers the toolbar area while the links stay above it. */
-    padding-bottom:calc(var(--scene-height) - 100dvh);
+    padding-bottom:calc(var(--scene-height) - var(--content-height,100svh));
+    padding-top:clamp(16px,calc(var(--content-height,100svh) * .03),28px);
   }
+  .galaxy-intro-copy h1 {font-size:clamp(36px,7vw,54px)}
+  .galaxy-links {padding-top:16px;padding-bottom:calc(16px + max(env(safe-area-max-inset-bottom,0px),env(safe-area-inset-bottom,0px)))}
   .galaxy-hero-sky::after {
     content:"";
     position:absolute;

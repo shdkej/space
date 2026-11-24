@@ -6,6 +6,7 @@ const links = [...sky.querySelectorAll('[data-galaxy-policy]')];
 const labels = links.map(link => link.querySelector('.orbit-label'));
 const dots = labels.map(label => label.querySelector('i'));
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const touchScene = matchMedia('(pointer:coarse) and (max-width:900px)');
 const gl = canvas.getContext('webgl', {alpha:false, antialias:true, powerPreference:'low-power'});
 
 const vertex = `
@@ -162,7 +163,7 @@ function start(){
   }
   const viewport=gl.getUniformLocation(program,'viewport'), density=gl.getUniformLocation(program,'density');
   const drawingNodes=gl.getUniformLocation(program,'drawingNodes');
-  let graph,lineData,pointData,positions,w,h,frame=0,last=0,t=0,visible=true,active=-1,paused=reduced.matches;
+  let graph,lineData,pointData,positions,w,h,frame=0,last=0,t=0,visible=true,active=-1,paused=reduced.matches||touchScene.matches;
   const flowCount=110,dx=new Float32Array(10),dy=new Float32Array(10);
   function layout(){
     const bounds=canvas.getBoundingClientRect();w=bounds.width;h=bounds.height;
@@ -229,7 +230,7 @@ function start(){
     link.addEventListener('pointerenter',highlight);link.addEventListener('focus',highlight);
     link.addEventListener('pointerleave',clear);link.addEventListener('blur',clear);
   });
-  motion.hidden=false;motion.addEventListener('click',()=>setMotion(!paused));reduced.addEventListener('change',()=>setMotion(reduced.matches));
+  motion.hidden=false;motion.addEventListener('click',()=>setMotion(!paused));reduced.addEventListener('change',()=>setMotion(reduced.matches||touchScene.matches));
   new ResizeObserver(layout).observe(sky);document.fonts.ready.then(layout);
   new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;refresh();}).observe(sky);
   document.addEventListener('visibilitychange',refresh);

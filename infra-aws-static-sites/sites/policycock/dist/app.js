@@ -1,12 +1,20 @@
 'use strict';
 // Safari can paint page content below its reported viewport behind the floating toolbar.
 const landingBackdrop=document.querySelector('.landing-backdrop');
-function updateLandingScreenHeight(){
-  landingBackdrop.style.setProperty('--screen-height',window.screen.height+'px');
-}
 if(landingBackdrop){
-  updateLandingScreenHeight();
-  window.addEventListener('resize',updateLandingScreenHeight);
+  let layoutWidth,screenHeight;
+  function updateLandingSize(){
+    const width=document.documentElement.clientWidth;
+    if(width===layoutWidth && screen.height===screenHeight)return;
+    layoutWidth=width;
+    screenHeight=screen.height;
+    landingBackdrop.style.setProperty('--screen-height',screenHeight+'px');
+    // Keep the original small viewport while the browser chrome expands or collapses.
+    const smallHeight=parseFloat(getComputedStyle(landingBackdrop).minHeight);
+    if(smallHeight>0)landingBackdrop.style.setProperty('--content-height',smallHeight+'px');
+  }
+  updateLandingSize();
+  window.addEventListener('resize',updateLandingSize);
 }
 const printStateMap=document.getElementById('print-state-map');
 printStateMap.hidden=false;

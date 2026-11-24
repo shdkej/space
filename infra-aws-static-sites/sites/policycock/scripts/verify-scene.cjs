@@ -179,7 +179,17 @@ async function main() {
 
     // The floating Safari toolbar can reveal page content outside the CSS viewport.
     const iphone=await browser.newContext({viewport:{width:393,height:694},screen:{width:393,height:852},
-      isMobile:true,hasTouch:true,deviceScaleFactor:3,reducedMotion:'reduce'});
+      isMobile:true,hasTouch:true,deviceScaleFactor:3,reducedMotion:'no-preference'});
+    await iphone.addInitScript(()=>{
+      const upload=WebGLRenderingContext.prototype.bufferData;
+      WebGLRenderingContext.prototype.bufferData=function(target,data,usage){
+        if(this.canvas.id==='galaxy-canvas' && data instanceof Float32Array){
+          window.lastGalaxyUpload=new Uint8Array(data.buffer,data.byteOffset,data.byteLength).slice();
+        }
+        return upload.call(this,target,data,usage);
+      };
+    });
+    let firstStars;
     const safariPage=await iphone.newPage();
     const cdp=await iphone.newCDPSession(safariPage);
     await cdp.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:59,bottom:34}});
@@ -187,9 +197,24 @@ async function main() {
       await cdp.send('Emulation.setDeviceMetricsOverride',{width:393,height,screenWidth:393,screenHeight:852,
         deviceScaleFactor:3,mobile:true});
       if(safariPage.url()==='about:blank')await safariPage.goto(url);
+      await safariPage.locator('#atlas[data-renderer="webgl"]').waitFor();
+      if(await safariPage.locator('#analytics-decline').isVisible())await safariPage.locator('#analytics-decline').click();
+      assert.equal(await safariPage.locator('#atlas').getAttribute('data-motion'),'paused');
+      await safariPage.evaluate(y=>scrollTo({top:y,behavior:'instant'}),height===793?100:0);
+      await safariPage.evaluate(()=>document.fonts.ready);
+      await safariPage.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+      const stars=await safariPage.evaluate(async()=>{
+        const buffer=await crypto.subtle.digest('SHA-256',window.lastGalaxyUpload);
+        return {points:Array.from(new Uint8Array(buffer)),anchors:Array.from(document.querySelectorAll('.orbit-label i'),dot=>{
+          const rect=dot.getBoundingClientRect();
+          return [rect.x,Math.round((rect.y+scrollY)*10)/10];
+        })};
+      });
+      if(firstStars)assert.deepEqual(stars,firstStars,'scroll and toolbar resizing preserve the same stars and anchors');
+      else firstStars=stars;
       const geometry=await safariPage.evaluate(()=>({
-        next:document.querySelector('main').getBoundingClientRect().top,
-        canvasBottom:document.querySelector('#galaxy-canvas').getBoundingClientRect().bottom,
+        next:document.querySelector('main').getBoundingClientRect().top+scrollY,
+        canvasBottom:document.querySelector('#galaxy-canvas').getBoundingClientRect().bottom+scrollY,
         links:document.querySelector('.galaxy-links a').getBoundingClientRect().bottom,
         screen:window.screen.height,viewport:window.visualViewport.height
       }));
@@ -197,8 +222,12 @@ async function main() {
       assert.equal(geometry.viewport,height);
       assert.ok(geometry.next>=793 && geometry.next<=794,'next section must start below the floating toolbar: '+JSON.stringify(geometry));
       assert.ok(Math.abs(geometry.canvasBottom-geometry.next)<=1,'graph must reach the next section');
-      assert.ok(geometry.links<=height-34,'links must stay above the bottom safe area');
+      assert.ok(geometry.links<=height-34,'links must stay above the bottom safe area: '+JSON.stringify(geometry));
     }
+    await safariPage.locator('#galaxy-motion').tap();
+    assert.equal(await safariPage.locator('#atlas').getAttribute('data-motion'),'running');
+    await safariPage.locator('#galaxy-motion').tap();
+    assert.equal(await safariPage.locator('#atlas').getAttribute('data-motion'),'paused');
     await iphone.close();
 
     const plain=await browser.newContext({javaScriptEnabled:false});

@@ -27,8 +27,38 @@ class RefreshTests(unittest.TestCase):
     def test_partial_failure_preserves_observation(self):
         result, complete = self.merged()
         self.assertFalse(complete)
-        self.assertEqual(result["rows"][1], {**self.old["rows"][0], "status": "unavailable"})
+        self.assertEqual(result["rows"][1], {**self.old["rows"][0], "status": "unavailable", "history": []})
         self.assertEqual(result["rows"][0]["values"]["newUsers"], 0)
+
+    def test_merge_preserves_recent_observations_and_real_zero_on_failure(self):
+        old_time = (self.start - timedelta(hours=2)).isoformat()
+        self.old["rows"] = [{**self.row, "observedAt": old_time, "periodLabel": "previous week"},
+                            {**self.row, "scope": "b", "observedAt": old_time}]
+        feed, _ = self.merged()
+        a, b = feed["rows"]
+        self.assertEqual([p["observedAt"] for p in a["history"]], [old_time, self.row["observedAt"]])
+        self.assertEqual(a["history"][0]["periodLabel"], "previous week")
+        self.assertEqual(b["history"], [{"observedAt": old_time, "values": self.row["values"]}])
+        self.assertEqual(b["status"], "unavailable")
+
+    def test_backfill_preserves_current_reading_and_uses_period_time_for_retention(self):
+        now = datetime(2026, 11, 24, 12, tzinfo=timezone.utc)
+        observed = now.isoformat()
+        def backfilled(days, hour):
+            when = (now - timedelta(days=days)).replace(hour=hour)
+            return {"observedAt": observed, "sampleAt": when.isoformat(),
+                    "values": {"newUsers": None, "sessions": 0}, "periodEnd": when.date().isoformat()}
+        points = [backfilled(32, 1), backfilled(5, 1), backfilled(5, 2), backfilled(1, 18)]
+        current = {"scope": "a", "values": {"newUsers": 8, "sessions": 10}, "observedAt": observed}
+        feed = {"schemaVersion": 1, "source": "ga4", "rows": [current]}
+        seed = {**feed, "rows": [{"scope": "a", "history": points}]}
+        result = refresh.attach_history("ga4", feed, {}, seed, now)
+        row = result["rows"][0]
+        self.assertEqual(row["values"], current["values"])
+        self.assertEqual(row["history"], [points[2], points[3], {"values": current["values"], "observedAt": observed}])
+        self.assertEqual(refresh.attach_history("ga4", result, result, seed, now), result)
+        with self.assertRaises(ValueError):
+            refresh.attach_history("ga4", feed, {}, {**seed, "source": "instagram"}, now)
 
     def test_total_failure_does_not_publish(self):
         self.row["status"] = "unavailable"

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Refresh the three public aggregate objects shared by Status and Metrics."""
+import argparse
 import configparser
 from datetime import datetime, timezone
 import fcntl
@@ -10,6 +11,8 @@ import re
 import subprocess
 import sys
 import tempfile
+
+from analytics_history import attach_history
 
 BASE = Path(__file__).resolve().parent
 BUCKET = "static-status-aws-shdkej-com"
@@ -117,18 +120,18 @@ def merge(source, result, previous, inventory, started):
         at = datetime.fromisoformat(row["observedAt"].replace("Z", "+00:00"))
         if at < started or at.timestamp() > datetime.now(timezone.utc).timestamp() + 60:
             raise ValueError("Stale observation")
-        if set(row) - {"scope", "values", "status", "observedAt", "method", "timeZone",
+        if set(row) - {"history", "scope", "values", "status", "observedAt", "method", "timeZone",
                        "periodStart", "periodEnd", "periodLabel"}:
             raise ValueError("Unexpected public field")
-        merged.append(row)
+        merged.append({k: v for k, v in row.items() if k != "history"})
         successful += 1
     if not successful:
         raise ValueError("No new observations")
-    return ({"schemaVersion": 1, "source": source, "observedAt": result["observedAt"],
-             "rows": merged}, successful == len(rows))
+    feed = {"schemaVersion": 1, "source": source, "observedAt": result["observedAt"], "rows": merged}
+    return attach_history(source, feed, previous), successful == len(rows)
 
 
-def refresh(client, source, inventory):
+def refresh(client, source, inventory, seed=None, seed_only=False):
     from botocore.exceptions import ClientError
     started = datetime.now(timezone.utc)
     key = f"analytics-{source}.json"
@@ -140,7 +143,16 @@ def refresh(client, source, inventory):
         if error.response["Error"]["Code"] not in {"NoSuchKey", "404"}:
             raise
         condition, previous = {"IfNoneMatch": "*"}, {}
-    result, complete = merge(source, collect(source, previous), previous, inventory, started)
+    if seed_only:
+        if not previous:
+            raise ValueError("A current feed is required to seed its history")
+        result, complete = attach_history(source, previous, previous, seed), True
+        if result == previous:
+            return True
+    else:
+        result, complete = merge(source, collect(source, previous), previous, inventory, started)
+        if seed is not None:
+            result = attach_history(source, result, previous, seed)
     body = json.dumps(result, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode()
     put = client.put_object(Bucket=BUCKET, Key=key, Body=body, ContentType="application/json",
                             CacheControl="public,max-age=60", **condition)
@@ -152,6 +164,12 @@ def refresh(client, source, inventory):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--history-seed-dir", type=Path)
+    parser.add_argument("--seed-only", action="store_true", help="Import verified history without recollecting current observations")
+    args = parser.parse_args()
+    if args.seed_only and not args.history_seed_dir:
+        parser.error("--seed-only requires --history-seed-dir")
     state = Path.home() / ".local/state/dashboard-analytics"
     state.mkdir(parents=True, exist_ok=True, mode=0o700)
     with (state / "refresh.lock").open("a") as lock:
@@ -159,13 +177,23 @@ def main():
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             log("Skipped overlapping run")
-            return 0
+            return 1 if args.seed_only else 0
         inventory = json.loads((BASE / "analytics-inventory.json").read_text())
         client = s3_client()
         success = True
-        for source in SOURCES:
+        sources = SOURCES
+        if args.seed_only:
+            sources = [s for s in SOURCES if (args.history_seed_dir / f"analytics-{s}.json").is_file()]
+            if not sources:
+                raise ValueError("No seed feeds")
+        for source in sources:
             try:
-                complete = refresh(client, source, inventory)
+                seed = None
+                if args.history_seed_dir:
+                    path = args.history_seed_dir / f"analytics-{source}.json"
+                    if path.is_file():
+                        seed = json.loads(path.read_text())
+                complete = refresh(client, source, inventory, seed, args.seed_only)
                 log(f"{source} {'verified' if complete else 'partially updated; prior rows retained'}")
                 success = success and complete
             except Exception as error:

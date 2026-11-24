@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Collect approved, account-level dashboard aggregates into a single atomic file."""
+from analytics_history import attach_history
+
 import argparse
 from datetime import datetime, time, timedelta, timezone
 import json
@@ -192,6 +194,7 @@ def collect(source, output, inventory):
     if not success:
         raise ValueError("no successful observations")
     result = {"schemaVersion": 1, "source": source, "observedAt": now.isoformat(), "rows": rows}
+    result = attach_history(source, result, previous)
     output.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(mode="w", dir=output, delete=False) as temp:
         json.dump(result, temp, allow_nan=False)

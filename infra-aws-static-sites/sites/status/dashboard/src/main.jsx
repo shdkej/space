@@ -212,15 +212,15 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
   const y = (value) => top + ((max - Number(value)) / (max - min)) * (height - top - bottom);
   const palette = ["#9a7b18", "#318277", "#b85c44", "#6670a8", "#8e659c", "#486f97"];
   const pathFor = (values) => {
-    let previous = null, path = "";
+    let previousEnd = null, path = "";
     for (const [time, value, bucket] of values) {
-      if (value === null || !Number.isFinite(Number(value))) { previous = null; continue; }
+      if (value === null || !Number.isFinite(Number(value))) { previousEnd = null; continue; }
       const px = x(time).toFixed(1), py = y(value).toFixed(1);
-      if (metric?.calendar && previous && bucket.start > previous[0] + 86400) previous = null;
-      if (!previous) path += `M${px},${py}`;
+      if (metric?.calendar && previousEnd !== null && bucket.start > previousEnd + 86400) previousEnd = null;
+      if (previousEnd === null) path += `M${px},${py}`;
       else if (metric?.kind === "state") path += `H${px}V${py}`;
       else path += `L${px},${py}`;
-      previous = [px, py];
+      previousEnd = time;
     }
     return path;
   };

@@ -3,8 +3,11 @@ const task = await taskSpace("Instagram account insights for the status dashboar
 try {
   const page = task.page("p1");
   await page.goto("https://www.instagram.com/accounts/insights/?timeframe=7");
-  await page.waitForFunction(() => document.querySelector("main")?.innerText.includes("총 팔로워"),
-    undefined, { timeout: 20000 });
+  await page.waitForFunction(() => {
+    const text = document.querySelector("main")?.innerText || "";
+    return [/조회수\n[\d,]+\n조회수/, /조회한 사람\n[\d,]+/, /반응\n[\d,]+\n반응/,
+      /프로필 방문\n[\d,]+/, /팔로워\n[\d,]+\n총 팔로워/].every(pattern => pattern.test(text));
+  }, undefined, { timeout: 30000 });
   const row = await page.evaluate(() => {
     const text = document.querySelector("main").innerText;
     if (!document.querySelector('a[href="/minimal_collector/"]') ||

@@ -57,7 +57,7 @@ const monitoringCatalog = [
       ["product.web_vitals", "Core Web Vitals", "PostHog exporter · LCP/INP 일부 연결, CLS 시계열 없음", "warn"],
       ["product.login_success", "로그인 성공률", "입력 필요 · 로그인 시도·성공 이벤트", "none"],
       ["product.payment_success", "결제 성공률", "입력 필요 · 결제 시도·성공·실패 이벤트", "none"],
-      ["product.sessions", "제품 세션 수", "PostHog 앱별 고유 세션 · 공용 프로젝트 시계열", "ok"],
+      ["product.sessions", "제품 세션 수", "PostHog 공용 프로젝트 · 앱 ID가 없는 이벤트는 등록 도메인으로 분류", "ok"],
       ["product.task_completion", "핵심 작업 완료율", "부분 연결 · virtue 퍼널만 구성, 앱별 핵심 이벤트 정의 필요", "warn"],
     ],
   },
@@ -242,8 +242,17 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
       <text x={x(minTime)} y={height - 6} textAnchor={minTime === maxTime ? "middle" : "start"} className="history-axis-label">{axisDate(minTime)}</text>
       {maxTime !== minTime && <text x={width - right} y={height - 6} textAnchor="end" className="history-axis-label">{metric?.calendar ? axisDate(maxTime) : "지금"}</text>}
     </svg>
-    <div className="history-legend">{series.map((entry, index) => { const latest = lastPoint(entry); return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{latest && latest[1] !== null ? displayValue(latest[1], metric?.unit, metric?.kind) : "—"}</strong>
-      {metric?.calendar && <small>{[latest?.[2].period, latest && `조회 ${chartDate(latest[2].observed)}`, entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>; })}</div>
+    <div className="history-legend">{series.map((entry, index) => {
+      const latest = lastPoint(entry);
+      const bucket = metric?.calendar ? latest?.[2] : null;
+      const hasEventCount = Number.isInteger(bucket?.events) && metric.metricKey === "sessions";
+      const value = hasEventCount && bucket.events > 0 && latest[1] === 0
+        ? "세션 ID 없음"
+        : latest && latest[1] !== null ? displayValue(latest[1], metric?.unit, metric?.kind) : "—";
+      return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{value}</strong>
+        {hasEventCount && <small>수신 이벤트 {bucket.events.toLocaleString("ko-KR")}건</small>}
+        {metric?.calendar && <small>{[bucket && `마지막 ${selectedRange.label} 집계 · ${bucket.period}`, latest && `조회 ${chartDate(latest[2].observed)}`, entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>;
+    })}</div>
     <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · {metric?.calendar ? { day: "하루 집계", week: "월요일부터 일요일까지의 주간 집계", month: "달력 월별 집계" }[selectedRange.id] : "최근 값 기준으로 표시합니다"}</small>
   </div>;
 }
@@ -262,7 +271,7 @@ function App() {
   const measurements = {
     "customer.new_users": { feed: ga4, metricKey: "newUsers", label: "GA4 신규 사용자", unit: "명" },
     "customer.sessions": { feed: ga4, metricKey: "sessions", label: "GA4 세션", unit: "회" },
-    "product.sessions": { feed: posthog, metricKey: "sessions", label: "PostHog 고유 세션", unit: "회" },
+    "product.sessions": { feed: posthog, metricKey: "sessions", label: "PostHog · 세션 ID로 식별한 세션", unit: "회" },
   };
   const load = React.useCallback(async () => { setLoading(true); const [a, b, c] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json()), fetch("./metrics-history.json", { cache: "no-store" }).then((r) => r.ok ? r.json() : null)]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setHistory(c.status === "fulfilled" ? c.value : null); setLoading(false); }, []);
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
@@ -324,6 +333,9 @@ function App() {
         }
         return <HistoryItem key={row.metricId} row={displayed} metric={metric} range={range} index={groupIndex * 8 + index} showChart={!measurement || !!metric?.series?.length}>
           {measurement && <HistoryChart metric={appMeasurementSeries(measurement, range)} range={range} />}
+          {row.metricId === "product.sessions" && <HistoryChart metric={appMeasurementSeries({
+            feed: posthog, metricKey: "events", unit: "건", label: "PostHog · 앱별 수신 이벤트",
+          }, range)} range={range} />}
         </HistoryItem>;
       })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={`${row.metricId}-${row.seriesName || row.name}-${i}`} />) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }

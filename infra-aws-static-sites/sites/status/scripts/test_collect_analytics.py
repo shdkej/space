@@ -36,6 +36,18 @@ class CollectorTests(unittest.TestCase):
                 collector.posthog(now, "bad", config, "test")
             self.assertEqual(request.call_count, 1)
 
+    def test_virtue_domains_share_a_scope_and_are_excluded_from_unassigned(self):
+        inventory = json.loads(Path(__file__).with_name("analytics-inventory.json").read_text())
+        apps = collector.inventory_for("posthog", inventory)
+        hosts = [host for config in apps.values() for host in collector.reporting_hosts(config)]
+        _, virtue = collector.posthog_query(apps["Virtue"], hosts)
+        _, other = collector.posthog_query(apps["앱 미지정"], hosts)
+        for host in ("virtue.aws.shdkej.com", "virtue.oracle.shdkej.com"):
+            self.assertIn(f"'{host}'", virtue)
+            self.assertIn(f"'{host}'", other)
+        self.assertIn("properties.$host IN (", virtue)
+        self.assertIn("NOT IN (", other)
+
     def test_wrong_instagram_account_stops_before_insights(self):
         with patch.dict(collector.os.environ, {"INSTAGRAM_ACCESS_TOKEN": "test"}), patch.object(
             collector, "request", return_value={"username": "different", "id": "123456"}

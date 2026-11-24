@@ -36,10 +36,10 @@ export function appMeasurementSeries({ feed, metricKey, unit, label }, range) {
       const dates = sample.periodStart === sample.periodEnd ? sample.periodStart : `${sample.periodStart} – ${sample.periodEnd}`;
       const period = sample.timeZone ? `${dates} (${sample.timeZone})` : dates;
       const value = sample.values?.[metricKey];
-      buckets.set(end, [end, Number.isSafeInteger(value) && value >= 0 ? value : null, { start, period, observed }]);
+      buckets.set(end, [end, Number.isSafeInteger(value) && value >= 0 ? value : null, { start, period, observed, events: sample.values?.events }]);
     }
     return { name: row.scope, points: [...buckets.values()].sort((a, b) => a[0] - b[0]),
       failed: feed.failed || row.status === "unavailable" || row.periodStatus === "partial" };
   });
-  return { label, series, unit, calendar: true, failed: feed.failed };
+  return { label, series, unit, metricKey, calendar: true, failed: feed.failed };
 }

@@ -107,6 +107,10 @@ def instagram(now):
     return {"scope": INSTAGRAM, "timeZone": "UTC", "method": "Instagram Insights API", **period(end.date()), "values": values}
 
 
+def reporting_hosts(config):
+    return config.get("hosts", [config["host"]] if "host" in config else [])
+
+
 def posthog_query(config, known_hosts):
     # Host is allowlisted before attaching a bearer token. Numeric project IDs
     # come from an explicit public reporting inventory.
@@ -118,12 +122,13 @@ def posthog_query(config, known_hosts):
         raise ValueError("invalid PostHog project")
     if app is None:
         app_filter = "properties.app_id IS NULL"
-        selected_host = config.get("host")
-        for name in [*known_hosts, *([selected_host] if selected_host else [])]:
+        selected_hosts = reporting_hosts(config)
+        for name in [*known_hosts, *selected_hosts]:
             if not re.fullmatch(r"[a-z0-9.-]+", name):
                 raise ValueError("invalid reporting hostname")
-        if selected_host:
-            app_filter += f" AND properties.$host = '{selected_host}'"
+        if selected_hosts:
+            names = ", ".join(f"'{name}'" for name in selected_hosts)
+            app_filter += f" AND properties.$host IN ({names})"
         elif known_hosts:
             names = ", ".join(f"'{name}'" for name in known_hosts)
             app_filter += f" AND coalesce(properties.$host, '') NOT IN ({names})"
@@ -226,8 +231,10 @@ def inventory_for(source, inventory):
         if not isinstance(scope, str) or not scope.strip() or len(scope) > 100:
             raise ValueError("invalid public scope label")
         if source == "posthog":
-            if not isinstance(identifier, dict) or set(identifier) not in ({"project", "app_id"}, {"project", "app_id", "host"}):
+            if not isinstance(identifier, dict) or set(identifier) not in ({"project", "app_id"}, {"project", "app_id", "host"}, {"project", "app_id", "hosts"}):
                 raise ValueError("PostHog requires a project and app_id")
+            if "hosts" in identifier and (not isinstance(identifier["hosts"], list) or not identifier["hosts"]):
+                raise ValueError("Expected reporting hostnames")
             identifier = identifier["project"]
         if not isinstance(identifier, str) or not re.fullmatch(r"[0-9]{1,24}", identifier):
             raise ValueError("invalid source ID")
@@ -252,8 +259,8 @@ def collect(source, output, inventory, calendar=False):
             else:
                 if not token:
                     raise ValueError("missing PostHog read token")
-                known_hosts = [item["host"] for item in scopes.values()
-                               if item.get("host") and item["project"] == identifier["project"]]
+                known_hosts = [host for item in scopes.values() if item["project"] == identifier["project"]
+                               for host in reporting_hosts(item)]
                 row = posthog(now, scope, identifier, token, known_hosts)
             cached = old.get(scope, {}).get("periods", {})
             if calendar and source in TIME_ZONES:

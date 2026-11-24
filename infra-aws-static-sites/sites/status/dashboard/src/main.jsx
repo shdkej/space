@@ -1,4 +1,4 @@
-import { AppMeasurements, useAnalyticsFeed } from "./AppMeasurements.jsx";
+import { appMeasurementSeries, useAnalyticsFeed } from "./AppMeasurements.jsx";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -186,15 +186,18 @@ const stateLabel = (value) => value >= 1.5 ? "정상" : value >= 0.5 ? "주의" 
 const chartDate = (epoch) => new Date(epoch * 1000).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
 const displayValue = (value, unit, kind) => kind === "state" ? stateLabel(value) : `${Number(value).toLocaleString("ko-KR", { maximumFractionDigits: 2 })} ${unit || ""}`.trim();
 
-function HistoryChart({ metric, row, range }) {
+function HistoryChart({ metric, row, range, label = metric?.label }) {
   const selectedRange = timeRanges.find((item) => item.id === range) || timeRanges[0];
-  const cutoff = Date.now() / 1000 - selectedRange.hours * 3600;
+  const now = Date.now() / 1000;
+  const cutoff = now - selectedRange.hours * 3600;
   const sourceSeries = (metric?.series || []).filter((series) => !row?.seriesName || series.name === row.seriesName);
-  const series = sourceSeries.map((entry) => ({ ...entry, points: (entry.points || []).filter(([time]) => time >= cutoff) })).filter((entry) => entry.points.length);
+  const series = sourceSeries.map((entry) => ({ ...entry, points: (entry.points || []).filter(([time]) => time >= cutoff && time <= now) })).filter((entry) => entry.points.length);
   const points = series.flatMap((entry) => entry.points).filter((point) => point[1] !== null && Number.isFinite(Number(point[1])));
   if (!points.length) {
     const hasAnyPoint = (metric?.series || []).some((entry) => (entry.points || []).length);
     const headline = hasAnyPoint ? "선택한 기간에 표시할 측정값이 없습니다." : metric?.source === "Prometheus" ? "Prometheus에서 현재 시계열을 받지 못했습니다." : row?.detail?.startsWith("입력 필요") ? "이 지표의 데이터 원천을 연결해야 그래프가 시작됩니다." : "수집기가 첫 시계열을 발행하면 그래프가 나타납니다.";
+    if (metric?.observations) return <div className="history-empty">{label}
+      <small>{metric.failed ? "집계 조회 실패" : hasAnyPoint ? "선택한 기간에 측정값이 없습니다." : "첫 측정값 확인 중"}</small></div>;
     return <div className="history-empty">{headline}<small>{metric?.source === "Prometheus" ? "Prometheus 쿼리 결과가 비어 있습니다. exporter·이벤트 설정을 확인하세요." : row?.detail || "수집기가 10분마다 상태를 기록합니다."}</small></div>;
   }
   const width = 680, height = 174, left = 42, right = 12, top = 12, bottom = 28;
@@ -204,7 +207,7 @@ function HistoryChart({ metric, row, range }) {
   const minTime = cutoff, maxTime = Date.now() / 1000;
   const x = (time) => left + ((time - minTime) / Math.max(1, maxTime - minTime)) * (width - left - right);
   const y = (value) => top + ((max - Number(value)) / (max - min)) * (height - top - bottom);
-  const palette = ["#9a7b18", "#318277", "#b85c44", "#6670a8"];
+  const palette = ["#9a7b18", "#318277", "#b85c44", "#6670a8", "#8e659c", "#486f97"];
   const pathFor = (values) => {
     let previous = null, path = "";
     for (const [time, value] of values) {
@@ -219,23 +222,31 @@ function HistoryChart({ metric, row, range }) {
   };
   const lastPoint = (entry) => [...entry.points].reverse().find((point) => point[1] !== null);
   return <div className="history-chart-wrap">
-    <svg className="history-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${selectedRange.label} 시계열 그래프`}>
+    {label && <strong className="history-chart-label">{label}</strong>}
+    <svg className="history-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${label ? label + " · " : ""}${selectedRange.label} 시계열 그래프`}>
       {(metric?.kind === "state" ? [0, 1, 2] : [0, 1, 2, 3]).map((step, index, steps) => {
         const value = metric?.kind === "state" ? step : max - ((max - min) * step / (steps.length - 1));
         return <g key={step}><line x1={left} x2={width - right} y1={y(value)} y2={y(value)} className="history-gridline" /><text x={left - 8} y={y(value) + 4} textAnchor="end" className="history-axis-label">{metric?.kind === "state" ? stateLabel(value) : value.toLocaleString("ko-KR", { maximumFractionDigits: 1 })}</text></g>;
       })}
-      {series.map((entry, index) => <path key={entry.name} d={pathFor(entry.points)} fill="none" stroke={palette[index % palette.length]} strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}
+      {series.map((entry, index) => <g key={entry.name} stroke={palette[index % palette.length]}>
+        <path d={pathFor(entry.points)} fill="none" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+        {metric?.observations && entry.points.filter(([, value]) => value !== null).map(([time, value, period, observed, hasEnd]) =>
+          <circle key={time} cx={x(time)} cy={y(value)} r="3.4" fill={palette[index % palette.length]}>
+            <title>{[entry.name, displayValue(value, metric.unit), hasEnd && `집계 종료 ${chartDate(time)}`, `조회 ${chartDate(observed)}`, period].filter(Boolean).join(" · ")}</title>
+          </circle>)}
+      </g>)}
       <text x={left} y={height - 6} className="history-axis-label">{chartDate(cutoff)}</text><text x={width - right} y={height - 6} textAnchor="end" className="history-axis-label">지금</text>
     </svg>
-    <div className="history-legend">{series.map((entry, index) => { const latest = lastPoint(entry); return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{latest ? displayValue(latest[1], metric?.unit, metric?.kind) : "—"}</strong></span>; })}</div>
-    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · 최근 값 기준으로 표시합니다</small>
+    <div className="history-legend">{series.map((entry, index) => { const latest = lastPoint(entry); return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{latest ? displayValue(latest[1], metric?.unit, metric?.kind) : "—"}</strong>
+      {metric?.observations && <small>{[latest?.[4] && `집계 종료 ${chartDate(latest[0])}`, latest && `조회 ${chartDate(latest[3])}`, latest?.[2], entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>; })}</div>
+    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · {metric?.observations ? "최근 7일 집계 · 가로축은 집계 종료 시각 또는 스냅샷 조회 시각" : "최근 값 기준으로 표시합니다"}</small>
   </div>;
 }
 
 function HistoryItem({ row, metric, range, index, children, showChart = true }) {
   return <details className="history-item" key={`${row.metricId || row.name}-${index}`}>
     <summary className="history-item-summary"><StatusDot state={row.state} /><span className="history-item-copy"><strong>{row.name}</strong><small>{row.detail || "실시간 상태 변화"}</small></span><span className="row-state">{row.readiness || stateText[row.state] || "확인 대기"}</span><ChevronDown className="history-item-chevron" size={16} aria-hidden="true" /></summary>
-    <div className="history-item-body">{children}{showChart && <HistoryChart metric={metric} row={row} range={range} />}{row.url && <a className="history-grafana-link" href={row.url} target="_blank" rel="noreferrer">Grafana에서 원본 보기 <ExternalLink size={14} /></a>}</div>
+    <div className="history-item-body">{children}{showChart && <HistoryChart metric={metric} row={row} range={range} label={children && metric?.series?.length ? "공용 프로젝트 전체 · PostHog exporter" : undefined} />}{row.url && <a className="history-grafana-link" href={row.url} target="_blank" rel="noreferrer">Grafana에서 원본 보기 <ExternalLink size={14} /></a>}</div>
   </details>;
 }
 
@@ -307,7 +318,7 @@ function App() {
           displayed = { ...row, state, readiness: hasFailure ? "확인 필요" : hasValue ? "연결됨" : "측정값 없음" };
         }
         return <HistoryItem key={row.metricId} row={displayed} metric={metric} range={range} index={groupIndex * 8 + index} showChart={!measurement || !!metric?.series?.length}>
-          {measurement && <AppMeasurements {...measurement} />}
+          {measurement && <HistoryChart metric={appMeasurementSeries(measurement)} range={range} />}
         </HistoryItem>;
       })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={`${row.metricId}-${row.seriesName || row.name}-${i}`} />) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }

@@ -25,19 +25,20 @@ export function useAnalyticsFeed(source, enabled) {
   return feed;
 }
 
-export function AppMeasurements({ feed, metricKey, unit, label }) {
-  return <div className="history-chart-wrap" aria-label={label}>
-    <small className="history-footnote">{label} · 앱별 최근 7일</small>
-    {!feed.rows.length && <p className="history-footnote">{feed.failed ? "집계 조회 실패" : "집계 확인 중"}</p>}
-    {feed.rows.map(row => {
-      const value = row.values?.[metricKey];
-      const period = row.periodLabel || (row.periodStart && row.periodEnd && `${row.periodStart} – ${row.periodEnd} (${row.timeZone})`);
-      const timestamp = Date.parse(row.observedAt);
-      const observed = Number.isFinite(timestamp) && new Date(timestamp).toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" });
-      return <div className="history-legend" key={row.scope}>
-        <span>{row.scope}<strong>{Number.isSafeInteger(value) && value >= 0 ? `${value.toLocaleString("ko-KR")}${unit}` : "측정값 없음"}</strong></span>
-        <span>{[period, observed && `조회 ${observed}`, Date.now() - timestamp > 86400000 && "24시간 이상 경과", (feed.failed || row.status === "unavailable") && "최근 조회 실패"].filter(Boolean).join(" · ")}</span>
-      </div>;
-    })}
-  </div>;
+export function appMeasurementSeries({ feed, metricKey, unit, label }) {
+  const series = feed.rows.map(row => {
+    const observations = new Map();
+    for (const sample of [...(Array.isArray(row.history) ? row.history : []), row]) {
+      const observed = Date.parse(sample?.observedAt) / 1000;
+      const time = sample?.sampleAt ? Date.parse(sample.sampleAt) / 1000 : observed;
+      if (!Number.isFinite(time) || !Number.isFinite(observed)) continue;
+      const value = sample.values?.[metricKey];
+      const period = sample.periodLabel || (sample.periodStart && sample.periodEnd
+        ? `${sample.periodStart} – ${sample.periodEnd}${sample.timeZone ? " (" + sample.timeZone + ")" : ""}` : "");
+      observations.set(time, [time, Number.isSafeInteger(value) && value >= 0 ? value : null, period, observed, !!sample.sampleAt]);
+    }
+    return { name: row.scope, points: [...observations.values()].sort((a, b) => a[0] - b[0]),
+      failed: feed.failed || row.status === "unavailable" };
+  });
+  return { label, series, unit, observations: true, failed: feed.failed };
 }

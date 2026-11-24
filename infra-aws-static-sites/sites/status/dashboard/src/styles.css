@@ -1004,6 +1004,9 @@ body:has(.dialog-content) .bottom-nav {
   background: rgba(255, 255, 255, .56);
 }
 .history-chart-wrap { min-width: 0; }
+.history-chart-label { display: block; margin: 8px; font-size: 13px; }
+.history-legend small { font-size: 10px; overflow-wrap: anywhere; }
+.history-legend span:has(small) { flex-wrap: wrap; }
 .history-chart { display: block; width: 100%; min-height: 150px; overflow: visible; }
 .history-gridline { stroke: var(--line); stroke-width: 1; }
 .history-axis-label { fill: var(--muted); font-size: 10px; }

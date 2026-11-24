@@ -29,7 +29,7 @@ test('empty PNG explains empty input without changing the size-limit error code'
     invalidate() {}, error(text, code) { state.status = text; state.code = code; }, message() {},
     dimensionsFromHeader() { throw Error('empty input must not decode'); }, capture() {},
   };
-  runInNewContext(`let selected=null,dimensions=null,generation=0; ${selection}`, context);
+  runInNewContext(`let selected=null,dimensions=null,generation=0,fileSelection=0; ${selection}`, context);
   await fileInput.change();
   assert.equal(state.source.textContent, '선택한 파일이 비어 있습니다.');
   assert.equal(state.status, '파일이 비어 있어 변환할 수 없습니다. 다른 이미지 파일을 선택해 주세요.');
@@ -46,7 +46,7 @@ test('oversize and unsupported or corrupt inputs retain their messages and error
     invalidate() {}, error(text, code) { results.push([text, code]); }, message() {},
     dimensionsFromHeader() { return null; }, capture() {},
   };
-  runInNewContext(`let selected=null,dimensions=null,generation=0; ${selection}`, context);
+  runInNewContext(`let selected=null,dimensions=null,generation=0,fileSelection=0; ${selection}`, context);
   for (const file of [
     { type: 'image/png', size: 12 * 1024 * 1024 + 1 },
     { type: 'image/gif', size: 43 },

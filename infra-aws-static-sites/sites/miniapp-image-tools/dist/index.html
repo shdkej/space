@@ -39,7 +39,7 @@
   const $=id=>document.getElementById(id);
   const fileInput=$('file'), edgeInput=$('edge'), formatInput=$('format'), transform=$('transform'), download=$('download');
   const status=$('status'), preview=$('preview'), empty=$('empty'), source=$('source'), meta=$('result-meta');
-  let selected=null, dimensions=null, output=null, outputUrl=null, generation=0;
+  let selected=null, dimensions=null, output=null, outputUrl=null, generation=0, fileSelection=0;
   const qa=new URLSearchParams(location.search).get('qa')==='1';
   const qaRunId=qa?crypto.randomUUID():null;
   const analytics=window.__IMAGE_TOOLS_ANALYTICS__;
@@ -96,19 +96,19 @@
     return null;
   }
   fileInput.addEventListener('change',async()=>{
-    selected=null;dimensions=null;invalidate();const ticket=generation;
+    selected=null;dimensions=null;invalidate();const ticket=++fileSelection;
     const file=fileInput.files?.[0];if(!file){source.textContent='선택한 이미지가 없습니다.';message('이미지를 선택하면 시작할 수 있습니다.');return;}
     source.textContent='이미지를 확인하고 있습니다.';
     if(!TYPES.has(file.type)){source.textContent='선택할 수 없는 형식입니다.';error('PNG, JPEG, WebP 파일을 선택하세요.','unsupported_format');return;}
     if(!file.size||file.size>MAX_BYTES){source.textContent=file.size?'파일 크기가 허용 범위를 벗어났습니다.':'선택한 파일이 비어 있습니다.';error(file.size?'12MB 이하의 이미지를 선택하세요.':'파일이 비어 있어 변환할 수 없습니다. 다른 이미지 파일을 선택해 주세요.','file_too_large');return;}
     try{
-      const header=await file.slice(0,Math.min(file.size,1024*1024)).arrayBuffer();if(ticket!==generation)return;
+      const header=await file.slice(0,Math.min(file.size,1024*1024)).arrayBuffer();if(ticket!==fileSelection)return;
       const size=dimensionsFromHeader(header,file.type);
       if(!size){source.textContent='이미지 정보를 읽을 수 없습니다.';error('손상되었거나 지원되지 않는 이미지입니다. 다른 파일을 선택하세요.','invalid_file');return;}
       if(size.some(v=>!v||v>MAX_EDGE)||size[0]*size[1]>MAX_PIXELS){source.textContent='이미지 크기가 허용 범위를 벗어났습니다.';error('긴 변 10,000px·2,000만 화소 이하를 선택하세요.','pixel_limit');return;}
       selected=file;dimensions=size;source.textContent=`${size[0]} × ${size[1]}px · ${formatSourceBytes(file.size)}`;transform.disabled=false;message('설정을 확인하고 이미지 변환을 누르세요.');
       capture('image_selected',{input_mime:file.type,input_width:size[0],input_height:size[1],input_bytes:file.size});
-    }catch{if(ticket===generation){source.textContent='이미지를 확인할 수 없습니다.';error('이미지 정보를 읽지 못했습니다. 다른 파일을 선택하세요.','invalid_file');}}
+    }catch{if(ticket===fileSelection){source.textContent='이미지를 확인할 수 없습니다.';error('이미지 정보를 읽지 못했습니다. 다른 파일을 선택하세요.','invalid_file');}}
   });
   edgeInput.addEventListener('input',()=>invalidate(true));formatInput.addEventListener('change',()=>invalidate(true));
   transform.addEventListener('click',async()=>{
@@ -150,7 +150,7 @@
     const link=document.createElement('a');link.href=outputUrl;link.download=`converted-image.${EXT[output.type]}`;document.body.append(link);link.click();link.remove();
     capture('download_requested',{output_mime:output.type,output_bytes:output.size});
   });
-  addEventListener('pagehide',()=>{generation++;clearOutput();});
+  addEventListener('pagehide',()=>{generation++;fileSelection++;clearOutput();});
 })();
 </script>
 </body>

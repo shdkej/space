@@ -39,7 +39,7 @@ const monitoringCatalog = [
   },
   {
     layer: "고객 · 마케팅", uid: "layer-customer", metrics: [
-      ["customer.new_users", "신규 사용자 수", "GA4 · 속성별 최근 7일 신규 사용자", "ok"],
+      ["customer.new_users", "신규 사용자 수", "GA4 · 속성별 신규 사용자", "ok"],
       ["customer.sessions", "세션 수", "GA4 속성별 세션 · PostHog 공용 프로젝트 시계열", "ok"],
       ["customer.channels", "채널별 유입", "GA4 채널 보고서 시계열 미연결", "none"],
       ["customer.campaign_conversion", "캠페인 전환율", "시계열은 있으나 원천 이벤트·GA4 key event 정의 확인 필요", "warn"],
@@ -191,28 +191,32 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
   const now = Date.now() / 1000;
   const cutoff = now - selectedRange.hours * 3600;
   const sourceSeries = (metric?.series || []).filter((series) => !row?.seriesName || series.name === row.seriesName);
-  const series = sourceSeries.map((entry) => ({ ...entry, points: (entry.points || []).filter(([time]) => time >= cutoff && time <= now) })).filter((entry) => entry.points.length);
+  const series = metric?.calendar ? sourceSeries : sourceSeries.map((entry) => ({ ...entry, points: (entry.points || []).filter(([time]) => time >= cutoff && time <= now) })).filter((entry) => entry.points.length);
   const points = series.flatMap((entry) => entry.points).filter((point) => point[1] !== null && Number.isFinite(Number(point[1])));
   if (!points.length) {
     const hasAnyPoint = (metric?.series || []).some((entry) => (entry.points || []).length);
     const headline = hasAnyPoint ? "선택한 기간에 표시할 측정값이 없습니다." : metric?.source === "Prometheus" ? "Prometheus에서 현재 시계열을 받지 못했습니다." : row?.detail?.startsWith("입력 필요") ? "이 지표의 데이터 원천을 연결해야 그래프가 시작됩니다." : "수집기가 첫 시계열을 발행하면 그래프가 나타납니다.";
-    if (metric?.observations) return <div className="history-empty">{label}
-      <small>{metric.failed ? "집계 조회 실패" : hasAnyPoint ? "선택한 기간에 측정값이 없습니다." : "첫 측정값 확인 중"}</small></div>;
+    if (metric?.calendar) return <div className="history-empty">{label}
+      <small>{metric.failed ? "집계 조회 실패" : `${selectedRange.label} 집계값이 없습니다.`}</small></div>;
     return <div className="history-empty">{headline}<small>{metric?.source === "Prometheus" ? "Prometheus 쿼리 결과가 비어 있습니다. exporter·이벤트 설정을 확인하세요." : row?.detail || "수집기가 10분마다 상태를 기록합니다."}</small></div>;
   }
   const width = 680, height = 174, left = 42, right = 12, top = 12, bottom = 28;
   const values = points.map((point) => Number(point[1]));
   let min = metric?.kind === "state" ? 0 : Math.min(...values), max = metric?.kind === "state" ? 2 : Math.max(...values);
   if (min === max) { const padding = Math.abs(min) * 0.08 || 1; min -= padding; max += padding; }
-  const minTime = cutoff, maxTime = Date.now() / 1000;
-  const x = (time) => left + ((time - minTime) / Math.max(1, maxTime - minTime)) * (width - left - right);
+  const bucketEnds = metric?.calendar ? series.flatMap(entry => entry.points.map(([time]) => time)) : [];
+  const minTime = metric?.calendar ? Math.min(...bucketEnds) : cutoff;
+  const maxTime = metric?.calendar ? Math.max(...bucketEnds) : now;
+  const x = (time) => left + (maxTime === minTime ? 0.5 : (time - minTime) / (maxTime - minTime)) * (width - left - right);
+  const axisDate = time => metric?.calendar ? new Date(time * 1000).toISOString().slice(0, 10) : chartDate(time);
   const y = (value) => top + ((max - Number(value)) / (max - min)) * (height - top - bottom);
   const palette = ["#9a7b18", "#318277", "#b85c44", "#6670a8", "#8e659c", "#486f97"];
   const pathFor = (values) => {
     let previous = null, path = "";
-    for (const [time, value] of values) {
+    for (const [time, value, bucket] of values) {
       if (value === null || !Number.isFinite(Number(value))) { previous = null; continue; }
       const px = x(time).toFixed(1), py = y(value).toFixed(1);
+      if (metric?.calendar && previous && bucket.start > previous[0] + 86400) previous = null;
       if (!previous) path += `M${px},${py}`;
       else if (metric?.kind === "state") path += `H${px}V${py}`;
       else path += `L${px},${py}`;
@@ -220,7 +224,7 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
     }
     return path;
   };
-  const lastPoint = (entry) => [...entry.points].reverse().find((point) => point[1] !== null);
+  const lastPoint = (entry) => metric?.calendar ? entry.points.at(-1) : [...entry.points].reverse().find((point) => point[1] !== null);
   return <div className="history-chart-wrap">
     {label && <strong className="history-chart-label">{label}</strong>}
     <svg className="history-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${label ? label + " · " : ""}${selectedRange.label} 시계열 그래프`}>
@@ -230,16 +234,17 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
       })}
       {series.map((entry, index) => <g key={entry.name} stroke={palette[index % palette.length]}>
         <path d={pathFor(entry.points)} fill="none" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-        {metric?.observations && entry.points.filter(([, value]) => value !== null).map(([time, value, period, observed, hasEnd]) =>
+        {metric?.calendar && entry.points.filter(([, value]) => value !== null).map(([time, value, bucket]) =>
           <circle key={time} cx={x(time)} cy={y(value)} r="3.4" fill={palette[index % palette.length]}>
-            <title>{[entry.name, displayValue(value, metric.unit), hasEnd && `집계 종료 ${chartDate(time)}`, `조회 ${chartDate(observed)}`, period].filter(Boolean).join(" · ")}</title>
+            <title>{[entry.name, displayValue(value, metric.unit), bucket.period, `조회 ${chartDate(bucket.observed)}`].filter(Boolean).join(" · ")}</title>
           </circle>)}
       </g>)}
-      <text x={left} y={height - 6} className="history-axis-label">{chartDate(cutoff)}</text><text x={width - right} y={height - 6} textAnchor="end" className="history-axis-label">지금</text>
+      <text x={x(minTime)} y={height - 6} textAnchor={minTime === maxTime ? "middle" : "start"} className="history-axis-label">{axisDate(minTime)}</text>
+      {maxTime !== minTime && <text x={width - right} y={height - 6} textAnchor="end" className="history-axis-label">{metric?.calendar ? axisDate(maxTime) : "지금"}</text>}
     </svg>
-    <div className="history-legend">{series.map((entry, index) => { const latest = lastPoint(entry); return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{latest ? displayValue(latest[1], metric?.unit, metric?.kind) : "—"}</strong>
-      {metric?.observations && <small>{[latest?.[4] && `집계 종료 ${chartDate(latest[0])}`, latest && `조회 ${chartDate(latest[3])}`, latest?.[2], entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>; })}</div>
-    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · {metric?.observations ? "최근 7일 집계 · 가로축은 집계 종료 시각 또는 스냅샷 조회 시각" : "최근 값 기준으로 표시합니다"}</small>
+    <div className="history-legend">{series.map((entry, index) => { const latest = lastPoint(entry); return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{latest && latest[1] !== null ? displayValue(latest[1], metric?.unit, metric?.kind) : "—"}</strong>
+      {metric?.calendar && <small>{[latest?.[2].period, latest && `조회 ${chartDate(latest[2].observed)}`, entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>; })}</div>
+    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · {metric?.calendar ? { day: "하루 집계", week: "월요일부터 일요일까지의 주간 집계", month: "달력 월별 집계" }[selectedRange.id] : "최근 값 기준으로 표시합니다"}</small>
   </div>;
 }
 
@@ -304,21 +309,21 @@ function App() {
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
     <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `시계열 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong><small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small></button>)}</div></div>}
-      {view === "monitoring" && <p className="monitoring-note">4개 레이어를 펼쳐 지표를 확인하세요. 항목을 열면 일·주·월 그래프가 표시됩니다. 측정값이 없는 항목은 0으로 바꾸지 않고 비워 둡니다.</p>}
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `시계열 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong>{view !== "monitoring" && <small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small>}</button>)}</div></div>}
+      {view === "monitoring" && <p className="monitoring-note">앱 분석은 완료된 일·주·월의 집계를 표시합니다. 운영 시계열은 최근 24시간·7일·30일의 관측값을 표시합니다.</p>}
       <div className={clsx("detail-list", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => {
         const measurement = measurements[row.metricId];
         const metric = chartMetric(row);
         let displayed = row;
         if (measurement && !metric?.series?.length) {
           const rows = measurement.feed.rows;
-          const hasValue = rows.some(item => Number.isFinite(item.values?.[measurement.metricKey]));
+          const hasValue = rows.some(item => item.periods?.[range]?.some(sample => Number.isFinite(sample.values?.[measurement.metricKey])));
           const hasFailure = measurement.feed.failed || rows.some(item => item.status === "unavailable");
           const state = hasFailure ? "warn" : hasValue ? "ok" : "none";
           displayed = { ...row, state, readiness: hasFailure ? "확인 필요" : hasValue ? "연결됨" : "측정값 없음" };
         }
         return <HistoryItem key={row.metricId} row={displayed} metric={metric} range={range} index={groupIndex * 8 + index} showChart={!measurement || !!metric?.series?.length}>
-          {measurement && <HistoryChart metric={appMeasurementSeries(measurement)} range={range} />}
+          {measurement && <HistoryChart metric={appMeasurementSeries(measurement, range)} range={range} />}
         </HistoryItem>;
       })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={`${row.metricId}-${row.seriesName || row.name}-${i}`} />) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }

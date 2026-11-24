@@ -25,20 +25,21 @@ export function useAnalyticsFeed(source, enabled) {
   return feed;
 }
 
-export function appMeasurementSeries({ feed, metricKey, unit, label }) {
+export function appMeasurementSeries({ feed, metricKey, unit, label }, range) {
   const series = feed.rows.map(row => {
-    const observations = new Map();
-    for (const sample of [...(Array.isArray(row.history) ? row.history : []), row]) {
-      const observed = Date.parse(sample?.observedAt) / 1000;
-      const time = sample?.sampleAt ? Date.parse(sample.sampleAt) / 1000 : observed;
-      if (!Number.isFinite(time) || !Number.isFinite(observed)) continue;
+    const buckets = new Map();
+    for (const sample of row.periods?.[range] || []) {
+      const start = Date.parse(sample.periodStart + "T00:00:00Z") / 1000;
+      const end = Date.parse(sample.periodEnd + "T00:00:00Z") / 1000;
+      const observed = Date.parse(sample.observedAt) / 1000;
+      if (!Number.isFinite(start) || !Number.isFinite(end) || end < start || !Number.isFinite(observed)) continue;
+      const dates = sample.periodStart === sample.periodEnd ? sample.periodStart : `${sample.periodStart} – ${sample.periodEnd}`;
+      const period = sample.timeZone ? `${dates} (${sample.timeZone})` : dates;
       const value = sample.values?.[metricKey];
-      const period = sample.periodLabel || (sample.periodStart && sample.periodEnd
-        ? `${sample.periodStart} – ${sample.periodEnd}${sample.timeZone ? " (" + sample.timeZone + ")" : ""}` : "");
-      observations.set(time, [time, Number.isSafeInteger(value) && value >= 0 ? value : null, period, observed, !!sample.sampleAt]);
+      buckets.set(end, [end, Number.isSafeInteger(value) && value >= 0 ? value : null, { start, period, observed }]);
     }
-    return { name: row.scope, points: [...observations.values()].sort((a, b) => a[0] - b[0]),
-      failed: feed.failed || row.status === "unavailable" };
+    return { name: row.scope, points: [...buckets.values()].sort((a, b) => a[0] - b[0]),
+      failed: feed.failed || row.status === "unavailable" || row.periodStatus === "partial" };
   });
-  return { label, series, unit, observations: true, failed: feed.failed };
+  return { label, series, unit, calendar: true, failed: feed.failed };
 }

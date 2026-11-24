@@ -177,6 +177,28 @@ async function main() {
     await openAndClose(mobile,policies[0],'touch');
     await openAndClose(mobile,policies.at(-1),'keyboard');
 
+    // The floating Safari toolbar can reveal page content outside the CSS viewport.
+    const iphone=await browser.newContext({viewport:{width:393,height:694},screen:{width:393,height:852},
+      isMobile:true,hasTouch:true,deviceScaleFactor:3,reducedMotion:'reduce'});
+    const safariPage=await iphone.newPage();
+    const cdp=await iphone.newCDPSession(safariPage);
+    await cdp.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:59,bottom:34}});
+    for(const height of [694,793,694]){
+      await cdp.send('Emulation.setDeviceMetricsOverride',{width:393,height,screenWidth:393,screenHeight:852,
+        deviceScaleFactor:3,mobile:true});
+      if(safariPage.url()==='about:blank')await safariPage.goto(url);
+      const geometry=await safariPage.evaluate(()=>({
+        next:document.querySelector('main').getBoundingClientRect().top,
+        links:document.querySelector('.galaxy-links a').getBoundingClientRect().bottom,
+        screen:window.screen.height,viewport:window.visualViewport.height
+      }));
+      assert.equal(geometry.screen,852);
+      assert.equal(geometry.viewport,height);
+      assert.ok(geometry.next>=793 && geometry.next<=794,'next section must start below the floating toolbar: '+JSON.stringify(geometry));
+      assert.ok(geometry.links<=height-34,'links must stay above the bottom safe area');
+    }
+    await iphone.close();
+
     const plain=await browser.newContext({javaScriptEnabled:false});
     const staticPage=await plain.newPage();
     await staticPage.goto(url);

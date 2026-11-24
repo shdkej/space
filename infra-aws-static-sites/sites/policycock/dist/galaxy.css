@@ -78,3 +78,11 @@
     padding-bottom:env(safe-area-inset-bottom,0px);
   }
 }
+
+@media screen and (max-width:600px) and (orientation:portrait) and (pointer:coarse) and (display-mode:browser) {
+  .landing-backdrop {
+    background:#0b0c0d;
+    min-height:max(100lvh,calc(var(--screen-height,100lvh + 104px) - env(safe-area-inset-top,0px)));
+  }
+  .galaxy-hero-sky {border-bottom:0}
+}

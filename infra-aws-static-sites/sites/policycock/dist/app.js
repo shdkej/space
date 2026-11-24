@@ -1,4 +1,13 @@
 'use strict';
+// Safari can paint page content below its reported viewport behind the floating toolbar.
+const landingBackdrop=document.querySelector('.landing-backdrop');
+function updateLandingScreenHeight(){
+  landingBackdrop.style.setProperty('--screen-height',window.screen.height+'px');
+}
+if(landingBackdrop){
+  updateLandingScreenHeight();
+  window.addEventListener('resize',updateLandingScreenHeight);
+}
 const printStateMap=document.getElementById('print-state-map');
 printStateMap.hidden=false;
 printStateMap.addEventListener('click',()=>window.print());

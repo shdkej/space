@@ -1,21 +1,21 @@
 {
-  "verifiedAt": "2026-11-24T03:46:53.193Z",
+  "verifiedAt": "2026-11-24T03:59:02.096Z",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "681d0c6b5cd0ec06a78cef0970cb9176997e06e3",
+  "sourceCommit": "bd79f66c86e1795bd4eedee9f9bf6f6a906143b5",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45321686965,
+    "runId": 45323019238,
     "conclusion": "success"
   },
   "verification": {
     "browserChecks": "qa/live-verification.json",
-    "mobile": "Chromium iPhone 15 emulation (393×852 screen, 694px viewport, 59px top inset): the interactive canvas and next section meet at document y=793, below the simulated toolbar. The live render shows a continuous graph and a plum-to-slate tint across the former solid strip. Link access, reduced motion and fallback passed. Physical Safari not tested.",
+    "mobile": "Chromium iPhone 15 emulation at 393×852. The old release moved the first policy anchor by 12.6 CSS px when the toolbar collapsed. With the new release, all ten document-relative anchors and the SHA-256 of the WebGL point buffer remain identical during scrolling through 694, 793, and 694px visible heights. Mobile starts paused; explicit play and pause work. Canvas coverage, touch links and keyboard navigation passed. Physical Safari not tested.",
     "scene": "Passed WebGL, fallback, ten policy targets, touch, keyboard and reduced motion. At 393×700 with identical anchors, graph nodes decreased from 4098 to 2816 and edges from 4355 to 2913.",
-    "review": "All four native roles completed independent and cross-review. /root/planner and /root/developer verified retaining the interactive layout while extending the canvas. /root/marketer and /root/operator reviewed the gradient, sampled colors, and link accessibility. /root checked the live render and scene tests."
+    "review": "All four native reviews completed. /root/planner and /root/developer examined viewport reflow and animation. /root/marketer and /root/operator reviewed opt-in playback, scroll behavior, and verification limits. /root checked before/after buffers on the public site."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/2cc3240/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/84d8902/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

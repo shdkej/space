@@ -60,18 +60,22 @@ function makeGraph(roots,w,h){
     const id=node(p.x+Math.cos(angle)*length,p.y+Math.sin(angle)*length,size,tint,p.owner);
     edges.push([parent,id]);return id;
   }
+  const compact=w<=600;
+  const decorativeHubs=compact?31:43;
+  const centralNodes=compact?95:140;
+  const spreadX=compact?.47:.41,spreadY=compact?.45:.39;
   const cx=w*.51,cy=h*.54;
   for(const [i,p] of roots.entries())hubs.push(node(p.x,p.y,6,palette[i%5],i));
   // Uneven, nested clusters give the network its silhouette.
-  for(let i=0;i<43;i++){
+  for(let i=0;i<decorativeHubs;i++){
     const a=random()*tau,r=Math.pow(random(),.72);
-    hubs.push(node(cx+Math.cos(a)*r*w*.41,cy+Math.sin(a)*r*h*.39,
+    hubs.push(node(cx+Math.cos(a)*r*w*spreadX,cy+Math.sin(a)*r*h*spreadY,
       2+4*random(),palette[i%5]));
   }
   for(const [i,id] of hubs.entries()){
     const hub=nodes[id],tint=hub.tint;
     const radius=(i<10?79:24+random()*60)*scale;
-    const turns=i<10?23:7+Math.floor(random()*14);
+    const turns=i<10?(compact?16:23):7+Math.floor(random()*(compact?10:14));
     const slant=random()*tau;
     for(let j=0;j<turns;j++){
       const angle=random()*tau;
@@ -91,9 +95,9 @@ function makeGraph(roots,w,h){
   // A broad central web binds the smaller trees into one continuous constellation.
   const core=node(cx,cy,6,[.94,.61,.60]);
   const inner=[];
-  for(let i=0;i<140;i++){
+  for(let i=0;i<centralNodes;i++){
     const a=random()*tau,r=Math.sqrt(random());
-    const id=node(cx+Math.cos(a)*r*w*.22,cy+Math.sin(a)*r*h*.29,
+    const id=node(cx+Math.cos(a)*r*w*(compact?.30:.22),cy+Math.sin(a)*r*h*(compact?.35:.29),
       1.6+random()*2.8,random()<.5?[.93,.57,.58]:palette[i%5]);
     if(i%3===0)edges.push([core,id]);
     const hub=hubs.reduce((best,other)=>{

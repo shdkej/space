@@ -56,3 +56,15 @@
 .orbit-caption small {color:#ddd2cc;font-size:11px;font-weight:450}
 .galaxy-bank:last-child .orbit-caption {text-align:right}
 @media(max-width:900px){.orbit-label i {width:29px;height:29px}.orbit-caption small{font-size:10px}}
+
+@media (max-width:600px) and (orientation:portrait) {
+  .galaxy-hero-sky {
+    display:grid;
+    grid-template-rows:auto minmax(220px,1fr) auto;
+    padding:clamp(16px,3dvh,28px) 5% 0;
+  }
+  .galaxy-intro-copy,.galaxy-orbits,.galaxy-links {position:relative;inset:auto}
+  .galaxy-intro-copy {max-width:none}
+  .galaxy-intro-copy p {margin-bottom:0}
+  .galaxy-orbits {margin:8px 0}
+}

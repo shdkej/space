@@ -20,7 +20,7 @@ spec:
         seccompProfile: {type: RuntimeDefault}
       initContainers:
         - name: data-permissions
-          image: ghcr.io/shdkej/agent-metrics:56d8b77cd6a1923325ce0f8bfe438624633126b7
+          image: ghcr.io/shdkej/agent-metrics:7f709472480127a38571c6f61a0fad3e2eb5b4d1
           imagePullPolicy: IfNotPresent
           command: ["node", "--input-type=module", "-e", "import fs from 'node:fs'; fs.mkdirSync('/data',{recursive:true}); fs.chmodSync('/data',0o700); fs.chownSync('/data',1000,1000);"]
           securityContext:
@@ -33,7 +33,7 @@ spec:
             - {name: data, mountPath: /data}
       containers:
         - name: app
-          image: ghcr.io/shdkej/agent-metrics:56d8b77cd6a1923325ce0f8bfe438624633126b7
+          image: ghcr.io/shdkej/agent-metrics:7f709472480127a38571c6f61a0fad3e2eb5b4d1
           imagePullPolicy: IfNotPresent
           ports:
             - {name: http, containerPort: 8786}

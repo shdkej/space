@@ -190,6 +190,7 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
   const selectedRange = timeRanges.find((item) => item.id === range) || timeRanges[0];
   const now = Date.now() / 1000;
   const cutoff = now - selectedRange.hours * 3600;
+  const sharedPosthog = ["customer.sessions", "customer.retention", "product.sessions", "product.frontend_errors", "product.web_vitals"].includes(row?.metricId);
   const sourceSeries = (metric?.series || []).filter((series) => !row?.seriesName || series.name === row.seriesName);
   const series = metric?.calendar ? sourceSeries : sourceSeries.map((entry) => ({ ...entry, points: (entry.points || []).filter(([time]) => time >= cutoff && time <= now) })).filter((entry) => entry.points.length);
   const points = series.flatMap((entry) => entry.points).filter((point) => point[1] !== null && Number.isFinite(Number(point[1])));
@@ -249,7 +250,7 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
       const value = hasEventCount && bucket.events > 0 && latest[1] === 0
         ? "세션 ID 없음"
         : latest && latest[1] !== null ? displayValue(latest[1], metric?.unit, metric?.kind) : "—";
-      return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{entry.name}<strong>{value}</strong>
+      return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{sharedPosthog && entry.name === "virtue" ? "PostHog 공용 프로젝트 전체" : entry.name}<strong>{value}</strong>
         {hasEventCount && <small>수신 이벤트 {bucket.events.toLocaleString("ko-KR")}건</small>}
         {metric?.calendar && <small>{[bucket && `마지막 ${selectedRange.label} 집계 · ${bucket.period}`, latest && `조회 ${chartDate(latest[2].observed)}`, entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>;
     })}</div>

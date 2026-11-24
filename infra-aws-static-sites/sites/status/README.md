@@ -96,7 +96,7 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 
 Status의 기존 Monitoring 지표에서 GA4 속성별 신규 사용자·세션과 PostHog 앱별 제품 세션을 확인합니다. Metrics 지도에서는 기존 유입 확인 지표와 연결해 봅니다. Instagram 피드는 `@minimal_collector`의 계정 집계와 조회 시각을 제공합니다. 기존 PostHog exporter의 공용 프로젝트 424014 전체 세션과 재방문율은 관측 시점 직전 7일 기준입니다. GA4와 앱별 PostHog 피드는 기존 최근 7일 집계와 달력 기준 일·주·월 집계를 함께 제공합니다. 원천에 행이 없으면 측정값 없음으로 표시합니다. 등록된 앱의 이름과 공개 식별자는 `scripts/analytics-inventory.json`에 관리합니다. PostHog는 프로젝트 내 승인된 app_id를 각각 조회하고 app_id가 없는 이벤트는 등록된 호스트별로 구분하고 나머지는 앱 미지정으로 표시합니다. 명시적 app_id가 등록 목록 밖이면 공개 집계에서 제외합니다. traffic_kind=synthetic 이벤트도 제외합니다. Virtue 호스트 범위에는 AWS·Oracle 도메인이 함께 들어갑니다.
 
-앱 분석 그래프 하단 숫자는 마지막 완료 구간의 값입니다. 제품 세션 행에서 앱별 수신 이벤트 추세를 함께 확인할 수 있습니다. PostHog 세션은 고유 `$session_id` 수입니다. 수신 이벤트가 있는데 식별한 세션이 0이면 범례에 ‘세션 ID 없음’을 표시합니다. 2026-11-23 한국 시간 기준 원본 대조에서 Policycock의 이벤트 80건 모두 app_id가 있었고 세션 ID는 없었습니다. 11월 17~23일 일간 집계는 6개 범주 모두 PostHog 원본과 일치했습니다.
+기존 exporter의 세션·재방문·프론트엔드 예외·Web Vitals 쿼리는 프로젝트 전체를 조회하며 서비스 라벨은 `virtue`입니다. 대시보드는 이 범례를 ‘PostHog 공용 프로젝트 전체’로 표시합니다. 앱 분석 그래프 하단 숫자는 마지막 완료 구간의 값입니다. 제품 세션 행에서 앱별 수신 이벤트 추세를 함께 확인할 수 있습니다. PostHog 세션은 고유 `$session_id` 수입니다. 수신 이벤트가 있는데 식별한 세션이 0이면 범례에 ‘세션 ID 없음’을 표시합니다. 2026-11-23 한국 시간 기준 원본 대조에서 Policycock의 이벤트 80건 모두 app_id가 있었고 세션 ID는 없었습니다. 11월 17~23일 일간 집계는 6개 범주 모두 PostHog 원본과 일치했습니다.
 
 두 대시보드는 같은 S3 피드를 읽습니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 일곱 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
 

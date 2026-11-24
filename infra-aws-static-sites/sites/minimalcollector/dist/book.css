@@ -1,0 +1,73 @@
+.reading-table {
+  position:absolute;top:clamp(170px,32vh,350px);left:0;width:min(63vw,890px);height:clamp(210px,33vw,425px);
+  pointer-events:none;perspective:1300px;
+}
+.reading-table::before {
+  content:"";position:absolute;inset:3% 2% 2% -24%;transform:rotateX(38deg) rotateZ(-6deg) skewX(-3deg);
+  background:linear-gradient(108deg,#261b18b8,#382b22a3 60%,#241711c9),url(rosewood.webp) center/cover;
+  border-radius:4px;box-shadow:0 3px #604839,0 7px #372921,0 12px #33251f,0 17px 14px #382c2428,0 42px 36px -23px #30231d44;
+}
+.closed-book {
+  appearance:none;position:absolute;left:25%;top:16%;width:clamp(110px,16vw,237px);aspect-ratio:.83;border:0;padding:0;
+  color:#eee9d9;background:#b9b09a;border-radius:2px 4px 4px 2px;cursor:zoom-in;pointer-events:auto;
+  transform:rotateX(33deg) rotateZ(-12deg);
+  box-shadow:1px 1px #ded6c4,2px 3px #aca78e,3px 4px #e2ddcc,4px 6px #373630,4px 10px 8px #17130d94,13px 22px 22px #17120f84;
+  transition:transform .3s ease;
+}
+.closed-book:hover,.closed-book:focus-visible{transform:rotateX(28deg) rotateZ(-10deg) translateY(-3px)}
+.cover-face {
+  position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;padding:10% 13%;
+  background:linear-gradient(90deg,#121713,#373b32 2.7%,#242820 5%,#353931 7%,#242821 9%,#252a24 76%,#20241e);
+  border-radius:2px 4px 4px 2px;box-shadow:inset -1px 1px 1px #a39a7855;
+}
+.cover-face::after{content:"";position:absolute;inset:0;opacity:.12;background:repeating-linear-gradient(87deg,transparent 0 2px,#cac6ae 3px,transparent 4px);pointer-events:none}
+.cover-title{position:relative;z-index:1;font:normal clamp(17px,2.6vw,42px)/.88 Georgia,serif;letter-spacing:-.065em;text-align:left}
+.cover-face img{width:73%;height:38%;object-fit:cover;margin:auto 0;filter:sepia(.28) brightness(.85);border:1px solid #131512}
+.cover-imprint{font-size:clamp(8px,.72vw,12px);letter-spacing:.16em;color:#e0d8be}
+.row{pointer-events:none}.tray{pointer-events:auto}.row:focus-visible{pointer-events:auto}
+.closed-book{z-index:1}.tray{z-index:2}
+.viewing {
+  padding:0;width:100%;max-width:none;height:100%;max-height:none;margin:0;color:#f0eee4;background-color:#312922;
+  background-image:radial-gradient(ellipse at 42% 27%,#a18b653b,transparent 53%),linear-gradient(115deg,#221b17b8,#332b24af 53%,#1b1714cf),url(rosewood.webp);
+  background-size:cover;box-shadow:none;
+}
+.viewing::backdrop{background:#27231eab}
+.reader{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 4vw 22px;gap:12px;}
+.viewing .close-view{position:fixed;z-index:3;top:max(15px,env(safe-area-inset-top));right:4vw;color:#f5f0e4;background:#2a251fce;border:1px solid #b0a48d80;border-radius:99px;padding:9px 15px}
+.book-stage{position:relative;width:min(100%,1350px,calc((100dvh - 150px)*1.85));aspect-ratio:1.85;display:none;transform-origin:center;}
+.has-book .book-stage{display:block}
+.book-canvas{display:block;width:100%;height:100%;touch-action:pan-y;}
+.viewing .detail-pin {
+  position:absolute;transform:translate(-50%,-50%);border:1px solid #f9f6e6a6;border-radius:18px;padding:2px 9px 2px 3px;
+  white-space:nowrap;background:#2d312ae8;display:flex;align-items:center;gap:4px;color:#fff9e7;
+  box-shadow:0 2px 7px #211e1c4d;font:11px/1.2 Arial,sans-serif;
+}
+.viewing .detail-pin span:first-child{display:grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#f2ead5;color:#322e26;font-size:17px}
+.viewing .detail-pin[hidden]{display:none}
+.viewing nav{margin:0;gap:18px;justify-content:center;color:#e7decb;font:14px Georgia,serif}
+.viewing nav button{border:1px solid #c9b79c80;color:#fcf6ea;border-radius:50%;font:20px/1 Arial,sans-serif}
+.viewing .position{max-width:60vw;text-align:center;font:12px/1.4 Arial,sans-serif;letter-spacing:.04em}
+.viewing .paper-fallback{max-width:930px;color:#292720;background:#f1ece0}
+.has-book .paper-fallback{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:660px){
+  .reading-table{top:34vh;width:calc(100vw - 114px);height:clamp(150px,40vw,220px)}
+  .closed-book{left:21%;top:18%;width:clamp(80px,25vw,130px)}
+  .reader{padding:64px 0 25px;justify-content:center;gap:15px}
+  .book-stage{width:min(100%,calc((100dvh - 125px)*1.45));aspect-ratio:1.45}
+  .has-book .paper-fallback{position:static;display:block;width:auto;height:auto;overflow:visible;clip-path:none;white-space:normal;background:transparent;color:#eee7d8}
+  .has-book .paper-fallback .mount{display:none}
+  .has-book .paper-fallback figcaption{max-width:36em;margin:auto;padding:0 8vw}
+  .has-book .category{color:#cabda5}.has-book .description{font-size:14px}.has-book h2{font-size:22px}
+  .viewing .detail-pin{font-size:10px;min-height:30px}
+}
+@media(max-height:480px) and (orientation:landscape){.reader{padding:18px 2vw 6px;gap:0}.book-stage{width:min(90%,calc((100dvh - 64px)*1.85))}.viewing .close-view{font-size:11px;right:10px}}
+
+/* The room remains visible behind the moving book during the camera approach. */
+.studio:has(.viewing.has-book[open]) .closed-book{visibility:hidden}
+.viewing.has-book{background:transparent;isolation:isolate}
+.viewing.has-book::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse at 42% 27%,#a18b653b,transparent 53%),linear-gradient(115deg,#221b17b8,#332b24af 53%,#1b1714cf),url(rosewood.webp) center/cover;animation:desk-arrives .55s both}
+.viewing.has-book::backdrop{background:transparent}
+.viewing.closing-book::before{animation:desk-leaves .52s both}
+.viewing.closing-book .reader nav,.viewing.closing-book .paper-fallback,.viewing.closing-book .close-view{visibility:hidden}
+@keyframes desk-arrives{from{opacity:0}to{opacity:1}}
+@keyframes desk-leaves{from{opacity:1}to{opacity:0}}

@@ -4,18 +4,29 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f9f9f7">
 <title>서랍 · Minimal Collector</title>
-<link rel="stylesheet" href="style.css"><script src="studio.js" defer></script>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="book.css">
+<script src="book.js" defer></script><script src="studio.js" defer></script>
 </head>
 <body class="studio">
 <header class="room-header"><a href="./" aria-label="입구로 돌아가기"><span aria-hidden="true">←</span> Minimal Collector</a><h1>서랍</h1></header>
+<div class="reading-table">
+  <button class="closed-book" type="button" aria-haspopup="dialog" aria-label="수집 도록 펼치기 · 라우렌치아나 도서관">
+    <span class="cover-face"><span class="cover-title" lang="en">Minimal<br>Collector</span><img src="exhibits/spaces-1.webp" alt=""><span class="cover-imprint">수집 도록</span></span>
+  </button>
+</div>
 <main class="cabinet" aria-label="주제별 서랍"></main>
 <dialog class="viewing" aria-labelledby="piece-title">
-  <button class="close-view" type="button" aria-label="감상 종료">닫기 ×</button>
-  <figure><div class="mount"><img alt=""></div>
-    <figcaption><p class="category"></p><h2 id="piece-title"></h2><p class="description"></p>
-    <nav aria-label="전시물 이동"><button type="button" class="previous" aria-label="이전 전시물">←</button><span class="position"></span><button type="button" class="next" aria-label="다음 전시물">→</button></nav>
-    </figcaption>
-  </figure>
+  <button class="close-view" type="button" aria-label="도록 덮기">도록 덮기 ×</button>
+  <div class="reader">
+    <div class="book-stage">
+      <canvas class="book-canvas" aria-hidden="true"></canvas>
+      <button class="detail-pin" type="button" aria-pressed="false" hidden><span aria-hidden="true">+</span><span class="pin-label"></span></button>
+    </div>
+    <figure class="paper-fallback"><div class="mount"><img alt=""></div>
+      <figcaption><p class="category"></p><h2 id="piece-title"></h2><p class="description"></p></figcaption>
+    </figure>
+    <nav aria-label="도록 페이지 이동"><button type="button" class="previous" aria-label="이전 전시물">←</button><span class="position" aria-live="polite"></span><button type="button" class="next" aria-label="다음 전시물">→</button></nav>
+  </div>
 </dialog>
 <noscript><p>서랍을 열려면 자바스크립트를 켜 주세요.</p></noscript>
 </body></html>

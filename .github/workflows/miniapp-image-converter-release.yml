@@ -2,6 +2,13 @@ name: Release image converter subpath
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Recovery-read preflight only; release remains disabled until proven
+        required: true
+        type: choice
+        options: [preflight]
+        default: preflight
 
 permissions:
   id-token: write
@@ -41,7 +48,43 @@ jobs:
           print("distribution_id="+d["Id"])
           PY
           aws s3api head-object --bucket static-images-aws-shdkej-com --key sort/index.html --query ContentType --output text > /dev/null
+      - name: Read both exact converter objects and versioned recovery sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          bucket="${{ steps.target.outputs.bucket }}"
+          status="$(aws s3api get-bucket-versioning --bucket "$bucket" --query Status --output text 2>/dev/null || echo Unavailable)"
+          echo "Bucket versioning status: $status"
+          for key in tools/image-converter/index.html tools/image-converter/; do
+            label=index
+            if [ "$key" = tools/image-converter/ ]; then label=slash; fi
+            dir="$RUNNER_TEMP/converter-$label"
+            mkdir -m 700 "$dir"
+            aws s3api head-object --bucket "$bucket" --key "$key" > "$dir/head.json"
+            aws s3api get-object --bucket "$bucket" --key "$key" "$dir/current.html" > "$dir/get.json"
+            python3 - "$dir" "$key" <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          d=Path(sys.argv[1]); key=sys.argv[2]
+          head=json.loads((d/'head.json').read_text()); got=json.loads((d/'get.json').read_text())
+          body=(d/'current.html').read_bytes()
+          if not body or len(body)!=head['ContentLength'] or head.get('VersionId') != got.get('VersionId'):
+              raise SystemExit('Object length/version mismatch: '+key)
+          version=head.get('VersionId')
+          print(f'{key}: HEAD+GET verified; sha256={hashlib.sha256(body).hexdigest()}; version_available={bool(version and version != "null")}; metadata_fields={sorted(head.keys())}')
+          (d/'version.txt').write_text(version or '')
+          PY
+            version="$(cat "$dir/version.txt")"
+            if [ "$status" = Enabled ] && [ -n "$version" ] && [ "$version" != null ]; then
+              aws s3api get-object --bucket "$bucket" --key "$key" --version-id "$version" "$dir/version.html" > "$dir/version.json"
+              cmp "$dir/current.html" "$dir/version.html"
+              echo "$key: GetObjectVersion body matches current"
+            else
+              echo "$key: durable version recovery unavailable"
+            fi
+          done
       - name: Upload only image converter objects
+        if: ${{ inputs.mode == 'release' && false }} # fail closed pending restore rehearsal
         env:
           POSTHOG_MINIAPP_PROJECT_TOKEN: ${{ secrets.POSTHOG_MINIAPP_PROJECT_TOKEN }}
         run: |

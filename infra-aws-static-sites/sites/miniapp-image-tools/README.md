@@ -4,7 +4,7 @@
 
 ## 실행
 
-`python3 -m http.server 8765 --directory dist` 후 `http://localhost:8765/`에서 엽니다. 의존성 설치나 빌드는 없습니다. `node --test tests/header.test.mjs`로 PNG/JPEG/WebP 헤더 파서의 경계 테스트를 실행합니다. 파일 선택 → 긴 변 최대 길이(64–4096px)와 형식 선택 → 이미지 변환 → 미리보기 → 결과 다운로드 순서입니다. 변환 조건을 바꾸면 이전 다운로드를 무효화합니다.
+`python3 -m http.server 8765 --directory dist` 후 `http://localhost:8765/`에서 엽니다. 의존성 설치나 빌드는 없습니다. `node --test tests/header.test.mjs`로 PNG/JPEG/WebP 헤더 파서의 경계 테스트를 실행합니다. 파일 선택 → 긴 변 최대 길이(64–4096px)와 형식 선택 → 이미지 변환 → 미리보기 → 결과 다운로드 순서입니다. 변환 조건을 바꾸면 이전 다운로드를 무효화합니다. 좁은 화면에서 완료 후 결과가 화면 밖에 있으면 결과 영역으로 이동하며, 움직임 줄이기 설정에서는 부드러운 스크롤을 사용하지 않습니다.
 
 ## 데이터와 제한
 

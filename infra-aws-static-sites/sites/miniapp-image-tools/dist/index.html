@@ -132,6 +132,10 @@
       output=blob;outputUrl=URL.createObjectURL(blob);preview.src=outputUrl;preview.hidden=false;empty.hidden=true;download.disabled=false;
       meta.textContent=`${width} × ${height}px · ${mime.slice(6).toUpperCase()} · ${(blob.size/1024).toFixed(1)}KB`;
       message('변환이 끝났습니다. 미리보기를 확인하고 내려받으세요.');
+      const result=document.querySelector('.result');
+      if(innerWidth<=700&&download.getBoundingClientRect().bottom>innerHeight){
+        result.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+      }
       capture('transform_succeeded',{...base,output_width:width,output_height:height,output_bytes:blob.size,duration_ms:Math.round(performance.now()-start)});
     }catch(e){if(ticket===generation)error(e.message==='unsupported'?'이 브라우저는 선택한 출력 형식을 저장하지 못합니다. 다른 형식을 선택하세요.':e.message==='output_size'?'출력 파일이 64MB를 넘습니다. 더 작은 크기나 다른 형식을 선택하세요.':e.message==='pixel_limit'?'출력 화소가 1,200만을 넘습니다. 긴 변을 줄이세요.':'이미지 변환에 실패했습니다. 다른 파일이나 더 작은 크기로 다시 시도하세요.',e.message==='unsupported'?'unsupported_output':e.message==='encode'?'encode_failed':e.message==='output_size'?'output_too_large':e.message==='pixel_limit'?'pixel_limit':'decode_failed',base);}
     finally{if(bitmap)bitmap.close();if(canvas){canvas.width=0;canvas.height=0;}if(ticket===generation)transform.disabled=!selected;}

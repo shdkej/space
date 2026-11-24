@@ -65,3 +65,7 @@ SAM-PC의 Windows 예약 작업 `Status Metrics Analytics Refresh`는 매일 10:
 지도에서 ‘데이터 연결’을 열어 PostHog 앱 또는 GA4 속성, 측정 항목과 대상 칸을 선택한 뒤 기존 편집기에서 ‘지도에 저장’합니다. 편집 중에 열면 현재 칸과 초안을 사용합니다. 검증용 지도에서 GA4 blog 신규 사용자와 PostHog Infinity 고유 세션을 각각 저장하고 재조회했습니다. 브라우저에서 Instagram 계정 입력, PostHog·GA4 선택, JSON 연결과 초안 보존을 검증했습니다.
 
 운영 이미지 `56d8b77`, Actions `45400065811`, manifest `a9c2bd3`의 rollout과 외부 health revision 일치를 확인했습니다. 배포 전후 운영 지도의 내용과 버전 해시가 동일했습니다. Status 그래프는 `3c3ad72`에서 배포했고 데이터 기간·원천·렌더 확인 기록은 [Status README](../../infra-aws-static-sites/sites/status/README.md)에 있습니다. 부모와 종료된 임시 역할 `connectplan`, `connectdev`, `connectmarket`, `connectops`는 대상 칸 선택·저장 의도, 시계열 단위, 실제 집계 날짜와 운영 검증 경로를 교차 확인했습니다.
+
+### 2026-11-24 달력 기준 집계
+
+Metrics 이미지 `7f70947` (Actions `45401964064`, manifest `fb48188`)를 배포하고 외부 health revision과 대조했습니다. 기존 편집기의 ‘집계 기간’에서 GA4·PostHog의 일간·주간·월간 또는 최근 7일을 선택합니다. 격리된 지도에서 일간 GA4 blog 신규 사용자 0명, 주간 PostHog Infinity 세션 8회를 실제 연결 창으로 저장하고 재조회했습니다. GA4 blog 세션도 공개 피드와 대조해 11월 23일 0회, 11월 16~22일 10회, 10월 43회를 확인했습니다. Status 그래프 릴리스는 `3ee65a4`입니다.

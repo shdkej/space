@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Recovery-read preflight only; release remains disabled until proven
+        description: Read-only preflight or identical-content recovery rehearsal; release disabled
         required: true
         type: choice
-        options: [preflight]
+        options: [preflight, rehearse]
         default: preflight
 
 permissions:
@@ -24,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # immutable deployed baseline must be locally available for recovery
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
@@ -83,6 +85,58 @@ jobs:
               echo "$key: durable version recovery unavailable"
             fi
           done
+      - name: Verify reproducible baseline and exact restore metadata
+        env:
+          POSTHOG_MINIAPP_PROJECT_TOKEN: ${{ secrets.POSTHOG_MINIAPP_PROJECT_TOKEN }}
+        run: |
+          set -euo pipefail
+          git show 3b9faeef227d97e48b3dfe42b71894ee0d738e7b:infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html > "$RUNNER_TEMP/baseline-source.html"
+          python3 - "$RUNNER_TEMP" <<'PY'
+          import hashlib,json,os,re,sys
+          from pathlib import Path
+          root=Path(sys.argv[1]); token=os.environ.get('POSTHOG_MINIAPP_PROJECT_TOKEN','')
+          if not re.fullmatch(r'phc_[A-Za-z0-9]+',token): raise SystemExit('Existing browser project token unavailable')
+          source=(root/'baseline-source.html').read_text()
+          marker='__POSTHOG_MINIAPP_PROJECT_TOKEN__'
+          if source.count(marker)!=1: raise SystemExit('Baseline placeholder count mismatch')
+          baseline=source.replace(marker,token).encode()
+          expected='054deb7b1acfae3e54424651208168720b3dfe850b22a5138e014e1b8563de3f'
+          if hashlib.sha256(baseline).hexdigest()!=expected: raise SystemExit('Immutable baseline reconstruction hash mismatch')
+          for label in ('index','slash'):
+              d=root/('converter-'+label)
+              head=json.loads((d/'head.json').read_text())
+              current=(d/'current.html').read_bytes()
+              if hashlib.sha256(current).hexdigest()!=expected: raise SystemExit('Current object is not baseline: '+label)
+              if head.get('ContentType')!='text/html' or head.get('CacheControl')!='public,max-age=60' or head.get('Metadata')!={} or head.get('ServerSideEncryption')!='AES256':
+                  raise SystemExit('Unexpected metadata; cannot reproduce exactly: '+label)
+          (root/'baseline.html').write_bytes(baseline)
+          print('Both current objects match reconstructed immutable baseline and relevant restore headers')
+          PY
+      - name: Rehearse identical-content restore of both exact keys and read back
+        if: ${{ inputs.mode == 'rehearse' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bucket="${{ steps.target.outputs.bucket }}"
+          distribution="${{ steps.target.outputs.distribution_id }}"
+          for key in tools/image-converter/index.html tools/image-converter/; do
+            label=index
+            if [ "$key" = tools/image-converter/ ]; then label=slash; fi
+            aws s3api put-object --bucket "$bucket" --key "$key" --body "$RUNNER_TEMP/baseline.html" --content-type text/html --cache-control 'public,max-age=60' --server-side-encryption AES256 > /dev/null
+            aws s3api get-object --bucket "$bucket" --key "$key" "$RUNNER_TEMP/rehearsed-$label.html" > /dev/null
+            cmp "$RUNNER_TEMP/baseline.html" "$RUNNER_TEMP/rehearsed-$label.html"
+            aws s3api head-object --bucket "$bucket" --key "$key" > "$RUNNER_TEMP/rehearsed-$label.json"
+            python3 - "$RUNNER_TEMP/rehearsed-$label.json" <<'PY'
+          import json,sys
+          h=json.load(open(sys.argv[1]))
+          if (h.get('ContentType'),h.get('CacheControl'),h.get('Metadata'),h.get('ServerSideEncryption')) != ('text/html','public,max-age=60',{},'AES256'):
+              raise SystemExit('Restored metadata mismatch')
+          PY
+            echo "$key: identical-content PutObject, GetObject, HEAD and metadata verified"
+          done
+          id="$(aws cloudfront create-invalidation --distribution-id "$distribution" --paths '/tools/image-converter/' '/tools/image-converter/index.html' --query 'Invalidation.Id' --output text)"
+          aws cloudfront wait invalidation-completed --distribution-id "$distribution" --id "$id"
+          echo "Exact two-path invalidation complete: $id"
       - name: Upload only image converter objects
         if: ${{ inputs.mode == 'release' && false }} # fail closed pending restore rehearsal
         env:

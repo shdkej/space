@@ -1,22 +1,21 @@
 {
-  "verifiedAt": "2026-11-23T13:31:13.367Z",
+  "verifiedAt": "2026-11-24T03:15:02.667Z",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "72223eb19bdeb4c1ad6ae90d4c370a1bed9fea55",
+  "sourceCommit": "5febb1dc4c89ae78a233a29cc4d0f2fa04653c33",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45184213050,
+    "runId": 45318019846,
     "conclusion": "success"
   },
   "verification": {
-    "pixel": "Meta Events Manager showed dedicated dataset 모두의정책, ID 1824168211816282. Automatic advanced matching was off.",
-    "transport": "On the live homepage, a fresh Chromium session made zero Meta requests before explicit advertising consent, then one PageView to facebook.com/tr with HTTP 200. Only id, ev, fixed homepage dl and noscript were included; no Cookie or Referer header. After revocation, reload and policy detail navigation produced no further request.",
-    "signup": "Local Chromium tests with intercepted Meta and signup endpoints checked opt-in, valid new signup, duplicate, failure, retry, cross-tab opt-out and tracking protection. No production signup or synthetic production Lead was submitted.",
-    "reporting": "The Meta overview for 2026-11-23 showed no received activity at verification time. Event counts, real-user Lead receipt and campaign attribution remain unconfirmed.",
-    "browserChecks": "qa/live-verification.json"
+    "browserChecks": "qa/live-verification.json",
+    "mobile": "Live Chromium iPhone 15 emulation, 393px wide, safe-area overrides 59px top and 34px bottom. Hero bottom matched visual viewport heights 659, 759 and 852px, including resize back to 659. No horizontal overflow. Physical iPhone Safari unverified.",
+    "scene": "Passed WebGL, fallback, ten policy targets, touch, keyboard and reduced motion. At 393×700 with identical anchors, graph nodes decreased from 4098 to 2816 and edges from 4355 to 2913.",
+    "review": "/root integrated four completed native roles. /root/planner reviewed first-screen fit and overlaps, /root/developer checked shared graph generation and existing height tests, /root/marketer reviewed spacing around labels, /root/operator cross-checked mobile sizes and the production route. The final layout retains all ten targets and extends the background into the safe area."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/dbe05aeed0e57198fdcdcc41fa6dd7625d0f221b/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/81bc072/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

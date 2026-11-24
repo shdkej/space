@@ -94,9 +94,22 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 
 ## 채널별 7일 실측
 
-Monitoring 상단에서 앱별 PostHog 이벤트·고유 세션·페이지뷰, GA4 속성별 신규 사용자·세션, Instagram `@minimal_collector` 조회수와 원천에서 확인된 계정 지표을 확인합니다. 기존 PostHog exporter의 공용 프로젝트 424014 전체 세션과 재방문율은 관측 시점 직전 7일 기준입니다. 별도 프로젝트·채널 피드는 완료한 7개 날짜를 표시합니다. 원천에 행이 없으면 측정값 없음으로 표시합니다. 등록된 앱의 이름과 공개 식별자는 `scripts/analytics-inventory.json`에 관리합니다. PostHog는 프로젝트 내 승인된 app_id를 각각 조회하고 app_id가 없는 이벤트는 등록된 호스트별로 구분하고 나머지는 앱 미지정으로 표시합니다. traffic_kind=synthetic 이벤트를 앱별 집계에서 제외합니다.
+Status의 기존 Monitoring 지표에서 GA4 속성별 신규 사용자·세션과 PostHog 앱별 제품 세션을 확인합니다. Metrics 지도에서는 기존 유입 확인 지표와 연결해 봅니다. Instagram 피드는 `@minimal_collector`의 계정 집계와 조회 시각을 제공합니다. 기존 PostHog exporter의 공용 프로젝트 424014 전체 세션과 재방문율은 관측 시점 직전 7일 기준입니다. 별도 프로젝트·채널 피드는 완료한 7개 날짜를 표시합니다. 원천에 행이 없으면 측정값 없음으로 표시합니다. 등록된 앱의 이름과 공개 식별자는 `scripts/analytics-inventory.json`에 관리합니다. PostHog는 프로젝트 내 승인된 app_id를 각각 조회하고 app_id가 없는 이벤트는 등록된 호스트별로 구분하고 나머지는 앱 미지정으로 표시합니다. traffic_kind=synthetic 이벤트를 앱별 집계에서 제외합니다.
 
-수집 명령은 고정된 원천에만 접속합니다. GA4는 읽기 권한의 `GA4_ACCESS_TOKEN` 또는 Google Application Default Credentials(Python google-auth 및 requests 필요), PostHog는 projects query 읽기 권한의 `POSTHOG_ACCESS_TOKEN` 또는 `POSTHOG_PERSONAL_API_KEY` 및 선택적인 `POSTHOG_HOST`, Instagram은 프로페셔널 계정의 Insights 권한을 가진 `INSTAGRAM_ACCESS_TOKEN`과 선택적인 `INSTAGRAM_ACCOUNT_ID`를 실행 환경에서 사용합니다. Instagram 응답 username을 확인한 뒤 계정 전체의 집계만 발행합니다. 토큰을 명령행 인수로 전달하지 마세요.
+두 대시보드는 같은 S3 피드를 읽습니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 다섯 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
+
+- `refresh-analytics.py`, `collect-analytics.py`, `analytics-inventory.json`
+- `read-ga4-insights.mjs`, `read-instagram-insights.mjs`
+
+Windows 예약 작업은 기존 사용자 로그온 세션에서 다음 명령을 실행합니다. 필요한 Python 패키지는 전용 `python/` 디렉터리의 boto3와 그 의존성입니다. PC를 켜고 사용자가 로그인한 뒤 놓친 예약을 보충 실행하도록 설정합니다.
+
+```text
+wsl.exe -d Ubuntu -u sam --exec /usr/bin/env PYTHONPATH=/home/sam/.local/share/dashboard-analytics/python /usr/bin/python3 /home/sam/.local/share/dashboard-analytics/current/refresh-analytics.py
+```
+
+예약 실행은 PostHog를 읽기 전용 API로, GA4 4개 속성과 Instagram을 로그인된 한국어 Egolite에서 읽습니다. 코드는 PostHog 토큰 파일과 AWS 자격 파일을 필요한 키만 읽고 브라우저의 원문 출력을 운영 로그에 기록하지 않습니다. 수집기는 이전 S3 객체의 ETag로 조건부 게시한 뒤 같은 버전을 다시 읽어 본문을 검증합니다. 다른 실행이 진행 중이면 중복 실행을 건너뜁니다. 일부 속성만 실패하면 그 행의 직전 값·관측 시각을 유지하며 실패 상태를 붙입니다. 한 원천이 모두 실패하면 해당 S3 객체를 보존하고 나머지 원천을 계속 처리합니다. 부분 실패와 전체 실패는 종료 코드 1이며 원천별 결과를 표준 출력에서 확인할 수 있습니다. 브라우저 로그인이 만료되면 해당 사이트에 다시 로그인한 후 예약 작업을 재실행합니다.
+
+수동 원천 점검용 수집 명령은 고정된 원천에만 접속합니다. GA4는 읽기 권한의 `GA4_ACCESS_TOKEN` 또는 Google Application Default Credentials(Python google-auth 및 requests 필요), PostHog는 projects query 읽기 권한의 `POSTHOG_ACCESS_TOKEN` 또는 `POSTHOG_PERSONAL_API_KEY` 및 선택적인 `POSTHOG_HOST`, Instagram은 프로페셔널 계정의 Insights 권한을 가진 `INSTAGRAM_ACCESS_TOKEN`과 선택적인 `INSTAGRAM_ACCOUNT_ID`를 실행 환경에서 사용합니다. Instagram 응답 username을 확인한 뒤 계정 전체의 집계만 발행합니다. 토큰을 명령행 인수로 전달하지 마세요.
 
 동일한 운영 출력 디렉터리에서 다음처럼 원천별로 실행합니다. `STATE_DIR`은 수집기 전용으로 지정한 디렉터리입니다. 다른 호스트에서 인계할 경우 기존 **해당 피드만** 먼저 내려받고, 마지막 성공값을 보존합니다. 같은 원천의 게시자는 한 번에 하나만 실행합니다.
 
@@ -110,4 +123,4 @@ python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
 
 정적 사이트 배포는 수집기 소유 객체를 제외하며 Status 버킷의 다른 파일을 삭제하지 않습니다. 집계 파일의 rows에는 승인된 범위 이름, 집계 기간·시간대, 조회 시각, 숫자와 수집 상태만 포함합니다. 최신 수집 전체가 실패하면 종료 코드 1을 반환하고 이전 파일을 유지합니다. 일부 앱이 실패하면 해당 앱의 마지막 성공 시각·값과 실패 상태를 함께 내보냅니다. 게시 후 해당 HTTPS 피드의 scope·기간·관측 시각·값을 원천과 대조하고, Status Monitoring과 Metrics 지도에서 동일한지 확인합니다.
 
-브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 API 권한이 없는 속성은 해당 속성의 GA4 홈에서 ‘지난 7일’ 날짜와 ‘새 사용자 수’·‘세션수’를 확인해 같은 GA4 피드의 해당 행에 원천, 기간, 조회 시각과 함께 반영합니다. API·브라우저 집계 갱신은 운영자가 실행할 때 이루어지며 화면의 새로고침은 최근 게시된 피드를 읽습니다.
+브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 API 권한이 없는 속성은 해당 속성의 GA4 홈에서 ‘지난 7일’ 날짜와 ‘새 사용자 수’·‘세션수’를 확인해 같은 GA4 피드의 해당 행에 원천, 기간, 조회 시각과 함께 반영합니다. 화면 새로고침은 마지막으로 게시된 피드를 읽습니다.

@@ -13,6 +13,7 @@ import sys
 import tempfile
 
 from analytics_history import attach_history
+from calendar_periods import TIME_ZONES, merge_periods, requested_periods
 
 BASE = Path(__file__).resolve().parent
 BUCKET = "static-status-aws-shdkej-com"
@@ -85,9 +86,16 @@ def collect(source, previous):
     script = BASE / f"read-{source}-insights.mjs"
     # On Windows builds Ego writes console.log to stderr. Never expose browser
     # output; the only accepted result is the structured public aggregate.
-    with script.open("rb") as code:
-        result = subprocess.run([str(BROWSER), "nodejs"], stdin=code, check=True, timeout=250,
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    code = script.read_bytes()
+    if source == "ga4":
+        inventory = json.loads((BASE / "analytics-inventory.json").read_text())["ga4"]
+        now = datetime.now(timezone.utc)
+        old = {r["scope"]: r.get("periods", {}) for r in previous.get("rows", [])}
+        plan = {scope: requested_periods(source, old.get(scope, {}), now) for scope in inventory}
+        code = ("const requestedCalendarPeriods = " + json.dumps(plan) + ";\n").encode() + code
+    result = subprocess.run([str(BROWSER), "nodejs"], input=code, check=True,
+                            timeout=680 if source == "ga4" else 45,
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     return json.loads(result.stdout.decode("utf-8-sig").strip())
 
 
@@ -107,6 +115,7 @@ def merge(source, result, previous, inventory, started):
         raise ValueError("Wrong scopes")
     old = {row["scope"]: row for row in previous.get("rows", [])}
     successful = 0
+    calendar_complete = True
     merged = []
     for row in rows:
         scope = row["scope"]
@@ -120,15 +129,21 @@ def merge(source, result, previous, inventory, started):
         at = datetime.fromisoformat(row["observedAt"].replace("Z", "+00:00"))
         if at < started or at.timestamp() > datetime.now(timezone.utc).timestamp() + 60:
             raise ValueError("Stale observation")
-        if set(row) - {"history", "scope", "values", "status", "observedAt", "method", "timeZone",
+        if set(row) - {"history", "periods", "periodStatus", "scope", "values", "status", "observedAt", "method", "timeZone",
                        "periodStart", "periodEnd", "periodLabel"}:
             raise ValueError("Unexpected public field")
-        merged.append({k: v for k, v in row.items() if k != "history"})
+        measurement = {k: v for k, v in row.items() if k not in {"history", "periods", "periodStatus"}}
+        if source in TIME_ZONES:
+            periods, done = merge_periods(source, old.get(scope, {}).get("periods", {}),
+                                          row.get("periods", {}), datetime.now(timezone.utc))
+            measurement.update(periods=periods, periodStatus="ok" if done else "partial")
+            calendar_complete = calendar_complete and done
+        merged.append(measurement)
         successful += 1
     if not successful:
         raise ValueError("No new observations")
     feed = {"schemaVersion": 1, "source": source, "observedAt": result["observedAt"], "rows": merged}
-    return attach_history(source, feed, previous), successful == len(rows)
+    return attach_history(source, feed, previous), successful == len(rows) and calendar_complete
 
 
 def refresh(client, source, inventory, seed=None, seed_only=False):
@@ -147,6 +162,14 @@ def refresh(client, source, inventory, seed=None, seed_only=False):
         if not previous:
             raise ValueError("A current feed is required to seed its history")
         result, complete = attach_history(source, previous, previous, seed), True
+        if source in TIME_ZONES and seed:
+            seed_rows = {r["scope"]: r for r in seed["rows"]}
+            for row in result["rows"]:
+                supplied = seed_rows.get(row["scope"], {}).get("periods")
+                if supplied is not None:
+                    row["periods"], done = merge_periods(source, row.get("periods", {}), supplied,
+                                                        datetime.now(timezone.utc))
+                    row["periodStatus"] = "ok" if done else "partial"
         if result == previous:
             return True
     else:

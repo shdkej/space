@@ -72,7 +72,7 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 
 - 첫 화면은 현재 확인해야 할 메시지와 `System`·`Agents`·`Loop` 세 가지 핵심 이동 버튼만 보여주며, 데스크톱 기준 페이지 스크롤 없이 바로 상태를 선택할 수 있습니다. 상세 레이어·표면 목록은 하단 메뉴에서 들어갑니다.
 - `System`: 운영 레이어 상태와 공개 가능한 실행 흐름 요약만 표시합니다. 역할별 개별 실행 내용은 공개 요약에 포함하지 않습니다.
-- `Monitoring`: 4개 레이어에 각각 8개 지표를 묶어 표시합니다. 지표를 펼쳐 24시간·7일·30일 시계열을 확인하며, 원천이 없는 값은 비워 둡니다. 데이터는 `system-dashboard` 수집기의 `metrics-history.json`에서 읽습니다. PostHog 시계열은 exporter가 제공하는 지표만 표시하며, GA4·Instagram은 원천별 공개 시계열이 확인되기 전까지 연결된 것으로 표시하지 않습니다.
+- `Monitoring`: 4개 레이어에 각각 8개 지표를 묶어 표시합니다. 지표를 펼쳐 24시간·7일·30일 시계열을 확인하며, 원천이 없는 값은 비워 둡니다. 데이터는 `system-dashboard` 수집기의 `metrics-history.json`에서 읽습니다. PostHog 시계열은 exporter가 제공하는 지표만 표시하며, GA4와 앱별 PostHog 달력 집계는 채널별 피드에서 읽습니다.
 - `Surfaces`: 각 서비스의 상태와 원천 URL을 표시하며, 항목의 외부 링크 아이콘을 누르면 해당 사이트를 새 탭으로 엽니다.
 - HTML·body·앱 루트를 동적 뷰포트 높이에 고정해 Safari 주소·도구 막대가 변해도 문서가 더 움직이거나 아래 빈 공간이 드러나지 않게 합니다. 바깥 문서의 스크롤·탄성 이동은 막습니다.
 - 상세 메뉴에서는 본문 영역만 내부 스크롤하고 하단 내비게이션은 flex 레이아웃 끝에 고정합니다. 홈 화면도 뷰포트 안에 맞춰 세로 스크롤 없이 고정합니다.
@@ -92,13 +92,13 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 
 2026-11-13: `infra-aws-static-sites/sites/status/dashboard`의 긴 크론 상세는 내부 `.cron-dialog-scroll`만 스크롤하도록 분리했습니다. `Dialog.Content`의 overflow 클리핑이 닫기 버튼에 적용되지 않게 해 X 버튼의 뷰포트 하단 중앙 고정과 Radix 접근성 경계, 모바일 safe-area·터치 영역을 유지합니다.
 
-## 채널별 7일 실측
+## 채널별 집계 기간
 
-Status의 기존 Monitoring 지표에서 GA4 속성별 신규 사용자·세션과 PostHog 앱별 제품 세션을 확인합니다. Metrics 지도에서는 기존 유입 확인 지표와 연결해 봅니다. Instagram 피드는 `@minimal_collector`의 계정 집계와 조회 시각을 제공합니다. 기존 PostHog exporter의 공용 프로젝트 424014 전체 세션과 재방문율은 관측 시점 직전 7일 기준입니다. 별도 프로젝트·채널 피드는 완료한 7개 날짜를 표시합니다. 원천에 행이 없으면 측정값 없음으로 표시합니다. 등록된 앱의 이름과 공개 식별자는 `scripts/analytics-inventory.json`에 관리합니다. PostHog는 프로젝트 내 승인된 app_id를 각각 조회하고 app_id가 없는 이벤트는 등록된 호스트별로 구분하고 나머지는 앱 미지정으로 표시합니다. traffic_kind=synthetic 이벤트를 앱별 집계에서 제외합니다.
+Status의 기존 Monitoring 지표에서 GA4 속성별 신규 사용자·세션과 PostHog 앱별 제품 세션을 확인합니다. Metrics 지도에서는 기존 유입 확인 지표와 연결해 봅니다. Instagram 피드는 `@minimal_collector`의 계정 집계와 조회 시각을 제공합니다. 기존 PostHog exporter의 공용 프로젝트 424014 전체 세션과 재방문율은 관측 시점 직전 7일 기준입니다. GA4와 앱별 PostHog 피드는 기존 최근 7일 집계와 달력 기준 일·주·월 집계를 함께 제공합니다. 원천에 행이 없으면 측정값 없음으로 표시합니다. 등록된 앱의 이름과 공개 식별자는 `scripts/analytics-inventory.json`에 관리합니다. PostHog는 프로젝트 내 승인된 app_id를 각각 조회하고 app_id가 없는 이벤트는 등록된 호스트별로 구분하고 나머지는 앱 미지정으로 표시합니다. traffic_kind=synthetic 이벤트를 앱별 집계에서 제외합니다.
 
-두 대시보드는 같은 S3 피드를 읽습니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 여섯 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
+두 대시보드는 같은 S3 피드를 읽습니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 일곱 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
 
-- `refresh-analytics.py`, `collect-analytics.py`, `analytics_history.py`, `analytics-inventory.json`
+- `refresh-analytics.py`, `collect-analytics.py`, `calendar_periods.py`, `analytics_history.py`, `analytics-inventory.json`
 - `read-ga4-insights.mjs`, `read-instagram-insights.mjs`
 
 Windows 예약 작업은 기존 사용자 로그온 세션에서 다음 명령을 실행합니다. 필요한 Python 패키지는 전용 `python/` 디렉터리의 boto3와 그 의존성입니다. PC를 켜고 사용자가 로그인한 뒤 놓친 예약을 보충 실행하도록 설정합니다.
@@ -123,8 +123,8 @@ python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
 
 정적 사이트 배포는 수집기 소유 객체를 제외하며 Status 버킷의 다른 파일을 삭제하지 않습니다. 집계 파일의 rows에는 승인된 범위 이름, 집계 기간·시간대, 조회 시각, 숫자와 수집 상태만 포함합니다. 최신 수집 전체가 실패하면 종료 코드 1을 반환하고 이전 파일을 유지합니다. 일부 앱이 실패하면 해당 앱의 마지막 성공 시각·값과 실패 상태를 함께 내보냅니다. 게시 후 해당 HTTPS 피드의 scope·기간·관측 시각·값을 원천과 대조하고, Status Monitoring과 Metrics 지도에서 동일한지 확인합니다.
 
-브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 API 권한이 없는 속성은 해당 속성의 GA4 홈에서 ‘지난 7일’ 날짜와 ‘새 사용자 수’·‘세션수’를 확인해 같은 GA4 피드의 해당 행에 원천, 기간, 조회 시각과 함께 반영합니다. 화면 새로고침은 마지막으로 게시된 피드를 읽습니다.
+브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 홈에서는 ‘지난 7일’ 및 각 달력 기간을 선택하고 ‘새 사용자 수’와 ‘세션수’를 확인합니다. 새 구간과 최근 마감 구간을 다시 조회해 GA4 피드에 반영합니다. 화면 새로고침은 마지막으로 게시된 피드를 읽습니다.
 
-Status의 기존 신규 사용자·세션 행은 앱별 실측을 일·주·월 그래프로 표시합니다. 각 점은 해당 시점의 7일 집계입니다. 피드는 최근 31일의 실제 관측을 보존합니다. 과거 보고서로 보강한 점에는 집계 종료 시각과 조회 시각을 각각 기록합니다. 기존 운영 피드에 검증된 원천 이력을 추가할 때는 `refresh-analytics.py --history-seed-dir DIR --seed-only`를 실행합니다. 최신 집계값과 조회 시각은 이 작업으로 바뀌지 않습니다.
+Status의 기존 신규 사용자·세션 행은 앱별 실측을 일·주·월 그래프로 표시합니다. 각 점은 한국 시간 기준 완료된 하루, 월요일~일요일 한 주, 또는 달력 한 달의 원천 집계입니다. 최근 7일·4주·2개월을 표시합니다. Metrics의 기존 연결은 최근 7일을 유지하며 GA4·PostHog 연결에서 집계 기간을 선택할 수 있습니다. Instagram은 최근 7일 계정 집계를 사용합니다. 피드는 최근 31일의 실제 관측을 보존합니다. 과거 보고서로 보강한 점에는 집계 종료 시각과 조회 시각을 각각 기록합니다. 기존 운영 피드에 검증된 원천 이력을 추가할 때는 `refresh-analytics.py --history-seed-dir DIR --seed-only`를 실행합니다. 최신 집계값과 조회 시각은 이 작업으로 바뀌지 않습니다.
 
 2026-11-24 이력 보강에서는 기준일마다 직전 7일을 원천에서 다시 조회했습니다. PostHog 6개 범주와 GA4 blog·afzma는 최근 30일에 대해 매일, GA4 policycock·purple-place-bb6ce는 10월 27일~11월 23일의 4개 주간에 대해 조회했습니다. GA4 주간 구간은 속성의 대한민국 시간대를 확인했습니다. 11월 17~23일 마지막 구간은 현재 공개 피드와 일치합니다. 390px 및 1440px 운영 화면에서 세 지표의 일·주·월 선택에 따라 실측점 수가 변하는 것을 확인했습니다. 수집기 릴리스 `5e2f8fc` 설치 후 예약 작업을 다시 실행해 최신 관측과 기존 이력을 함께 유지하는 것도 확인했습니다.

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Collect approved, account-level dashboard aggregates into a single atomic file."""
 from analytics_history import attach_history
+from calendar_periods import TIME_ZONES, requested_periods, merge_periods
 
 import argparse
 from datetime import datetime, time, timedelta, timezone
@@ -106,15 +107,12 @@ def instagram(now):
     return {"scope": INSTAGRAM, "timeZone": "UTC", "method": "Instagram Insights API", **period(end.date()), "values": values}
 
 
-def posthog(now, scope, config, token, known_hosts=()):
+def posthog_query(config, known_hosts):
     # Host is allowlisted before attaching a bearer token. Numeric project IDs
     # come from an explicit public reporting inventory.
     host = os.environ.get("POSTHOG_HOST", "https://us.posthog.com").rstrip("/")
     if host not in {"https://us.posthog.com", "https://eu.posthog.com", "https://app.posthog.com"}:
         raise ValueError("unexpected PostHog host")
-    end = datetime.combine(now.date(), time.min, UTC)
-    start = end - timedelta(days=7)
-    predicate = f"timestamp >= toDateTime({int(start.timestamp())}) AND timestamp < toDateTime({int(end.timestamp())})"
     project, app = config["project"], config["app_id"]
     if not re.fullmatch(r"[0-9]{1,24}", project):
         raise ValueError("invalid PostHog project")
@@ -133,15 +131,89 @@ def posthog(now, scope, config, token, known_hosts=()):
         app_filter = f"properties.app_id = '{app}'"
     else:
         raise ValueError("invalid PostHog app ID")
-    query = (f"SELECT uniq(properties['$session_id']), countIf(event = '$pageview'), count() "
-             f"FROM events WHERE {predicate} AND {app_filter} "
-             "AND coalesce(properties.traffic_kind, '') != 'synthetic'")
+    return (f"{host}/api/projects/{project}/query/",
+            f"{app_filter} AND coalesce(properties.traffic_kind, '') != 'synthetic'")
 
-    response = request(f"{host}/api/projects/{project}/query/", token,
-                       {"query": {"kind": "HogQLQuery", "query": query}})
+
+def timestamp_filter(start, end):
+    return f"timestamp >= toDateTime({int(start.timestamp())}) AND timestamp < toDateTime({int(end.timestamp())})"
+
+
+def posthog(now, scope, config, token, known_hosts=()):
+    end = datetime.combine(now.date(), time.min, UTC)
+    start = end - timedelta(days=7)
+    url, app_filter = posthog_query(config, known_hosts)
+    query = (f"SELECT uniq(properties['$session_id']), countIf(event = '$pageview'), count() "
+             f"FROM events WHERE {timestamp_filter(start, end)} AND {app_filter}")
+    response = request(url, token, {"query": {"kind": "HogQLQuery", "query": query}})
     sessions, pageviews, events = response["results"][0]
     return {"scope": scope, "timeZone": "UTC", "method": "PostHog HogQL", **period(end.date()),
             "values": {"sessions": count(sessions), "pageviews": count(pageviews), "events": count(events)}}
+
+
+def calendar_start(day):
+    return datetime.fromisoformat(day).replace(tzinfo=ZoneInfo(TIME_ZONES["posthog"]))
+
+
+def posthog_period_batch(config, token, hosts, windows):
+    url, scope = posthog_query(config, hosts)
+    # Aggregate unique sessions directly for each requested time range.
+    # A session can cross midnight, so summing daily distinct counts is incorrect.
+    fields, starts, ends = [], [], []
+    for window in windows:
+        start = calendar_start(window["periodStart"])
+        end = calendar_start(window["periodEnd"]) + timedelta(days=1)
+        starts.append(start)
+        ends.append(end)
+        condition = timestamp_filter(start, end)
+        fields.extend([f"uniqIf(properties['$session_id'], {condition})",
+                       f"countIf(event = '$pageview' AND {condition})", f"countIf({condition})"])
+    query = (f"SELECT {', '.join(fields)} FROM events WHERE {timestamp_filter(min(starts), max(ends))} "
+             f"AND {scope}")
+    data = request(url, token, {"query": {"kind": "HogQLQuery", "query": query}})
+    values, = data["results"]
+    if len(values) != len(fields):
+        raise ValueError("Unexpected PostHog calendar columns")
+    return [dict(zip(("sessions", "pageviews", "events"), map(count, values[i:i+3])))
+            for i in range(0, len(values), 3)]
+
+
+def ga4_period_batch(prop, token, windows):
+    keys = ["newUsers", "sessions"]
+    name = f"properties/{prop}"
+    reports = [{"property": name, "metrics": [{"name": k} for k in keys], "keepEmptyRows": True,
+                "dateRanges": [{"startDate": w["periodStart"], "endDate": w["periodEnd"]}]} for w in windows]
+    response = request(f"https://analyticsdata.googleapis.com/v1beta/{name}:batchRunReports", token,
+                       {"requests": reports})
+    values = []
+    for report in response["reports"]:
+        if report["metadata"]["timeZone"] != TIME_ZONES["ga4"] or [m["name"] for m in report["metricHeaders"]] != keys:
+            raise ValueError("Unexpected GA4 calendar definition")
+        rows = report.get("rows", [])
+        if not rows:
+            values.append(dict.fromkeys(keys))
+        else:
+            row, = rows
+            values.append(dict(zip(keys, (count(v["value"]) for v in row["metricValues"]), strict=True)))
+    return values
+
+
+def collect_periods(source, config, token, hosts, cached, now):
+    needed = requested_periods(source, cached, now)
+    updated = {"day": [], "week": [], "month": []}
+    size = 5 if source == "ga4" else 8
+    for start in range(0, len(needed), size):
+        batch = needed[start:start+size]
+        try:
+            values = (ga4_period_batch(config, token, batch) if source == "ga4"
+                      else posthog_period_batch(config, token, hosts, batch))
+            observed = datetime.now(UTC).isoformat()
+            for window, metrics in zip(batch, values, strict=True):
+                updated[window["kind"]].append({"periodStart": window["periodStart"], "periodEnd": window["periodEnd"],
+                                               "observedAt": observed, "timeZone": TIME_ZONES[source], "values": metrics})
+        except (HTTPError, OSError, ValueError, KeyError, TypeError) as error:
+            print(f"{source} calendar batch: {type(error).__name__}", file=sys.stderr)
+    return merge_periods(source, cached, updated, datetime.now(UTC))
 
 
 def inventory_for(source, inventory):
@@ -162,7 +234,7 @@ def inventory_for(source, inventory):
     return entries
 
 
-def collect(source, output, inventory):
+def collect(source, output, inventory, calendar=False):
     now = datetime.now(UTC)
     scopes = inventory_for(source, inventory)
     destination = output / f"analytics-{source}.json"
@@ -171,6 +243,7 @@ def collect(source, output, inventory):
     rows, success = [], 0
     token = ga4_token() if source == "ga4" else (os.environ.get("POSTHOG_PERSONAL_API_KEY") or os.environ.get("POSTHOG_ACCESS_TOKEN"))
     for scope, identifier in scopes.items():
+        known_hosts = []
         try:
             if source == "ga4":
                 row = ga4(now, scope, identifier, token)
@@ -182,6 +255,12 @@ def collect(source, output, inventory):
                 known_hosts = [item["host"] for item in scopes.values()
                                if item.get("host") and item["project"] == identifier["project"]]
                 row = posthog(now, scope, identifier, token, known_hosts)
+            cached = old.get(scope, {}).get("periods", {})
+            if calendar and source in TIME_ZONES:
+                row["periods"], done = collect_periods(source, identifier, token, known_hosts, cached, now)
+                row["periodStatus"] = "ok" if done else "partial"
+            elif cached:
+                row["periods"] = cached
             row["observedAt"] = now.isoformat()
             row["status"] = "ok"
             success += 1
@@ -210,7 +289,7 @@ if __name__ == "__main__":
     parser.add_argument("--inventory", type=Path, default=Path(__file__).with_name("analytics-inventory.json"))
     args = parser.parse_args()
     try:
-        print(collect(args.source, args.output_dir, json.loads(args.inventory.read_text())))
+        print(collect(args.source, args.output_dir, json.loads(args.inventory.read_text()), calendar=True))
     except HTTPError as error:
         parser.exit(1, f"{args.source} API returned HTTP {error.code}. Previous snapshot retained.\n")
     except Exception as error:

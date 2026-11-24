@@ -43,3 +43,11 @@
 변경 source `5cb7a59fa3d4f8b650b5c9c86d0c616c15458355`. 테스트 16개·build, 320/390/768/1440px 지도→가이드→지도 이동과 목차/접기/넘침을 검증했다. 복구 이미지는 최초 배포 source `b19582f8b6ccacce4ef0915073db1c925d99b29a`다. 데이터 모델·저장·인증·AI·수집기는 변경하지 않는다.
 
 가이드 배포 확인: [Actions 43583529867](https://github.com/shdkej/agent-metrics/actions/runs/43583529867) 성공, 운영 revision **4**/ready **1**. 외부 health의 source SHA 일치, 운영 이미지에서 guide HTTP 200과 검증한 HTML의 SHA256 일치, 외부 가이드 URL의 미인증 401을 확인했다. 로컬 실제 브라우저의 4개 너비 렌더·이동 검증과 운영 파일 검증을 구분한다. 배포 전후 기존 지도·연결·관측의 행 수와 내용 해시가 동일하다.
+
+### 2026-11-24 앱별 분석 연동
+
+소스 `f2908387509f6b2b2d4d504f33a813b219122d3c`, Actions `45357369641`의 arm64 이미지를 가져와 배포했습니다. Space manifest는 `814a045`, 배포 revision 5, Ready 1이고 외부 health의 source revision이 일치했습니다. 배포 전 이미지는 `5cb7a59fa3d4f8b650b5c9c86d0c616c15458355`입니다.
+
+Status 릴리스 `44e7a4f`의 Monitoring 화면과 Metrics 운영 Pod의 조회 코드가 같은 공개 집계 3개를 읽었습니다. PostHog 앱/호스트 5개 및 미지정, GA4 속성 4개, Instagram 계정 1개입니다. 운영 Metrics 데이터 API는 인증 없는 요청에 401을 반환했습니다. 원천 수집·범위·게시 명령은 [Status README](../../infra-aws-static-sites/sites/status/README.md)에 있습니다.
+
+실행 기록은 부모 `/root`와 종료된 임시 역할 `/root/planner`, `/root/developer`, `/root/marketer`, `/root/operator`입니다. 범위·구현·지표 정의·배포를 각자 검토한 뒤 공개 집계와 사용자별 연결의 분리, 원천의 관측 시각, 앱 식별 방법을 대조했습니다. 프로젝트 안에 여러 앱이 있는 것을 직접 확인해 앱 ID와 서비스 호스트를 우선순위대로 적용했습니다.

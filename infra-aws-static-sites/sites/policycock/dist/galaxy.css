@@ -80,9 +80,22 @@
 }
 
 @media screen and (max-width:600px) and (orientation:portrait) and (pointer:coarse) and (display-mode:browser) {
-  .landing-backdrop {
-    background:#0b0c0d;
-    min-height:max(100lvh,calc(var(--screen-height,100lvh + 104px) - env(safe-area-inset-top,0px)));
+  .landing-opening {
+    --scene-height:max(100dvh,100lvh,calc(var(--screen-height,100lvh + 104px) - env(safe-area-inset-top,0px)));
+    min-height:var(--scene-height);
   }
-  .galaxy-hero-sky {border-bottom:0}
+  .galaxy-hero-sky {
+    border-bottom:0;
+    /* The canvas covers the toolbar area while the links stay above it. */
+    padding-bottom:calc(var(--scene-height) - 100dvh);
+  }
+  .galaxy-hero-sky::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+    background:radial-gradient(ellipse 96% 56% at 22% 103%,rgba(116,84,108,.28),transparent),
+               radial-gradient(ellipse 82% 48% at 100% 95%,rgba(79,101,119,.24),transparent);
+  }
 }

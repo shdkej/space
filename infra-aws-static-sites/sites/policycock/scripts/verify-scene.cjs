@@ -189,12 +189,14 @@ async function main() {
       if(safariPage.url()==='about:blank')await safariPage.goto(url);
       const geometry=await safariPage.evaluate(()=>({
         next:document.querySelector('main').getBoundingClientRect().top,
+        canvasBottom:document.querySelector('#galaxy-canvas').getBoundingClientRect().bottom,
         links:document.querySelector('.galaxy-links a').getBoundingClientRect().bottom,
         screen:window.screen.height,viewport:window.visualViewport.height
       }));
       assert.equal(geometry.screen,852);
       assert.equal(geometry.viewport,height);
       assert.ok(geometry.next>=793 && geometry.next<=794,'next section must start below the floating toolbar: '+JSON.stringify(geometry));
+      assert.ok(Math.abs(geometry.canvasBottom-geometry.next)<=1,'graph must reach the next section');
       assert.ok(geometry.links<=height-34,'links must stay above the bottom safe area');
     }
     await iphone.close();

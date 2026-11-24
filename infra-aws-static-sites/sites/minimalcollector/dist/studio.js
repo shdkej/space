@@ -67,207 +67,30 @@ const imageSubjects = [
 ];
 const studyTypes = ['형태 습작','공간 모형','인물에서 연상한 정물','기록 도구 습작','제작 습작'];
 const imagePath = (group, item) => 'exhibits/' + drawers[group][1].toLowerCase() + '-' + (item + 1) + '.webp';
-const coverButton = document.querySelector('.closed-book');
-const canvas = viewing.querySelector('.book-canvas');
-const pin = viewing.querySelector('.detail-pin');
-const position = viewing.querySelector('.position');
-const previous = viewing.querySelector('.previous');
-const nextButton = viewing.querySelector('.next');
-const fallbackImage = viewing.querySelector('.mount img');
-let currentGroup, currentItem, opener;
-let book, unavailable = false, busy = false, revision = 0;
-let closing = false;
-let gesture, detailPinned = false, detailHovered = false;
-const images = new Map();
-
-function pieceData(group, item) {
-  const [groupName, english, items] = drawers[group];
-  const [title, description] = items[item];
-  const stairs = group === 1 && item === 0;
-  return {group:groupName, english, title, description, stairs, subject:imageSubjects[group][item],
-    number:(item + 1) + ' / ' + items.length, credit:studyTypes[group] + ' · AI 이미지',
-    detail:stairs ? '돌계단의 곡면' : '가까이 보기'};
+let currentGroup;
+let currentItem;
+function showPiece(group, item) {
+  currentGroup = group;
+  currentItem = item;
+  const [name, , items] = drawers[group];
+  const img = viewing.querySelector('img');
+  img.src = imagePath(group, item);
+  img.alt = imageSubjects[group][item];
+  viewing.querySelector('.category').textContent = name + ' / ' + studyTypes[group] + ' · AI 이미지';
+  viewing.querySelector('h2').textContent = items[item][0];
+  viewing.querySelector('.description').textContent = items[item][1];
+  viewing.querySelector('.position').textContent = (item + 1) + ' / ' + items.length;
+  viewing.querySelector('.previous').disabled = item === 0;
+  viewing.querySelector('.next').disabled = item === items.length - 1;
+  if (!viewing.open) viewing.showModal();
 }
-function imageFor(group, item) {
-  const url = imagePath(group, item);
-  if (!images.has(url)) {
-    const img = new Image();
-    const ready = new Promise((resolve, reject) => {
-      img.onload = () => resolve(img);
-      img.onerror = () => {images.delete(url); reject(new Error('Image unavailable'));};
-    });
-    img.src = url;
-    images.set(url, ready);
-  }
-  return images.get(url);
+function stepPiece(delta) {
+  const next = currentItem + delta;
+  if (next >= 0 && next < drawers[currentGroup][2].length) showPiece(currentGroup, next);
 }
-function describe(group, item) {
-  const data = pieceData(group,item);
-  fallbackImage.src = imagePath(group,item);
-  fallbackImage.alt = data.subject;
-  viewing.querySelector('.category').textContent = data.group + ' / ' + data.credit;
-  viewing.querySelector('h2').textContent = data.title;
-  viewing.querySelector('.description').textContent = data.description;
-  position.textContent = data.title + '  ·  ' + data.number;
-  previous.disabled = item === 0;
-  nextButton.disabled = item === drawers[group][2].length - 1;
-  pin.querySelector('.pin-label').textContent = data.stairs ? '돌계단' : '디테일';
-  pin.setAttribute('aria-label', data.detail + ' 확대');
-}
-function restoreFallback() {
-  revision++;
-  busy = false; gesture = null;
-  if (book) book.reset();
-  viewing.classList.remove('has-book');
-  pin.hidden = true;
-}
-function syncDetail() {
-  if (!book?.current) return;
-  book.detail = detailPinned || detailHovered;
-  pin.setAttribute('aria-pressed', String(detailPinned));
-  pin.firstElementChild.textContent = book.detail ? '−' : '+';
-  book.draw();
-}
-function settled() {
-  busy = false;
-  book.turn = null;
-  detailPinned = false; detailHovered = false;
-  syncDetail();
-  const [x,y] = book.pinPosition();
-  pin.style.left = x + '%'; pin.style.top = y + '%'; pin.hidden = false;
-  // Preload only the immediate neighbours in the active drawer.
-  for (const i of [currentItem-1,currentItem+1]) {
-    if (drawers[currentGroup][2][i]) imageFor(currentGroup,i).catch(()=>{});
-  }
-}
-function moveCamera(towardBook) {
-  if (book.motion.matches || typeof canvas.animate !== 'function') return;
-  const initial = coverButton.getBoundingClientRect();
-  if (initial.bottom <= 0 || initial.top >= innerHeight) return;
-  const bounds = canvas.getBoundingClientRect();
-  // In the resting room, the closed cover is centred on the right-hand leaf.
-  const scale = Math.min(.8, initial.width / (bounds.width*.45));
-  const dx = initial.left+initial.width/2 - (bounds.left+bounds.width*(.5+.225*scale));
-  const dy = initial.top+initial.height/2 - (bounds.top+bounds.height*.5);
-  const distance = {transform:'translate('+dx+'px,'+dy+'px) scale('+scale+') rotate(-10deg)'};
-  canvas.animate(towardBook ? [distance,{transform:'none'}] : [{transform:'none'},distance],
-    {duration:towardBook ? 720 : 520,easing:'cubic-bezier(.24,.64,.22,1)',fill:towardBook ? 'none' : 'forwards'});
-}
-async function showPiece(group, item, source) {
-  const id = ++revision;
-  opener = source;
-  currentGroup = group; currentItem = item;
-  describe(group,item);
-  viewing.showModal();
-  if (unavailable) return;
-  busy = true;
-  try {
-    if (!book) book = new CollectionBook(canvas);
-    const img = await imageFor(group,item);
-    if (id !== revision) return;
-    book.reset();
-    const coverPhoto = coverButton.querySelector('img');
-    if (!book.coverPrinted && coverPhoto.naturalWidth) {
-      book.gl.deleteTexture(book.cover);
-      book.cover = book.texture(book.coverArt(coverPhoto));
-      book.coverPrinted = true;
-    }
-    book.current = book.spread(pieceData(group,item),img);
-    book.turn = {kind:'open', q:0};
-    viewing.classList.add('has-book');
-    book.draw();
-    moveCamera(true);
-    book.animate(1,settled);
-  } catch {
-    if (id === revision) restoreFallback();
-  }
-}
-function finishTurn(commit) {
-  if (commit) {
-    book.drop(book.current);
-    book.current = book.pending;
-    currentItem += book.turn.kind === 'next' ? 1 : -1;
-    describe(currentGroup,currentItem);
-  } else book.drop(book.pending);
-  book.pending = null;
-  settled();
-}
-async function stepPiece(delta, drag = null) {
-  const target = currentItem + delta;
-  if (busy || !drawers[currentGroup][2][target]) return;
-  if (!viewing.classList.contains('has-book')) {
-    currentItem = target; describe(currentGroup,target); return;
-  }
-  const id = ++revision;
-  busy = true; pin.hidden = true;
-  try {
-    const img = await imageFor(currentGroup,target);
-    if (id !== revision) return;
-    book.pending = book.spread(pieceData(currentGroup,target),img);
-    book.turn = {kind:delta > 0 ? 'next' : 'previous',q:drag?.progress || 0};
-    book.draw();
-    if (!drag || drag.released) {
-      const commit = !drag || drag.commit;
-      book.animate(commit ? 1 : 0,()=>finishTurn(commit));
-    }
-  } catch {
-    if (id !== revision) return;
-    currentItem = target; describe(currentGroup,target); restoreFallback();
-  }
-}
-
-pin.addEventListener('click',()=>{
-  detailPinned = !detailPinned; detailHovered = false; syncDetail();
-});
-pin.addEventListener('pointerenter',e=>{
-  if (e.pointerType === 'mouse' && !busy) {detailHovered=true;syncDetail();}
-});
-pin.addEventListener('pointerleave',()=>{detailHovered=false;syncDetail();});
-canvas.addEventListener('pointerdown',e=>{
-  if (busy || gesture || e.button !== 0) return;
-  const bounds = canvas.getBoundingClientRect(), x=(e.clientX-bounds.left)/bounds.width, y=(e.clientY-bounds.top)/bounds.height;
-  if (y < .12 || y > .90 || x < .035 || x > .965 || (x > .21 && x < .79)) return;
-  const delta=x>.5?1:-1;
-  if (!drawers[currentGroup][2][currentItem+delta]) return;
-  gesture={id:e.pointerId,start:e.clientX,y:e.clientY,delta,width:bounds.width,progress:0,released:false};
-  canvas.setPointerCapture(e.pointerId);
-  stepPiece(delta,gesture);
-});
-canvas.addEventListener('pointermove',e=>{
-  if (!gesture || gesture.id !== e.pointerId) return;
-  gesture.progress=Math.max(0,Math.min(1,(gesture.start-e.clientX)*gesture.delta/(gesture.width*.65)));
-  if (book.turn) {book.turn.q=gesture.progress;book.draw();}
-});
-function releaseGesture(e) {
-  if (!gesture || gesture.id !== e.pointerId) return;
-  const drag=gesture;gesture=null;drag.released=true;
-  const tap=Math.hypot(e.clientX-drag.start,e.clientY-drag.y)<8;
-  drag.commit=e.type==='pointerup' && (tap || drag.progress>.19);
-  if (book.turn) book.animate(drag.commit?1:0,()=>finishTurn(drag.commit));
-}
-canvas.addEventListener('pointerup',releaseGesture);
-canvas.addEventListener('pointercancel',releaseGesture);
-canvas.addEventListener('webglcontextlost',()=>{unavailable=true;restoreFallback();});
-coverButton.onclick = () => showPiece(1,0,coverButton);
-function closeBook() {
-  if (closing) return;
-  if (busy || !book?.current || book.motion.matches) {viewing.close();return;}
-  closing = true; busy = true; pin.hidden = true;
-  viewing.classList.add('closing-book');
-  book.turn = {kind:'open',q:1};
-  moveCamera(false);
-  book.animate(0,()=>viewing.close());
-}
-viewing.querySelector('.close-view').onclick = closeBook;
-viewing.addEventListener('cancel',e=>{e.preventDefault();closeBook();});
-viewing.addEventListener('close',()=>{
-  restoreFallback();
-  closing = false; viewing.classList.remove('closing-book');
-  canvas.getAnimations?.().forEach(animation=>animation.cancel());
-  opener?.focus({preventScroll:true});
-});
-previous.onclick = () => stepPiece(-1);
-nextButton.onclick = () => stepPiece(1);
+viewing.querySelector('.close-view').onclick = () => viewing.close();
+viewing.querySelector('.previous').onclick = () => stepPiece(-1);
+viewing.querySelector('.next').onclick = () => stepPiece(1);
 viewing.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
     e.preventDefault();
@@ -302,7 +125,7 @@ for (const [index, [name, english, items]] of drawers.entries()) {
     const caption = element('span', 'caption');
     caption.append(element('strong', '', title), element('small', '', studyTypes[index]));
     button.append(img, caption);
-    button.onclick = () => showPiece(index, item, button);
+    button.onclick = () => showPiece(index, item);
     card.append(button);
     contents.append(card);
   }

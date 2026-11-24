@@ -59,3 +59,9 @@ Metrics 이미지 `fd96aab453981ca5b0c7a7adf0975021faf4ee46` (Actions `453981135
 SAM-PC의 Windows 예약 작업 `Status Metrics Analytics Refresh`는 매일 10:15 KST에 실행됩니다. 21:55 KST에 같은 예약 작업을 호출해 종료 코드 0, 원천 3개 11행 모두 성공, 다음 실행 11월 25일 10:15를 확인했습니다. 수집기 릴리스는 `f7d856b`입니다. 로그인된 Windows 사용자와 Egolite 인증이 필요합니다. 예약 작업이 실패하면 재시도 설정과 [Status 운영 절차](../../infra-aws-static-sites/sites/status/README.md)를 확인합니다.
 
 임시 역할 `autoplanner`, `autodev`, `automarketer`, `autooperator`의 검토를 통합해 수집 기간, 지표 의미, 데이터 소스 연결, Windows 로그인 조건을 대조했습니다. 부모는 운영 지표 바인딩과 배포 revision, 예약 작업의 종료 코드, 공개 피드 및 렌더를 직접 확인했습니다.
+
+### 2026-11-24 데이터 연결 창
+
+지도에서 ‘데이터 연결’을 열어 PostHog 앱 또는 GA4 속성, 측정 항목과 대상 칸을 선택한 뒤 기존 편집기에서 ‘지도에 저장’합니다. 편집 중에 열면 현재 칸과 초안을 사용합니다. 검증용 지도에서 GA4 blog 신규 사용자와 PostHog Infinity 고유 세션을 각각 저장하고 재조회했습니다. 브라우저에서 Instagram 계정 입력, PostHog·GA4 선택, JSON 연결과 초안 보존을 검증했습니다.
+
+운영 이미지 `56d8b77`, Actions `45400065811`, manifest `a9c2bd3`의 rollout과 외부 health revision 일치를 확인했습니다. 배포 전후 운영 지도의 내용과 버전 해시가 동일했습니다. Status 그래프는 `3c3ad72`에서 배포했고 데이터 기간·원천·렌더 확인 기록은 [Status README](../../infra-aws-static-sites/sites/status/README.md)에 있습니다. 부모와 종료된 임시 역할 `connectplan`, `connectdev`, `connectmarket`, `connectops`는 대상 칸 선택·저장 의도, 시계열 단위, 실제 집계 날짜와 운영 검증 경로를 교차 확인했습니다.

@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 from analytics_history import attach_history
-from support_inquiries import ACCOUNT_FILE, collect_support
+from support_inquiries import collect_support
 from calendar_periods import TIME_ZONES, merge_periods, requested_periods, validate_session_events
 
 BASE = Path(__file__).resolve().parent
@@ -303,7 +303,7 @@ def main():
     parser.add_argument("--history-seed-dir", type=Path)
     parser.add_argument("--seed-only", action="store_true", help="Import verified history without recollecting current observations")
     parser.add_argument("--legacy-private", action="store_true", help="Also refresh pre-exporter private browser snapshots for rollback")
-    parser.add_argument("--support-only", action="store_true", help="Update only the private Gmail support aggregate")
+    parser.add_argument("--support-only", action="store_true", help="Manually refresh the legacy support snapshot for comparison")
     args = parser.parse_args()
     if args.support_only and (args.seed_only or args.history_seed_dir or args.legacy_private):
         parser.error("--support-only is independent of public feed options")
@@ -317,16 +317,15 @@ def main():
         except BlockingIOError:
             log("Skipped overlapping run")
             return 1 if args.seed_only or args.support_only else 0
-        success = True
-        if args.support_only or (not args.seed_only and ACCOUNT_FILE.exists()):
+        if args.support_only:
             try:
                 publish_private("customer-support-counts", "report.json", collect_support(kubectl_command()), "customer-support-counts")
                 log("customer support counts verified")
+                return 0
             except Exception as error:
                 log(f"customer support counts failed ({type(error).__name__})")
-                success = False
-        if args.support_only:
-            return 0 if success else 1
+                return 1
+        success = True
         inventory = json.loads((BASE / "analytics-inventory.json").read_text())
         client = s3_client()
         sources = SOURCES

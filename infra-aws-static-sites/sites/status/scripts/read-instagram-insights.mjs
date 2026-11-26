@@ -5,6 +5,16 @@ const insightsURL = "https://www.instagram.com/accounts/insights/?timeframe=7";
 const privateMode = typeof collectPrivateInstagram !== "undefined" && collectPrivateInstagram;
 const accounts = privateMode ? ["minimal_collector", "every.policy"] : ["minimal_collector"];
 
+async function openInsights() {
+  try {
+    await page.goto(insightsURL, {waitUntil: "domcontentloaded"});
+  } catch (error) {
+    // Ego may time out on page resources after the navigation already committed.
+    // Callers still verify the insights screen and the active account.
+    if (error.name !== "PageNavigationTimeoutError" || !String(error.message).includes("navigation committed")) throw error;
+  }
+}
+
 async function signedInProfile() {
   return page.evaluate(() => {
     const profile = [...document.querySelectorAll('a[href]')].find(a =>
@@ -43,7 +53,7 @@ async function selectAccount(target) {
 }
 
 async function readInsights(scope) {
-  await page.goto(insightsURL);
+  await openInsights();
   await page.waitForFunction(() => {
     const text = document.querySelector("main")?.innerText || "";
     return /조회수\n[\d,]+\n조회수/.test(text) && /조회한 사람\n[\d,]+/.test(text);
@@ -71,14 +81,14 @@ async function readInsights(scope) {
 
 let original;
 try {
-  await page.goto(insightsURL);
+  await openInsights();
   await page.waitForFunction(() => document.querySelector('svg[aria-label="설정"]'), undefined, {timeout: 20000});
   original = await signedInProfile();
   if (!original) throw Error("Unable to establish signed-in account");
   const rows = [];
   for (const scope of accounts) {
     try {
-      await page.goto(insightsURL);
+      await openInsights();
       await page.waitForFunction(() => document.querySelector('svg[aria-label="설정"]'), undefined, {timeout: 10000});
       if (!await selectAccount(scope)) throw Error("No account access");
       rows.push(await readInsights(scope));
@@ -90,7 +100,7 @@ try {
        values: {views: row.values.views, viewers: row.values.viewers}}
     : row);
   if (await signedInProfile() !== original) {
-    await page.goto(insightsURL);
+    await openInsights();
     await page.waitForFunction(() => document.querySelector('svg[aria-label="설정"]'), undefined, {timeout: 10000});
     if (!await selectAccount(original) || await signedInProfile() !== original) throw Error("Failed to restore signed-in account");
   }

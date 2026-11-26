@@ -73,3 +73,7 @@ Metrics 이미지 `7f70947` (Actions `45401964064`, manifest `fb48188`)를 배�
 수집기 릴리스 `86bde0d`를 설치하고 기존 Windows 예약 작업을 22:28 KST에 실행했습니다. 종료 코드 0, 다음 예약 11월 25일 10:15 KST입니다. GA4 4속성의 52개 구간과 PostHog 6범주의 78개 구간을 확인했습니다. 390·1440px 운영 그래프에 표시된 일·주·월 점의 수가 각 피드와 일치했습니다. GA4 blog와 afzma는 Data API와 Egolite의 구간별 두 지표가 모두 일치했습니다. 부모와 임시 역할 `periodcollector`, `periodmarket`, `periodui`, `periodbrowser`가 수집 기간 경계, 기존 그래프 호환성, 데이터 원천을 대조했습니다.
 
 Grafana 수집용 8787 포트는 내부 Service와 NetworkPolicy로 monitoring의 Prometheus Pod에 연결합니다. 외부 Ingress는 기존 80번 웹 서비스 포트를 사용합니다. 인증 계정이 여러 개면 앱에 `METRICS_BOARD_OWNER`를 설정해 게시할 지도의 소유자를 명시합니다.
+
+2026-11-27 운영 검증에서 앱 `bbe3c1e` (Actions `45911991360`), Space 매니페스트 `9d8b372`, 모니터링 `a74b7c6`을 확인했습니다. 앱 rollout revision 10과 HTTPS health가 일치했고 배포 전후 저장된 지도·버전의 해시가 같았습니다. Prometheus와 인증된 Grafana ‘내 지표 지도’ 표에서 운영 지표 한 칸의 집계 기간, 실제 0, 단위, 원천 측정 시각을 대조했습니다. 운영 지도의 집계 기간은 유지하고, 기간 변경·미측정·계정 격리는 임시 SQLite로 검증했습니다. monitoring-config는 Synced/Healthy였고 agent-metrics에는 기존 Argo 비교 오류가 있어 저장소에 게시한 매니페스트를 직접 적용했습니다.
+
+부모 `/root`와 임시 역할 `/root/planner`, `/root/developer`, `/root/marketer`, `/root/operator`가 참여했습니다. 기획의 현재 정의·실제 0 기준, 개발의 읽기 전용 계정별 조회, 고객 관점의 미측정 행·원천 시각, 운영의 전용 포트·Prometheus 접근 범위를 대조해 구현했습니다. 네 역할 종료 후 부모가 배포와 실제 표 렌더를 확인했습니다.

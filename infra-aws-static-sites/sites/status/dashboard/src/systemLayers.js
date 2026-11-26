@@ -17,11 +17,6 @@ const artifactRepos = [
   ["agent-wiki", "Agent Wiki"],
   ["shdkej.github.io", "shdkej.github.io"],
 ];
-const commitTime = new Intl.DateTimeFormat("ko-KR", {
-  timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
-  hour: "2-digit", minute: "2-digit", hourCycle: "h23",
-});
-
 export async function fetchPublicCommitTimes(signal) {
   const repos = ["agent-wiki", "shdkej.github.io"];
   const results = await Promise.allSettled(repos.map(async repo => {
@@ -41,14 +36,14 @@ function artifactLayer(collectedRepos, publicCommits) {
     const direct = publicCommits[repo];
     const date = Date.parse(direct || (feed?.state === "ok" ? feed.updatedAt : ""));
     const source = direct ? "GitHub API" : "운영 피드";
-    return { name, when: Number.isFinite(date) ? commitTime.format(date) + " KST · " + source : null };
+    return { name, timestamp: Number.isFinite(date) ? date : null, source };
   });
-  const known = entries.filter(entry => entry.when).length;
+  const known = entries.filter(entry => entry.timestamp !== null).length;
   return {
     name: "L4 아티팩트", state: known === entries.length ? "ok" : "none",
     readiness: known === entries.length ? "확인됨" : "확인 대기",
     detail: `저장소 5개 · 최근 커밋 시각 ${known}개 확인`,
-    observations: entries.map(entry => entry.name + " · " + (entry.when || "최근 커밋 미확인")),
+    artifacts: entries,
   };
 }
 

@@ -118,6 +118,11 @@ resource "helm_release" "kube_prometheus_stack" {
     value = "blackcowmoo-googleanalytics-datasource"
   }
 
+  set {
+    name  = "grafana.plugins[1]"
+    value = "volkovlabs-echarts-panel@7.3.0"
+  }
+
   # Grafana 환경변수 - GA4 datasource 크레덴셜 (Secret에서 주입)
   set {
     name  = "grafana.envFromSecret"

@@ -1,4 +1,4 @@
-import { systemLayers } from "./systemLayers.js";
+import { fetchPublicCommitTimes, systemLayers } from "./systemLayers.js";
 import { appMeasurementSeries, useAnalyticsFeed } from "./AppMeasurements.jsx";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
@@ -95,7 +95,6 @@ const metricValue = (series, period) => {
   return item?.value?.[1] ?? "—";
 };
 const monitoringState = (value, fallback = "none") => value || fallback;
-const ageHours = (item) => Number.isFinite(item?.ageHours) ? item.ageHours : Infinity;
 const humanAge = (hours) => {
   if (!Number.isFinite(hours)) return "확인 시각 없음";
   if (hours < 1) return `${Math.max(1, Math.round(hours * 60))}분 전`;
@@ -107,8 +106,6 @@ const priorityMessage = ({ data, live, checks, layers }) => {
   if (brokenLayer) return `${brokenLayer.name} 레이어를 먼저 확인하세요 · ${brokenLayer.detail || brokenLayer.reason || "운영 신호가 끊겼습니다."}`;
   const warningLayer = layers.find((layer) => layer.state === "warn");
   if (warningLayer) return `${warningLayer.name} 레이어에 확인할 신호가 있습니다 · ${warningLayer.detail || warningLayer.reason || "상세 화면에서 근거를 확인하세요."}`;
-  const staleOutput = [...(live?.outputs || [])].sort((a, b) => ageHours(b) - ageHours(a)).find((item) => item.state === "bad");
-  if (staleOutput) return `${staleOutput.name}이 ${humanAge(staleOutput.ageHours)} 멈춰 있습니다 · 다음 기록을 확인하세요.`;
   const failedCheck = checks.find((item) => item.state !== "ok");
   if (failedCheck) return `${failedCheck.name} 접점이 응답하지 않습니다 · ${failedCheck.detail || "Surfaces에서 연결 상태를 확인하세요."}`;
   const feedAge = live?.generatedAt ? (Date.now() - new Date(live.generatedAt).getTime()) / 3600000 : Infinity;
@@ -259,7 +256,31 @@ function App() {
   };
   const load = React.useCallback(async () => { setLoading(true); const [a, b, c] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json()), fetch("./metrics-history.json", { cache: "no-store" }).then((r) => r.ok ? r.json() : null)]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setHistory(c.status === "fulfilled" ? c.value : null); setLoading(false); }, []);
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
-  const layers = systemLayers(live);
+  const [publicCommits, setPublicCommits] = React.useState({});
+  const lastCommitCheck = React.useRef(0);
+  React.useEffect(() => {
+    if (view !== "system") return;
+    const refresh = async () => {
+      const now = Date.now();
+      if (document.hidden || now - lastCommitCheck.current < 10 * 60 * 1000) return;
+      lastCommitCheck.current = now;
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 10000);
+      try {
+        setPublicCommits(await fetchPublicCommitTimes(controller.signal));
+      } finally {
+        window.clearTimeout(timeout);
+      }
+    };
+    refresh();
+    const timer = window.setInterval(refresh, 60000);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, [view]);
+  const layers = systemLayers(live, publicCommits);
   const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks, layers });
   const roleWatchers = live?.roleWatchers || [];
   const liveAgents = live?.agents || [];

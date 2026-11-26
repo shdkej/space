@@ -10,7 +10,49 @@ function worst(values) {
 
 const count = value => Number.isInteger(value) && value >= 0 ? value + "건" : "미수집";
 
-export function systemLayers(live) {
+const artifactRepos = [
+  ["infinity", "Infinity"],
+  ["openclaw-backups", "OpenClaw Backups"],
+  ["knowledge-lab", "Knowledge Lab"],
+  ["agent-wiki", "Agent Wiki"],
+  ["shdkej.github.io", "shdkej.github.io"],
+];
+const commitTime = new Intl.DateTimeFormat("ko-KR", {
+  timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
+  hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+});
+
+export async function fetchPublicCommitTimes(signal) {
+  const repos = ["agent-wiki", "shdkej.github.io"];
+  const results = await Promise.allSettled(repos.map(async repo => {
+    const response = await fetch(`https://api.github.com/repos/shdkej/${repo}/commits?per_page=1`, {
+      signal, credentials: "omit", referrerPolicy: "no-referrer",
+    });
+    if (!response.ok) return null;
+    const [latest] = await response.json();
+    return latest?.commit?.committer?.date;
+  }));
+  return Object.fromEntries(repos.map((repo, index) => [repo, results[index].value]));
+}
+
+function artifactLayer(collectedRepos, publicCommits) {
+  const entries = artifactRepos.map(([repo, name]) => {
+    const feed = collectedRepos.find(row => row.repo === "shdkej/" + repo);
+    const direct = publicCommits[repo];
+    const date = Date.parse(direct || (feed?.state === "ok" ? feed.updatedAt : ""));
+    const source = direct ? "GitHub API" : "운영 피드";
+    return { name, when: Number.isFinite(date) ? commitTime.format(date) + " KST · " + source : null };
+  });
+  const known = entries.filter(entry => entry.when).length;
+  return {
+    name: "L4 아티팩트", state: known === entries.length ? "ok" : "none",
+    readiness: known === entries.length ? "확인됨" : "확인 대기",
+    detail: `저장소 5개 · 최근 커밋 시각 ${known}개 확인`,
+    observations: entries.map(entry => entry.name + " · " + (entry.when || "최근 커밋 미확인")),
+  };
+}
+
+export function systemLayers(live, publicCommits = {}) {
   const system = live?.system;
   const sections = live?.audit?.sections || [];
   const collected = name => {
@@ -23,11 +65,9 @@ export function systemLayers(live) {
   const infra = collected("monitoring") && live?.monitoring?.prometheus;
   const intents = collected("intents") && system?.intents;
   const pdca = collected("pdca") && system?.pdca;
-  const outputs = collected("freshness") && Array.isArray(live?.outputs) ? live.outputs : null;
+  const repos = collected("monitoring") && Array.isArray(live?.monitoring?.github) ? live.monitoring.github : [];
   const cronStates = crons?.map(row => row.status) ?? ["none"];
   const backlogStates = backlogs?.map(row => row.state) ?? ["none"];
-  const overdue = outputs?.filter(row => ["warn", "bad"].includes(row.state));
-  const knownOutputStates = outputs?.every(row => ["ok", "warn", "bad"].includes(row.state));
 
   return [
     {
@@ -55,15 +95,6 @@ export function systemLayers(live) {
         "운영 규칙 " + count(pdca.actRules),
       ] : ["PDCA 수집 대기"],
     },
-    {
-      name: "L4 아티팩트", state: worst(outputs?.map(row => row.state) || []),
-      readiness: overdue?.length ? "갱신 지연" : undefined,
-      detail: outputs ? "산출물 " + outputs.length + "개 · 갱신 지연 " + (knownOutputStates ? overdue.length + "개" : "집계 대기") : "산출물 수집 대기",
-      observations: outputs?.length ? [...outputs].sort((a, b) => overdue.includes(b) - overdue.includes(a)).map(row => {
-        const age = Number.isFinite(row.ageHours) ? (row.ageHours < 1 ? "1시간 이내" : Math.round(row.ageHours) + "시간 전") : "갱신 시각 미수집";
-        const label = {ok: "최신", warn: "갱신 주의", bad: "갱신 지연"}[row.state] || "상태 미수집";
-        return row.name + " · " + label + " · " + age;
-      }) : [outputs ? "등록된 산출물 없음" : "산출물 수집 대기"],
-    },
+    artifactLayer(repos, publicCommits),
   ];
 }

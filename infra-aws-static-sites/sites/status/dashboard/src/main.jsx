@@ -1,3 +1,4 @@
+import { systemLayers } from "./systemLayers.js";
 import { appMeasurementSeries, useAnalyticsFeed } from "./AppMeasurements.jsx";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
@@ -15,14 +16,6 @@ const tabs = [
   { id: "output", label: "Loop", icon: RefreshCw },
   { id: "monitoring", label: "Monitoring", icon: Gauge },
 ];
-const fallbackLayers = [
-  ["L1", "비즈니스", "수용 가능량과 방향", "warn"],
-  ["L2", "제품", "사용 흐름과 핵심 지표", "warn"],
-  ["L3", "콘텐츠", "기획·개발·마케팅 흐름", "warn"],
-  ["L4", "시스템", "저장소와 배포 상태", "ok"],
-  ["L5", "리소스", "노드와 실행 환경", "ok"],
-];
-
 const grafanaBase = "https://grafana.oracle.shdkej.com/d";
 const monitoringCatalog = [
   {
@@ -109,8 +102,7 @@ const humanAge = (hours) => {
   if (hours < 24) return `${Math.round(hours)}시간 전`;
   return `${Math.round(hours / 24)}일 전`;
 };
-const priorityMessage = ({ data, live, checks }) => {
-  const layers = live?.system?.layers || [];
+const priorityMessage = ({ data, live, checks, layers }) => {
   const brokenLayer = layers.find((layer) => layer.state === "bad");
   if (brokenLayer) return `${brokenLayer.name} 레이어를 먼저 확인하세요 · ${brokenLayer.detail || brokenLayer.reason || "운영 신호가 끊겼습니다."}`;
   const warningLayer = layers.find((layer) => layer.state === "warn");
@@ -134,22 +126,13 @@ function Metric({ label, value, tone = "normal" }) {
 }
 
 function SurfaceCard({ item, onOpen }) {
-  return <button className="surface-card" onClick={() => onOpen(item)}>
-    <span className="surface-card-head"><StatusDot state={item.state} /><span>{item.name}</span><ArrowUpRight size={15} /></span>
-    <strong>{item.state === "ok" ? "운영 중" : stateText[item.state] || "확인 대기"}</strong>
-    <small>{item.detail || "상태 설명을 확인할 수 없습니다."}</small>
-  </button>;
-}
-
-function LayerRail({ layers, onOpen }) {
-  return <section className="focus-surface">
-    <div className="section-heading"><div><span className="eyebrow">운영 흐름</span><h2>다섯 레이어가 지금 어디에 있나</h2></div><span className="section-note">상태를 누르면 근거를 봅니다</span></div>
-    <div className="layer-rail">
-      {layers.map(([key, name, detail, state], index) => <button className={clsx("layer-row", `depth-${index}`, state)} key={key} onClick={() => onOpen({ name: `${key} ${name}`, state, detail })}>
-        <span className="layer-marker"><StatusDot state={state} /></span><span className="layer-key">{key}</span><span className="layer-copy"><strong>{name}</strong><small>{detail}</small></span><span className="layer-state">{stateText[state]}</span><ChevronRight size={16} />
-      </button>)}
-    </div>
-  </section>;
+  const content = <>
+    <strong>{item.name}</strong>
+    <small><StatusDot state={item.state} />{stateText[item.state] || "확인 대기"}</small>
+  </>;
+  return item.url
+    ? <a className="surface-tile" title={item.detail} href={item.url} target="_blank" rel="noreferrer">{content}</a>
+    : <button className="surface-tile" title={item.detail} onClick={() => onOpen(item)}>{content}</button>;
 }
 
 function DetailDialog({ item, onClose }) {
@@ -276,8 +259,8 @@ function App() {
   };
   const load = React.useCallback(async () => { setLoading(true); const [a, b, c] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json()), fetch("./metrics-history.json", { cache: "no-store" }).then((r) => r.ok ? r.json() : null)]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setHistory(c.status === "fulfilled" ? c.value : null); setLoading(false); }, []);
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
-  const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks });
-  const layers = live?.system?.layers?.length ? live.system.layers.map((x, i) => [`L${i + 1}`, x.name || x.key || "운영 레이어", x.detail || x.reason || "라이브 상태 확인", x.state || "warn"]) : fallbackLayers;
+  const layers = systemLayers(live);
+  const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks, layers });
   const roleWatchers = live?.roleWatchers || [];
   const liveAgents = live?.agents || [];
   const staticAgents = data?.agents || [];
@@ -304,7 +287,7 @@ function App() {
   const loopEmptyMessage = cronCollectionFailed ? "크론 목록을 가져오지 못했습니다. 수집기 상태를 확인하고 있습니다." : live ? "등록된 크론이 없습니다." : "크론 정보를 불러오는 중입니다.";
   const detailCountLabel = view === "output" ? (crons.length ? `${crons.length}개 크론` : cronCollectionFailed ? "목록 확인 필요" : live ? "등록된 크론 없음" : "수집 대기") : null;
   const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: `${agents.length || "--"} agents`, note: roleWatchers.length ? "역할별 관찰 연결" : "현재 실행 인계", icon: Activity }, { id: "output", label: "Loop", value: loopLabel, note: loopNote, icon: RefreshCw }];
-  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: x.detail || `${x.crons || x.executionLogs?.length || 0}개 실행 기록`, metricId: "agents.status", seriesName: x.name || x.id })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : view === "monitoring" ? monitoringRows : layers.map(([key, name, detail, state]) => ({ name: `${key} ${name}`, state, detail, metricId: `system.layer.${key}` }));
+  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: x.detail || `${x.crons || x.executionLogs?.length || 0}개 실행 기록`, metricId: "agents.status", seriesName: x.name || x.id })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : view === "monitoring" ? monitoringRows : layers;
   const hasHistoryView = ["system", "agents", "monitoring"].includes(view);
   const chartMetric = (row) => history?.metrics?.[row.metricId] || null;
   const navigate = (next) => { setView(next); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
@@ -314,7 +297,7 @@ function App() {
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
     </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `시계열 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong>{view !== "monitoring" && <small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small>}</button>)}</div></div>}
       {view === "monitoring" && <p className="monitoring-note">앱 분석은 완료된 일·주·월의 집계를 표시합니다. 운영 시계열은 최근 24시간·7일·30일의 관측값을 표시합니다.</p>}
-      <div className={clsx("detail-list", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => {
+      <div className={clsx("detail-list", view === "surfaces" && "surface-tiles", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "surfaces" ? detailRows.map(item => <SurfaceCard key={item.url || item.name} item={item} onOpen={setSelected} />) : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => {
         const measurement = measurements[row.metricId];
         const metric = chartMetric(row);
         let displayed = row;
@@ -331,7 +314,7 @@ function App() {
             feed: posthog, metricKey: "events", unit: "건", label: "PostHog · 앱별 수신 이벤트",
           }, range)} range={range} />}
         </HistoryItem>;
-      })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={`${row.metricId}-${row.seriesName || row.name}-${i}`} />) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+      })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={row.metricId || row.name} showChart={Boolean(row.metricId)}>{row.observations && <ul className="layer-observations">{row.observations.map(line => <li key={line}>{line}</li>)}</ul>}</HistoryItem>) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

@@ -1057,3 +1057,34 @@ body:has(.dialog-content) .bottom-nav {
   font-size: 12px;
   line-height: 1.6;
 }
+
+.surface-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+  border: 0;
+}
+.surface-tile {
+  aspect-ratio: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.surface-tile:hover { background: var(--lemon-100); }
+.surface-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.surface-tile strong { font-size: 12px; line-height: 1.2; overflow-wrap: anywhere; }
+.surface-tile small { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); }
+.layer-observations { margin: 0; padding-inline-start: 18px; font-size: 13px; line-height: 1.6; }
+@media (max-width: 620px) {
+  .surface-tiles { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
+  .surface-tile { padding: 4px; gap: 3px; border-radius: 13px; }
+  .surface-tile strong { font-size: 11px; line-height: 1.15; }
+}

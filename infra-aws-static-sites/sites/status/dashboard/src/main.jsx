@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { Archive, Bot, CalendarRange, Camera, Clapperboard, FlaskConical, GalleryVerticalEnd, Globe2, Images, Landmark, ListTree, Luggage, Rocket, ShieldCheck, SlidersHorizontal, Sprout } from "lucide-react";
 import { Activity, ArrowUpRight, Check, ChevronRight, CircleAlert, Clock3, ExternalLink, Gauge, ChevronDown, Layers3, RefreshCw, Server, Sparkles, X } from "lucide-react";
 import { clsx } from "clsx";
 import "./styles.css";
@@ -124,14 +125,38 @@ function Metric({ label, value, tone = "normal" }) {
   return <div className={clsx("metric", tone)}><span>{label}</span><strong>{value}</strong></div>;
 }
 
+const surfaceIcons = new Map([
+  ["Agent Adapt", [Bot, "iris"]],
+  ["Instagram Maker", [Camera, "coral"]],
+  ["Status", [Activity, "lemon"]],
+  ["Travel Ops", [Luggage, "sea"]],
+  ["Night Ledger / Safety Map", [ShieldCheck, "sea"]],
+  ["Safety Map Experiment 03", [FlaskConical, "iris"]],
+  ["Schengen Calculator", [CalendarRange, "sea"]],
+  ["Card News Library", [GalleryVerticalEnd, "lemon"]],
+  ["Image Archive", [Images, "coral"]],
+  ["Infinity", [ListTree, "iris"]],
+  ["Virtue", [Sprout, "sea"]],
+  ["Launch Timeline", [Rocket, "coral"]],
+  ["Control Center CMS", [SlidersHorizontal, "iris"]],
+  ["Reel Room", [Clapperboard, "coral"]],
+  ["Minimal Collector", [Archive, "lemon"]],
+  ["모두의정책", [Landmark, "sea"]],
+]);
+
 function SurfaceCard({ item, onOpen }) {
+  const [Icon, tone] = surfaceIcons.get(item.name) || [Globe2, "neutral"];
+  const tileClass = `surface-tile tone-${tone}`;
   const content = <>
+    <span className="surface-tile-top">
+      <span className="surface-glyph" aria-hidden="true"><Icon size={20} strokeWidth={1.8} /></span>
+      <small><span aria-hidden="true"><StatusDot state={item.state} /></span>{stateText[item.state] || "확인 대기"}</small>
+    </span>
     <strong>{item.name}</strong>
-    <small><StatusDot state={item.state} />{stateText[item.state] || "확인 대기"}</small>
   </>;
   return item.url
-    ? <a className="surface-tile" title={item.detail} href={item.url} target="_blank" rel="noreferrer">{content}</a>
-    : <button className="surface-tile" title={item.detail} onClick={() => onOpen(item)}>{content}</button>;
+    ? <a className={tileClass} title={item.detail} href={item.url} target="_blank" rel="noreferrer">{content}</a>
+    : <button className={tileClass} title={item.detail} onClick={() => onOpen(item)}>{content}</button>;
 }
 
 function DetailDialog({ item, onClose }) {

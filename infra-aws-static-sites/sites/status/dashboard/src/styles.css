@@ -1060,33 +1060,65 @@ body:has(.dialog-content) .bottom-nav {
 
 .surface-tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 9px;
   border: 0;
 }
 .surface-tile {
+  --tile-ink: #516573;
+  --tile-tint: #e7edf0;
   aspect-ratio: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
-  text-align: center;
-  border: 1px solid var(--line);
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 9px;
+  text-align: left;
+  border: 1px solid color-mix(in srgb, var(--tile-ink) 24%, white);
   border-radius: 16px;
-  background: var(--surface);
+  background: linear-gradient(155deg, var(--tile-tint), var(--surface) 94%);
+  box-shadow: inset 0 1px white;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
-.surface-tile:hover { background: var(--lemon-100); }
-.surface-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.surface-tile strong { font-size: 12px; line-height: 1.2; overflow-wrap: anywhere; }
-.surface-tile small { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); }
+.surface-tile.tone-lemon { --tile-ink: #775519; --tile-tint: #fcf1cb; }
+.surface-tile.tone-iris { --tile-ink: #634e89; --tile-tint: #ebe6f6; }
+.surface-tile.tone-coral { --tile-ink: #974e45; --tile-tint: #fae7df; }
+.surface-tile.tone-sea { --tile-ink: #326962; --tile-tint: #dff1e9; }
+.surface-tile:hover { border-color: var(--tile-ink); box-shadow: inset 0 1px white, 0 3px 8px color-mix(in srgb, var(--tile-ink) 14%, transparent); }
+.surface-tile:focus-visible { outline: 2px solid var(--tile-ink); outline-offset: 2px; }
+.surface-tile-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 2px; }
+.surface-glyph {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: var(--tile-ink);
+  background: color-mix(in srgb, var(--tile-ink) 10%, var(--tile-tint));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tile-ink) 10%, transparent);
+}
+.surface-tile strong { font-size: 12px; line-height: 1.2; letter-spacing: -.015em; overflow-wrap: anywhere; }
+.surface-tile small { display: inline-flex; align-items: center; gap: 3px; padding-top: 2px; font-size: 10px; line-height: 1.1; color: #514f43; }
+.surface-tile .status-dot { display: block; width: 5px; height: 5px; box-shadow: none; }
 .layer-observations { margin: 0; padding-inline-start: 18px; font-size: 13px; line-height: 1.6; }
 @media (max-width: 620px) {
-  .surface-tiles { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
-  .surface-tile { padding: 4px; gap: 3px; border-radius: 13px; }
-  .surface-tile strong { font-size: 11px; line-height: 1.15; }
+  .surface-tiles { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 6px; margin-inline: -12px; }
+  .surface-tile { padding: 4px 5px; gap: 2px; border-radius: 13px; }
+  .surface-glyph { width: 22px; height: 22px; border-radius: 7px; }
+  .surface-glyph svg { width: 16px; height: 16px; }
+  .surface-tile strong { font-size: 11px; line-height: 1.12; }
+}
+@media (max-width: 460px) {
+  .surface-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 369px) {
+  .surface-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .surface-tile { transition: none; }
 }
 
 .artifact-timeline {

@@ -113,3 +113,13 @@ nodeSelector:
 - [ ] canary deployment
 - [ ] skip deployment
 - [ ] sync another repository
+
+### S3 사용량·요금 및 OpenClaw 에러 내용
+
+Monitoring의 YACE ConfigMap이 5개 사용 리전의 S3 일간 저장량·객체 수와 us-east-1의
+AWS/Billing S3 예상 월 누적 요금을 수집합니다. 신규 유료 S3 요청 메트릭은 활성화하지 않습니다.
+OpenClaw 상세는 기존 exporter의 내부 JSON API를 Grafana Infinity 4.1.8 플러그인으로 읽습니다.
+플러그인 선언은 `modules/k3s-apps/monitoring.tf`이며 수집·패널·복구 정본은
+[Monitoring DEPLOYMENT.md](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md)입니다.
+현재 운영의 다른 Helm 설정을 바꾸지 않도록 Grafana ConfigMap `plugins`에 해당 플러그인만
+추가하고 Grafana를 rollout합니다. 이후 Helm apply도 위 선언으로 동일 플러그인을 유지합니다.

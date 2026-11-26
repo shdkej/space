@@ -123,6 +123,12 @@ resource "helm_release" "kube_prometheus_stack" {
     value = "volkovlabs-echarts-panel@7.3.0"
   }
 
+  # Private JSON error details from the existing dispatcher exporter.
+  set {
+    name  = "grafana.plugins[2]"
+    value = "yesoreyeram-infinity-datasource@4.1.8"
+  }
+
   # Grafana 환경변수 - GA4 datasource 크레덴셜 (Secret에서 주입)
   set {
     name  = "grafana.envFromSecret"

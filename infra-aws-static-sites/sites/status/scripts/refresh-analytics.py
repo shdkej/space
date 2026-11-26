@@ -277,9 +277,12 @@ def refresh(client, source, inventory, seed=None, seed_only=False, legacy_privat
         if source == "instagram":
             try:
                 snapshot = private_instagram(collected, started)
-                publish_engagement(snapshot, "instagram.json")
                 private_complete = any(row["scope"] == "every.policy" and row["status"] == "ok"
                                        for row in snapshot["rows"])
+                if private_complete or legacy_private:
+                    publish_engagement(snapshot, "instagram.json")
+                else:
+                    log("every.policy unavailable; retaining its last verified snapshot")
             except (KeyError, TypeError, AttributeError, OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
                 log(f"private Instagram snapshot failed ({type(error).__name__})")
                 private_complete = False

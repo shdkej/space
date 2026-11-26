@@ -6,7 +6,18 @@
     'launch_cta_clicked', 'signup_request_accepted',
     'signup_withdrawn', 'signup_cleanup_pending', 'signup_failed'
   ]);
-  const synthetic = new URLSearchParams(location.search).get('qa') === '1';
+  let handoff;
+  try {
+    const saved = JSON.parse(sessionStorage.getItem('policycock.ga4.clean-navigation.v1'));
+    if (saved?.url === location.href) handoff = saved.firstVisit;
+  } catch { /* No incoming GA4 clean navigation. */ }
+  let synthetic = new URLSearchParams(location.search).get('qa') === '1' || handoff?.synthetic === true;
+  try { synthetic ||= sessionStorage.getItem('policycock.firstVisit.qaTab') === '1'; } catch { /* Per-page mode. */ }
+  const wasConsented = handoff?.newBrowser !== true && window.policycockAnalyticsConsent?.() === true;
+  window.policycockFirstVisitHandoff = {
+    synthetic, shared: new URLSearchParams(location.search).get('ref') === 'share' || handoff?.shared === true,
+    newBrowser: !wasConsented,
+  };
   const pageId = window.crypto?.randomUUID?.();
   const sessionKey = 'policycock.posthog.session.v1';
   const idleTimeout = 30 * 60 * 1000;
@@ -31,16 +42,25 @@
     try { sessionStorage.setItem(sessionKey, JSON.stringify(session)); } catch { /* Memory still works. */ }
     return session.id;
   }
+  const firstVisit = window.createFirstVisitTracker({
+    app: 'policycock', key: config.projectKey, allowed: () => window.policycockAnalyticsConsent?.() === true,
+    knownReturning: () => wasConsented, sessionId: visitId, handoff,
+  });
   function clearSessionIfBlocked() {
     if (window.policycockAnalyticsConsent?.()) return;
     session = null;
     try { sessionStorage.removeItem(sessionKey); } catch { /* Storage can be disabled. */ }
   }
-  window.addEventListener('policycock:analytics-choice', clearSessionIfBlocked);
+  window.addEventListener('policycock:analytics-choice', () => {
+    clearSessionIfBlocked();
+    if (!window.policycockAnalyticsConsent?.()) firstVisit.clear();
+  });
   clearSessionIfBlocked();
   function capture(event) {
     if (!allowedEvents.has(event) || !pageId || !/^phc_[A-Za-z0-9]+$/.test(config.projectKey)) return;
     if (!window.policycockAnalyticsConsent?.()) return;
+    if (event === 'landing_viewed') void firstVisit.enter();
+    if (event === 'case_opened') void firstVisit.complete();
     const now = Date.now();
     const properties = {app_id: 'policycock', traffic_kind: synthetic ? 'synthetic' : 'user',
       $session_id: visitId(now), $process_person_profile: false, $geoip_disable: true};
@@ -71,6 +91,15 @@
   });
 
   const byId = id => document.getElementById(id);
+  byId('share-app').addEventListener('click', async () => {
+    const url = 'https://policy.minimalcollector.com/?ref=share';
+    try {
+      if (navigator.share) await navigator.share({title: '모두의정책', url});
+      else { await navigator.clipboard.writeText(url); byId('share-status').textContent = '공유 링크를 복사했습니다.'; }
+    } catch (error) {
+      if (error.name !== 'AbortError') byId('share-status').textContent = url;
+    }
+  });
   const form = byId('launch-form'), status = byId('launch-status');
   const tokenPattern = /^[a-f0-9]{64}\.[a-f0-9]{64}$/;
   const receiptKey = 'policycock.launch.withdraw.v3', pendingKey = 'policycock.launch.retry.v3';

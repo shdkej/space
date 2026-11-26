@@ -181,7 +181,10 @@ const server = createServer((request, response) => {
       assert.ok(elapsed >= 0 && elapsed < 24 * 60 * 60 * 1000, 'event falls within the UUIDv7 session window');
       assert.equal(event.properties.app_id, 'policycock');
       assert.equal(event.properties.traffic_kind, 'synthetic');
-      assert.deepEqual(Object.keys(event.properties).sort(), ['$geoip_disable','$process_person_profile','$session_id','app_id','qa_run_id','traffic_kind'].sort());
+      const firstVisit = ['first_session_started', 'first_session_activated'].includes(event.event);
+      const keys = ['$geoip_disable','$process_person_profile','$session_id','app_id','qa_run_id','traffic_kind'];
+      if (firstVisit) keys.push('referral_source');
+      assert.deepEqual(Object.keys(event.properties).sort(), keys.sort());
       assert.doesNotMatch(JSON.stringify(event), /qa-user|gmail|example\.org|청년기본소득|launch-withdraw|이재명/);
       assert.ok(!JSON.stringify(event).includes(feedback));
       assert.ok(!JSON.stringify(event).includes(token) && !JSON.stringify(event).includes(retry));

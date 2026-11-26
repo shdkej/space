@@ -50,7 +50,7 @@
       // no-referrer document removes both originals before the tag can run.
       if (location.href !== cleanPage.href || document.referrer) {
         try {
-          sessionStorage.setItem(handoffKey, JSON.stringify({url: cleanPage.href, referrer}));
+          sessionStorage.setItem(handoffKey, JSON.stringify({url: cleanPage.href, referrer, firstVisit: window.policycockFirstVisitHandoff}));
           location.replace(cleanPage.href);
         } catch { status.textContent = '주소를 보호할 수 없어 GA4를 실행하지 않습니다.'; }
         return;

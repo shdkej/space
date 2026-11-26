@@ -88,9 +88,11 @@ resource "helm_release" "kube_prometheus_stack" {
     value = "500m"
   }
 
+  # Grafana 13이 768Mi 한계 부근에서 메모리를 회수하는 동안 DB·대시보드 DTO 조회가
+  # 타임아웃된 사례를 확인했다. 조회와 인덱싱에 여유를 둔다.
   set {
     name  = "grafana.resources.limits.memory"
-    value = "768Mi"
+    value = "1Gi"
   }
 
   # Grafana 13은 부팅/인덱싱 중 health 응답이 1초를 넘기는 경우가 있어

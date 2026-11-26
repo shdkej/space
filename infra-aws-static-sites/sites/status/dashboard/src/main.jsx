@@ -1,3 +1,4 @@
+import { useWorkflowHistory, workflowChart, workflowLayer } from "./workflowHistory.js";
 import { fetchPublicCommitTimes, systemLayers } from "./systemLayers.js";
 import { appMeasurementSeries, useAnalyticsFeed } from "./AppMeasurements.jsx";
 import * as React from "react";
@@ -199,7 +200,7 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
       const px = x(time).toFixed(1), py = y(value).toFixed(1);
       if (metric?.calendar && previousEnd !== null && bucket.start > previousEnd + 86400) previousEnd = null;
       if (previousEnd === null) path += `M${px},${py}`;
-      else if (metric?.kind === "state") path += `H${px}V${py}`;
+      else if (metric?.kind === "state" || metric?.snapshot) path += `H${px}V${py}`;
       else path += `L${px},${py}`;
       previousEnd = time;
     }
@@ -232,9 +233,9 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
         : latest && latest[1] !== null ? displayValue(latest[1], metric?.unit, metric?.kind) : "—";
       return <span key={entry.name}><i style={{ background: palette[index % palette.length] }} />{sharedPosthog && entry.name === "virtue" ? "PostHog 공용 프로젝트 전체" : entry.name}<strong>{value}</strong>
         {hasEventCount && <small>수신 이벤트 {bucket.events.toLocaleString("ko-KR")}건{Number.isInteger(bucket.eventsWithSessionId) && ` · 세션 ID 포함 ${bucket.eventsWithSessionId.toLocaleString("ko-KR")}건`}</small>}
-        {metric?.calendar && <small>{[bucket && `마지막 ${selectedRange.label} 집계 · ${bucket.period}`, latest && `조회 ${chartDate(latest[2].observed)}`, entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>;
+        {metric?.calendar && !metric.snapshot && <small>{[bucket && `마지막 ${selectedRange.label} 집계 · ${bucket.period}`, latest && `조회 ${chartDate(latest[2].observed)}`, entry.failed && "최근 조회 실패"].filter(Boolean).join(" · ")}</small>}</span>;
     })}</div>
-    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · {metric?.calendar ? { day: "하루 집계", week: "월요일부터 일요일까지의 주간 집계", month: "달력 월별 집계" }[selectedRange.id] : "최근 값 기준으로 표시합니다"}</small>
+    <small className="history-footnote">{metric?.kind === "state" ? "상태 변화 · 정상 / 주의 / 중단" : `단위: ${metric?.unit || "원천값"}`} · {metric?.snapshot ? "한국 시간(KST) 기간 말 줄 수 · 진행 중인 기간은 현재값" : metric?.calendar ? { day: "하루 집계", week: "월요일부터 일요일까지의 주간 집계", month: "달력 월별 집계" }[selectedRange.id] : "최근 값 기준으로 표시합니다"}</small>
   </div>;
 }
 
@@ -280,7 +281,8 @@ function App() {
       document.removeEventListener("visibilitychange", refresh);
     };
   }, [view]);
-  const layers = systemLayers(live, publicCommits);
+  const workflowFeed = useWorkflowHistory(view === "system");
+  const layers = systemLayers(live, publicCommits, workflowLayer(workflowFeed));
   const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks, layers });
   const roleWatchers = live?.roleWatchers || [];
   const liveAgents = live?.agents || [];
@@ -316,7 +318,7 @@ function App() {
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
     <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `시계열 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong>{view !== "monitoring" && <small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small>}</button>)}</div></div>}
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `${view === "system" ? "L1 상태" : "시계열"} 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong>{view !== "monitoring" && view !== "system" && <small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small>}</button>)}</div></div>}
       {view === "monitoring" && <p className="monitoring-note">앱 분석은 완료된 일·주·월의 집계를 표시합니다. 운영 시계열은 최근 24시간·7일·30일의 관측값을 표시합니다.</p>}
       <div className={clsx("detail-list", view === "surfaces" && "surface-tiles", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "surfaces" ? detailRows.map(item => <SurfaceCard key={item.url || item.name} item={item} onOpen={setSelected} />) : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => {
         const measurement = measurements[row.metricId];
@@ -335,7 +337,17 @@ function App() {
             feed: posthog, metricKey: "events", unit: "건", label: "PostHog · 앱별 수신 이벤트",
           }, range)} range={range} />}
         </HistoryItem>;
-      })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => <HistoryItem row={row} metric={chartMetric(row)} range={range} index={i} key={row.metricId || row.name} showChart={Boolean(row.metricId)}>{row.observations && <ul className="layer-observations">{row.observations.map(line => <li key={line}>{line}</li>)}</ul>}</HistoryItem>) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+      })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => {
+        if (row.workflow) {
+          return <HistoryItem key={row.name} row={row} range={range} index={i} showChart={false}>
+            <HistoryChart metric={workflowChart(workflowFeed, range)} range={range} />
+            {workflowFeed.failed && workflowFeed.data && <small>마지막 성공 조회 기준 · 최근 조회 실패</small>}
+          </HistoryItem>;
+        }
+        return <HistoryItem key={row.metricId || row.name} row={row} metric={chartMetric(row)} range={range} index={i} showChart={Boolean(row.metricId)}>
+          {row.observations && <ul className="layer-observations">{row.observations.map(line => <li key={line}>{line}</li>)}</ul>}
+        </HistoryItem>;
+      }) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

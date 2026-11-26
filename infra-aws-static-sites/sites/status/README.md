@@ -71,7 +71,7 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 ## 운영 화면 메뉴
 
 - 첫 화면은 현재 확인해야 할 메시지와 `System`·`Agents`·`Loop` 세 가지 핵심 이동 버튼만 보여주며, 데스크톱 기준 페이지 스크롤 없이 바로 상태를 선택할 수 있습니다. 상세 레이어·표면 목록은 하단 메뉴에서 들어갑니다.
-- `System`: 삶(데일리 리뷰), 업/시스템(크론·백로그·인프라), 워크플로우(Infinity·PDCA), 아티팩트(지정한 저장소 5개의 최근 커밋 시각)를 표시합니다. 삶의 상태 시계열은 `system.layer.l1`에서 읽습니다. 다른 세 레이어는 펼치면 현재 관측값을 볼 수 있습니다. L4의 Infinity·OpenClaw Backups·Knowledge Lab은 운영 피드의 `monitoring.github`에서, Agent Wiki·shdkej.github.io는 System 화면에서 10분마다 GitHub 공개 API의 기본 브랜치 최근 커밋에서 확인합니다. 시각은 한국 시간이며 확인할 수 없는 저장소는 미확인으로 표시합니다.
+- `System`: 삶(데일리 리뷰), 업/시스템(크론·백로그·인프라), 워크플로우(Prompt Archive의 기획·개발·마케팅·운영 파일 줄 수), 아티팩트(지정한 저장소 5개의 최근 커밋 시각)를 표시합니다. 삶의 상태 시계열은 `system.layer.l1`에서 읽습니다. L2와 L4를 펼치면 현재 관측값을 볼 수 있습니다. L3는 Prompt Archive의 `.agent/workflows/{planner,developer,marketer,operator}.md` 변경 시 Git 이력으로 생성하는 `data/workflow-line-counts.json`을 읽습니다. 그래프는 한국 시간으로 최근 14일·12주(월요일 시작)·12개월의 기간 말 파일 줄 수를 표시합니다. 현재 기간에는 조회한 시점의 값을 표시하고, 변경 없는 기간은 직전 파일 상태를 이어갑니다. 생성 전이나 삭제된 파일은 결측으로 표시합니다. L4의 Infinity·OpenClaw Backups·Knowledge Lab은 운영 피드의 `monitoring.github`에서, Agent Wiki·shdkej.github.io는 System 화면에서 10분마다 GitHub 공개 API의 기본 브랜치 최근 커밋에서 확인합니다. 시각은 한국 시간이며 확인할 수 없는 저장소는 미확인으로 표시합니다.
 - `Monitoring`: 4개 레이어에 각각 8개 지표를 묶어 표시합니다. 지표를 펼쳐 24시간·7일·30일 시계열을 확인하며, 원천이 없는 값은 비워 둡니다. 데이터는 `system-dashboard` 수집기의 `metrics-history.json`에서 읽습니다. PostHog 시계열은 exporter가 제공하는 지표만 표시하며, GA4와 앱별 PostHog 달력 집계는 채널별 피드에서 읽습니다.
 - `Surfaces`: 서비스 이름과 상태를 정사각형 타일로 표시합니다. 타일을 누르면 서비스가 새 탭에서 열리고, URL이 없는 항목은 상태 상세가 열립니다.
 - HTML·body·앱 루트를 동적 뷰포트 높이에 고정해 Safari 주소·도구 막대가 변해도 문서가 더 움직이거나 아래 빈 공간이 드러나지 않게 합니다. 바깥 문서의 스크롤·탄성 이동은 막습니다.

@@ -52,7 +52,7 @@ function artifactLayer(collectedRepos, publicCommits) {
   };
 }
 
-export function systemLayers(live, publicCommits = {}) {
+export function systemLayers(live, publicCommits, workflow) {
   const system = live?.system;
   const sections = live?.audit?.sections || [];
   const collected = name => {
@@ -63,8 +63,6 @@ export function systemLayers(live, publicCommits = {}) {
   const crons = collected("crons") && Array.isArray(live?.crons) ? live.crons : null;
   const backlogs = collected("backlogs") && Array.isArray(system?.backlogs) ? system.backlogs : null;
   const infra = collected("monitoring") && live?.monitoring?.prometheus;
-  const intents = collected("intents") && system?.intents;
-  const pdca = collected("pdca") && system?.pdca;
   const repos = collected("monitoring") && Array.isArray(live?.monitoring?.github) ? live.monitoring.github : [];
   const cronStates = crons?.map(row => row.status) ?? ["none"];
   const backlogStates = backlogs?.map(row => row.state) ?? ["none"];
@@ -85,16 +83,7 @@ export function systemLayers(live, publicCommits = {}) {
         ...(infra?.nodes || []).map(row => row.name + " · " + (row.status || "상태 미수집")),
       ],
     },
-    {
-      name: "L3 워크플로우", state: states[pdca?.state || pdca?.status] || "none",
-      readiness: pdca && !states[pdca.state || pdca.status] ? "상태 미수집" : undefined,
-      detail: intents ? "Infinity 접수 " + count(intents.inbox) + " · 진행 " + count(intents.active) + " · 대기 " + count(intents.waiting) : "Infinity 수집 대기",
-      observations: pdca ? [
-        "미해결 감시 항목 " + count(pdca.checkUnresolved),
-        "최근 7일 품질 게이트 실패 " + count(pdca.checkFailures7d),
-        "운영 규칙 " + count(pdca.actRules),
-      ] : ["PDCA 수집 대기"],
-    },
+    workflow,
     artifactLayer(repos, publicCommits),
   ];
 }

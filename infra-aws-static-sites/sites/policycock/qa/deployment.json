@@ -1,21 +1,21 @@
 {
-  "verifiedAt": "2026-11-24T03:59:02.096Z",
+  "verifiedAt": "2026-11-26T07:49:47.867Z",
   "status": "deployed-and-verified",
   "url": "https://policy.minimalcollector.com/",
   "sourceRepository": "https://github.com/shdkej/space",
   "sourcePath": "infra-aws-static-sites/sites/policycock",
-  "sourceCommit": "bd79f66c86e1795bd4eedee9f9bf6f6a906143b5",
+  "sourceCommit": "b29df3e29278e3999156bd03eec6fdb266b0f2ac",
   "workflow": {
     "name": "Deploy static site to AWS",
-    "runId": 45323019238,
+    "runId": 45777307993,
     "conclusion": "success"
   },
   "verification": {
-    "browserChecks": "qa/live-verification.json",
-    "mobile": "Chromium iPhone 15 emulation at 393×852. The old release moved the first policy anchor by 12.6 CSS px when the toolbar collapsed. With the new release, all ten document-relative anchors and the SHA-256 of the WebGL point buffer remain identical during scrolling through 694, 793, and 694px visible heights. Mobile starts paused; explicit play and pause work. Canvas coverage, touch links and keyboard navigation passed. Physical Safari not tested.",
-    "scene": "Passed WebGL, fallback, ten policy targets, touch, keyboard and reduced motion. At 393×700 with identical anchors, graph nodes decreased from 4098 to 2816 and edges from 4355 to 2913.",
-    "review": "All four native reviews completed. /root/planner and /root/developer examined viewport reflow and animation. /root/marketer and /root/operator reviewed opt-in playback, scroll behavior, and verification limits. /root checked before/after buffers on the public site."
+    "browserChecks": "Production Chromium with outbound analytics intercepted. Before a choice, after declining and after withdrawal, no PostHog requests were observed. The four observed events across acceptance, GA4 redirect, reload and opening a case shared one session ID.",
+    "posthog": "One synthetic event was sent to the production PostHog project 424014. Filtering by its qa_run_id returned one event, one event with properties.$session_id and one distinct session ID.",
+    "baseline": "2026-11-19 through 2026-11-25 UTC inclusive. All 152 user events and all 62 synthetic events lacked properties.$session_id.",
+    "review": "Native role sessions /root/planner, /root/developer, /root/marketer and /root/operator reviewed the change. Developer implemented and tested consent, withdrawal, reload, GA4 navigation and session expiration. Parent /root verified the workflow conclusion, compared production launch.js byte-for-byte with the source, observed browser requests and queried PostHog ingestion."
   },
   "infrastructure": "The existing distribution serves both aliases. Retain the Cloudflare ACM validation record for renewal. See README before the next Terraform apply.",
-  "previousDeployment": "https://github.com/shdkej/space/blob/84d8902/infra-aws-static-sites/sites/policycock/qa/deployment.json"
+  "previousDeployment": "https://github.com/shdkej/space/blob/a95d5134270d9b29c5ac33e9c501dbec0cc87d42/infra-aws-static-sites/sites/policycock/qa/deployment.json"
 }

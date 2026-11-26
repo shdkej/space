@@ -240,11 +240,32 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
   </div>;
 }
 
-function HistoryItem({ row, metric, range, index, children, showChart = true }) {
-  return <details className="history-item" key={`${row.metricId || row.name}-${index}`}>
+function HistoryItem({ row, metric, range, children, showChart = true }) {
+  return <details className="history-item">
     <summary className="history-item-summary"><StatusDot state={row.state} /><span className="history-item-copy"><strong>{row.name}</strong><small>{row.detail || "실시간 상태 변화"}</small></span><span className="row-state">{row.readiness || stateText[row.state] || "확인 대기"}</span><ChevronDown className="history-item-chevron" size={16} aria-hidden="true" /></summary>
     <div className="history-item-body">{children}{showChart && <HistoryChart metric={metric} row={row} range={range} label={children && metric?.series?.length ? "공용 프로젝트 전체 · PostHog exporter" : undefined} />}{row.url && <a className="history-grafana-link" href={row.url} target="_blank" rel="noreferrer">Grafana에서 원본 보기 <ExternalLink size={14} /></a>}</div>
   </details>;
+}
+
+function agentHistoryRows(agents) {
+  const occurrences = new Map();
+  return agents.map(agent => {
+    const name = agent.name || agent.id;
+    let key = `agent:id:${agent.id}`;
+    if (!agent.id) {
+      const occurrence = (occurrences.get(name) || 0) + 1;
+      occurrences.set(name, occurrence);
+      key = `agent:name:${occurrence}:${name}`;
+    }
+    return {
+      key,
+      name,
+      state: agent.state || "ok",
+      detail: agent.detail || `${agent.crons || agent.executionLogs?.length || 0}개 실행 기록`,
+      metricId: "agents.status",
+      seriesName: name,
+    };
+  });
 }
 
 function App() {
@@ -311,7 +332,7 @@ function App() {
   const loopEmptyMessage = cronCollectionFailed ? "크론 목록을 가져오지 못했습니다. 수집기 상태를 확인하고 있습니다." : live ? "등록된 크론이 없습니다." : "크론 정보를 불러오는 중입니다.";
   const detailCountLabel = view === "output" ? (crons.length ? `${crons.length}개 크론` : cronCollectionFailed ? "목록 확인 필요" : live ? "등록된 크론 없음" : "수집 대기") : null;
   const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: `${agents.length || "--"} agents`, note: roleWatchers.length ? "역할별 관찰 연결" : "현재 실행 인계", icon: Activity }, { id: "output", label: "Loop", value: loopLabel, note: loopNote, icon: RefreshCw }];
-  const detailRows = view === "surfaces" ? checks : view === "agents" ? agents.map((x) => ({ name: x.name || x.id, state: x.state || "ok", detail: x.detail || `${x.crons || x.executionLogs?.length || 0}개 실행 기록`, metricId: "agents.status", seriesName: x.name || x.id })) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : view === "monitoring" ? monitoringRows : layers;
+  const detailRows = view === "surfaces" ? checks : view === "agents" ? agentHistoryRows(agents) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : view === "monitoring" ? monitoringRows : layers;
   const hasHistoryView = ["system", "agents", "monitoring"].includes(view);
   const chartMetric = (row) => history?.metrics?.[row.metricId] || null;
   const navigate = (next) => { setView(next); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
@@ -321,7 +342,7 @@ function App() {
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
     </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `${view === "system" ? "L1 상태" : "시계열"} 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label={view === "system" ? "L1·L3 그래프 기간" : "그래프 기간"}>{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong>{view !== "monitoring" && view !== "system" && <small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small>}</button>)}</div></div>}
       {view === "monitoring" && <p className="monitoring-note">앱 분석은 완료된 일·주·월의 집계를 표시합니다. 운영 시계열은 최근 24시간·7일·30일의 관측값을 표시합니다.</p>}
-      <div className={clsx("detail-list", view === "surfaces" && "surface-tiles", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "surfaces" ? detailRows.map(item => <SurfaceCard key={item.url || item.name} item={item} onOpen={setSelected} />) : view === "monitoring" ? monitoringGroups.map((group, groupIndex) => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map((row, index) => {
+      <div className={clsx("detail-list", view === "surfaces" && "surface-tiles", view === "monitoring" && "monitoring-list", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "surfaces" ? detailRows.map(item => <SurfaceCard key={item.url || item.name} item={item} onOpen={setSelected} />) : view === "monitoring" ? monitoringGroups.map(group => <details className="monitoring-group" key={group.uid}><summary><span className="monitoring-group-title">{group.layer}</span><span className="monitoring-group-count">{group.rows.length}개 지표</span><ChevronDown className="monitoring-group-chevron" size={17} aria-hidden="true" /></summary><div className="monitoring-group-rows">{group.rows.map(row => {
         const measurement = measurements[row.metricId];
         const metric = chartMetric(row);
         let displayed = row;
@@ -332,20 +353,20 @@ function App() {
           const state = hasFailure ? "warn" : hasValue ? "ok" : "none";
           displayed = { ...row, state, readiness: hasFailure ? "확인 필요" : hasValue ? "연결됨" : "측정값 없음" };
         }
-        return <HistoryItem key={row.metricId} row={displayed} metric={metric} range={range} index={groupIndex * 8 + index} showChart={!measurement || !!metric?.series?.length}>
+        return <HistoryItem key={row.metricId} row={displayed} metric={metric} range={range} showChart={!measurement || !!metric?.series?.length}>
           {measurement && <HistoryChart metric={appMeasurementSeries(measurement, range)} range={range} />}
           {row.metricId === "product.sessions" && <HistoryChart metric={appMeasurementSeries({
             feed: posthog, metricKey: "events", unit: "건", label: "PostHog · 앱별 수신 이벤트",
           }, range)} range={range} />}
         </HistoryItem>;
-      })}</div></details>) : hasHistoryView ? detailRows.map((row, i) => {
+      })}</div></details>) : hasHistoryView ? detailRows.map(row => {
         if (row.workflow) {
-          return <HistoryItem key={row.name} row={row} range={range} index={i} showChart={false}>
+          return <HistoryItem key={row.name} row={row} range={range} showChart={false}>
             <HistoryChart metric={workflowChart(workflowFeed, range)} range={range} />
             {workflowFeed.failed && workflowFeed.data && <small>마지막 성공 조회 기준 · 최근 조회 실패</small>}
           </HistoryItem>;
         }
-        return <HistoryItem key={row.metricId || row.name} row={row} metric={chartMetric(row)} range={range} index={i} showChart={Boolean(row.metricId)}>
+        return <HistoryItem key={row.key || row.metricId || row.name} row={row} metric={chartMetric(row)} range={range} showChart={Boolean(row.metricId)}>
           {row.artifacts && <ArtifactTimeline entries={row.artifacts} />}
           {row.observations && <ul className="layer-observations">{row.observations.map(line => <li key={line}>{line}</li>)}</ul>}
         </HistoryItem>;

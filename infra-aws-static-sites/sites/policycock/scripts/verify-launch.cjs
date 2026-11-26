@@ -22,6 +22,7 @@ const server = createServer((request, response) => {
     const page = await context.newPage();
     const url = 'http://127.0.0.1:' + server.address().port;
     const events = [], requests = [];
+    const storedVisit = target => target.evaluate(() => sessionStorage.getItem('policycock.posthog.session.v1'));
     const token = '1'.repeat(64) + '.' + 'a'.repeat(64);
     let enabled = false, fail = false, cleanupPending = true, duplicate = false;
     await page.route('**/policy-scene.js', route => route.abort());
@@ -40,15 +41,42 @@ const server = createServer((request, response) => {
     await page.goto(url + '/?qa=1');
     await page.waitForTimeout(150);
     assert.equal(events.length, 0, 'no PostHog call before consent');
+    assert.equal(await storedVisit(page), null);
     await page.getByRole('button', {name:'거부하고 계속'}).click();
     await page.locator('.person').first().click();
     assert.equal(events.length, 0, 'decline also blocks case events');
+    assert.equal(await storedVisit(page), null);
     await page.locator('#policy-dialog button.dialog-close').click();
     await page.getByRole('button', {name:'방문 분석 설정'}).click();
     await page.getByRole('button', {name:'방문 분석 동의'}).click();
     await page.waitForTimeout(150);
     assert.equal(events.some(event => event.event === 'landing_viewed'), true, 'consent starts analytics');
     assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.posthog-only.v1')), 'accepted');
+    const firstSession = events.find(event => event.event === 'landing_viewed').properties.$session_id;
+    assert.match(firstSession, /^[a-f0-9]{8}-[a-f0-9]{4}-7[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/, 'consented event carries a UUIDv7 session ID');
+    const nextLanding = () => page.waitForRequest(request => request.url() === 'https://us.i.posthog.com/i/v0/e/' && request.postDataJSON().event === 'landing_viewed');
+    const [reloadEvent] = await Promise.all([nextLanding(), page.reload()]);
+    assert.equal(reloadEvent.postDataJSON().properties.$session_id, firstSession, 'reload continues the visit');
+    // Simulate returning to a still-active tab whose session began 24 hours ago.
+    const expiredId = await page.evaluate(() => {
+      const key = 'policycock.posthog.session.v1';
+      const saved = JSON.parse(sessionStorage.getItem(key));
+      saved.started = Date.now() - 24 * 60 * 60 * 1000;
+      const time = saved.started.toString(16).padStart(12, '0');
+      saved.id = time.slice(0, 8) + '-' + time.slice(8) + saved.id.slice(13);
+      sessionStorage.setItem(key, JSON.stringify(saved));
+      return saved.id;
+    });
+    const [nextDay] = await Promise.all([nextLanding(), page.reload()]);
+    const nextDayId = nextDay.postDataJSON().properties.$session_id;
+    assert.notEqual(nextDayId, expiredId, 'active visit ends after 24 hours');
+    const [idleEvent] = await Promise.all([page.waitForRequest(request => request.url() === 'https://us.i.posthog.com/i/v0/e/' && request.postDataJSON().event === 'case_opened'), page.evaluate(() => {
+      const now = Date.now();
+      Date.now = () => now + 30 * 60 * 1000;
+      window.policycockCapture('case_opened');
+    })]);
+    const afterIdle = idleEvent.postDataJSON().properties.$session_id;
+    assert.notEqual(afterIdle, nextDayId, '30 minutes of inactivity starts a new visit');
     const sibling = await context.newPage();
     const siblingEvents = [];
     await sibling.route('**/launch-config.js', route => route.fulfill({ contentType: 'application/javascript', body:
@@ -62,6 +90,7 @@ const server = createServer((request, response) => {
     await page.getByRole('button', {name:'방문 분석 설정'}).click();
     await page.getByRole('button', {name:'거부하고 계속'}).click();
     await sibling.waitForFunction(() => !window.policycockAnalyticsConsent());
+    assert.equal(await storedVisit(sibling), null, 'cross-tab withdrawal clears the visit');
     const siblingBefore = siblingEvents.length;
     await sibling.evaluate(() => window.policycockCapture('case_opened'));
     await sibling.waitForTimeout(500);
@@ -76,7 +105,8 @@ const server = createServer((request, response) => {
     assert.equal(await sibling.locator('#analytics-notice').isVisible(), false, 'cross-tab choice closes notice without losing focus');
     await sibling.close();
     await page.getByRole('button', {name:'방문 분석 설정'}).click();
-    await page.getByRole('button', {name:'방문 분석 동의'}).click();
+    const [renewed] = await Promise.all([nextLanding(), page.getByRole('button', {name:'방문 분석 동의'}).click()]);
+    assert.notEqual(renewed.postDataJSON().properties.$session_id, afterIdle, 'new consent starts a fresh visit');
     await page.getByRole('button', {name: '이메일 등록 준비 중'}).waitFor({timeout: 2500});
     assert.equal(await page.locator('#launch-pending button').isDisabled(), true);
     assert.equal(await page.locator('#launch a[href^="mailto:"]').count(), 0);
@@ -146,9 +176,12 @@ const server = createServer((request, response) => {
     }
     assert.equal(events.some(event => ['signup_cleanup_pending','signup_withdrawn'].includes(event.event)), false);
     for (const event of events) {
+      const started = parseInt(event.properties.$session_id.slice(0, 13).replace('-', ''), 16);
+      const elapsed = Date.parse(event.timestamp) - started;
+      assert.ok(elapsed >= 0 && elapsed < 24 * 60 * 60 * 1000, 'event falls within the UUIDv7 session window');
       assert.equal(event.properties.app_id, 'policycock');
       assert.equal(event.properties.traffic_kind, 'synthetic');
-      assert.deepEqual(Object.keys(event.properties).sort(), ['$geoip_disable','$process_person_profile','app_id','qa_run_id','traffic_kind'].sort());
+      assert.deepEqual(Object.keys(event.properties).sort(), ['$geoip_disable','$process_person_profile','$session_id','app_id','qa_run_id','traffic_kind'].sort());
       assert.doesNotMatch(JSON.stringify(event), /qa-user|gmail|example\.org|청년기본소득|launch-withdraw|이재명/);
       assert.ok(!JSON.stringify(event).includes(feedback));
       assert.ok(!JSON.stringify(event).includes(token) && !JSON.stringify(event).includes(retry));

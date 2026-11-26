@@ -64,6 +64,10 @@ const server = createServer((request, response) => {
     await page.waitForFunction(() => !!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]'));
     await page.waitForTimeout(200);
     assert.equal(await page.evaluate(() => document.referrer), '', 'new document drops sensitive referrer');
+    const landingEvents = posthog.filter(event => event.event === 'landing_viewed');
+    assert.equal(landingEvents.length, 2, 'PostHog observed both documents in the GA4 redirect');
+    assert.ok(landingEvents[0].properties.$session_id);
+    assert.equal(landingEvents[0].properties.$session_id, landingEvents[1].properties.$session_id, 'GA4 redirect continues the visit');
     assert.equal(tags.length, 1);
     assert.equal(hits.length, 1, 'single sanitized page view');
     assert.equal(tags[0].headers.referer, undefined);

@@ -7,14 +7,45 @@
     'signup_withdrawn', 'signup_cleanup_pending', 'signup_failed'
   ]);
   const synthetic = new URLSearchParams(location.search).get('qa') === '1';
-  const sessionId = window.crypto?.randomUUID?.();
+  const pageId = window.crypto?.randomUUID?.();
+  const sessionKey = 'policycock.posthog.session.v1';
+  const idleTimeout = 30 * 60 * 1000;
+  const maxDuration = 24 * 60 * 60 * 1000;
+  const uuidPattern = /^[a-f0-9]{8}-[a-f0-9]{4}-7[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
+  let session;
+  function visitId(now) {
+    if (!session) {
+      try { session = JSON.parse(sessionStorage.getItem(sessionKey)); }
+      catch { /* Storage can be unavailable. Keep this page's session in memory. */ }
+    }
+    if (!uuidPattern.test(session?.id) || !Number.isFinite(session.started) ||
+        !Number.isFinite(session.lastEvent) || now - session.started >= maxDuration ||
+        session.lastEvent > now || now - session.lastEvent >= idleTimeout) {
+      // UUIDv7 carries the start time in its first 48 bits and 74 random bits after the version.
+      const time = now.toString(16).padStart(12, '0');
+      const random = window.crypto.randomUUID();
+      const id = time.slice(0, 8) + '-' + time.slice(8) + '-7' + random.slice(15);
+      session = {id, started: now};
+    }
+    session.lastEvent = now;
+    try { sessionStorage.setItem(sessionKey, JSON.stringify(session)); } catch { /* Memory still works. */ }
+    return session.id;
+  }
+  function clearSessionIfBlocked() {
+    if (window.policycockAnalyticsConsent?.()) return;
+    session = null;
+    try { sessionStorage.removeItem(sessionKey); } catch { /* Storage can be disabled. */ }
+  }
+  window.addEventListener('policycock:analytics-choice', clearSessionIfBlocked);
+  clearSessionIfBlocked();
   function capture(event) {
-    if (!allowedEvents.has(event) || !sessionId || !/^phc_[A-Za-z0-9]+$/.test(config.projectKey)) return;
+    if (!allowedEvents.has(event) || !pageId || !/^phc_[A-Za-z0-9]+$/.test(config.projectKey)) return;
     if (!window.policycockAnalyticsConsent?.()) return;
+    const now = Date.now();
     const properties = {app_id: 'policycock', traffic_kind: synthetic ? 'synthetic' : 'user',
-      $process_person_profile: false, $geoip_disable: true};
-    if (synthetic) properties.qa_run_id = sessionId;
-    const body = JSON.stringify({api_key: config.projectKey, event, distinct_id: sessionId, properties});
+      $session_id: visitId(now), $process_person_profile: false, $geoip_disable: true};
+    if (synthetic) properties.qa_run_id = pageId;
+    const body = JSON.stringify({api_key: config.projectKey, event, distinct_id: pageId, timestamp: new Date(now).toISOString(), properties});
     fetch('https://us.i.posthog.com/i/v0/e/', {method: 'POST', headers: {'Content-Type': 'application/json'},
       credentials: 'omit', referrerPolicy: 'no-referrer', body, keepalive: true}).catch(() => {});
   }

@@ -320,7 +320,7 @@ def main():
         success = True
         if args.support_only or (not args.seed_only and ACCOUNT_FILE.exists()):
             try:
-                publish_private("customer-support-counts", "report.json", collect_support(), "customer-support-counts")
+                publish_private("customer-support-counts", "report.json", collect_support(kubectl_command()), "customer-support-counts")
                 log("customer support counts verified")
             except Exception as error:
                 log(f"customer support counts failed ({type(error).__name__})")

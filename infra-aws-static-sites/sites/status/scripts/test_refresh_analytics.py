@@ -54,6 +54,21 @@ class RefreshTests(unittest.TestCase):
             with self.subTest(change=change), patch.dict(row, change), self.assertRaises(ValueError):
                 refresh.merge(*args)
 
+    def test_private_engagement_isolated_and_zero_session_is_undefined(self):
+        self.row["avgSessionEngagementSeconds"] = 0
+        self.feed["rows"][1].update(status="ok", observedAt=self.row["observedAt"],
+                                    values={"newUsers": 0, "sessions": 0})
+        private, complete = refresh.split_engagement(self.feed)
+        self.assertTrue(complete)
+        self.assertEqual(private["rows"][0]["seconds"], 0)
+        self.assertEqual(private["rows"][1]["status"], "no_sessions")
+        self.assertNotIn("seconds", private["rows"][1])
+        public, _ = self.merged()
+        self.assertNotIn("engagement", str(public).lower())
+        private, complete = refresh.split_engagement(self.feed)
+        self.assertFalse(complete)
+        self.assertEqual(private["rows"][0]["status"], "unavailable")
+
     def test_partial_failure_preserves_observation(self):
         result, complete = self.merged()
         self.assertFalse(complete)

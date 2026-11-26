@@ -10,24 +10,32 @@ const task = await taskSpace("Daily GA4 account aggregates for Status");
 const page = task.page("p1");
 const rows = [];
 
+const engagementLabel = '세션당 평균 참여 시간';
+
 async function readTab(label) {
-  return page.evaluate(label => {
+  const value = await page.evaluate(label => {
     for (const tab of document.querySelectorAll('[role="tab"]')) {
-      const [name, value] = tab.innerText.trim().split(/\s*\n\s*/);
-      if (name === label && /^(?:\d+|\d{1,3}(?:,\d{3})+)$/.test(value))
-        return Number(value.replaceAll(",", ""));
+      const [name, text] = tab.innerText.trim().split(/\s*\n\s*/);
+      if (name === label) return text;
     }
     return null;
   }, label);
+  if (!value) return null;
+  if (label === engagementLabel) {
+    const duration = /^(?:(\d+)시간\s*)?(?:(\d+)분\s*)?(?:(\d+)초)?$/.exec(value);
+    return duration && duration.slice(1).some(Boolean)
+      ? Number(duration[1] || 0) * 3600 + Number(duration[2] || 0) * 60 + Number(duration[3] || 0) : null;
+  }
+  return /^(?:\d+|\d{1,3}(?:,\d{3})+)$/.test(value) ? Number(value.replaceAll(",", "")) : null;
 }
 
-async function selectMetric(label, preserve) {
+async function selectMetric(label, ...preserve) {
   if (await readTab(label) !== null) return;
   const snapshot = await page.snapshot();
   const controls = [...snapshot.matchAll(/container "([^"\n]+)"\s+button \[ref=(\d+)\]/g)];
   const control = controls.find(([_, name]) =>
-    /^(활성 사용자|새 사용자 수|세션수|이벤트 수|주요 이벤트|조회수)\s/.test(name) &&
-    !name.startsWith(preserve + " "));
+    /^(활성 사용자|새 사용자 수|세션수|이벤트 수|주요 이벤트|조회수|세션당 평균 참여 시간)\s/.test(name) &&
+    !preserve.some(kept => name.startsWith(kept + " ")));
   if (!control) throw Error("GA4 metric selector unavailable");
   await page.click("@" + control[2]);
   const menu = await page.snapshot();
@@ -36,7 +44,7 @@ async function selectMetric(label, preserve) {
   await page.click("@" + option[1]);
   await page.waitForFunction(label => [...document.querySelectorAll('[role="tab"]')].some(tab => {
     const [name, value] = tab.innerText.trim().split(/\s*\n\s*/);
-    return name === label && /^[\d,]+$/.test(value);
+    return name === label && /^\d/.test(value);
   }), label, {timeout: 15000});
 }
 
@@ -134,6 +142,16 @@ try {
         throw Error("GA4 selection changed");
       row = {scope, status: "ok", method: "GA4 홈 · Egolite", observedAt: new Date().toISOString(),
         periodLabel: "지난 7일 (GA4 속성 기준)", values: {newUsers, sessions}};
+      if (typeof collectPrivateEngagement !== "undefined" && collectPrivateEngagement && sessions > 0) {
+        try {
+          // Keep both required tabs available for the calendar queries.
+          await selectMetric(engagementLabel, "새 사용자 수", "세션수");
+          const seconds = await readTab(engagementLabel);
+          if (seconds !== null) row.avgSessionEngagementSeconds = seconds;
+        } catch {
+          await page.keyboard.press("Escape").catch(() => {});
+        }
+      }
       if (requests[scope]?.length) {
         changedRange = true;
         row.periods = {day: [], week: [], month: []};

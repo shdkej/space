@@ -60,13 +60,18 @@ def s3_client():
                                       retries={"total_max_attempts": 3, "mode": "standard"}))
 
 
+def kubectl_command():
+    kubectl = shutil.which("kubectl") or str(Path.home() / ".local/bin/kubectl")
+    local_config = Path.home() / ".local/share/dashboard-analytics/kubeconfig"
+    command = [kubectl, "--request-timeout=20s"]
+    if not os.environ.get("KUBECONFIG") and local_config.exists():
+        command.extend(["--kubeconfig", str(local_config)])
+    return command
+
+
 def collect(source, previous):
     if source == "posthog":
-        kubectl = shutil.which("kubectl") or str(Path.home() / ".local/bin/kubectl")
-        local_config = Path.home() / ".local/share/dashboard-analytics/kubeconfig"
-        command = [kubectl, "--request-timeout=20s"]
-        if "KUBECONFIG" not in os.environ and local_config.exists():
-            command.extend(["--kubeconfig", str(local_config)])
+        command = kubectl_command()
         endpoint = "/api/v1/namespaces/monitoring/services/http:posthog-exporter:metrics/proxy/analytics-posthog.json"
         result = subprocess.run([*command, "get", "--raw", endpoint], check=True,
                                 capture_output=True, timeout=30)
@@ -80,7 +85,7 @@ def collect(source, previous):
         now = datetime.now(timezone.utc)
         old = {r["scope"]: r.get("periods", {}) for r in previous.get("rows", [])}
         plan = {scope: requested_periods(source, old.get(scope, {}), now) for scope in inventory}
-        code = ("const requestedCalendarPeriods = " + json.dumps(plan) + ";\n").encode() + code
+        code = ("const collectPrivateEngagement = true;\nconst requestedCalendarPeriods = " + json.dumps(plan) + ";\n").encode() + code
     result = subprocess.run([str(BROWSER), "nodejs"], input=code, check=True,
                             timeout=680 if source == "ga4" else 45,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -155,6 +160,41 @@ def merge(source, result, previous, inventory, started):
     return attach_history(source, feed, previous), successful == len(rows) and calendar_complete
 
 
+def split_engagement(result):
+    """Remove optional private measurements before validating the public GA4 feed."""
+    rows = []
+    complete = True
+    for row in result["rows"]:
+        seconds = row.pop("avgSessionEngagementSeconds", None)
+        sessions = row.get("values", {}).get("sessions")
+        private = {"scope": row["scope"], "observedAt": row.get("observedAt", result["observedAt"]),
+                   "status": "unavailable"}
+        if row.get("status") == "ok":
+            private["sessions"] = sessions
+            if sessions == 0:
+                private["status"] = "no_sessions"
+            elif type(seconds) is int and 0 <= seconds < 2**53:
+                private.update(status="ok", seconds=seconds)
+        if private["status"] == "unavailable":
+            complete = False
+        rows.append(private)
+    return {"schemaVersion": 1, "rows": rows}, complete
+
+
+def publish_engagement(report):
+    name = "ga4-session-engagement"
+    payload = json.dumps(report, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
+    manifest = {"apiVersion": "v1", "kind": "ConfigMap", "metadata": {"name": name, "namespace": "monitoring"},
+                "data": {"report.json": payload}}
+    cmd = [*kubectl_command(), "-n", "monitoring"]
+    subprocess.run([*cmd, "apply", "--server-side", "--field-manager=space-analytics", "-f", "-"],
+                   input=json.dumps(manifest).encode(), check=True, capture_output=True, timeout=30)
+    stored = subprocess.run([*cmd, "get", "configmap", name, "-o", "json"],
+                            check=True, capture_output=True, timeout=30)
+    if json.loads(stored.stdout)["data"]["report.json"] != payload:
+        raise RuntimeError("Private GA4 snapshot verification failed")
+
+
 def refresh(client, source, inventory, seed=None, seed_only=False):
     from botocore.exceptions import ClientError
     started = datetime.now(timezone.utc)
@@ -167,6 +207,7 @@ def refresh(client, source, inventory, seed=None, seed_only=False):
         if error.response["Error"]["Code"] not in {"NoSuchKey", "404"}:
             raise
         condition, previous = {"IfNoneMatch": "*"}, {}
+    engagement = None
     if seed_only:
         if not previous:
             raise ValueError("A current feed is required to seed its history")
@@ -182,7 +223,10 @@ def refresh(client, source, inventory, seed=None, seed_only=False):
         if result == previous:
             return True
     else:
-        result, complete = merge(source, collect(source, previous), previous, inventory, started)
+        collected = collect(source, previous)
+        if source == "ga4":
+            engagement, engagement_complete = split_engagement(collected)
+        result, complete = merge(source, collected, previous, inventory, started)
         if seed is not None:
             result = attach_history(source, result, previous, seed)
     body = json.dumps(result, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode()
@@ -192,6 +236,16 @@ def refresh(client, source, inventory, seed=None, seed_only=False):
     stored = client.get_object(Bucket=BUCKET, Key=key, IfMatch=put["ETag"])
     if stored["Body"].read() != body:
         raise RuntimeError("S3 verification failed")
+    if engagement is not None:
+        # The public feed has been published and read back, independently of Kubernetes.
+        try:
+            publish_engagement(engagement)
+        except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
+            log(f"private GA4 engagement publish failed ({type(error).__name__})")
+            return False
+        if not engagement_complete:
+            log("private GA4 engagement partially available")
+            return False
     return complete
 
 

@@ -69,7 +69,7 @@ def kubectl_command():
     return command
 
 
-def collect(source, previous):
+def collect(source, previous, legacy_private=False):
     if source == "posthog":
         command = kubectl_command()
         endpoint = "/api/v1/namespaces/monitoring/services/http:posthog-exporter:metrics/proxy/analytics-posthog.json"
@@ -85,8 +85,10 @@ def collect(source, previous):
         now = datetime.now(timezone.utc)
         old = {r["scope"]: r.get("periods", {}) for r in previous.get("rows", [])}
         plan = {scope: requested_periods(source, old.get(scope, {}), now) for scope in inventory}
-        code = ("const collectPrivateEngagement = true;\nconst requestedCalendarPeriods = " + json.dumps(plan) + ";\n").encode() + code
-    if source == "instagram":
+        code = ("const requestedCalendarPeriods = " + json.dumps(plan) + ";\n").encode() + code
+        if legacy_private:
+            code = b"const collectPrivateEngagement = true;\n" + code
+    if source == "instagram" and legacy_private:
         code = b"const collectPrivateInstagram = true;\n" + code
     result = subprocess.run([str(BROWSER), "nodejs"], input=code, check=True,
                             timeout=800 if source == "ga4" else 150,
@@ -235,7 +237,7 @@ def private_instagram(collected, started):
     return report
 
 
-def refresh(client, source, inventory, seed=None, seed_only=False):
+def refresh(client, source, inventory, seed=None, seed_only=False, legacy_private=False):
     from botocore.exceptions import ClientError
     started = datetime.now(timezone.utc)
     key = f"analytics-{source}.json"
@@ -263,10 +265,10 @@ def refresh(client, source, inventory, seed=None, seed_only=False):
         if result == previous:
             return True
     else:
-        collected = collect(source, previous)
-        if source == "ga4":
+        collected = collect(source, previous, legacy_private)
+        if legacy_private and source == "ga4":
             engagement, engagement_complete = split_engagement(collected)
-        if source == "instagram":
+        if legacy_private and source == "instagram":
             publish_engagement(private_instagram(collected, started), "instagram.json")
         result, complete = merge(source, collected, previous, inventory, started)
         if seed is not None:
@@ -295,6 +297,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--history-seed-dir", type=Path)
     parser.add_argument("--seed-only", action="store_true", help="Import verified history without recollecting current observations")
+    parser.add_argument("--legacy-private", action="store_true", help="Also refresh pre-exporter private browser snapshots for rollback")
     args = parser.parse_args()
     if args.seed_only and not args.history_seed_dir:
         parser.error("--seed-only requires --history-seed-dir")
@@ -321,7 +324,7 @@ def main():
                     path = args.history_seed_dir / f"analytics-{source}.json"
                     if path.is_file():
                         seed = json.loads(path.read_text())
-                complete = refresh(client, source, inventory, seed, args.seed_only)
+                complete = refresh(client, source, inventory, seed, args.seed_only, args.legacy_private)
                 log(f"{source} {'verified' if complete else 'partially updated; prior rows retained'}")
                 success = success and complete
             except Exception as error:

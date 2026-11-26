@@ -21,6 +21,16 @@ class RefreshTests(unittest.TestCase):
                               "values": {"newUsers": 8, "sessions": 13}}]}
         self.inventory = {"ga4": {"a": "1", "b": "2"}}
 
+    def test_scheduled_browser_collects_only_public_metrics(self):
+        for source, flag in (("ga4", b"const collectPrivateEngagement = true;"),
+                             ("instagram", b"const collectPrivateInstagram = true;")):
+            for legacy in (False, True):
+                with self.subTest(source=source, legacy=legacy), patch.object(refresh.subprocess, "run") as run:
+                    run.return_value.stdout = b'{"rows":[]}'
+                    refresh.collect(source, {}, legacy)
+                    code = run.call_args.kwargs["input"]
+                    self.assertEqual(flag in code, legacy)
+
     def merged(self):
         return refresh.merge("ga4", self.feed, self.old, self.inventory, self.start)
 

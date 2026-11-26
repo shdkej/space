@@ -127,7 +127,7 @@ python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
 
 정적 사이트 배포는 수집기 소유 객체를 제외하며 Status 버킷의 다른 파일을 삭제하지 않습니다. 집계 파일의 rows에는 승인된 범위 이름, 집계 기간·시간대, 조회 시각, 숫자와 수집 상태만 포함합니다. 최신 수집 전체가 실패하면 종료 코드 1을 반환하고 이전 파일을 유지합니다. 일부 앱이 실패하면 해당 앱의 마지막 성공 시각·값과 실패 상태를 함께 내보냅니다. 게시 후 해당 HTTPS 피드의 scope·기간·관측 시각·값을 원천과 대조하고, Status Monitoring과 Metrics 지도에서 동일한지 확인합니다.
 
-Grafana 전용 인스타그램 유입 데이터는 같은 예약 작업이 monitoring/ga4-session-engagement에 기록합니다. report.json의 각 GA4 속성에는 세션 소스와 첫 사용자 소스 중 인스타그램에 귀속된 세션·신규 사용자 수를 포함합니다. instagram.json에는 minimal_collector·every.policy에서 확인한 최근 7일 조회수와 조회한 사람 수를 독립적으로 저장합니다. 인사이트를 볼 수 없는 계정은 unavailable입니다. 공개 인스타그램 피드에는 기존 minimal_collector 행만 게시합니다.
+Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API와 Meta Insights API를 직접 읽습니다. SAM-PC 예약 작업은 공개 Space 피드를 갱신합니다. 이전 수집 방식으로 복구할 때만 `refresh-analytics.py --legacy-private`로 Grafana용 ConfigMap을 별도로 갱신할 수 있습니다.
 
 브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 홈에서는 ‘지난 7일’ 및 각 달력 기간을 선택하고 ‘새 사용자 수’와 ‘세션수’를 확인합니다. 새 구간과 최근 마감 구간을 다시 조회해 GA4 피드에 반영합니다. 화면 새로고침은 마지막으로 게시된 피드를 읽습니다.
 
@@ -135,4 +135,4 @@ Status의 기존 신규 사용자·세션 행은 앱별 실측을 일·주·월 
 
 2026-11-24 이력 보강에서는 기준일마다 직전 7일을 원천에서 다시 조회했습니다. PostHog 6개 범주와 GA4 blog·afzma는 최근 30일에 대해 매일, GA4 policycock·purple-place-bb6ce는 10월 27일~11월 23일의 4개 주간에 대해 조회했습니다. GA4 주간 구간은 속성의 대한민국 시간대를 확인했습니다. 11월 17~23일 마지막 구간은 현재 공개 피드와 일치합니다. 390px 및 1440px 운영 화면에서 세 지표의 일·주·월 선택에 따라 실측점 수가 변하는 것을 확인했습니다. 수집기 릴리스 `5e2f8fc` 설치 후 예약 작업을 다시 실행해 최신 관측과 기존 이력을 함께 유지하는 것도 확인했습니다.
 
-Grafana 제품 레이어의 세션당 참여시간은 같은 GA4 예약 실행에서 속성별 지난 7일 보고서의 초 단위 표시값을 읽습니다. 수집기는 같은 날짜의 트래픽 획득 보고서에서 세션 기본 채널 그룹별 세션 수도 읽습니다. 채널 합계가 속성의 전체 세션과 일치할 때 게시합니다. 수집기는 두 값을 공개 피드에서 분리하고 Kubernetes `monitoring/ga4-session-engagement` ConfigMap에 게시합니다. 세션이 0이거나 값을 읽지 못하면 해당 앱 평균은 비어 있습니다.
+Grafana용 exporter는 GA4 속성별 최근 완료 7일의 참여시간·세션수·채널별 세션을 조회합니다. Instagram 계정 지표는 UTC 최근 완료 7일 기준입니다. 공개 인스타그램 피드의 조회한 사람과 Grafana의 API 도달 계정 수는 각 원천의 명칭을 따릅니다.

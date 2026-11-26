@@ -127,7 +127,7 @@ python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
 
 정적 사이트 배포는 수집기 소유 객체를 제외하며 Status 버킷의 다른 파일을 삭제하지 않습니다. 집계 파일의 rows에는 승인된 범위 이름, 집계 기간·시간대, 조회 시각, 숫자와 수집 상태만 포함합니다. 최신 수집 전체가 실패하면 종료 코드 1을 반환하고 이전 파일을 유지합니다. 일부 앱이 실패하면 해당 앱의 마지막 성공 시각·값과 실패 상태를 함께 내보냅니다. 게시 후 해당 HTTPS 피드의 scope·기간·관측 시각·값을 원천과 대조하고, Status Monitoring과 Metrics 지도에서 동일한지 확인합니다.
 
-Grafana 고객 문의 수는 클러스터의 exporter가 Gmail 읽기 전용 인증으로 `gog`를 실행해 매시간 갱신합니다. 등록 앱 이름으로 시작하는 최근 7일의 수신 대화를 앱별로 한 번 집계합니다. 공개 Space 예약 작업은 Gmail을 조회하지 않습니다. 이전 수집기를 수동으로 대조할 때만 `refresh-analytics.py --support-only`를 사용합니다. 이 명령은 로컬 `~/.local/share/dashboard-analytics/gmail-support-account`의 계정으로 비공개 ConfigMap을 갱신하며 운영 exporter는 그 값을 읽지 않습니다.
+Grafana 고객 문의 수는 클러스터의 exporter가 기존 계정 인증과 읽기 전용 모드로 `gog`를 실행해 매시간 갱신합니다. 등록 앱 이름으로 시작하는 최근 7일의 수신 대화를 앱별로 한 번 집계합니다. 공개 Space 예약 작업은 Gmail을 조회하지 않습니다. 이전 수집기를 수동으로 대조할 때만 `refresh-analytics.py --support-only`를 사용합니다. 이 명령은 로컬 `~/.local/share/dashboard-analytics/gmail-support-account`의 계정으로 비공개 ConfigMap을 갱신하며 운영 exporter는 그 값을 읽지 않습니다.
 
 Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API와 Meta Insights API를 직접 읽습니다. SAM-PC 예약 작업은 공개 Space 피드를 갱신합니다. 이전 수집 방식으로 복구할 때만 `refresh-analytics.py --legacy-private`로 Grafana용 ConfigMap을 별도로 갱신할 수 있습니다.
 

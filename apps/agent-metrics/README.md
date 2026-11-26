@@ -71,3 +71,5 @@ SAM-PC의 Windows 예약 작업 `Status Metrics Analytics Refresh`는 매일 10:
 Metrics 이미지 `7f70947` (Actions `45401964064`, manifest `fb48188`)를 배포하고 외부 health revision과 대조했습니다. 기존 편집기의 ‘집계 기간’에서 GA4·PostHog의 일간·주간·월간 또는 최근 7일을 선택합니다. 격리된 지도에서 일간 GA4 blog 신규 사용자 0명, 주간 PostHog Infinity 세션 8회를 실제 연결 창으로 저장하고 재조회했습니다. GA4 blog 세션도 공개 피드와 대조해 11월 23일 0회, 11월 16~22일 10회, 10월 43회를 확인했습니다. Status 그래프 릴리스는 `3ee65a4`입니다.
 
 수집기 릴리스 `86bde0d`를 설치하고 기존 Windows 예약 작업을 22:28 KST에 실행했습니다. 종료 코드 0, 다음 예약 11월 25일 10:15 KST입니다. GA4 4속성의 52개 구간과 PostHog 6범주의 78개 구간을 확인했습니다. 390·1440px 운영 그래프에 표시된 일·주·월 점의 수가 각 피드와 일치했습니다. GA4 blog와 afzma는 Data API와 Egolite의 구간별 두 지표가 모두 일치했습니다. 부모와 임시 역할 `periodcollector`, `periodmarket`, `periodui`, `periodbrowser`가 수집 기간 경계, 기존 그래프 호환성, 데이터 원천을 대조했습니다.
+
+Grafana 수집용 8787 포트는 내부 Service와 NetworkPolicy로 monitoring의 Prometheus Pod에 연결합니다. 외부 Ingress는 기존 80번 웹 서비스 포트를 사용합니다. 인증 계정이 여러 개면 앱에 `METRICS_BOARD_OWNER`를 설정해 게시할 지도의 소유자를 명시합니다.

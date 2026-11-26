@@ -10,7 +10,7 @@ spec:
     targetRevision: HEAD
     path: apps/agent-metrics
     directory:
-      include: '{deployment.yaml,service.yaml,ingress.yaml}'
+      include: '{deployment.yaml,service.yaml,ingress.yaml,network-policy.yaml}'
   destination:
     server: https://kubernetes.default.svc
     namespace: default

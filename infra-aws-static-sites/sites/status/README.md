@@ -98,7 +98,7 @@ Status의 기존 Monitoring 지표에서 GA4 속성별 신규 사용자·세션�
 
 기존 exporter의 세션·재방문·프론트엔드 예외·Web Vitals 쿼리는 프로젝트 전체를 조회하며 서비스 라벨은 `virtue`입니다. 대시보드는 이 범례를 ‘PostHog 공용 프로젝트 전체’로 표시합니다. 앱 분석 그래프 하단 숫자는 마지막 완료 구간의 값입니다. 제품 세션 행에서 앱별 수신 이벤트 추세를 함께 확인할 수 있습니다. PostHog 세션은 고유 `$session_id` 수입니다. 수신 이벤트가 있는데 식별한 세션이 0이면 범례에 ‘세션 ID 없음’을 표시합니다. 2026-11-23 한국 시간 기준 원본 대조에서 Policycock의 이벤트 80건 모두 app_id가 있었고 세션 ID는 없었습니다. 11월 17~23일 일간 집계는 6개 범주 모두 PostHog 원본과 일치했습니다.
 
-Grafana의 **GA4 · PostHog 앱별 비교**(`/d/app-analytics`)도 이 인벤토리를 사용합니다. monitoring_personal의 exporter가 HTTPS GA4 피드의 속성별 신규 사용자·세션과 PostHog 앱별 이벤트·품질 집계를 Prometheus에 제공합니다. 각 차트의 앱 선택기에서 여러 앱을 선택할 수 있습니다. GA4 피드에 추가된 속성은 다음 exporter 수집 때 표시됩니다.
+Grafana 고객 레이어(`/d/layer-customer`)와 제품 레이어(`/d/layer-product`)의 기존 지표에서도 이 인벤토리를 사용합니다. 고객 레이어에서 GA4 신규 사용자·세션과 PostHog 이탈·재방문율을, 제품 레이어에서 PostHog 세션·예외·Web Vitals를 앱별로 비교할 수 있습니다. GA4 피드에 추가된 속성은 다음 exporter 수집 때 표시됩니다.
 
 두 대시보드는 같은 S3 피드를 읽습니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 일곱 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
 

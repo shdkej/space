@@ -99,18 +99,24 @@ async function readBreakdown(account, property, name, expected, observedAt, dime
   const params = encodeURIComponent(route);
   await report.goto("about:blank");
   await report.goto("https://analytics.google.com/analytics/web/#" + path + "?r=" + reportName + "&params=" + params);
-  await report.waitForFunction(({path, dates, name}) => {
+  await report.waitForFunction(({path, dates, name, label, metric, expected}) => {
     const selected = document.querySelector('button[aria-label="기간 선택 도구 열기"]')?.innerText || "";
     const bounds = [...selected.matchAll(/(?:(\d{4})년\s*)?(\d{1,2})월\s*(\d{1,2})일/g)];
     const matches = bounds.length === 2 && bounds.every((m, i) => {
       const [y, mo, d] = dates[i].split("-").map(Number);
       return (!m[1] || Number(m[1]) === y) && Number(m[2]) === mo && Number(m[3]) === d;
     });
-    return matches && location.hash.includes(path) &&
+    const header = [...document.querySelectorAll('tr[role="row"]')].find(r =>
+      r.cells[2]?.innerText.split("\n").some(line => line.trim() === label));
+    const column = header ? [...header.cells].findIndex(c => c.innerText.trim() === metric) : -1;
+    const total = header?.closest("table")?.querySelectorAll('tr[role="row"]');
+    const number = (text) => text?.split(/\n/).map(x => x.trim()).find(x => /^[\d,]+$/.test(x));
+    const value = column >= 0 && total && number([...total].find(r => r.cells[2]?.innerText.trim() === "합계")?.cells[column]?.innerText);
+    return matches && value && (expected == null || Number(value.replaceAll(",", "")) === expected) && location.hash.includes(path) &&
       document.querySelector('button[aria-label="범용 선택 도구 열기"]')?.innerText.includes(name) &&
       [...document.querySelectorAll('tr[role="row"]')].some(r => r.cells[2]?.innerText.trim() === "합계") &&
       (document.querySelector('td[role="gridcell"]') || document.body.innerText.includes("데이터가 없습니다"));
-  }, {path, dates, name}, {timeout: 20000});
+  }, {path, dates, name, label, metric, expected}, {timeout: 20000});
 
   const readTable = () => report.evaluate(({label, metric}) => {
     const rows = [...document.querySelectorAll('tr[role="row"]')];
@@ -129,7 +135,7 @@ async function readBreakdown(account, property, name, expected, observedAt, dime
     return {total: Number(totalText.replaceAll(",", "")), entries};
   }, {label, metric});
   let data = await readTable();
-  if (data?.entries.length >= 10 && data.entries.reduce((sum, [, n]) => sum + n, 0) < expected) {
+  if (data?.entries.length >= 10 && data.entries.reduce((sum, [, n]) => sum + n, 0) < data.total) {
     await report.evaluate(() => document.getElementById("rows-per-page-select")?.scrollIntoView({block: "center"}));
     await report.click("css:#rows-per-page-select");
     await report.click(dimension ? 'role:option[name="250"]' : 'role:option[name="50"]');
@@ -137,10 +143,10 @@ async function readBreakdown(account, property, name, expected, observedAt, dime
       /^\d+$/.test(r.cells[1]?.innerText.trim())).length > 10, undefined, {timeout: 10000});
     data = await readTable();
   }
-  if (!data || data.total !== expected || data.entries.length > (dimension ? 250 : 32) ||
+  if (!data || (expected != null && data.total !== expected) || data.entries.length > (dimension ? 250 : 32) ||
       data.entries.some(([name, count]) => !name || name.length > (dimension ? 255 : 48) || !Number.isSafeInteger(count) || count < 0) ||
       new Set(data.entries.map(([name]) => name)).size !== data.entries.length ||
-      data.entries.reduce((sum, [, count]) => sum + count, 0) !== expected) {
+      data.entries.reduce((sum, [, count]) => sum + count, 0) !== data.total) {
     throw Error("GA4 breakdown does not match the source total");
   }
   return Object.fromEntries(data.entries);
@@ -243,16 +249,22 @@ try {
       } catch {
         // Public measurements and the independently observed engagement metric remain available.
       }
+    }
+    if (typeof collectPrivateEngagement !== "undefined" && collectPrivateEngagement) {
+      // These reports have their own independently checked totals and remain usable if the home failed.
       row.instagramAcquisition = {};
       for (const [metric, dimension, label, heading] of [
         ["sessions", "sessionSource", "세션 소스", "세션수"],
         ["newUsers", "firstUserSource", "첫 사용자 소스", "새 사용자 수"],
       ]) {
-        try {
-          const sources = await readBreakdown(account, property, name, row.values[metric], row.observedAt,
-            dimension, label, heading);
-          row.instagramAcquisition[metric] = instagramCount(sources);
-        } catch { /* An unverified or unavailable metric stays absent. */ }
+        for (let attempt = 0; attempt < 2; attempt++) {
+          try {
+            const sources = await readBreakdown(account, property, name, row.values?.[metric],
+              row.observedAt || new Date().toISOString(), dimension, label, heading);
+            row.instagramAcquisition[metric] = instagramCount(sources);
+            break;
+          } catch { /* A new navigation retries a transient report render. */ }
+        }
       }
     }
     rows.push(row);

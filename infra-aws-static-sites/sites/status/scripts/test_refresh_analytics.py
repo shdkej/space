@@ -56,10 +56,11 @@ class RefreshTests(unittest.TestCase):
 
     def test_private_engagement_isolated_and_zero_session_is_undefined(self):
         self.row["avgSessionEngagementSeconds"] = 0
-        self.row["instagramAcquisition"] = {"sessions": 2, "newUsers": 3}
+        self.row["instagramAcquisition"] = {"sessions": 2, "newUsers": 0}
         self.row["channelSessions"] = {"Direct": 3, "Referral": 1}
         self.feed["rows"][1].update(status="ok", observedAt=self.row["observedAt"],
-                                    values={"newUsers": 0, "sessions": 0}, channelSessions={})
+                                    values={"newUsers": 0, "sessions": 0}, channelSessions={},
+                                    instagramAcquisition={"newUsers": 0, "sessions": 0})
         private, complete = refresh.split_engagement(self.feed)
         self.assertTrue(complete)
         self.assertEqual(private["rows"][0]["seconds"], 0)
@@ -70,10 +71,19 @@ class RefreshTests(unittest.TestCase):
         self.assertNotIn("engagement", str(public).lower())
         self.assertNotIn("channelSessions", str(public))
         self.assertNotIn("instagramAcquisition", str(public))
-        self.assertEqual(private["rows"][0]["instagramAcquisition"], {"sessions": 2})
+        self.assertEqual(private["rows"][0]["instagramAcquisition"], {"sessions": 2, "newUsers": 0})
         private, complete = refresh.split_engagement(self.feed)
         self.assertFalse(complete)
         self.assertEqual(private["rows"][0]["status"], "unavailable")
+
+    def test_instagram_breakdowns_remain_independent_and_partial_is_flagged(self):
+        self.row.update(avgSessionEngagementSeconds=0, channelSessions={"Direct": 4},
+                        instagramAcquisition={"sessions": 2, "newUsers": 3})
+        self.feed["rows"][1]["instagramAcquisition"] = {"newUsers": 0, "sessions": 5}
+        report, complete = refresh.split_engagement(self.feed)
+        self.assertFalse(complete)
+        self.assertEqual(report["rows"][0]["instagramAcquisition"], {"sessions": 2})
+        self.assertEqual(report["rows"][1]["instagramAcquisition"], {"sessions": 5, "newUsers": 0})
 
     def test_private_instagram_records_only_verified_account_measures(self):
         collected = {"privateAccounts": [

@@ -173,13 +173,15 @@ def split_engagement(result):
         sessions = row.get("values", {}).get("sessions")
         private = {"scope": row["scope"], "observedAt": row.get("observedAt", result["observedAt"]),
                    "status": "unavailable"}
+        private["instagramAcquisition"] = {
+            key: acquisition[key] for key in ("sessions", "newUsers")
+            if isinstance(acquisition, dict) and type(acquisition.get(key)) is int
+            and 0 <= acquisition[key] <= row.get("values", {}).get(key, 2**53 - 1)
+        }
+        if len(private["instagramAcquisition"]) != 2:
+            complete = False
         if row.get("status") == "ok":
             private["sessions"] = sessions
-            private["instagramAcquisition"] = {
-                key: acquisition[key] for key in ("sessions", "newUsers")
-                if isinstance(acquisition, dict) and type(acquisition.get(key)) is int
-                and type(row["values"].get(key)) is int and 0 <= acquisition[key] <= row["values"][key]
-            }
             if (isinstance(channels, dict) and len(channels) <= 32
                     and all(isinstance(k, str) and 0 < len(k) <= 48 and type(v) is int
                             and 0 <= v < 2**53 for k, v in channels.items())
@@ -284,7 +286,7 @@ def refresh(client, source, inventory, seed=None, seed_only=False):
             log(f"private GA4 engagement publish failed ({type(error).__name__})")
             return False
         if not engagement_complete:
-            log("private GA4 engagement or channel breakdown partially available")
+            log("private GA4 engagement, channel or Instagram breakdown partially available")
             return False
     return complete
 

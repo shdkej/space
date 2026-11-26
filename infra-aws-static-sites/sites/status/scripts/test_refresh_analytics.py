@@ -56,15 +56,18 @@ class RefreshTests(unittest.TestCase):
 
     def test_private_engagement_isolated_and_zero_session_is_undefined(self):
         self.row["avgSessionEngagementSeconds"] = 0
+        self.row["channelSessions"] = {"Direct": 3, "Referral": 1}
         self.feed["rows"][1].update(status="ok", observedAt=self.row["observedAt"],
-                                    values={"newUsers": 0, "sessions": 0})
+                                    values={"newUsers": 0, "sessions": 0}, channelSessions={})
         private, complete = refresh.split_engagement(self.feed)
         self.assertTrue(complete)
         self.assertEqual(private["rows"][0]["seconds"], 0)
+        self.assertEqual(private["rows"][0]["channelSessions"]["Referral"], 1)
         self.assertEqual(private["rows"][1]["status"], "no_sessions")
         self.assertNotIn("seconds", private["rows"][1])
         public, _ = self.merged()
         self.assertNotIn("engagement", str(public).lower())
+        self.assertNotIn("channelSessions", str(public))
         private, complete = refresh.split_engagement(self.feed)
         self.assertFalse(complete)
         self.assertEqual(private["rows"][0]["status"], "unavailable")

@@ -85,6 +85,63 @@ async function waitForChart(range, path) {
   }, {...range, path}, {timeout: 15000});
 }
 
+async function readChannelSessions(account, property, name, expectedSessions, observedAt) {
+  const report = page;
+  const day = 86400000;
+  const today = Date.parse(new Intl.DateTimeFormat("sv-SE", {timeZone: "Asia/Seoul"}).format(new Date(observedAt)));
+  const dates = [7, 1].map(n => new Date(today - n * day).toISOString().slice(0, 10));
+  const path = "/a" + account + "p" + property + "/reports/explorer";
+  const [start, end] = dates.map(d => d.replaceAll("-", ""));
+  const params = encodeURIComponent("_u..nav=maui&_u.date00=" + start + "&_u.date01=" + end);
+  await report.goto("about:blank");
+  await report.goto("https://analytics.google.com/analytics/web/#" + path + "?r=lifecycle-traffic-acquisition-v2&params=" + params);
+  await report.waitForFunction(({path, dates, name}) => {
+    const selected = document.querySelector('button[aria-label="기간 선택 도구 열기"]')?.innerText || "";
+    const bounds = [...selected.matchAll(/(?:(\d{4})년\s*)?(\d{1,2})월\s*(\d{1,2})일/g)];
+    const matches = bounds.length === 2 && bounds.every((m, i) => {
+      const [y, mo, d] = dates[i].split("-").map(Number);
+      return (!m[1] || Number(m[1]) === y) && Number(m[2]) === mo && Number(m[3]) === d;
+    });
+    return matches && location.hash.includes(path) &&
+      document.querySelector('button[aria-label="범용 선택 도구 열기"]')?.innerText.includes(name) &&
+      [...document.querySelectorAll('tr[role="row"]')].some(r => r.cells[2]?.innerText.trim() === "합계") &&
+      (document.querySelector('td[role="gridcell"]') || document.body.innerText.includes("데이터가 없습니다"));
+  }, {path, dates, name}, {timeout: 20000});
+
+  const readTable = () => report.evaluate(() => {
+    const rows = [...document.querySelectorAll('tr[role="row"]')];
+    const header = rows.find(r => r.cells[2]?.innerText.includes("세션 기본 채널 그룹(기본 채널 그룹)") &&
+      r.cells[3]?.innerText.trim() === "세션수");
+    if (!header) return null;
+    const tableRows = rows.filter(r => r.closest("table") === header.closest("table"));
+    const totalCell = tableRows.find(r => r.cells[2]?.innerText.trim() === "합계")?.cells[3].innerText;
+    const totalText = totalCell?.split(/\n/).map(s => s.trim()).find(s => /^[\d,]+$/.test(s));
+    if (!totalText) return null;
+    const entries = tableRows.filter(r => /^\d+$/.test(r.cells[1]?.innerText.trim())).map(r => {
+      const label = r.cells[2].innerText.trim();
+      const count = r.cells[3].innerText.trim().match(/^([\d,]+)(?:\s|$)/);
+      return [label, count ? Number(count[1].replaceAll(",", "")) : null];
+    });
+    return {total: Number(totalText.replaceAll(",", "")), entries};
+  });
+  let data = await readTable();
+  if (data?.entries.length >= 10 && data.entries.reduce((sum, [, n]) => sum + n, 0) < expectedSessions) {
+    await report.evaluate(() => document.getElementById("rows-per-page-select")?.scrollIntoView({block: "center"}));
+    await report.click("css:#rows-per-page-select");
+    await report.click('role:option[name="50"]');
+    await report.waitForFunction(() => [...document.querySelectorAll('tr[role="row"]')].filter(r =>
+      /^\d+$/.test(r.cells[1]?.innerText.trim())).length > 10, undefined, {timeout: 10000});
+    data = await readTable();
+  }
+  if (!data || data.total !== expectedSessions || data.entries.length > 32 ||
+      data.entries.some(([name, count]) => !name || name.length > 48 || !Number.isSafeInteger(count) || count < 0) ||
+      new Set(data.entries.map(([name]) => name)).size !== data.entries.length ||
+      data.entries.reduce((sum, [, count]) => sum + count, 0) !== expectedSessions) {
+    throw Error("GA4 channel sessions do not match the source total");
+  }
+  return Object.fromEntries(data.entries);
+}
+
 async function readPeriod(range, path) {
   const {kind, periodStart, periodEnd} = range;
   if (!["day", "week", "month"].includes(kind) ||
@@ -167,6 +224,13 @@ try {
       if (changedRange) {
         await page.keyboard.press("Escape").catch(() => {});
         await chooseRange("지난 7일").catch(() => {});
+      }
+    }
+    if (typeof collectPrivateEngagement !== "undefined" && collectPrivateEngagement && row?.status === "ok") {
+      try {
+        row.channelSessions = await readChannelSessions(account, property, name, row.values.sessions, row.observedAt);
+      } catch {
+        // Public measurements and the independently observed engagement metric remain available.
       }
     }
     rows.push(row);

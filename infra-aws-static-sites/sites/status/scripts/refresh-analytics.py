@@ -87,7 +87,7 @@ def collect(source, previous):
         plan = {scope: requested_periods(source, old.get(scope, {}), now) for scope in inventory}
         code = ("const collectPrivateEngagement = true;\nconst requestedCalendarPeriods = " + json.dumps(plan) + ";\n").encode() + code
     result = subprocess.run([str(BROWSER), "nodejs"], input=code, check=True,
-                            timeout=680 if source == "ga4" else 45,
+                            timeout=800 if source == "ga4" else 45,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     return json.loads(result.stdout.decode("utf-8-sig").strip())
 
@@ -166,11 +166,19 @@ def split_engagement(result):
     complete = True
     for row in result["rows"]:
         seconds = row.pop("avgSessionEngagementSeconds", None)
+        channels = row.pop("channelSessions", None)
         sessions = row.get("values", {}).get("sessions")
         private = {"scope": row["scope"], "observedAt": row.get("observedAt", result["observedAt"]),
                    "status": "unavailable"}
         if row.get("status") == "ok":
             private["sessions"] = sessions
+            if (isinstance(channels, dict) and len(channels) <= 32
+                    and all(isinstance(k, str) and 0 < len(k) <= 48 and type(v) is int
+                            and 0 <= v < 2**53 for k, v in channels.items())
+                    and sum(channels.values()) == sessions):
+                private["channelSessions"] = channels
+            else:
+                complete = False
             if sessions == 0:
                 private["status"] = "no_sessions"
             elif type(seconds) is int and 0 <= seconds < 2**53:
@@ -244,7 +252,7 @@ def refresh(client, source, inventory, seed=None, seed_only=False):
             log(f"private GA4 engagement publish failed ({type(error).__name__})")
             return False
         if not engagement_complete:
-            log("private GA4 engagement partially available")
+            log("private GA4 engagement or channel breakdown partially available")
             return False
     return complete
 

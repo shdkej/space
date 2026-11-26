@@ -100,10 +100,10 @@ Status의 기존 Monitoring 지표에서 GA4 속성별 신규 사용자·세션�
 
 Grafana 고객 레이어(`/d/layer-customer`)와 제품 레이어(`/d/layer-product`)의 기존 지표에서도 이 인벤토리를 사용합니다. 고객 레이어에서 GA4 신규 사용자·세션과 PostHog 이탈·재방문율을, 제품 레이어에서 PostHog 세션·예외·Web Vitals를 앱별로 비교할 수 있습니다. GA4 피드에 추가된 속성은 다음 exporter 수집 때 표시됩니다.
 
-두 대시보드는 같은 S3 피드를 읽습니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 일곱 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
+두 대시보드는 같은 S3 피드를 읽습니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 여덟 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
 
 - `refresh-analytics.py`, `collect-analytics.py`, `calendar_periods.py`, `analytics_history.py`, `analytics-inventory.json`
-- `read-ga4-insights.mjs`, `read-instagram-insights.mjs`
+- `read-ga4-insights.mjs`, `read-instagram-insights.mjs`, `support_inquiries.py`
 
 Windows 예약 작업은 기존 사용자 로그온 세션에서 다음 명령을 실행합니다. 필요한 Python 패키지는 전용 `python/` 디렉터리의 boto3와 그 의존성입니다. PC를 켜고 사용자가 로그인한 뒤 놓친 예약을 보충 실행하도록 설정합니다.
 
@@ -126,6 +126,8 @@ python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
 ```
 
 정적 사이트 배포는 수집기 소유 객체를 제외하며 Status 버킷의 다른 파일을 삭제하지 않습니다. 집계 파일의 rows에는 승인된 범위 이름, 집계 기간·시간대, 조회 시각, 숫자와 수집 상태만 포함합니다. 최신 수집 전체가 실패하면 종료 코드 1을 반환하고 이전 파일을 유지합니다. 일부 앱이 실패하면 해당 앱의 마지막 성공 시각·값과 실패 상태를 함께 내보냅니다. 게시 후 해당 HTTPS 피드의 scope·기간·관측 시각·값을 원천과 대조하고, Status Monitoring과 Metrics 지도에서 동일한지 확인합니다.
+
+Grafana 고객 문의 수는 같은 예약 작업에서 매일 오전 10:15 KST에 별도로 갱신합니다. 이 호스트의 `~/.local/share/dashboard-analytics/gmail-support-account`에 승인된 수신 주소 하나를 저장하고 파일 권한을 0600으로 지정합니다. `~/.local/bin/gog`의 기존 사용자 인증으로 지난 7일 동안 받은 메일에서 제목 맨 앞의 [모두의정책]·[virtue]만 분류합니다. 한 대화는 앱별 한 번 집계하고 영문 대소문자는 구분하지 않습니다. `refresh-analytics.py --support-only`는 앱별 건수와 관측 시각을 비공개 Kubernetes ConfigMap `monitoring/customer-support-counts`에 게시하고 재조회합니다. 메일 제목·본문·주소·대화 ID는 게시하지 않습니다.
 
 Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API와 Meta Insights API를 직접 읽습니다. SAM-PC 예약 작업은 공개 Space 피드를 갱신합니다. 이전 수집 방식으로 복구할 때만 `refresh-analytics.py --legacy-private`로 Grafana용 ConfigMap을 별도로 갱신할 수 있습니다.
 

@@ -12,6 +12,7 @@ import subprocess
 import sys
 
 from analytics_history import attach_history
+from support_inquiries import ACCOUNT_FILE, collect_support
 from calendar_periods import TIME_ZONES, merge_periods, requested_periods, validate_session_events
 
 BASE = Path(__file__).resolve().parent
@@ -203,11 +204,15 @@ def split_engagement(result):
 
 def publish_engagement(report, key="report.json"):
     name = "ga4-session-engagement"
+    manager = "space-analytics-instagram" if key == "instagram.json" else "space-analytics"
+    publish_private(name, key, report, manager)
+
+
+def publish_private(name, key, report, manager):
     payload = json.dumps(report, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
     manifest = {"apiVersion": "v1", "kind": "ConfigMap", "metadata": {"name": name, "namespace": "monitoring"},
                 "data": {key: payload}}
     cmd = [*kubectl_command(), "-n", "monitoring"]
-    manager = "space-analytics-instagram" if key == "instagram.json" else "space-analytics"
     subprocess.run([*cmd, "apply", "--server-side", f"--field-manager={manager}", "-f", "-"],
                    input=json.dumps(manifest).encode(), check=True, capture_output=True, timeout=30)
     stored = subprocess.run([*cmd, "get", "configmap", name, "-o", "json"],
@@ -298,7 +303,10 @@ def main():
     parser.add_argument("--history-seed-dir", type=Path)
     parser.add_argument("--seed-only", action="store_true", help="Import verified history without recollecting current observations")
     parser.add_argument("--legacy-private", action="store_true", help="Also refresh pre-exporter private browser snapshots for rollback")
+    parser.add_argument("--support-only", action="store_true", help="Update only the private Gmail support aggregate")
     args = parser.parse_args()
+    if args.support_only and (args.seed_only or args.history_seed_dir or args.legacy_private):
+        parser.error("--support-only is independent of public feed options")
     if args.seed_only and not args.history_seed_dir:
         parser.error("--seed-only requires --history-seed-dir")
     state = Path.home() / ".local/state/dashboard-analytics"
@@ -308,10 +316,19 @@ def main():
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             log("Skipped overlapping run")
-            return 1 if args.seed_only else 0
+            return 1 if args.seed_only or args.support_only else 0
+        success = True
+        if args.support_only or (not args.seed_only and ACCOUNT_FILE.exists()):
+            try:
+                publish_private("customer-support-counts", "report.json", collect_support(), "customer-support-counts")
+                log("customer support counts verified")
+            except Exception as error:
+                log(f"customer support counts failed ({type(error).__name__})")
+                success = False
+        if args.support_only:
+            return 0 if success else 1
         inventory = json.loads((BASE / "analytics-inventory.json").read_text())
         client = s3_client()
-        success = True
         sources = SOURCES
         if args.seed_only:
             sources = [s for s in SOURCES if (args.history_seed_dir / f"analytics-{s}.json").is_file()]

@@ -89,7 +89,7 @@ def collect(source, previous, legacy_private=False):
         code = ("const requestedCalendarPeriods = " + json.dumps(plan) + ";\n").encode() + code
         if legacy_private:
             code = b"const collectPrivateEngagement = true;\n" + code
-    if source == "instagram" and legacy_private:
+    if source == "instagram":
         code = b"const collectPrivateInstagram = true;\n" + code
     result = subprocess.run([str(BROWSER), "nodejs"], input=code, check=True,
                             timeout=800 if source == "ga4" else 150,
@@ -255,6 +255,7 @@ def refresh(client, source, inventory, seed=None, seed_only=False, legacy_privat
             raise
         condition, previous = {"IfNoneMatch": "*"}, {}
     engagement = None
+    private_complete = True
     if seed_only:
         if not previous:
             raise ValueError("A current feed is required to seed its history")
@@ -273,8 +274,15 @@ def refresh(client, source, inventory, seed=None, seed_only=False, legacy_privat
         collected = collect(source, previous, legacy_private)
         if legacy_private and source == "ga4":
             engagement, engagement_complete = split_engagement(collected)
-        if legacy_private and source == "instagram":
-            publish_engagement(private_instagram(collected, started), "instagram.json")
+        if source == "instagram":
+            try:
+                snapshot = private_instagram(collected, started)
+                publish_engagement(snapshot, "instagram.json")
+                private_complete = any(row["scope"] == "every.policy" and row["status"] == "ok"
+                                       for row in snapshot["rows"])
+            except (KeyError, TypeError, AttributeError, OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
+                log(f"private Instagram snapshot failed ({type(error).__name__})")
+                private_complete = False
         result, complete = merge(source, collected, previous, inventory, started)
         if seed is not None:
             result = attach_history(source, result, previous, seed)
@@ -295,7 +303,7 @@ def refresh(client, source, inventory, seed=None, seed_only=False, legacy_privat
         if not engagement_complete:
             log("private GA4 engagement, channel or Instagram breakdown partially available")
             return False
-    return complete
+    return complete and private_complete
 
 
 def main():

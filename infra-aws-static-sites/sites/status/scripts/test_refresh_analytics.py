@@ -30,7 +30,7 @@ class RefreshTests(unittest.TestCase):
             gmail.assert_not_called()
             self.assertEqual(public.call_count, len(refresh.SOURCES))
 
-    def test_scheduled_browser_collects_only_public_metrics(self):
+    def test_daily_instagram_includes_private_snapshot_and_ga4_private_is_opt_in(self):
         for source, flag in (("ga4", b"const collectPrivateEngagement = true;"),
                              ("instagram", b"const collectPrivateInstagram = true;")):
             for legacy in (False, True):
@@ -38,7 +38,7 @@ class RefreshTests(unittest.TestCase):
                     run.return_value.stdout = b'{"rows":[]}'
                     refresh.collect(source, {}, legacy)
                     code = run.call_args.kwargs["input"]
-                    self.assertEqual(flag in code, legacy)
+                    self.assertEqual(flag in code, source == "instagram" or legacy)
 
     def merged(self):
         return refresh.merge("ga4", self.feed, self.old, self.inventory, self.start)

@@ -129,7 +129,7 @@ python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
 
 Grafana 고객 문의 수는 클러스터의 exporter가 기존 계정 인증과 읽기 전용 모드로 `gog`를 실행해 매시간 갱신합니다. 등록 앱 이름으로 시작하는 최근 7일의 수신 대화를 앱별로 한 번 집계합니다. 공개 Space 예약 작업은 Gmail을 조회하지 않습니다. 이전 수집기를 수동으로 대조할 때만 `refresh-analytics.py --support-only`를 사용합니다. 이 명령은 로컬 `~/.local/share/dashboard-analytics/gmail-support-account`의 계정으로 비공개 ConfigMap을 갱신하며 운영 exporter는 그 값을 읽지 않습니다.
 
-Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API와 Meta Insights API를 직접 읽습니다. SAM-PC 예약 작업은 공개 Space 피드를 갱신합니다. 이전 수집 방식으로 복구할 때만 `refresh-analytics.py --legacy-private`로 Grafana용 ConfigMap을 별도로 갱신할 수 있습니다.
+Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API와 Meta Insights API를 직접 읽습니다. SAM-PC 예약 작업은 공개 피드를 갱신하면서 Ego의 @every.policy 조회수·조회한 사람을 비공개 instagram.json에 기록합니다. 공개 Instagram 피드에는 @minimal_collector만 포함됩니다. GA4의 이전 수집 방식으로 복구할 때는 `refresh-analytics.py --legacy-private`로 Grafana용 ConfigMap을 별도로 갱신할 수 있습니다.
 
 브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 홈에서는 ‘지난 7일’ 및 각 달력 기간을 선택하고 ‘새 사용자 수’와 ‘세션수’를 확인합니다. 새 구간과 최근 마감 구간을 다시 조회해 GA4 피드에 반영합니다. 화면 새로고침은 마지막으로 게시된 피드를 읽습니다.
 

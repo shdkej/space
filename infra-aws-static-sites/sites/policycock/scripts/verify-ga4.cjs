@@ -77,6 +77,21 @@ const server = createServer((request, response) => {
     assert.equal(sent.searchParams.get('dr'), 'https://google.com/');
     assert.doesNotMatch(tags[0].url+hits[0], /sensitive-query-and-withdrawal-token/);
     assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.combined.v1')), 'accepted');
+    for (const [query, referer] of [
+      ['?utm_source=instagram&utm_content='+secret, undefined],
+      ['?q='+secret, 'https://l.instagram.com/'+secret],
+    ]) {
+      const instagram = await context.newPage();
+      await instagram.goto(origin+'/'+query, referer ? {referer} : {});
+      await instagram.waitForURL(origin+'/?utm_source=instagram&utm_medium=social');
+      await instagram.waitForFunction(() => window.policycockGa4Started());
+      const event = await instagram.evaluate(() => Array.from(window.dataLayer.find(args => args[0] === 'event')));
+      assert.equal(event[2].page_location, origin+'/?utm_source=instagram&utm_medium=social');
+      assert.equal(event[2].page_referrer, referer ? 'https://instagram.com/' : '');
+      assert.ok(!JSON.stringify(event).includes(secret));
+      await instagram.close();
+    }
+    const hitsAfterInstagram = hits.length;
     const sibling = await context.newPage();
     await sibling.goto(origin+'/');
     await sibling.waitForFunction(() => !!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]'));
@@ -86,7 +101,7 @@ const server = createServer((request, response) => {
     await page.waitForURL(origin+'/index.html#launch');
     assert.equal(await page.locator('script[src^="https://www.googletagmanager.com/gtag/js"]').count(), 0);
     assert.equal(await page.locator('#launch-manage').isVisible(), true);
-    assert.equal(hits.length, 2, 'private-link navigation creates no Google collection');
+    assert.equal(hits.length, hitsAfterInstagram + 1, 'private-link navigation creates no Google collection');
     assert.ok(tagObservedHashes.every(value => !JSON.stringify(value).includes(token)), 'pre-existing tag listener never sees the capability, including event.newURL');
     const before = hits.length, posthogBefore = posthog.length;
     await page.locator('#analytics-settings').click();

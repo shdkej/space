@@ -86,8 +86,10 @@ def collect(source, previous):
         old = {r["scope"]: r.get("periods", {}) for r in previous.get("rows", [])}
         plan = {scope: requested_periods(source, old.get(scope, {}), now) for scope in inventory}
         code = ("const collectPrivateEngagement = true;\nconst requestedCalendarPeriods = " + json.dumps(plan) + ";\n").encode() + code
+    if source == "instagram":
+        code = b"const collectPrivateInstagram = true;\n" + code
     result = subprocess.run([str(BROWSER), "nodejs"], input=code, check=True,
-                            timeout=800 if source == "ga4" else 45,
+                            timeout=800 if source == "ga4" else 150,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     return json.loads(result.stdout.decode("utf-8-sig").strip())
 
@@ -167,11 +169,17 @@ def split_engagement(result):
     for row in result["rows"]:
         seconds = row.pop("avgSessionEngagementSeconds", None)
         channels = row.pop("channelSessions", None)
+        acquisition = row.pop("instagramAcquisition", {})
         sessions = row.get("values", {}).get("sessions")
         private = {"scope": row["scope"], "observedAt": row.get("observedAt", result["observedAt"]),
                    "status": "unavailable"}
         if row.get("status") == "ok":
             private["sessions"] = sessions
+            private["instagramAcquisition"] = {
+                key: acquisition[key] for key in ("sessions", "newUsers")
+                if isinstance(acquisition, dict) and type(acquisition.get(key)) is int
+                and type(row["values"].get(key)) is int and 0 <= acquisition[key] <= row["values"][key]
+            }
             if (isinstance(channels, dict) and len(channels) <= 32
                     and all(isinstance(k, str) and 0 < len(k) <= 48 and type(v) is int
                             and 0 <= v < 2**53 for k, v in channels.items())
@@ -189,18 +197,40 @@ def split_engagement(result):
     return {"schemaVersion": 1, "rows": rows}, complete
 
 
-def publish_engagement(report):
+def publish_engagement(report, key="report.json"):
     name = "ga4-session-engagement"
     payload = json.dumps(report, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
     manifest = {"apiVersion": "v1", "kind": "ConfigMap", "metadata": {"name": name, "namespace": "monitoring"},
-                "data": {"report.json": payload}}
+                "data": {key: payload}}
     cmd = [*kubectl_command(), "-n", "monitoring"]
-    subprocess.run([*cmd, "apply", "--server-side", "--field-manager=space-analytics", "-f", "-"],
+    manager = "space-analytics-instagram" if key == "instagram.json" else "space-analytics"
+    subprocess.run([*cmd, "apply", "--server-side", f"--field-manager={manager}", "-f", "-"],
                    input=json.dumps(manifest).encode(), check=True, capture_output=True, timeout=30)
     stored = subprocess.run([*cmd, "get", "configmap", name, "-o", "json"],
                             check=True, capture_output=True, timeout=30)
-    if json.loads(stored.stdout)["data"]["report.json"] != payload:
-        raise RuntimeError("Private GA4 snapshot verification failed")
+    if json.loads(stored.stdout)["data"][key] != payload:
+        raise RuntimeError("Private analytics snapshot verification failed")
+
+
+def private_instagram(collected, started):
+    """Allowlist two account snapshots and strip all other browser data."""
+    rows = collected.pop("privateAccounts")
+    if sorted(r.get("scope") for r in rows) != ["every.policy", "minimal_collector"]:
+        raise ValueError("Unexpected Instagram accounts")
+    report = {"schemaVersion": 1, "source": "instagram", "rows": []}
+    for row in rows:
+        scope = row["scope"]
+        if row.get("status") == "unavailable":
+            report["rows"].append({"scope": scope, "status": "unavailable"})
+            continue
+        at = datetime.fromisoformat(row["observedAt"].replace("Z", "+00:00"))
+        values = row["values"]
+        if (row.get("status") != "ok" or at < started or at > datetime.now(timezone.utc) + timedelta(minutes=1)
+                or set(values) - {"views", "reach", "viewers"} or "views" not in values
+                or not all(type(v) is int and 0 <= v < 2**53 for v in values.values())):
+            raise ValueError("Invalid Instagram measurement")
+        report["rows"].append({"scope": scope, "status": "ok", "observedAt": row["observedAt"], "values": values})
+    return report
 
 
 def refresh(client, source, inventory, seed=None, seed_only=False):
@@ -234,6 +264,8 @@ def refresh(client, source, inventory, seed=None, seed_only=False):
         collected = collect(source, previous)
         if source == "ga4":
             engagement, engagement_complete = split_engagement(collected)
+        if source == "instagram":
+            publish_engagement(private_instagram(collected, started), "instagram.json")
         result, complete = merge(source, collected, previous, inventory, started)
         if seed is not None:
             result = attach_history(source, result, previous, seed)

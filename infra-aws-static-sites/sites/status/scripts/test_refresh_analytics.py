@@ -56,6 +56,7 @@ class RefreshTests(unittest.TestCase):
 
     def test_private_engagement_isolated_and_zero_session_is_undefined(self):
         self.row["avgSessionEngagementSeconds"] = 0
+        self.row["instagramAcquisition"] = {"sessions": 2, "newUsers": 3}
         self.row["channelSessions"] = {"Direct": 3, "Referral": 1}
         self.feed["rows"][1].update(status="ok", observedAt=self.row["observedAt"],
                                     values={"newUsers": 0, "sessions": 0}, channelSessions={})
@@ -68,9 +69,22 @@ class RefreshTests(unittest.TestCase):
         public, _ = self.merged()
         self.assertNotIn("engagement", str(public).lower())
         self.assertNotIn("channelSessions", str(public))
+        self.assertNotIn("instagramAcquisition", str(public))
+        self.assertEqual(private["rows"][0]["instagramAcquisition"], {"sessions": 2})
         private, complete = refresh.split_engagement(self.feed)
         self.assertFalse(complete)
         self.assertEqual(private["rows"][0]["status"], "unavailable")
+
+    def test_private_instagram_records_only_verified_account_measures(self):
+        collected = {"privateAccounts": [
+            {"scope": "minimal_collector", "status": "ok", "observedAt": self.start.isoformat(),
+             "values": {"views": 0, "viewers": 0}},
+            {"scope": "every.policy", "status": "unavailable", "values": {"views": 8}},
+        ]}
+        report = refresh.private_instagram(collected, self.start)
+        self.assertNotIn("privateAccounts", collected)
+        self.assertEqual(report["rows"][0]["values"], {"views": 0, "viewers": 0})
+        self.assertEqual(report["rows"][1], {"scope": "every.policy", "status": "unavailable"})
 
     def test_partial_failure_preserves_observation(self):
         result, complete = self.merged()

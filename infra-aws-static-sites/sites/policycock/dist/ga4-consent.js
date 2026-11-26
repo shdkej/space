@@ -15,7 +15,7 @@
   function safeReferrer() {
     try {
       const host = new URL(document.referrer).hostname.toLowerCase();
-      for (const domain of ['google.com', 'naver.com', 'bing.com', 'daum.net', 'duckduckgo.com']) {
+      for (const domain of ['google.com', 'naver.com', 'bing.com', 'daum.net', 'duckduckgo.com', 'instagram.com']) {
         if (host === domain || host.endsWith('.' + domain)) return 'https://' + domain + '/';
       }
     } catch { /* Missing or invalid referrer. */ }
@@ -33,7 +33,7 @@
     let cleanPage;
     if (handoff) {
       if (handoff.url !== location.href || document.referrer ||
-          (handoff.referrer && !/^https:\/\/(google\.com|naver\.com|bing\.com|daum\.net|duckduckgo\.com)\/$/.test(handoff.referrer))) {
+          (handoff.referrer && !/^https:\/\/(google\.com|naver\.com|bing\.com|daum\.net|duckduckgo\.com|instagram\.com)\/$/.test(handoff.referrer))) {
         status.textContent = '주소를 보호할 수 없어 GA4를 실행하지 않습니다.';
         return;
       }
@@ -42,7 +42,11 @@
     } else {
       referrer = safeReferrer();
       cleanPage = new URL('/', location.origin);
-      if (referrer) {
+      const taggedInstagram = /^(instagram|ig)$/i.test(new URLSearchParams(location.search).get('utm_source') || '');
+      if (taggedInstagram || referrer === 'https://instagram.com/') {
+        cleanPage.searchParams.set('utm_source', 'instagram');
+        cleanPage.searchParams.set('utm_medium', 'social');
+      } else if (referrer) {
         cleanPage.searchParams.set('utm_source', new URL(referrer).hostname.split('.')[0]);
         cleanPage.searchParams.set('utm_medium', 'organic');
       }

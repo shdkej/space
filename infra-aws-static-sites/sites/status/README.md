@@ -127,6 +127,8 @@ python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
 
 정적 사이트 배포는 수집기 소유 객체를 제외하며 Status 버킷의 다른 파일을 삭제하지 않습니다. 집계 파일의 rows에는 승인된 범위 이름, 집계 기간·시간대, 조회 시각, 숫자와 수집 상태만 포함합니다. 최신 수집 전체가 실패하면 종료 코드 1을 반환하고 이전 파일을 유지합니다. 일부 앱이 실패하면 해당 앱의 마지막 성공 시각·값과 실패 상태를 함께 내보냅니다. 게시 후 해당 HTTPS 피드의 scope·기간·관측 시각·값을 원천과 대조하고, Status Monitoring과 Metrics 지도에서 동일한지 확인합니다.
 
+Grafana 전용 인스타그램 유입 데이터는 같은 예약 작업이 monitoring/ga4-session-engagement에 기록합니다. report.json의 각 GA4 속성에는 세션 소스와 첫 사용자 소스 중 인스타그램에 귀속된 세션·신규 사용자 수를 포함합니다. instagram.json에는 minimal_collector·every.policy에서 확인한 최근 7일 조회수와 조회한 사람 수를 독립적으로 저장합니다. 인사이트를 볼 수 없는 계정은 unavailable입니다. 공개 인스타그램 피드에는 기존 minimal_collector 행만 게시합니다.
+
 브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 홈에서는 ‘지난 7일’ 및 각 달력 기간을 선택하고 ‘새 사용자 수’와 ‘세션수’를 확인합니다. 새 구간과 최근 마감 구간을 다시 조회해 GA4 피드에 반영합니다. 화면 새로고침은 마지막으로 게시된 피드를 읽습니다.
 
 Status의 기존 신규 사용자·세션 행은 앱별 실측을 일·주·월 그래프로 표시합니다. 각 점은 한국 시간 기준 완료된 하루, 월요일~일요일 한 주, 또는 달력 한 달의 원천 집계입니다. 최근 7일·4주·2개월을 표시합니다. Metrics의 기존 연결은 최근 7일을 유지하며 GA4·PostHog 연결에서 집계 기간을 선택할 수 있습니다. Instagram은 최근 7일 계정 집계를 사용합니다. 피드는 최근 31일의 실제 관측을 보존합니다. 과거 보고서로 보강한 점에는 집계 종료 시각과 조회 시각을 각각 기록합니다. 기존 운영 피드에 검증된 원천 이력을 추가할 때는 `refresh-analytics.py --history-seed-dir DIR --seed-only`를 실행합니다. 최신 집계값과 조회 시각은 이 작업으로 바뀌지 않습니다.

@@ -51,6 +51,12 @@ exporter, `ServiceMonitor`, alert/rule, Grafana datasource/dashboard ConfigMap�
 commit/push → Argo CD의 새 revision `Synced/Healthy` → Kubernetes 리소스와 Prometheus 쿼리 →
 Grafana sidecar reload 및 실제 패널 확인입니다. Docker/Compose는 이 운영 경로에 사용하지 않습니다.
 
+시스템 레이어의 OpenClaw 에러 로그 수는 Monitoring 저장소의 기존 dispatcher exporter가
+`oracle-arm-2`의 `/home/ubuntu/.openclaw/logs`를 읽기 전용으로 집계합니다. 최근 24시간
+ERROR·FATAL 건수만 Prometheus로 수집하며, 원문을 전송하지 않습니다. 소스·배포·검증·복구 계약은
+[Monitoring DEPLOYMENT.md](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#openclaw-에러-로그-수)가 소유합니다.
+
+
 ## cloud
 - digitalocean
 - ~~aws free tier (expired)~~

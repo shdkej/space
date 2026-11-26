@@ -59,7 +59,7 @@ blender -b --factory-startup --python-exit-code 1 -P scripts/build-console-knob.
 
 Blender 4.0.2 arm64와 Python NumPy, glTF exporter로 검증했습니다. 모델의 editable `.blend`, 배포용 GLB, `qa/console-model.json`, 앞/뒤 소재 검토 이미지를 생성합니다. Cycles CPU 렌더이며 이 환경은 OpenImageDenoiser가 없어 denoising을 끕니다. 스킬의 환경 보고·mesh QA도 실행하고 UV·닫힌 메시·노멀·내보낸 바이트를 확인합니다. 자산 파일 로딩 실패는 `data-model=fallback`으로 남기며 장면 사용은 계속됩니다.
 
-Hallmark, Blender, OpenPencil 스킬 원본은 Prompt Archive의 `skills/hallmark/`, `skills/blender-skills/`, `skills/open-pencil/`에 있습니다. Hallmark는 audit 보조로 사용하며 OpenPencil은 현재 실행 앱에 문서가 없어 실제 캔버스 작업은 미수행입니다. 공통 레퍼런스·출처는 `DESIGN_SYSTEM.md`를 참고합니다.
+Hallmark, Blender, OpenPencil 스킬 원본은 Prompt Archive의 `skills/external/hallmark/`, `skills/external/blender-skills/`, `skills/external/open-pencil/`에 있습니다. Hallmark는 audit 보조로 사용하며 OpenPencil은 현재 실행 앱에 문서가 없어 실제 캔버스 작업은 미수행입니다. 공통 레퍼런스·출처는 `DESIGN_SYSTEM.md`를 참고합니다.
 
 ## 데이터와 저장
 

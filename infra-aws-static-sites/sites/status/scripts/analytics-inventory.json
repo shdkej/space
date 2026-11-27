@@ -27,7 +27,7 @@
     "Virtue": {
       "project": "424014",
       "app_id": null,
-      "hosts": ["virtue.aws.shdkej.com", "virtue.oracle.shdkej.com"]
+      "hosts": ["virtue.minimalcollector.com", "virtue.aws.shdkej.com", "virtue.oracle.shdkej.com"]
     },
     "앱 미지정": {
       "project": "424014",

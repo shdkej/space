@@ -2332,4 +2332,170 @@ index 36eb114..9f0df55 100644
          self.assertEqual(set(out), {'updatedAt', 'github', 'prometheus'})
 -- 
 2.43.0
-
+--- a/README.md
++++ b/README.md
+@@ -65,7 +65,9 @@
+ 
+ 세션의 `status`가 없으면 `unknown`입니다. 활동 근거가 720초보다 오래됐거나 미래 시각이면 실행 중으로 판정하지 않습니다. 실행 시작 시각은 보존하므로 40분 경과 표시는 최근 조회 시각이 아닌 실제 시작에 기초합니다. 완료 세션과 시작·종료·성공 이벤트는 최근 600초만 제공하며 이벤트 ID는 반복 수집해도 같습니다. 실패 종료에는 성공 보고 이벤트가 없습니다. 목록에서 사라진 세션의 퇴근을 만들지 않습니다.
+ 
+-AARRR의 유입 단계는 **방문 세션(유입 참고)**이며 신규 획득 고객 수가 아닙니다. 활성화는 기존 30일 핵심 행동 전환율, 재방문은 이전 7일 대비 최근 7일 코호트입니다. 코호트 분모가 없으면 재방문율도 `null`입니다. 추천·매출은 정의된 exporter 원천이 없어 `null`로 남깁니다. 표본의 실제 0은 보존합니다. `observedAt`은 Prometheus range vector의 표본 시각이며, exporter가 PostHog 마지막 성공 수집 시각을 제공하지 않아 `upstreamFreshness: unknown`을 별도로 표시합니다. 새 scrape가 API 갱신 성공을 증명하지는 않습니다.
++AARRR의 유입 단계는 **방문 세션(유입 참고)**이며 신규 획득 고객 수가 아닙니다. 활성화는 기존 30일 핵심 행동 전환율, 재방문은 이전 7일 대비 최근 7일 코호트입니다. 코호트 분모가 없으면 재방문율도 `null`입니다. 추천·매출은 정의된 exporter 원천이 없어 `null`로 남깁니다. 표본의 실제 0은 보존합니다. `observedAt`은 Prometheus range vector의 표본 시각입니다. `upstreamObservedAt`은 Monitoring exporter의 `product_last_success_timestamp_seconds{service}`에서 같은 앱의 성공 관측 시각을 읽습니다. 성공 관측 후 45분까지 `upstreamFreshness: ok`, 초과하면 `stale`, 시각 누락·0·미래 값은 `unknown`입니다. 새 scrape는 이 시각을 갱신하지 않으며, 추천·매출처럼 원천 값이 없는 항목은 계속 `unknown`입니다. source 전체의 freshness는 실제 값이 있는 항목을 집계하며 일부 앱 시각이 없으면 `unknown`입니다.
++
++전략 문구는 해당 프로젝트의 현재 목적과 manifest의 공개 요약·`evidence`를 함께 맞춥니다. 2026-11-27 모두의정책의 목적 변경 후 남은 옛 근거 문구를 현재 `PROJECT.md`로 갱신했습니다. 문서의 근거 확인을 생략하거나 자동으로 원문 전체를 공개하지 않습니다.
+ 
+ `office.day`는 기존 일일 마감 시간에 맞춘 `Asia/Seoul`, 23시 마감·08시 시작 설정입니다. 마지막 23시를 `closedAt`으로 제공하며 세션 종료를 추정하지 않습니다. 실제 작업·질문이 있는 방은 화면에서 불을 유지합니다. 시간대와 시간은 manifest에서 바꿀 수 있습니다.
+ 
+--- a/collector/manifest.yaml
++++ b/collector/manifest.yaml
+@@ -146,17 +146,17 @@
+   # Additional actual exporter service labels are discovered from the metric rows.
+   projects:
+     - id: policycock
+-      name: 정책콕
++      name: 모두의정책
+     - id: minimalmoeum
+       name: 미니멀모음
+   strategy:
+     strategy:
+       - id: policycock-purpose
+         title: 정책 정보에서 다음 행동으로
+-        detail: 자신에게 맞는 정책·지원사업을 발견하고 신청·준비·후속 행동까지 연결합니다.
++        detail: 내 삶에 필요한 정책을 찾고, 변화를 따라가며, 근거를 확인해 행동할 수 있게 하는 서비스를 지향합니다.
+         source_path: /home/ubuntu/workspace/projects/policycock/PROJECT.md
+-        source_label: 정책콕 PROJECT.md · 목적
+-        evidence: 신청·준비·후속 행동까지
++        source_label: 모두의정책 PROJECT.md · 목적
++        evidence: 내 삶에 필요한 정책을 찾고, 변화를 따라가며, 근거를 확인해 행동할 수 있게 하는 서비스
+         sourceUrl: https://github.com/shdkej/policycock/blob/main/PROJECT.md
+       - id: minimalmoeum-purpose
+         title: 다시 찾을 만한 큐레이션
+--- a/collector/office.py
++++ b/collector/office.py
+@@ -18,6 +18,7 @@
+ 
+ CADENCE = 600
+ STALE = 720
++UPSTREAM_STALE = 45 * 60  # Match the PostHog exporter's successful snapshot TTL.
+ AGENTS = {
+     'main': ('SAM', 3), 'sam': ('SAM', 3), 'genie': ('지니', 1),
+     'marketing': ('고딘', 2), 'godin': ('고딘', 2), 'cmo': ('고딘', 2),
+@@ -380,7 +381,7 @@
+     if not base:
+         raise ValueError('metrics source not configured')
+     # A range vector returns sample times; ordinary instant vectors use query time.
+-    names = '|'.join([m[2] for m in METRICS if m[2]] + ['product_app_connected', 'product_retained_users', 'product_churned_users'])
++    names = '|'.join([m[2] for m in METRICS if m[2]] + ['product_app_connected', 'product_retained_users', 'product_churned_users', 'product_last_success_timestamp_seconds'])
+     query = '{__name__=~"' + names + '"}[15m]'
+     code, out = run(args + ['get', '--raw', base + '?' + urllib.parse.urlencode({'query': query})])
+     if code: raise RuntimeError('metrics query failed')
+@@ -395,9 +396,10 @@
+         source = source_status(1, 0, now)
+     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError):
+         rows, source = [], source_status(0, 1, now)
+-    source.update(upstreamFreshness='unknown', detail='Prometheus 표본 시각 · PostHog 마지막 성공 수집 시각은 exporter 미제공')
++    source.update(upstreamFreshness='unknown', upstreamObservedAt=None,
++                  detail='Prometheus 표본 시각과 PostHog 성공 관측 시각을 구분 · 원천 시각 누락은 확인 불가')
+     projects = {str(row['id']): public_text(row.get('name') or row['id']) for row in settings.get('projects', [])}
+-    samples = {}
++    samples, upstream_samples = {}, {}
+     for row in rows:
+         labels = row.get('metric') or {}
+         service = labels.get('service')
+@@ -411,6 +413,8 @@
+                 if not math.isfinite(value) or not at: continue
+             except (ValueError, TypeError):
+                 continue
++            if labels.get('__name__') == 'product_last_success_timestamp_seconds':
++                upstream_samples[(service, at)] = value
+             key = (service, labels.get('__name__'))
+             if key not in samples or at > samples[key][1]:
+                 samples[key] = (value, at, {k: public_text(labels[k], 64) for k in ('service', 'period') if k in labels})
+@@ -430,15 +434,27 @@
+                 retained, churned = samples.get((pid, 'product_retained_users')), samples.get((pid, 'product_churned_users'))
+                 if not retained or not churned or retained[0] + churned[0] <= 0:
+                     item, state = None, 'unavailable'
++            # Match the metric's scrape; a newer successful snapshot may omit it.
++            upstream_value = upstream_samples.get((pid, item[1])) if item else None
++            upstream_at = timestamp(upstream_value) if upstream_value and upstream_value > 0 else None
++            if upstream_at and upstream_at > now:
++                upstream_at = None
++            upstream_state = ('ok' if (now - upstream_at).total_seconds() <= UPSTREAM_STALE else 'stale') if upstream_at else 'unknown'
+             metrics.append({'stage': stage, 'label': label, 'value': item[0] if item else None,
+                             'unit': unit, 'window': window, 'state': state,
+                             'observedAt': iso(item[1]) if item else None,
+                             'sourceMetric': metric_name, 'sourceLabels': item[2] if item else {'service': pid},
+-                            'upstreamFreshness': 'unknown'})
++                            'upstreamObservedAt': iso(upstream_at) if item else None,
++                            'upstreamFreshness': upstream_state if item else 'unknown'})
+         observations = [m['observedAt'] for m in metrics if m['observedAt']]
+         states = {m['state'] for m in metrics}
+         result.append({'id': pid, 'name': name, 'observedAt': max(observations) if observations else None,
+                        'state': 'partial' if 'ok' in states else 'stale' if 'stale' in states else 'unavailable' if source['state'] != 'ok' else 'unconnected', 'metrics': metrics})
++    measured = [metric for project in result for metric in project['metrics'] if metric['value'] is not None]
++    upstream_states = {metric['upstreamFreshness'] for metric in measured}
++    source['upstreamFreshness'] = ('stale' if 'stale' in upstream_states else 'unknown' if not measured or 'unknown' in upstream_states else 'ok')
++    upstream_times = [metric['upstreamObservedAt'] for metric in measured if metric['upstreamObservedAt']]
++    source['upstreamObservedAt'] = min(upstream_times) if upstream_times else None
+     return result, source
+ 
+ 
+--- a/collector/tests/test_office.py
++++ b/collector/tests/test_office.py
+@@ -301,6 +301,57 @@
+         self.assertEqual(metric['state'], 'stale')
+         self.assertEqual(metric['value'], 9)
+ 
++    def test_upstream_freshness_uses_each_services_success_time_not_scrape_time(self):
++        rows = [
++            {'metric': {'__name__': 'product_sessions', 'service': 'virtue'}, 'values': [[ms()/1000, '0']]},
++            {'metric': {'__name__': 'product_last_success_timestamp_seconds', 'service': 'virtue'}, 'values': [[ms()/1000, str(ms(-20)/1000)]]},
++            {'metric': {'__name__': 'product_sessions', 'service': 'policycock'}, 'values': [[ms()/1000, '7']]},
++        ]
++        projects, source = office.collect_projects(self.settings, NOW, metric_rows=rows)
++        virtue, policycock = [p['metrics'][0] for p in projects]
++        self.assertEqual(virtue['observedAt'], '2026-11-11T12:00:00Z')
++        self.assertEqual(virtue['upstreamObservedAt'], '2026-11-11T11:40:00Z')
++        self.assertEqual(virtue['upstreamFreshness'], 'ok')
++        self.assertEqual(virtue['value'], 0)
++        self.assertEqual(policycock['upstreamFreshness'], 'unknown')
++        self.assertIsNone(policycock['upstreamObservedAt'])
++        self.assertEqual(source['upstreamFreshness'], 'unknown')
++        self.assertIsNone(projects[0]['metrics'][3]['upstreamObservedAt'])
++
++    def test_upstream_stale_missing_and_invalid_timestamps_are_never_fresh(self):
++        for upstream, expected in [(ms(-46)/1000, 'stale'), (ms(1)/1000, 'unknown'), (0, 'unknown'), ('NaN', 'unknown')]:
++            with self.subTest(upstream=upstream):
++                rows = [
++                    {'metric': {'__name__': 'product_sessions', 'service': 'virtue'}, 'values': [[ms()/1000, '4']]},
++                    {'metric': {'__name__': 'product_last_success_timestamp_seconds', 'service': 'virtue'}, 'values': [[ms()/1000, str(upstream)]]},
++                ]
++                projects, source = office.collect_projects(self.settings, NOW, metric_rows=rows)
++                self.assertEqual(projects[0]['metrics'][0]['upstreamFreshness'], expected)
++                self.assertEqual(source['upstreamFreshness'], expected)
++
++    def test_new_success_does_not_relabel_a_metric_missing_from_that_scrape(self):
++        rows = [
++            {'metric': {'__name__': 'product_sessions', 'service': 'virtue'}, 'values': [[ms(-5)/1000, '4']]},
++            {'metric': {'__name__': 'product_last_success_timestamp_seconds', 'service': 'virtue'},
++             'values': [[ms(-5)/1000, str(ms(-20)/1000)], [ms()/1000, str(ms()/1000)]]},
++        ]
++        projects, source = office.collect_projects(self.settings, NOW, metric_rows=rows)
++        self.assertEqual(projects[0]['metrics'][0]['upstreamObservedAt'], '2026-11-11T11:40:00Z')
++
++    def test_metric_query_includes_source_success_time(self):
++        self.settings['prometheus_service'] = '/query'
++        rows = [
++            {'metric': {'__name__': 'product_sessions', 'service': 'virtue'}, 'values': [[ms()/1000, '1']]},
++            {'metric': {'__name__': 'product_last_success_timestamp_seconds', 'service': 'virtue'}, 'values': [[ms()/1000, str(ms(-5)/1000)]]},
++        ]
++        def run(args):
++            import urllib.parse
++            query = urllib.parse.parse_qs(urllib.parse.urlsplit(args[-1]).query)['query'][0]
++            return 0, json.dumps({'status': 'success', 'data': {'result': [row for row in rows if row['metric']['__name__'] in query]}})
++        projects, source = office.collect_projects(self.settings, NOW, run=run)
++        self.assertEqual(source['upstreamFreshness'], 'ok')
++        self.assertEqual(projects[0]['metrics'][0]['upstreamObservedAt'], '2026-11-11T11:55:00Z')
++
+     def test_git_error_is_unknown_and_never_emits_command_paths(self):
+         self.settings['repositories'] = [{'name':'OpenClaw','path':'/home/private','url':'https://github.com/example/repo?token=SECRET'}]
+         repos, _ = office.collect_repositories(self.settings, NOW, run=lambda args:(1,'fatal /home/private SECRET'))

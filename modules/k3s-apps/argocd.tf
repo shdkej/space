@@ -19,6 +19,13 @@ resource "helm_release" "argocd" {
     value = "true"
   }
 
+  # GitOps manifests do not use the private static-site dashboard submodule.
+  # Keep repo-server from cloning it before rendering unrelated applications.
+  set {
+    name  = "configs.params.reposerver\\.enable\\.git\\.submodule"
+    value = "false"
+  }
+
   # Dex 비활성화 (리소스 절약)
   set {
     name  = "dex.enabled"

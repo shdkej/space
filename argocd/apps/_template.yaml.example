@@ -1,11 +1,12 @@
 # 새 앱 배포 템플릿
 # 이 파일을 복사해서 {앱이름}.yaml 로 저장 후 git push
+# .example 확장자를 유지해야 root가 이 예제를 실제 앱으로 배포하지 않습니다.
 #
 # 필수 수정:
 #   - metadata.name: 앱 이름
 #   - helm.values 안의 fullname, image.repository, service.port
 #
-# 원리: space repo의 base/ Helm chart를 공용 템플릿으로 사용하고
+# 원리: space repo의 helm_chart_base/ Helm chart를 공용 템플릿으로 사용하고
 #       아래 values로 앱별 설정만 오버라이드
 #
 apiVersion: argoproj.io/v1alpha1
@@ -18,7 +19,7 @@ spec:
   source:
     repoURL: https://github.com/shdkej/space.git
     targetRevision: HEAD
-    path: base           # 공용 Helm chart 경로
+    path: helm_chart_base # 공용 Helm chart 경로
     helm:
       values: |
         fullname: my-app

@@ -71,5 +71,35 @@ Pod 기록 정리는 디스크 압력 원인 개선과 별개이며 디스크 �
 - 위 기록은 적용 전 조사입니다. 소스 commit, 실제 적용·검증 결과와 남은 한계는 실행 기록에
   구분해서 남기며 이 조사만으로 복구 완료를 선언하지 않습니다.
 
+## SAM-14 적용·검증 결과
+
+2026-11-27 23:10 UTC에 다음을 확인했습니다. 배포 소스 revision은
+`2e7b0c9131ea9fdd2da8740045b031ccc45457e4`입니다.
+
+- ConfigMap key를 `"false"`로 반영하고 repo-server만 rolling restart했습니다.
+  새 Pod Ready와 실제 `ARGOCD_GIT_MODULES_ENABLED=false`를 확인했습니다.
+- 새 revision의 실제 `argocd app diff`는 관리용 `tracking-id` annotation 추가 6개와
+  빈 `my-app` Application 제거뿐이었습니다. workload spec·이미지·Pod template·PVC
+  변경은 없었습니다. my-app의 finalizer·관리 리소스·연결 workload가 없음을 직전 확인했습니다.
+- 자식 앱의 원래 sync policy를 복원하고 root를 마지막에 복원했습니다. 임시 `enabled: false`는
+  남기지 않았고, 기존 prune/selfHeal을 유지했습니다. root를 포함한 유효 앱 6개 모두
+  `Synced/Healthy`, ComparisonError 0개이며 `my-app`은 제거됐습니다.
+- 사전 기록의 고정 UID 20개를 각각 `Failed/Evicted`로 재확인하고 UID·resourceVersion
+  precondition을 붙여 Pod API 객체만 삭제했습니다. 건너뛴 항목 0개, 남은 Failed Pod 0개입니다.
+  실행 중 Pod 28개의 UID는 정책 복원·정리 전후 모두 같고, Succeeded 19개는 유지했습니다.
+- Deployment 23개는 desired=ready=available(의도적으로 중지한 guestbook은 0/0), 노드 3개는
+  Ready이며 Disk/Memory/PID pressure가 모두 False였습니다. ClusterIP 실제 요청으로
+  agent-metrics·CMS `/api/health`, reel-room `/`의 HTTP 200을 확인했습니다.
+
+상태·복구 증거는 실행 호스트의 접근 제한된
+`/home/ubuntu/.local/state/codex-watcher/sam-14-20261127/`에 보관했습니다.
+`before.json`은 원래 정책·ConfigMap key·종료 Pod 식별자, `published-diffs.json`은 적용 전 diff,
+`deleted-pods.json`은 삭제 영수증, `final-verification.json`은 마지막 검증 결과입니다.
+Secret이나 전체 Pod spec은 이 기록에 포함하지 않습니다.
+
+이 조치는 Git 비교 장애와 종료 Pod 잔존 기록을 해결했습니다. 과거 DiskPressure의 재발 방지,
+Prometheus 보관·스토리지 변경, 외부 인터넷 경로의 종단 간 가용성은 이 완료 검증 범위에
+포함하지 않습니다. submodule을 사용하는 새 GitOps 앱은 위 전역 설정의 적용 범위를 먼저 검토합니다.
+
 공식 근거: [submodule 설정](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#git-submodules),
 [auto-sync enabled](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/).

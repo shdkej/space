@@ -51,7 +51,7 @@ const server = createServer((request, response) => {
     await page.getByRole('button', {name:'방문 분석 동의'}).click();
     await page.waitForTimeout(150);
     assert.equal(events.some(event => event.event === 'landing_viewed'), true, 'consent starts analytics');
-    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.posthog-only.v1')), 'accepted');
+    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.posthog-only.v2')), 'accepted');
     const firstSession = events.find(event => event.event === 'landing_viewed').properties.$session_id;
     assert.match(firstSession, /^[a-f0-9]{8}-[a-f0-9]{4}-7[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/, 'consented event carries a UUIDv7 session ID');
     const nextLanding = () => page.waitForRequest(request => request.url() === 'https://us.i.posthog.com/i/v0/e/' && request.postDataJSON().event === 'landing_viewed');
@@ -176,14 +176,18 @@ const server = createServer((request, response) => {
     }
     assert.equal(events.some(event => ['signup_cleanup_pending','signup_withdrawn'].includes(event.event)), false);
     for (const event of events) {
+      const core = event.event === 'pmf_core_completed';
+      if (!core) {
       const started = parseInt(event.properties.$session_id.slice(0, 13).replace('-', ''), 16);
       const elapsed = Date.parse(event.timestamp) - started;
       assert.ok(elapsed >= 0 && elapsed < 24 * 60 * 60 * 1000, 'event falls within the UUIDv7 session window');
+      }
       assert.equal(event.properties.app_id, 'policycock');
       assert.equal(event.properties.traffic_kind, 'synthetic');
       const firstVisit = ['first_session_started', 'first_session_activated'].includes(event.event);
       const keys = ['$geoip_disable','$process_person_profile','$session_id','app_id','qa_run_id','traffic_kind'];
-      if (firstVisit) keys.push('referral_source');
+      if (firstVisit || core) keys.push('referral_source', 'pmf_identity_version');
+      if (core) keys.splice(keys.indexOf('$session_id'), 1);
       assert.deepEqual(Object.keys(event.properties).sort(), keys.sort());
       assert.doesNotMatch(JSON.stringify(event), /qa-user|gmail|example\.org|청년기본소득|launch-withdraw|이재명/);
       assert.ok(!JSON.stringify(event).includes(feedback));

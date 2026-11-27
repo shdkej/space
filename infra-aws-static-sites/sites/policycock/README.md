@@ -146,3 +146,18 @@ GA4 유입 분석은 PostHog와 같은 방문 분석 선택에 묶여 있지만 
 `dist/data.js`의 정책이나 타임라인을 수정한 뒤 `npm run search:build`를 실행하고 생성된 페이지와 사이트맵을 함께 커밋합니다. `npm run check`가 데이터와 생성 결과의 일치를 검사합니다. 대표 주소는 `https://policy.minimalcollector.com/`이며 사이트맵은 `/sitemap.xml`입니다.
 
 첫 방문 지표는 방문 분석에 동의한 브라우저의 첫 관측 세션을 기준으로 합니다. 사이트 하단의 공유 버튼은 `https://policy.minimalcollector.com/?ref=share`만 전달합니다. 첫 관측에서 공유 유입 여부를 고정하고, 세션이 30분간 비활성 상태이거나 시작 후 24시간이 지나면 후속 사례 열람을 첫 방문 완료에 포함하지 않습니다. 분석 도입 전부터 동의 이력이 있는 브라우저는 새 사용자에서 제외됩니다. 첫 방문 프로토콜 회귀 검사는 `node --test scripts/first-visit.test.cjs`로 실행합니다.
+
+
+### PMF 재이용 계측 (2026-11-27)
+
+기존 방문 분석을 `combined.v2` / `posthog-only.v2` 동의로 갱신합니다. 이전 v1 동의는
+재이용 측정 권한으로 자동 승계하지 않습니다. `dist/first-visit.js`의 30일 고정 익명 ID로
+첫 유입·첫 세션 사례 열람·이후 사례 열람(`pmf_core_completed`)을 연결합니다. 실제 인원 수가
+아닌 동의한 관측 브라우저 수이며, 사례 열람은 잠정 가치 신호입니다. 정책명·검색어·메모·이메일은
+보내지 않습니다. 상세 데이터·기간·철회 설명은 `dist/privacy.html`이 소유합니다.
+
+- 로컬 `policycock.pmf.v1.user|qa`에 ID·고정 만료시각·전송 대기 최대 50건을 보관합니다. 실패 시 UUID·시각을 유지해 중복 제거 가능한 재전송을 합니다. 30일 뒤 다음 이용에서 ID를 교체하며 신규 유입 표시는 다시 만들지 않습니다.
+- 철회는 ID·미전송 큐를 지우고 구 버전 동의도 거부로 남깁니다. GPC/DNT·저장소/Web Locks 제한 시 수집하지 않습니다. `?qa=1`의 합성 트래픽은 별도 ID를 쓰고 운영 집계에서 제외합니다.
+- 동일 프로토콜의 Virtue 소스는 독립 `virtue-rebirth-app/apps/web/public/first-visit.js`입니다. Virtue의 준비 이벤트 한 줄 외에는 같은 파일을 유지합니다.
+- `node --test scripts/first-visit.test.cjs`와 `scripts/verify-ga4.cjs`, `scripts/verify-launch.cjs`를 실행합니다. 브라우저 검사는 Playwright Core와 `CHROME_PATH`가 필요하며 외부 수집/신청 요청을 가로챕니다. 후자의 두 검사는 동의 갱신·주소 정제·철회·개인정보 미전송도 확인합니다.
+- 검증 후 Space main push → 기존 AWS 정적 사이트 배포 → 실제 URL의 동의 안내·첫 방문 스크립트 확인 순서입니다. Grafana 집계 정의·샘플 수·관찰 기간은 Monitoring의 `docs/DEPLOYMENT.md#pmf-계측과-코호트`가 소유합니다.

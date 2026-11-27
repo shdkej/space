@@ -155,3 +155,13 @@ PostHog의 완료 일간 7개·주간 4개·월간 2개는 과거 원천을 다�
 [Monitoring 노드 헬스체크 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#노드-헬스체크-표시)을 따릅니다.
 Prometheus의 AMD 이전과 스토리지 확장은 사용자 요청으로 보류했습니다. 이 표시 변경은
 Helm·수집기·노드 배치·보관 기간을 바꾸지 않습니다.
+
+
+### 유입·PMF 검증 지표와 앱 계측
+
+기존 비즈니스 대시보드의 북극성은 이번 주 신규 활성 브라우저입니다. 첫 완료·7일 재사용을
+비율과 표본 수로 함께 표시하고, 갱신된 동의를 받은 Policycock·Virtue 브라우저에만 30일
+익명 ID를 유지합니다. 앱 소스·정적 게시·철회·검증 경로는 각 사이트 README를 따릅니다.
+Grafana/collector의 소유 저장소는 Monitoring이며
+[PMF 계측 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#pmf-계측과-코호트)을 따릅니다.
+새 대시보드는 만들지 않고 Prometheus 보관·AMD 이전 보류를 유지합니다.

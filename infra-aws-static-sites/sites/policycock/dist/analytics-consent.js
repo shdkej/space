@@ -3,7 +3,7 @@
   // A new decision is required: neither earlier vendor-specific choice grants both recipients.
   const configured = /^G-[A-Z0-9]{8,}$/.test(window.policycockConfig?.ga4MeasurementId || '');
   // A PostHog-only choice never becomes GA4 permission if a later deploy enables GA4.
-  const key = configured ? 'policycock.analytics.combined.v1' : 'policycock.analytics.posthog-only.v1';
+  const key = configured ? 'policycock.analytics.combined.v2' : 'policycock.analytics.posthog-only.v2';
   const withdrawalVisit = location.hash.startsWith('#launch-withdraw=');
   const blocked = () => navigator.globalPrivacyControl === true || navigator.doNotTrack === '1';
   const notice = document.getElementById('analytics-notice');
@@ -59,7 +59,7 @@
         }
       }
       // Prevent old separate consents from resurfacing if a release is rolled back.
-      for (const oldKey of ['policycock.analytics.consent.v1', 'policycock.ga4.consent.v1']) {
+      for (const oldKey of ['policycock.analytics.consent.v1', 'policycock.ga4.consent.v1', 'policycock.analytics.combined.v1', 'policycock.analytics.posthog-only.v1']) {
         try { localStorage.setItem(oldKey, 'declined'); }
         catch { try { localStorage.removeItem(oldKey); } catch { /* Cannot rewrite legacy state. */ } }
       }

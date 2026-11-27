@@ -38,8 +38,10 @@ const server = createServer((request, response) => {
     });
     // Even two previous affirmative vendor choices must not silently authorize the new combined choice.
     await context.addInitScript(() => {
-      if (localStorage.getItem('policycock.analytics.combined.v1') === null) {
+      if (localStorage.getItem('policycock.analytics.combined.v2') === null) {
         localStorage.setItem('policycock.analytics.consent.v1','accepted');
+        localStorage.setItem('policycock.analytics.combined.v1','accepted');
+        localStorage.setItem('policycock.analytics.posthog-only.v1','accepted');
         localStorage.setItem('policycock.ga4.consent.v1','accepted');
       }
     });
@@ -56,7 +58,7 @@ const server = createServer((request, response) => {
     await page.locator('.person').first().click();
     assert.deepEqual([tags.length,hits.length,posthog.length], [0,0,0]);
     await page.keyboard.press('Escape');
-    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.combined.v1')), 'declined');
+    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.combined.v2')), 'declined');
     assert.equal(await page.evaluate(() => localStorage.getItem('policycock.ga4.consent.v1')), 'declined', 'rollback-safe decline');
     await page.locator('#analytics-settings').click();
     await page.locator('#analytics-accept').click();
@@ -76,7 +78,7 @@ const server = createServer((request, response) => {
     assert.equal(sent.searchParams.get('dl'), origin+'/?utm_source=google&utm_medium=organic');
     assert.equal(sent.searchParams.get('dr'), 'https://google.com/');
     assert.doesNotMatch(tags[0].url+hits[0], /sensitive-query-and-withdrawal-token/);
-    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.combined.v1')), 'accepted');
+    assert.equal(await page.evaluate(() => localStorage.getItem('policycock.analytics.combined.v2')), 'accepted');
     for (const [query, referer] of [
       ['?utm_source=instagram&utm_content='+secret, undefined],
       ['?q='+secret, 'https://l.instagram.com/'+secret],
@@ -146,8 +148,8 @@ const server = createServer((request, response) => {
     assert.equal(await blankPage.locator('#analytics-google-copy').isVisible(), false, 'unconfigured GA4 is not described as active');
     assert.equal(await blankPage.locator('script[src^="https://www.googletagmanager.com"]').count(), 0);
     await blankPage.locator('#analytics-accept').click();
-    assert.equal(await blankPage.evaluate(() => localStorage.getItem('policycock.analytics.posthog-only.v1')), 'accepted');
-    assert.equal(await blankPage.evaluate(() => localStorage.getItem('policycock.analytics.combined.v1')), null);
+    assert.equal(await blankPage.evaluate(() => localStorage.getItem('policycock.analytics.posthog-only.v2')), 'accepted');
+    assert.equal(await blankPage.evaluate(() => localStorage.getItem('policycock.analytics.combined.v2')), null);
     await blank.route('**/launch-config.js', route => route.fulfill({contentType:'application/javascript',body:
       'window.policycockConfig={projectKey:"",signupEnabled:false,signupEndpoint:"",ga4MeasurementId:"G-TEST1234"}'}));
     await blankPage.reload();
@@ -179,7 +181,7 @@ const server = createServer((request, response) => {
     await revokePage.locator('#analytics-settings').click();
     await revokePage.locator('#analytics-decline').click();
     await revokePage.waitForFunction(() => !document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]'));
-    assert.equal(await revokePage.evaluate(() => localStorage.getItem('policycock.analytics.combined.v1')), null, 'failed overwrite deletes prior grant');
+    assert.equal(await revokePage.evaluate(() => localStorage.getItem('policycock.analytics.combined.v2')), null, 'failed overwrite deletes prior grant');
     await revokePage.locator('#analytics-accept').click();
     await revokePage.waitForFunction(() => !!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]'));
     await revokePage.evaluate(() => {

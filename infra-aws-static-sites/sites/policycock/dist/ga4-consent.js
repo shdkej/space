@@ -82,7 +82,7 @@
   }
   window.addEventListener('policycock:analytics-accepted', start);
   window.addEventListener('storage', event => {
-    if (event.key !== 'policycock.analytics.combined.v1' && event.key !== null) return;
+    if (event.key !== 'policycock.analytics.combined.v2' && event.key !== null) return;
     if (!allowed() && started) location.reload();
   });
   window.addEventListener('focus', () => { if (!allowed() && started) location.reload(); });

@@ -2268,3 +2268,68 @@ index fcd7b9b..2c229bc 100644
 -- 
 2.43.0
 
+From 753b44a7f8b929d55aa06c5dbb88819ecb0fdc98 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Fri, 27 Nov 2026 13:05:29 +0000
+Subject: [PATCH] Resolve shared node lookup consistently outside systemd PATH
+
+---
+ collector/collector.py                     | 5 ++++-
+ collector/manifest.yaml                    | 2 ++
+ collector/tests/test_monitoring_removal.py | 7 ++++---
+ 3 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/collector/collector.py b/collector/collector.py
+index 02497cb..0a8c75a 100644
+--- a/collector/collector.py
++++ b/collector/collector.py
+@@ -1112,7 +1112,10 @@ def collect_evidence(cfg):
+     if base:
+         try:
+             query = urllib.parse.urlencode({"query": "kube_node_info"})
+-            raw = subprocess.check_output(["kubectl", "get", "--raw", f"{base}?{query}"], text=True, timeout=20)
++            command = [settings.get("kubectl") or shutil.which("kubectl") or "/usr/local/bin/kubectl"]
++            if settings.get("kubeconfig"):
++                command += ["--kubeconfig", str(Path(settings["kubeconfig"]).expanduser())]
++            raw = subprocess.check_output(command + ["get", "--raw", f"{base}?{query}"], text=True, timeout=20)
+             payload = json.loads(raw)
+             if payload.get("status", "success") != "success":
+                 raise ValueError("node list unavailable")
+diff --git a/collector/manifest.yaml b/collector/manifest.yaml
+index 9b17fd5..95b34ee 100644
+--- a/collector/manifest.yaml
++++ b/collector/manifest.yaml
+@@ -96,6 +96,8 @@ notion:
+   social_media_content_path: /home/ubuntu/workspace/knowledge-lab/source/external-links/notion-social-media-content/items
+ 
+ evidence:
++  kubectl: /usr/local/bin/kubectl
++  kubeconfig: /etc/rancher/k3s/k3s.yaml
+   prometheus_service: /api/v1/namespaces/monitoring/services/http:kube-prometheus-stack-prometheus:9090/proxy/api/v1/query
+   github_repositories:
+     - shdkej/openclaw-backups
+diff --git a/collector/tests/test_monitoring_removal.py b/collector/tests/test_monitoring_removal.py
+index 36eb114..9f0df55 100644
+--- a/collector/tests/test_monitoring_removal.py
++++ b/collector/tests/test_monitoring_removal.py
+@@ -13,13 +13,14 @@ class TestMonitoringRemoval(unittest.TestCase):
+         calls = []
+         def request(args, **kwargs):
+             calls.append(args)
+-            if args[0] == 'kubectl':
++            if args[0].endswith('kubectl'):
+                 return json.dumps({'data': {'result': [{'metric': {'node': 'test-node'}}]}})
+             return json.dumps([{'sha': 'abc12345', 'commit': {'committer': {'date': '2026-11-27T00:00:00Z'}}}])
+-        with mock.patch.dict(collector.os.environ, {}, clear=True), mock.patch.object(collector.shutil, 'which', return_value='gh'), mock.patch.object(collector.subprocess, 'check_output', side_effect=request):
+-            out = collector.collect_evidence({'evidence': {'prometheus_service': '/test/query', 'github_repositories': ['owner/repo']}})
++        with mock.patch.dict(collector.os.environ, {}, clear=True), mock.patch.object(collector.shutil, 'which', side_effect=lambda name: 'gh' if name=='gh' else None), mock.patch.object(collector.subprocess, 'check_output', side_effect=request):
++            out = collector.collect_evidence({'evidence': {'prometheus_service': '/test/query', 'kubeconfig':'/test/config', 'github_repositories': ['owner/repo']}})
+         self.assertEqual(len(calls), 2)
+         self.assertIn('kube_node_info', calls[0][-1])
++        self.assertEqual(calls[0][:3], ['/usr/local/bin/kubectl','--kubeconfig','/test/config'])
+         self.assertEqual(out['github'][0]['sha'], 'abc1234')
+         self.assertEqual(out['prometheus']['nodes'][0]['name'], 'test-node')
+         self.assertEqual(set(out), {'updatedAt', 'github', 'prometheus'})
+-- 
+2.43.0
+

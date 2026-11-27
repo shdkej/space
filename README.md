@@ -137,3 +137,12 @@ Argo CD revision·exporter rollout → JSON/Grafana 실제 차트 순으로 검�
 
 네이버 인증정보의 수집·표시 경계, 실제 누출 대조 범위와 남은 공통 보안 설정은
 [Monitoring 인증정보 보호 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#인증정보-보호와-점검-범위)을 따릅니다.
+
+### 시계열 보관·기간 집계
+
+현재 Space의 `modules/k3s-apps/monitoring.tf`와 live Prometheus는 보관 3일·emptyDir입니다.
+장기 주간·월간 추이 보관을 제공하지 않으며 Pod 교체 전에 기존 기록 보존을 확인해야 합니다.
+PostHog의 완료 일간 7개·주간 4개·월간 2개는 과거 원천을 다시 조회한 집계이며, Prometheus에
+그 기간 전체가 보관됐다는 뜻은 아닙니다. 현재 패널의 집계 기간·미연결 항목·실제 검증 방법은
+[Monitoring 기간 수집 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#시계열-보관과-기간-집계)이 정본입니다.
+2026-11-27 점검에서는 보관·스토리지·수집·대시보드 설정을 변경하지 않았습니다.

@@ -1730,3 +1730,515 @@ index dfffa99..6539d41 100644
 -- 
 2.43.0
 
+From 532b34448ee9bc49e6d6c0a7fb998886783d8a00 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Fri, 27 Nov 2026 12:56:48 +0000
+Subject: [PATCH] Remove duplicated Status monitoring collection and retain
+ shared state feeds
+
+---
+ README.md                                  |  18 +-
+ collector/collector.py                     | 240 +++------------------
+ collector/manifest.yaml                    |   4 +-
+ collector/office.py                        |   1 -
+ collector/tests/test_collector.py          |   6 +-
+ collector/tests/test_monitoring_removal.py |  50 +++++
+ 6 files changed, 98 insertions(+), 221 deletions(-)
+ create mode 100644 collector/tests/test_monitoring_removal.py
+
+diff --git a/README.md b/README.md
+index e041cd1..039323e 100644
+--- a/README.md
++++ b/README.md
+@@ -1,12 +1,12 @@
+ # system-dashboard
+ 
+-OpenClaw 에이전트 시스템 상태를 Control Center CMS System 탭으로 시각화하는 프로젝트.
++OpenClaw 상태를 공개 Status의 System·Agents·Loop와 LCML 사무실에 공급하는 수집기입니다. 기존 비공개 스냅샷·액션 경로도 유지합니다.
+ 
+ - 저장 위치: `/home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/system-dashboard` (수집기 코드·설정·운영 문서)
+ 
+ - 설계: `docs/2026-07-04-system-dashboard-design.md`
+ - 수집기: `collector/` — 이 박스에서 systemd user timer로 10분마다 실행
+-- UI: `~/workspace/space/apps/control-center-cms` (System 탭)
++- UI: 상위 Space의 `infra-aws-static-sites/sites/status/dashboard/`와 `dashboard/office/`
+ - 감시 대상 추가/제거: `collector/manifest.yaml`만 수정
+ 
+ Infinity Intent 원장은 `INTENTS.yaml`의 Backlog/Inbox/Active/Waiting을 읽고, 완료 항목은
+@@ -18,9 +18,11 @@ Infinity Intent 원장은 `INTENTS.yaml`의 Backlog/Inbox/Active/Waiting을 읽
+ 
+ ## 공개 시계열
+ 
+-같은 collector는 별도 `metrics-history.json`도 발행합니다. `manifest.yaml`의 `timeseries.local_path`가 가리키는 호스트 파일에 10분 간격 샘플을 저장하고, 31일보다 오래된 점은 제거합니다. 첫 기록 때 Prometheus `/query_range`로 연결된 node-exporter·prober·PostHog exporter·YACE 계열을 최대 31일 소급합니다. System 레이어·Agents의 상태 시계열은 배포 후 실행부터 기록합니다.
++같은 collector는 `metrics-history.json`에 System 4개 레이어·Flow·Agents 상태만 10분마다 기록하고 31일을 보존합니다. Status의 Monitoring 메뉴는 2026-11-27 사용자 요청으로 제거했습니다. CPU·메모리·디스크·네트워크·제품·비즈니스 수치의 중복 수집, Prometheus 과거 보강, Apify Threads·content-live 수집을 제거했습니다.
+ 
+-공개 기록은 고정된 지표 ID·표시 이름·숫자값 또는 상태값·시간만 포함합니다. 에이전트 로그·프롬프트·개별 크론 설정은 포함하지 않습니다. 소스에 값이 없거나 쿼리가 실패하면 0으로 대체하지 않고 점을 비우거나 그래프를 비워둡니다. Grafana/Prometheus의 쿼리가 정본이고, Status는 이 시계열 파일로 읽기 전용 그래프를 그립니다.
++System에 필요한 노드 목록 1회와 GitHub 저장소 최근 커밋 시각만 `evidence`에 남깁니다. 노드 목록은 등록 여부이며 건강 상태로 판정하지 않습니다. Office의 프로젝트 지표는 `office.prometheus_service`에서 별도 묶음 쿼리 1회로 유지합니다. Grafana exporter·Prometheus 원본 보관과 별도 공유 analytics 예약 작업은 이 변경 대상이 아닙니다.
++
++기존 역사 파일은 전환 전 호스트에 사본을 보존하고, 다음 기록부터 위 여섯 상태 지표만 공개합니다. 이전 수치 지표를 다시 수집하거나 Grafana의 시계열을 지우지 않습니다. 원문 로그·프롬프트·비밀값은 시계열에 포함하지 않습니다.
+ 
+ 배포 후 collector timer가 한 차례 실행되면 공개 그래프가 갱신됩니다. DB 기록·액션 처리를 건드리지 않고 공개 피드만 갱신할 때는 다음 명령을 사용할 수 있습니다.
+ 
+@@ -87,4 +89,10 @@ PYTHONPATH=collector python3 -m unittest discover -s collector/tests -v
+ 
+ 정적 사이트 배포에서 `office-live.json`을 삭제하거나 빌드 예제로 덮어쓰지 않습니다. 복구는 Office 소스·설정을 이전 Git 버전으로 복원한 뒤 기존 timer 또는 독립 명령으로 검증합니다. 화면 롤백은 상위 Status의 배포 절차를 따릅니다.
+ 
+-2026-11-11 검증 시 Office 테스트는 통과했습니다. 기존 `test_system_rollup`은 고정된 2026-10-11/16 Git 날짜가 7일을 넘어 `warn`인데 `ok`를 기대해 실패했고, 수정 전 `312c38c` 코드에서도 같은 실패를 재현했습니다. 이 기존 테스트의 시간 의존성은 이번 변경에 포함하지 않았습니다.
++2026-11-27 수정 전 84개 테스트 중 `test_system_rollup`만 고정된 10월 날짜 때문에 실패했습니다. 정상 롤업 사례의 날짜를 실행 시점으로 바꾸고 별도의 오래된 커밋 사례는 유지했습니다. 간소화·데이터 보존 회귀를 포함해 87개가 통과했습니다.
++
++## 변경·복구 경로
++
++2026-11-27 `shdkej/system-dashboard`의 원격 Git/API가 Repository not found/404를 반환했습니다. 운영 checkout의 별개 `collect_crons` 최적화 수정은 보존하고 요청 변경만 격리 checkout에서 검증했습니다. 기존 Space `infra-aws-static-sites/sites/status/patches/lcml-office-collector.patch`에 이번 변경을 마지막 패치로 추가해 Space main에 보관합니다. 새 저장소나 서버는 만들지 않습니다.
++
++검증은 `PYTHONPATH=collector python3 -m unittest discover -s collector/tests`, Python 구문 검사, 공개 전용 발행, 실제 공개 피드의 evidence/상태 6종 및 Status PC·모바일입니다. 전환 전 코드·설정·역사 파일을 보존하며 되돌릴 때 이번 마지막 패치만 역적용하고 보존한 역사 파일을 복원합니다. 기존 Office·크론 수집 변경을 포함한 전체 reset은 하지 않습니다.
+diff --git a/collector/collector.py b/collector/collector.py
+index 088587d..02497cb 100644
+--- a/collector/collector.py
++++ b/collector/collector.py
+@@ -6,13 +6,11 @@
+ import argparse
+ import datetime as dt
+ import json
+-import math
+ import os
+ import re
+ import shutil
+ import subprocess
+ import sys
+-import time
+ import urllib.error
+ import urllib.request
+ import urllib.parse
+@@ -29,23 +27,6 @@ ACTION_TABLE = "system_actions"
+ UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+ STALE_RUNNING_MINUTES = 30
+ INTENT_SECTIONS = ("Backlog", "Inbox", "Active", "Waiting")
+-PROMETHEUS_SERIES = {
+-    "system.cpu": ("100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])))", "%"),
+-    "system.memory": ("100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)", "%"),
+-    "system.disk": ("100 * (1 - max by (instance) (node_filesystem_avail_bytes{mountpoint=\"/\",fstype=~\"ext4|xfs\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype=~\"ext4|xfs\"}))", "%"),
+-    "system.network": ("sum by (instance) (rate(node_network_receive_bytes_total{device!~\"lo|veth.*|cali.*|cni.*|flannel.*\"}[5m]) + rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|cali.*|cni.*|flannel.*\"}[5m]))", "bytes/s"),
+-    "system.latency": ("histogram_quantile(0.95, sum by (le, instance) (rate(prober_probe_duration_seconds_bucket[5m])))", "s"),
+-    "system.node_health": ("up{job=\"node-exporter\"}", "state"),
+-    "system.autoscale": ("max by (namespace, horizontalpodautoscaler) (kube_horizontalpodautoscaler_spec_max_replicas - kube_horizontalpodautoscaler_status_current_replicas)", "pods"),
+-    "system.aws": ("label_replace(sum(aws_lambda_invocations_sum), \"series\", \"호출 수\", \"__name__\", \".*\") or label_replace(sum(aws_lambda_errors_sum), \"series\", \"오류 수\", \"__name__\", \".*\")", "CloudWatch count"),
+-    "customer.sessions": ("product_sessions", "sessions"),
+-    "customer.funnel_dropoff": ("product_funnel_dropoff_rate", "%"),
+-    "customer.retention": ("product_retention_rate", "%"),
+-    "product.frontend_errors": ("product_errors", "errors"),
+-    "product.web_vitals": ("product_web_vitals_lcp_ms or product_web_vitals_inp_ms", "ms"),
+-    "product.sessions": ("product_sessions", "sessions"),
+-    "product.task_completion": ("product_conversion_rate", "%"),
+-}
+ STATE_VALUE = {"bad": 0, "down": 0, "warn": 1, "degraded": 1, "ok": 2, "operational": 2}
+ 
+ 
+@@ -750,7 +731,7 @@ def build_snapshot(cfg, collect_crons_fn=None):
+         ("effectiveness", lambda: collect_effectiveness(cfg["effectiveness"])),
+         ("review", lambda: collect_review(cfg)),
+         ("notion", lambda: collect_notion(cfg)),
+-        ("monitoring", lambda: collect_monitoring(cfg)),
++        ("evidence", lambda: collect_evidence(cfg)),
+         ("role_watchers", lambda: collect_role_watchers(cfg)),
+     )
+     if cfg.get("office"):
+@@ -1013,7 +994,7 @@ def public_system(snapshot):
+     """4레이어 롤업 + PDCA/백로그/인텐트 카운트 — 판정·숫자·판정 근거(reason)만, 내용은 비공개."""
+     crons = snapshot.get("crons") or []
+     backlogs = snapshot.get("backlogs") or []
+-    github = (snapshot.get("monitoring") or {}).get("github") or []
++    github = (snapshot.get("evidence") or snapshot.get("monitoring") or {}).get("github") or []
+     pdca = snapshot.get("pdca") or {}
+     intents = (snapshot.get("intents") or {}).get("counts") or {}
+     l1_status, l1_reason = _l1_status_and_reason(snapshot)
+@@ -1123,119 +1104,27 @@ def collect_notion(cfg):
+             "reason": None}
+ 
+ 
+-def collect_threads_apify():
+-    """Apify로 공개 Threads 프로필 원자료를 수집한다. 토큰은 환경에서만 읽는다."""
+-    token = os.environ.get("APIFY_TOKEN") or os.environ.get("APIFY_API_TOKEN")
+-    if not token:
+-        return None
+-    actor = "webdata_labs~threads-scraper"
+-    api = "https://api.apify.com/v2"
+-    query = urllib.parse.urlencode({"token": token})
+-    body = {"usernames": ["minimal_collector"], "maxPosts": 25}
+-    req = urllib.request.Request(f"{api}/acts/{actor}/runs?{query}", data=json.dumps(body).encode(),
+-                                 method="POST", headers={"Content-Type": "application/json"})
+-    with urllib.request.urlopen(req, timeout=30) as res:
+-        run = json.loads(res.read().decode()).get("data") or {}
+-    run_id = run.get("id")
+-    dataset_id = run.get("defaultDatasetId")
+-    if not run_id or not dataset_id:
+-        raise RuntimeError("Apify 실행 ID 또는 dataset ID가 없습니다")
+-    status = run.get("status")
+-    for _ in range(12):
+-        if status in ("SUCCEEDED", "FAILED", "ABORTED", "TIMED-OUT"):
+-            break
+-        time.sleep(2)
+-        status_req = urllib.request.Request(f"{api}/actor-runs/{run_id}?{query}")
+-        with urllib.request.urlopen(status_req, timeout=20) as res:
+-            status = (json.loads(res.read().decode()).get("data") or {}).get("status")
+-    if status != "SUCCEEDED":
+-        raise RuntimeError(f"Apify 실행 상태: {status}")
+-    items_req = urllib.request.Request(f"{api}/datasets/{dataset_id}/items?clean=true&limit=25&{query}")
+-    with urllib.request.urlopen(items_req, timeout=30) as res:
+-        items = json.loads(res.read().decode())
+-    profile = next((x for x in items if x.get("type") == "profile"), {})
+-    posts = [x for x in items if x.get("type") == "post"]
+-    posts.sort(key=lambda x: x.get("timestamp") or 0, reverse=True)
+-    return {
+-        "source": "apify",
+-        "sourceUrl": "https://www.threads.com/@minimal_collector",
+-        "fetchedAt": iso(now_utc()),
+-        "followers": profile.get("followerCount"),
+-        "threads": len(posts),
+-        "recentPosts": [{"id": p.get("postId"), "title": next((line.strip() for line in (p.get("text") or "").splitlines() if line.strip()), "제목 없음")[:80], "text": p.get("text", "")[:280],
+-                         "date": p.get("date"), "url": p.get("url"),
+-                         "likes": p.get("likeCount"), "replies": p.get("replyCount"),
+-                         "views": p.get("viewCount")} for p in posts],
+-        "metrics": {"views": sum((p.get("viewCount") or 0) for p in posts) or None,
+-                    "likes": sum((p.get("likeCount") or 0) for p in posts) or None,
+-                    "replies": sum((p.get("replyCount") or 0) for p in posts) or None},
+-        "availability": "public_profile_via_apify",
+-    }
+-
+-
+-def collect_monitoring(cfg):
+-    """원자료 기반 L2/L4/L5 지표. 실패한 소스는 추정하지 않고 상태로 남긴다."""
+-    out = {"updatedAt": iso(now_utc()), "business": None, "posthog": None, "content": None, "github": [], "prometheus": None, "timeseries": {}}
+-    mcfg = cfg.get("monitoring") or {}
+-    base = mcfg.get("prometheus_service")
+-    try:
+-        def prom(query):
+-            q = urllib.parse.urlencode({"query": query})
+-            raw = subprocess.check_output(["kubectl", "get", "--raw", f"{base}?{q}"], text=True, timeout=20)
+-            return json.loads(raw).get("data", {}).get("result", [])
+-        for metric_id, (query, unit) in PROMETHEUS_SERIES.items():
+-            try:
+-                rows = prom(query)
+-                series = []
+-                for row in rows:
+-                    labels = row.get("metric") or {}
+-                    raw_value = (row.get("value") or [None, None])[1]
+-                    try:
+-                        value = float(raw_value)
+-                    except (TypeError, ValueError):
+-                        continue
+-                    if not math.isfinite(value):
+-                        continue
+-                    if metric_id == "system.node_health":
+-                        value = 2.0 if value > 0 else 0.0
+-                    name = prometheus_series_name(metric_id, labels)
+-                    series.append({"name": name, "value": value})
+-                out["timeseries"][metric_id] = {
+-                    "kind": "state" if metric_id == "system.node_health" else "numeric",
+-                    "unit": unit,
+-                    "series": series,
+-                }
+-            except Exception as exc:
+-                out["timeseries"][metric_id] = {
+-                    "kind": "state" if metric_id == "system.node_health" else "numeric",
+-                    "unit": unit,
+-                    "series": [],
+-                    "reason": str(exc)[:160],
+-                }
+-        nodes = prom("kube_node_info")
+-        ups = {r.get("metric", {}).get("node") or r.get("metric", {}).get("instance"): r.get("value", [None, None])[1] for r in prom("up")}
+-        product = {q: prom(q) for q in ("product_active_users", "product_page_views", "product_conversion_rate")}
+-        business = {q: prom(q) for q in ("business_dau", "business_signups", "business_revenue")}
+-        out["prometheus"] = {"state": "ok", "nodes": [{"name": r.get("metric", {}).get("node") or r.get("metric", {}).get("instance"), "status": "정상"} for r in nodes], "product": product}
+-        out["posthog"] = {"state": "ok" if any(product.values()) else "warn", "metrics": product}
+-        out["business"] = {"state": "ok" if any(business.values()) else "warn", "metrics": business}
+-    except Exception as exc:
+-        out["prometheus"] = {"state": "warn", "nodes": [], "reason": str(exc)[:200]}
+-        out["posthog"] = {"state": "warn", "metrics": {}, "reason": "Prometheus exporter 응답 없음"}
+-        out["business"] = {"state": "warn", "metrics": {}, "reason": "Business exporter 응답 없음"}
+-    try:
+-        apify_content = collect_threads_apify() if os.environ.get("APIFY_ENABLED") == "1" else None
+-        content_path = Path(mcfg.get("content_live_path", ""))
+-        out["content"] = apify_content or (json.loads(content_path.read_text()) if content_path.exists() else {"availability": "missing"})
+-        if apify_content and content_path:
+-            content_path.parent.mkdir(parents=True, exist_ok=True)
+-            content_path.write_text(json.dumps(apify_content, ensure_ascii=False, indent=2) + "\n")
+-        out["content"]["state"] = "ok" if out["content"].get("recentPosts") or out["content"].get("metrics", {}).get("views") is not None else "warn"
+-    except Exception as exc:
+-        out["content"] = {"state": "warn", "availability": str(exc)[:160]}
++def collect_evidence(cfg):
++    """System에 필요한 노드 목록과 저장소 갱신 시각만 수집한다."""
++    out = {"updatedAt": iso(now_utc()), "github": [], "prometheus": None}
++    settings = cfg.get("evidence") or {}
++    base = settings.get("prometheus_service")
++    if base:
++        try:
++            query = urllib.parse.urlencode({"query": "kube_node_info"})
++            raw = subprocess.check_output(["kubectl", "get", "--raw", f"{base}?{query}"], text=True, timeout=20)
++            payload = json.loads(raw)
++            if payload.get("status", "success") != "success":
++                raise ValueError("node list unavailable")
++            nodes = payload.get("data", {}).get("result", [])
++            out["prometheus"] = {"state": "ok", "nodes": [
++                {"name": row.get("metric", {}).get("node") or row.get("metric", {}).get("instance"), "status": "등록됨"}
++                for row in nodes]}
++        except Exception:
++            out["prometheus"] = {"state": "warn", "reason": "노드 목록 조회 실패"}
+     github_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+     gh_bin = shutil.which("gh")
+-    for repo in mcfg.get("github_repositories", []):
++    for repo in settings.get("github_repositories", []):
+         try:
+             if github_token:
+                 req = urllib.request.Request(
+@@ -1260,13 +1149,7 @@ def collect_monitoring(cfg):
+     return out
+ 
+ 
+-def prometheus_series_name(metric_id, labels):
+-    if metric_id == "product.web_vitals":
+-        return {"product_web_vitals_lcp_ms": "LCP p75", "product_web_vitals_inp_ms": "INP p75"}.get(labels.get("__name__"), labels.get("service") or "웹 성능")
+-    return next((labels.get(key) for key in ("series", "node", "function_name", "horizontalpodautoscaler", "service", "instance", "__name__") if labels.get(key)), "전체")
+-
+-
+-def public_agents_payload(crons, roster, freshness=None, system=None, notion=None, monitoring=None, role_watchers=None, audit=None):
++def public_agents_payload(crons, roster, freshness=None, system=None, notion=None, evidence=None, role_watchers=None, audit=None):
+     """에이전트 종류별 롤업 + 산출물 신선도 + 시스템 롤업. 크론 이름·스케줄·UUID는 내보내지 않는다."""
+     by_agent = {}
+     for c in crons or []:
+@@ -1296,8 +1179,8 @@ def public_agents_payload(crons, roster, freshness=None, system=None, notion=Non
+         payload["system"] = system
+     if notion is not None:
+         payload["notion"] = notion
+-    if monitoring is not None:
+-        payload["monitoring"] = monitoring
++    if evidence is not None:
++        payload["evidence"] = evidence
+     if role_watchers is not None:
+         payload["roleWatchers"] = role_watchers
+         active_roles = [row for row in role_watchers if row.get("state") == "ok"]
+@@ -1340,16 +1223,12 @@ def public_roster(snapshot):
+ 
+ def public_payload(snapshot, roster=None):
+     roster = roster if roster is not None else public_roster(snapshot)
+-    monitoring = snapshot.get("monitoring")
+-    if isinstance(monitoring, dict):
+-        # The graph history is published once in metrics-history.json.
+-        monitoring = {key: value for key, value in monitoring.items() if key != "timeseries"}
+     return public_agents_payload(snapshot.get("crons"),
+                                  roster,
+                                  snapshot.get("freshness"),
+                                  public_system(snapshot),
+                                  snapshot.get("notion"),
+-                                 monitoring,
++                                 snapshot.get("evidence"),
+                                  snapshot.get("role_watchers"),
+                                  snapshot.get("audit"))
+ 
+@@ -1390,13 +1269,11 @@ def record_timeseries(cfg, snapshot, current_payload, now=None):
+     timestamp = int(now.timestamp())
+     retention_days = int(settings.get("retention_days", 31))
+     cutoff = timestamp - retention_days * 86400
+-    for metric_id, (query, unit) in PROMETHEUS_SERIES.items():
+-        history["metrics"].setdefault(metric_id, {
+-            "kind": "state" if metric_id == "system.node_health" else "numeric",
+-            "unit": unit,
+-            "source": "Prometheus",
+-            "series": [],
+-        })
++    # Retire duplicated monitoring samples while preserving System/Agents history.
++    allowed = {"system.layer.l1", "system.layer.l2", "system.layer.l3", "system.layer.l4", "system.flow", "agents.status"}
++    history["metrics"] = {key: value for key, value in history["metrics"].items() if key in allowed}
++    history.pop("prometheusBackfillComplete", None)
++    history.pop("prometheusBackfilled", None)
+ 
+     def append(metric_id, series_name, value, kind="numeric", unit="", point_time=timestamp):
+         if value is not None:
+@@ -1413,45 +1290,6 @@ def record_timeseries(cfg, snapshot, current_payload, now=None):
+         if not series["points"] or series["points"][-1][0] != point_time:
+             series["points"].append([point_time, value])
+ 
+-    # Prometheus can supply real historical samples immediately; only the
+-    # system/agent state series begin at the first safe collector snapshot.
+-    if not history.get("prometheusBackfillComplete"):
+-        prom_base = ((cfg.get("monitoring") or {}).get("prometheus_service") or "")
+-        range_url = prom_base.rsplit("/", 1)[0] + "/query_range" if prom_base else ""
+-        if range_url:
+-            start = timestamp - retention_days * 86400
+-            backfilled = set(history.get("prometheusBackfilled") or [])
+-            for metric_id, (query, unit) in PROMETHEUS_SERIES.items():
+-                if metric_id in backfilled:
+-                    continue
+-                params = urllib.parse.urlencode({"query": query, "start": str(start),
+-                                                 "end": str(timestamp), "step": "600"})
+-                try:
+-                    raw = subprocess.check_output(["kubectl", "get", "--raw", f"{range_url}?{params}"],
+-                                                  text=True, timeout=45)
+-                    rows = json.loads(raw).get("data", {}).get("result", [])
+-                    backfilled.add(metric_id)
+-                    kind = "state" if metric_id == "system.node_health" else "numeric"
+-                    for row in rows:
+-                        labels = row.get("metric") or {}
+-                        name = prometheus_series_name(metric_id, labels)
+-                        for raw_time, raw_value in row.get("values", []):
+-                            try:
+-                                value = float(raw_value)
+-                                point_time = int(float(raw_time))
+-                            except (TypeError, ValueError):
+-                                continue
+-                            if not math.isfinite(value):
+-                                continue
+-                            if metric_id == "system.node_health":
+-                                value = 2.0 if value > 0 else 0.0
+-                            append(metric_id, name, value, kind, unit, point_time)
+-                except Exception:
+-                    # Historical API support is optional; current collection remains authoritative.
+-                    continue
+-            history["prometheusBackfilled"] = sorted(backfilled)
+-            history["prometheusBackfillComplete"] = len(backfilled) == len(PROMETHEUS_SERIES)
+-
+     system = public_system(snapshot)
+     for layer in system.get("layers", []):
+         key = layer.get("key")
+@@ -1466,18 +1304,6 @@ def record_timeseries(cfg, snapshot, current_payload, now=None):
+         state = STATE_VALUE.get(agent.get("state"))
+         append("agents.status", agent.get("name") or "에이전트", state, "state", "상태")
+ 
+-    current_metrics = ((snapshot.get("monitoring") or {}).get("timeseries") or {})
+-    for metric_id, data in current_metrics.items():
+-        for series in data.get("series") or []:
+-            append(metric_id, series.get("name") or "전체", series.get("value"),
+-                   data.get("kind", "numeric"), data.get("unit", ""))
+-    # Known Prometheus series that temporarily vanish get a gap rather than a falsely continuous line.
+-    for metric_id, (query, unit) in PROMETHEUS_SERIES.items():
+-        entry = history["metrics"].get(metric_id)
+-        if entry and not (current_metrics.get(metric_id) or {}).get("series"):
+-            for series in entry.get("series", []):
+-                if not series.get("points") or series["points"][-1][0] != timestamp:
+-                    series.setdefault("points", []).append([timestamp, None])
+     for entry in history["metrics"].values():
+         for series in entry.get("series", []):
+             series["points"] = [point for point in series.get("points", []) if point[0] >= cutoff]
+@@ -1621,12 +1447,6 @@ def main(argv=None):
+     args = ap.parse_args(argv)
+ 
+     cfg = yaml.safe_load(Path(args.config).read_text())
+-    # 사용자 홈의 보호된 환경 파일에 있는 선택적 외부 수집 자격증명은 값 자체를 로그에 남기지 않는다.
+-    home_env = Path.home() / ".env"
+-    if home_env.exists():
+-        for key, value in load_env_values(home_env).items():
+-            if key.startswith("APIFY_") and value:
+-                os.environ.setdefault(key, value)
+     snapshot = build_snapshot(cfg)
+     if args.dry_run:
+         print(json.dumps(snapshot, ensure_ascii=False, indent=2))
+diff --git a/collector/manifest.yaml b/collector/manifest.yaml
+index bc4cb3d..9b17fd5 100644
+--- a/collector/manifest.yaml
++++ b/collector/manifest.yaml
+@@ -95,16 +95,16 @@ notion:
+   social_media_content_database_id: 58930c3b-7ad6-4422-9392-02cef3c5d037
+   social_media_content_path: /home/ubuntu/workspace/knowledge-lab/source/external-links/notion-social-media-content/items
+ 
+-monitoring:
++evidence:
+   prometheus_service: /api/v1/namespaces/monitoring/services/http:kube-prometheus-stack-prometheus:9090/proxy/api/v1/query
+   github_repositories:
+     - shdkej/openclaw-backups
+     - shdkej/infinity
+     - shdkej/knowledge-lab
+-  content_live_path: /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/dist/content-live.json
+ 
+ # LCML /office/: metadata-only public snapshots, using the existing 10-minute timer.
+ office:
++  prometheus_service: /api/v1/namespaces/monitoring/services/http:kube-prometheus-stack-prometheus:9090/proxy/api/v1/query
+   local_path: /home/ubuntu/.local/state/openclaw/office-live.json
+   public_key: office-live.json
+   state_db: /home/ubuntu/.openclaw/state/openclaw.sqlite
+diff --git a/collector/office.py b/collector/office.py
+index 6cd00f7..e7051e7 100644
+--- a/collector/office.py
++++ b/collector/office.py
+@@ -485,7 +485,6 @@ def collect_day(settings, now):
+ def collect_office(cfg, snapshot=None, now=None, run=run_cmd):
+     now = now or dt.datetime.now(dt.timezone.utc)
+     settings = dict(cfg.get('office') or {})
+-    settings.setdefault('prometheus_service', (cfg.get('monitoring') or {}).get('prometheus_service'))
+     result = {'schemaVersion': 1, 'observedAt': iso(now), 'cadenceSeconds': CADENCE,
+               'staleAfterSeconds': STALE, 'sources': {}}
+     result['residents'], result['sources']['residents'] = collect_residents(settings, now)
+diff --git a/collector/tests/test_collector.py b/collector/tests/test_collector.py
+index ee26928..fcd7b9b 100644
+--- a/collector/tests/test_collector.py
++++ b/collector/tests/test_collector.py
+@@ -559,9 +559,9 @@ class TestPublicPublish(unittest.TestCase):
+             "intents": {"counts": {"inbox": 1, "active": 2, "waiting": 3}},
+             "layer_checks": [],
+             "monitoring": {"github": [
+-                {"repo": "shdkej/openclaw-backups", "updatedAt": "2026-10-11T03:30:05Z", "state": "ok"},
+-                {"repo": "shdkej/infinity", "updatedAt": "2026-10-16T03:00:07Z", "state": "ok"},
+-                {"repo": "shdkej/knowledge-lab", "updatedAt": "2026-10-16T21:11:22Z", "state": "ok"},
++                {"repo": "shdkej/openclaw-backups", "updatedAt": collector.iso(collector.now_utc()), "state": "ok"},
++                {"repo": "shdkej/infinity", "updatedAt": collector.iso(collector.now_utc()), "state": "ok"},
++                {"repo": "shdkej/knowledge-lab", "updatedAt": collector.iso(collector.now_utc()), "state": "ok"},
+             ]},
+         }
+         out = collector.public_system(snapshot)
+diff --git a/collector/tests/test_monitoring_removal.py b/collector/tests/test_monitoring_removal.py
+new file mode 100644
+index 0000000..36eb114
+--- /dev/null
++++ b/collector/tests/test_monitoring_removal.py
+@@ -0,0 +1,50 @@
++import datetime as dt
++import json
++import tempfile
++import unittest
++from pathlib import Path
++from unittest import mock
++
++import collector
++
++
++class TestMonitoringRemoval(unittest.TestCase):
++    def test_evidence_queries_only_nodes_and_repo_timestamps(self):
++        calls = []
++        def request(args, **kwargs):
++            calls.append(args)
++            if args[0] == 'kubectl':
++                return json.dumps({'data': {'result': [{'metric': {'node': 'test-node'}}]}})
++            return json.dumps([{'sha': 'abc12345', 'commit': {'committer': {'date': '2026-11-27T00:00:00Z'}}}])
++        with mock.patch.dict(collector.os.environ, {}, clear=True), mock.patch.object(collector.shutil, 'which', return_value='gh'), mock.patch.object(collector.subprocess, 'check_output', side_effect=request):
++            out = collector.collect_evidence({'evidence': {'prometheus_service': '/test/query', 'github_repositories': ['owner/repo']}})
++        self.assertEqual(len(calls), 2)
++        self.assertIn('kube_node_info', calls[0][-1])
++        self.assertEqual(out['github'][0]['sha'], 'abc1234')
++        self.assertEqual(out['prometheus']['nodes'][0]['name'], 'test-node')
++        self.assertEqual(set(out), {'updatedAt', 'github', 'prometheus'})
++
++    def test_public_feed_omits_retired_monitoring_even_in_old_snapshot(self):
++        snapshot = {'monitoring': {'content': {'private': 'should-not-publish'}}, 'evidence': {'github': []}}
++        out = collector.public_payload(snapshot, [])
++        self.assertNotIn('monitoring', out)
++        self.assertEqual(out['evidence'], {'github': []})
++        self.assertNotIn('should-not-publish', json.dumps(out))
++
++    def test_history_retains_state_samples_without_prometheus_backfill(self):
++        now = dt.datetime(2026, 11, 27, tzinfo=dt.timezone.utc)
++        stamp = int(now.timestamp()) - 600
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / 'history.json'
++            state = {'kind':'state', 'series':[{'name':'Agent', 'points':[[stamp,2]]}]}
++            path.write_text(json.dumps({'prometheusBackfillComplete': True, 'prometheusBackfilled':['system.cpu'], 'metrics':{'system.cpu':state, 'agents.status':state, 'customer.sessions':state}}))
++            cfg = {'timeseries': {'local_path':str(path)}}
++            with mock.patch.object(collector.subprocess,'check_output',side_effect=AssertionError('no historical query')):
++                collector.record_timeseries(cfg, {}, {'agents': [{'name':'Agent','state':'ok'}]}, now=now)
++            result = json.loads(path.read_text())
++        self.assertNotIn('system.cpu', result['metrics'])
++        self.assertNotIn('customer.sessions', result['metrics'])
++        self.assertNotIn('prometheusBackfillComplete', result)
++        self.assertEqual(result['metrics']['agents.status']['series'][0]['points'][0], [stamp,2])
++        self.assertEqual(len(result['metrics']['agents.status']['series'][0]['points']), 2)
++        self.assertIn('system.layer.l1',result['metrics'])
+-- 
+2.43.0
+

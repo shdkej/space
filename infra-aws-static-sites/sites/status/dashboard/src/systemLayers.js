@@ -57,8 +57,11 @@ export function systemLayers(live, publicCommits, workflow) {
   const life = collected("review") && system?.layers?.find(row => row?.key?.toLowerCase() === "l1");
   const crons = collected("crons") && Array.isArray(live?.crons) ? live.crons : null;
   const backlogs = collected("backlogs") && Array.isArray(system?.backlogs) ? system.backlogs : null;
-  const infra = collected("monitoring") && live?.monitoring?.prometheus;
-  const repos = collected("monitoring") && Array.isArray(live?.monitoring?.github) ? live.monitoring.github : [];
+  // Accept the previous feed during rollout; the reduced collector publishes evidence only.
+  const evidence = live?.evidence || live?.monitoring;
+  const evidenceReady = collected(live?.evidence ? "evidence" : "monitoring");
+  const infra = evidenceReady && evidence?.prometheus;
+  const repos = evidenceReady && Array.isArray(evidence?.github) ? evidence.github : [];
   const cronStates = crons?.map(row => row.status) ?? ["none"];
   const backlogStates = backlogs?.map(row => row.state) ?? ["none"];
 

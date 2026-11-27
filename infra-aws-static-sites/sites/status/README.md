@@ -2,7 +2,7 @@
 
 ## LCML 사무실
 
-`https://status.aws.shdkej.com/office/`는 네 층의 AI 사무실입니다. 소스·데이터 계약·실행·검증·사무실 단독 배포는 [Office README](dashboard/office/README.md)가 소유합니다. 모바일 전체 보기는 네 층과 층 선택 메뉴를 한 화면에 맞추며, 개별 층의 긴 상세는 스크롤합니다. 수집기 복구 패치는 `patches/lcml-office-collector.patch`이며 운영 수집기 자체는 이번 화면 변경 대상이 아닙니다.
+`https://status.aws.shdkej.com/office/`는 네 층의 AI 사무실입니다. 소스·데이터 계약·실행·검증·사무실 단독 배포는 [Office README](dashboard/office/README.md)가 소유합니다. 모바일 전체 보기는 네 층과 층 선택 메뉴를 한 화면에 맞추며, 개별 층의 긴 상세는 스크롤합니다. 수집기 복구 패치는 `patches/lcml-office-collector.patch`입니다. 모니터링 전용 수집 제거와 공유 수집 범위는 아래 운영 절차를 따릅니다.
 
 ## 목적
 
@@ -18,7 +18,15 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 
 ## 상태 수집기 운영
 
-실제 수집기 작업 경로는 `/home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/system-dashboard/collector/`입니다. 10분 주기의 `Status dashboard collector`와 기획·개발·마케팅·디자인·운영 역할별 `Role watcher` 5개가 OpenClaw cron에서 이 경로를 사용합니다. 작업 경로를 바꿀 때는 다섯 watcher 모두의 `cwd`와 실행 인자를 함께 갱신하고, 각 작업을 수동 실행해 최근 상태가 `ok`인지 확인합니다. 비밀값이 든 `.env`는 저장소에 추가하지 않습니다.
+실제 수집기 작업 경로는 `/home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/system-dashboard/collector/`입니다. `system-dashboard-collector.timer`가 10분마다 System·Agents·Loop·Office 피드를 갱신합니다. 별도 역할 watcher와 기존 DB/액션 처리, Grafana exporter·Prometheus 설정은 이 변경에서 유지합니다. 비밀값이 든 `.env`는 저장소에 추가하지 않습니다.
+
+2026-11-27 사용자 요청으로 Monitoring 메뉴·32개 지표 정의·전용 분석 피드 요청과 렌더 코드를 제거했습니다. 수집기의 15개 수치 시계열과 31일 Prometheus 보강, 추가 제품·비즈니스 조회 및 Apify Threads/content-live 수집도 제거했습니다. 기존 모니터링 묶음의 Prometheus 조회는 주기당 23회에서 **System 노드 목록 1회**로 줄었습니다. GitHub 최근 커밋은 System의 아티팩트 표시에 필요하므로 유지하고 공개 피드의 `monitoring` 대신 `evidence`로 제공합니다. 노드 목록은 등록 여부이며 건강 판정이 아닙니다.
+
+`metrics-history.json`은 System 4개 레이어·Flow·Agents의 **6개 상태 지표**만 31일 보존합니다. 전환 전 원본 역사 파일을 호스트에 사본으로 남기고, 다음 기록부터 제거한 수치 지표를 제외합니다. Office 프로젝트 지표는 `office.prometheus_service`의 묶음 쿼리 1회로 유지합니다. UI는 배포 전후 호환을 위해 이전 `monitoring`의 공유 항목도 잠시 읽을 수 있지만 Monitoring 메뉴나 수치 차트를 다시 노출하지 않습니다.
+
+수집기 원격 `shdkej/system-dashboard`는 현재 Git/API에서 Repository not found/404입니다. 이번 소스·설정·테스트·문서 변경은 기존 `patches/lcml-office-collector.patch`의 마지막 패치로 Space main에 보관합니다. 로컬 수집기 변경 커밋은 `532b344`이며 기존 `collect_crons` 최적화 수정은 별도로 보존합니다. 기존 복구 패치의 기준은 `1043559`이고 전체 패치열은 `git am`으로 재현합니다. 이미 Office 패치까지 반영된 운영 checkout에는 마지막 변경만 `git apply --check` 후 적용합니다. 서브모듈 포인터를 접근 불가능한 새 커밋으로 바꾸거나 새 저장소를 만들지 않습니다.
+
+검증·게시 순서: collector의 `PYTHONPATH=collector python3 -m unittest discover -s collector/tests` → Status `npm ci --ignore-scripts && npm run build` → 복구 패치 재현 검증 → Space main push/Status AWS 배포 → 기존 타이머가 실행 중이지 않을 때 요청 변경 적용 → `python3 collector.py --publish-public-only` → 공개 피드 및 PC·모바일 네 메뉴 확인입니다. 공개 전용 실행은 DB·액션 큐를 처리하지 않습니다. 복구는 UI 커밋 revert, 수집기 마지막 패치 역적용, 보관한 역사 파일 복원입니다. 다른 에이전트/크론 설정이나 과거 데이터를 전체 reset하지 않습니다.
 
 배포 후 테스트 화면은 `https://status.aws.shdkej.com/ui-material-test.html`에서 확인합니다.
 
@@ -94,13 +102,13 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 
 ## 채널별 집계 기간
 
-Status의 기존 Monitoring 지표에서 GA4 속성별 신규 사용자·세션과 PostHog 앱별 제품 세션을 확인합니다. Metrics 지도에서는 기존 유입 확인 지표와 연결해 봅니다. Instagram 피드는 `@minimal_collector`의 계정 집계와 조회 시각을 제공합니다. 기존 PostHog exporter의 공용 프로젝트 424014 전체 세션과 재방문율은 관측 시점 직전 7일 기준입니다. GA4와 앱별 PostHog 피드는 기존 최근 7일 집계와 달력 기준 일·주·월 집계를 함께 제공합니다. 원천에 행이 없으면 측정값 없음으로 표시합니다. 등록된 앱의 이름과 공개 식별자는 `scripts/analytics-inventory.json`에 관리합니다. PostHog는 프로젝트 내 승인된 app_id를 각각 조회하고 app_id가 없는 이벤트는 등록된 호스트별로 구분하고 나머지는 앱 미지정으로 표시합니다. 명시적 app_id가 등록 목록 밖이면 공개 집계에서 제외합니다. traffic_kind=synthetic 이벤트도 제외합니다. Virtue 호스트 범위에는 AWS·Oracle 도메인이 함께 들어갑니다.
+아래 analytics 수집 스크립트는 Status Monitoring 전용 Python 수집기와 별개입니다. Status 화면은 더 이상 GA4·PostHog 분석 피드를 요청하지 않습니다. 기존 Metrics 연동 계약과 Grafana의 Instagram 관측값 공급에 걸친 공유 예약 작업은 유지합니다. Instagram 피드는 `@minimal_collector`의 계정 집계와 조회 시각을 제공합니다. 기존 PostHog exporter의 공용 프로젝트 424014 전체 세션과 재방문율은 관측 시점 직전 7일 기준입니다. GA4와 앱별 PostHog 피드는 기존 최근 7일 집계와 달력 기준 일·주·월 집계를 함께 제공합니다. 원천에 행이 없으면 측정값 없음으로 표시합니다. 등록된 앱의 이름과 공개 식별자는 `scripts/analytics-inventory.json`에 관리합니다. PostHog는 프로젝트 내 승인된 app_id를 각각 조회하고 app_id가 없는 이벤트는 등록된 호스트별로 구분하고 나머지는 앱 미지정으로 표시합니다. 명시적 app_id가 등록 목록 밖이면 공개 집계에서 제외합니다. traffic_kind=synthetic 이벤트도 제외합니다. Virtue 호스트 범위에는 AWS·Oracle 도메인이 함께 들어갑니다.
 
 기존 exporter의 세션·재방문·프론트엔드 예외·Web Vitals 쿼리는 프로젝트 전체를 조회하며 서비스 라벨은 `virtue`입니다. 대시보드는 이 범례를 ‘PostHog 공용 프로젝트 전체’로 표시합니다. 앱 분석 그래프 하단 숫자는 마지막 완료 구간의 값입니다. 제품 세션 행에서 앱별 수신 이벤트 추세를 함께 확인할 수 있습니다. PostHog 세션은 고유 `$session_id` 수입니다. 수신 이벤트가 있는데 식별한 세션이 0이면 범례에 ‘세션 ID 없음’을 표시합니다. 2026-11-23 한국 시간 기준 원본 대조에서 Policycock의 이벤트 80건 모두 app_id가 있었고 세션 ID는 없었습니다. 11월 17~23일 일간 집계는 6개 범주 모두 PostHog 원본과 일치했습니다.
 
 Grafana 고객 레이어(`/d/layer-customer`)와 제품 레이어(`/d/layer-product`)의 기존 지표에서도 이 인벤토리를 사용합니다. 고객 레이어에서 GA4 신규 사용자·세션과 PostHog 이탈·재방문율을, 제품 레이어에서 PostHog 세션·예외·Web Vitals를 앱별로 비교할 수 있습니다. GA4 피드에 추가된 속성은 다음 exporter 수집 때 표시됩니다.
 
-두 대시보드는 같은 S3 피드를 읽습니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 여덟 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
+공유 analytics 피드는 별도로 유지합니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 여덟 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
 
 - `refresh-analytics.py`, `collect-analytics.py`, `calendar_periods.py`, `analytics_history.py`, `analytics-inventory.json`
 - `read-ga4-insights.mjs`, `read-instagram-insights.mjs`, `support_inquiries.py`
@@ -133,7 +141,7 @@ Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API
 
 브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 홈에서는 ‘지난 7일’ 및 각 달력 기간을 선택하고 ‘새 사용자 수’와 ‘세션수’를 확인합니다. 새 구간과 최근 마감 구간을 다시 조회해 GA4 피드에 반영합니다. 화면 새로고침은 마지막으로 게시된 피드를 읽습니다.
 
-Status의 기존 신규 사용자·세션 행은 앱별 실측을 일·주·월 그래프로 표시합니다. 각 점은 한국 시간 기준 완료된 하루, 월요일~일요일 한 주, 또는 달력 한 달의 원천 집계입니다. 최근 7일·4주·2개월을 표시합니다. Metrics의 기존 연결은 최근 7일을 유지하며 GA4·PostHog 연결에서 집계 기간을 선택할 수 있습니다. Instagram은 최근 7일 계정 집계를 사용합니다. 피드는 최근 31일의 실제 관측을 보존합니다. 과거 보고서로 보강한 점에는 집계 종료 시각과 조회 시각을 각각 기록합니다. 기존 운영 피드에 검증된 원천 이력을 추가할 때는 `refresh-analytics.py --history-seed-dir DIR --seed-only`를 실행합니다. 최신 집계값과 조회 시각은 이 작업으로 바뀌지 않습니다.
+공유 analytics 피드의 앱별 실측은 일·주·월 집계를 제공합니다. 제거한 Status 메뉴에서는 표시하지 않습니다. 각 점은 한국 시간 기준 완료된 하루, 월요일~일요일 한 주, 또는 달력 한 달의 원천 집계입니다. 최근 7일·4주·2개월을 표시합니다. Metrics의 기존 연결은 최근 7일을 유지하며 GA4·PostHog 연결에서 집계 기간을 선택할 수 있습니다. Instagram은 최근 7일 계정 집계를 사용합니다. 피드는 최근 31일의 실제 관측을 보존합니다. 과거 보고서로 보강한 점에는 집계 종료 시각과 조회 시각을 각각 기록합니다. 기존 운영 피드에 검증된 원천 이력을 추가할 때는 `refresh-analytics.py --history-seed-dir DIR --seed-only`를 실행합니다. 최신 집계값과 조회 시각은 이 작업으로 바뀌지 않습니다.
 
 2026-11-24 이력 보강에서는 기준일마다 직전 7일을 원천에서 다시 조회했습니다. PostHog 6개 범주와 GA4 blog·afzma는 최근 30일에 대해 매일, GA4 policycock·purple-place-bb6ce는 10월 27일~11월 23일의 4개 주간에 대해 조회했습니다. GA4 주간 구간은 속성의 대한민국 시간대를 확인했습니다. 11월 17~23일 마지막 구간은 현재 공개 피드와 일치합니다. 390px 및 1440px 운영 화면에서 세 지표의 일·주·월 선택에 따라 실측점 수가 변하는 것을 확인했습니다. 수집기 릴리스 `5e2f8fc` 설치 후 예약 작업을 다시 실행해 최신 관측과 기존 이력을 함께 유지하는 것도 확인했습니다.
 

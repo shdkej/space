@@ -146,3 +146,12 @@ PostHog의 완료 일간 7개·주간 4개·월간 2개는 과거 원천을 다�
 그 기간 전체가 보관됐다는 뜻은 아닙니다. 현재 패널의 집계 기간·미연결 항목·실제 검증 방법은
 [Monitoring 기간 수집 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#시계열-보관과-기간-집계)이 정본입니다.
 2026-11-27 점검에서는 보관·스토리지·수집·대시보드 설정을 변경하지 않았습니다.
+
+### 노드 헬스체크 표시
+
+시스템 레이어의 기존 6번 패널은 노드별 수집 상태 타일을 표시합니다. Monitoring의
+`layer-system.json`이 정본이며 기존 `monitoring-config` Argo CD와 Grafana sidecar로 반영합니다.
+노드 이름·정상/실패/미수집 판정과 데스크톱·모바일 검증 기준은
+[Monitoring 노드 헬스체크 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#노드-헬스체크-표시)을 따릅니다.
+Prometheus의 AMD 이전과 스토리지 확장은 사용자 요청으로 보류했습니다. 이 표시 변경은
+Helm·수집기·노드 배치·보관 기간을 바꾸지 않습니다.

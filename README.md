@@ -124,3 +124,13 @@ OpenClaw 상세는 기존 exporter의 내부 JSON API를 Grafana Infinity 4.1.8 
 현재 운영의 다른 Helm 설정을 바꾸지 않도록 Grafana ConfigMap `plugins`에 해당 플러그인만
 추가했습니다. 운영 중인 Grafana에는 관리자 플러그인 설치 API로 즉시 로드하고 datasource를
 reload해 재시작 없이 반영했습니다. 이후 재시작과 Helm apply도 위 선언으로 동일 플러그인을 유지합니다.
+
+### 시장 검색 추이
+
+비즈니스 레이어의 ARPPU 패널은 네이버 데이터랩의 5개 주제별 최근 완료 52주 검색 추이로
+교체했습니다. 소스는 Monitoring의 `posthog-exporter/market-trends.js`이며 기존 exporter와
+Infinity 내부 datasource를 재사용합니다. 인증은 `monitoring/market-trends-naver` Secret으로
+주입합니다. 새 대시보드·외부 엔드포인트·플러그인은 만들지 않습니다. Kustomize·테스트 →
+Argo CD revision·exporter rollout → JSON/Grafana 실제 차트 순으로 검증합니다. 수집 주기·
+누락값·복구·2027-06-30 레거시 API 종료 대응은
+[Monitoring 운영 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#시장-검색-추이)이 정본입니다.

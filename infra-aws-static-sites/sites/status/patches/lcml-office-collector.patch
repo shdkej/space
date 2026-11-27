@@ -2242,3 +2242,29 @@ index 0000000..36eb114
 -- 
 2.43.0
 
+From d68f25b7e67ee4df07730cb8ebd03704891f5190 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Fri, 27 Nov 2026 13:02:51 +0000
+Subject: [PATCH] Accept both supported read-only cron list transports in
+ regression fixture
+
+---
+ collector/tests/test_collector.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/collector/tests/test_collector.py b/collector/tests/test_collector.py
+index fcd7b9b..2c229bc 100644
+--- a/collector/tests/test_collector.py
++++ b/collector/tests/test_collector.py
+@@ -180,7 +180,7 @@ class TestCronStatus(unittest.TestCase):
+         calls = []
+         def fake_run(args, timeout=60):
+             calls.append(args)
+-            if args[1:3] == ["cron", "list"]:
++            if args[1:3] == ["cron", "list"] or args[1:4] == ["gateway", "call", "cron.list"]:
+                 return 0, json.dumps({"jobs": [{
+                     "id": "job-1", "name": "demo", "description": "파일과 상태를 확인",
+                     "enabled": True, "schedule": {"expr": "*", "tz": "UTC"},
+-- 
+2.43.0
+

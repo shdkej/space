@@ -24,9 +24,9 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 
 `metrics-history.json`은 System 4개 레이어·Flow·Agents의 **6개 상태 지표**만 31일 보존합니다. 전환 전 원본 역사 파일을 호스트에 사본으로 남기고, 다음 기록부터 제거한 수치 지표를 제외합니다. Office 프로젝트 지표는 `office.prometheus_service`의 묶음 쿼리 1회로 유지합니다. UI는 배포 전후 호환을 위해 이전 `monitoring`의 공유 항목도 잠시 읽을 수 있지만 Monitoring 메뉴나 수치 차트를 다시 노출하지 않습니다.
 
-수집기 원격 `shdkej/system-dashboard`는 현재 Git/API에서 Repository not found/404입니다. 이번 소스·설정·테스트·문서 변경은 기존 `patches/lcml-office-collector.patch`의 마지막 패치로 Space main에 보관합니다. 로컬 수집기 변경 커밋은 `532b344`이며 기존 `collect_crons` 최적화 수정은 별도로 보존합니다. 기존 복구 패치의 기준은 `1043559`이고 전체 패치열은 `git am`으로 재현합니다. 이미 Office 패치까지 반영된 운영 checkout에는 마지막 변경만 `git apply --check` 후 적용합니다. 서브모듈 포인터를 접근 불가능한 새 커밋으로 바꾸거나 새 저장소를 만들지 않습니다.
+수집기 원격 `shdkej/system-dashboard`는 현재 Git/API에서 Repository not found/404입니다. 이번 소스·설정·테스트·문서 변경은 기존 `patches/lcml-office-collector.patch`에 간소화와 테스트 호환 패치로 Space main에 보관합니다. 로컬 수집기 변경 커밋은 `532b344`이며 기존 `collect_crons` 최적화 수정은 별도로 보존합니다. 기존 복구 패치의 기준은 `1043559`이고 전체 패치열은 `git am`으로 재현합니다. 이미 Office 패치까지 반영된 운영 checkout에는 간소화(`532b344`)와 뒤따르는 테스트 호환 변경만 `git apply --check` 후 적용합니다. 서브모듈 포인터를 접근 불가능한 새 커밋으로 바꾸거나 새 저장소를 만들지 않습니다.
 
-검증·게시 순서: collector의 `PYTHONPATH=collector python3 -m unittest discover -s collector/tests` → Status `npm ci --ignore-scripts && npm run build` → 복구 패치 재현 검증 → Space main push/Status AWS 배포 → 기존 타이머가 실행 중이지 않을 때 요청 변경 적용 → `python3 collector.py --publish-public-only` → 공개 피드 및 PC·모바일 네 메뉴 확인입니다. 공개 전용 실행은 DB·액션 큐를 처리하지 않습니다. 복구는 UI 커밋 revert, 수집기 마지막 패치 역적용, 보관한 역사 파일 복원입니다. 다른 에이전트/크론 설정이나 과거 데이터를 전체 reset하지 않습니다.
+검증·게시 순서: collector의 `PYTHONPATH=collector python3 -m unittest discover -s collector/tests` → Status `npm ci --ignore-scripts && npm run build` → 복구 패치 재현 검증 → Space main push/Status AWS 배포 → 기존 타이머가 실행 중이지 않을 때 요청 변경 적용 → `python3 collector.py --publish-public-only` → 공개 피드 및 PC·모바일 네 메뉴 확인입니다. 공개 전용 실행은 DB·액션 큐를 처리하지 않습니다. 복구는 UI 커밋 revert, 수집기 간소화 패치(`532b344`) 역적용, 보관한 역사 파일 복원입니다. 다른 에이전트/크론 설정이나 과거 데이터를 전체 reset하지 않습니다.
 
 배포 후 테스트 화면은 `https://status.aws.shdkej.com/ui-material-test.html`에서 확인합니다.
 
@@ -146,3 +146,5 @@ Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API
 2026-11-24 이력 보강에서는 기준일마다 직전 7일을 원천에서 다시 조회했습니다. PostHog 6개 범주와 GA4 blog·afzma는 최근 30일에 대해 매일, GA4 policycock·purple-place-bb6ce는 10월 27일~11월 23일의 4개 주간에 대해 조회했습니다. GA4 주간 구간은 속성의 대한민국 시간대를 확인했습니다. 11월 17~23일 마지막 구간은 현재 공개 피드와 일치합니다. 390px 및 1440px 운영 화면에서 세 지표의 일·주·월 선택에 따라 실측점 수가 변하는 것을 확인했습니다. 수집기 릴리스 `5e2f8fc` 설치 후 예약 작업을 다시 실행해 최신 관측과 기존 이력을 함께 유지하는 것도 확인했습니다.
 
 Grafana용 exporter는 GA4 속성별 최근 완료 7일의 참여시간·세션수·채널별 세션을 조회합니다. Instagram 계정 지표는 UTC 최근 완료 7일 기준입니다. 공개 인스타그램 피드의 조회한 사람과 Grafana의 API 도달 계정 수는 각 원천의 명칭을 따릅니다.
+
+전환 전 코드·설정·전체 역사 파일은 `/home/ubuntu/.local/state/openclaw/backups/status-monitoring-removal-20261127/`에 보존했습니다. 운영 checkout의 `collect_crons` 최적화와 함께 실행한 87개 테스트도 통과했습니다. 테스트는 기존 CLI와 Gateway RPC 두 읽기 전용 목록 조회를 모두 지원합니다.

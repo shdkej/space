@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "덕 쌓기 · 환생",
+  "short_name": "덕 쌓기",
+  "lang": "ko",
+  "description": "오늘의 선행을 사진이나 한 줄 메모로 기록하고 덕을 쌓아보세요.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#fafafa",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

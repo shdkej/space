@@ -23,6 +23,14 @@ Space main push 후 `Deploy static site to AWS`의 virtue 배포·CloudFront 무
 소스의 `LIVE_BASE=https://virtue.minimalcollector.com node scripts/verify-pmf.cjs`로 라이브 UI를 검사합니다.
 검사 중 수집 요청은 가로채므로 운영 코호트에 시험 데이터를 섞지 않습니다.
 
+PWA 게시 후 대표 주소에서 `/manifest.webmanifest`의 JSON과 `/sw.js`의 JavaScript 본문,
+아이콘 PNG의 크기, 루트 범위의 서비스 워커 등록을 확인합니다. CDN이 누락된 객체에도
+HTML을 돌려줄 수 있어 HTTP 상태 코드만으로 설치 가능 여부를 판단할 수 없습니다.
+Chromium에서 설치 후 실행하고 오프라인 실행과 연결 복구를 확인합니다.
+iPhone 설치 경로는 Safari의 공유 → 홈 화면에 추가입니다.
+서비스 워커는 오프라인 페이지 안내만 제공합니다. 이미 설치된 워커를 철회할 때는
+같은 `/sw.js` 경로에 등록 해제용 워커를 먼저 게시해 기존 설치에도 업데이트가 전달되도록 합니다.
+
 Grafana는 기존 `layer-business`에서 첫 완료율·재사용률과 분자/분모·관찰 중·과거 미측정을
 표시합니다. 집계 정본은 [Monitoring PMF 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#pmf-계측과-코호트)입니다.
 복구는 해당 소스/정적 산출물 변경의 revert와 동일 배포 경로를 사용합니다.

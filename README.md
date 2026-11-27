@@ -171,8 +171,9 @@ Grafana/collector의 소유 저장소는 Monitoring이며
 고객 레이어의 기존 유입 패널에 `minimal_collector`·`_archivenoh`의 최근 7개 완료 일간 구간
 프로필 조회·좋아요·답글·재게시·인용을 표시하도록 준비했습니다. 수집 코드는 Monitoring의
 `posthog-exporter/threads.js`, 계정별 인증은 optional `monitoring/analytics-threads-api` Secret이며
-기존 exporter·ServiceMonitor·Grafana 패널을 재사용합니다. 현재 두 계정의 Threads 인증은
-미연결이므로 실제 수치는 수집하지 않습니다. Instagram 토큰으로 대체하지 않습니다.
+기존 exporter·ServiceMonitor·Grafana 패널을 재사용합니다. 현재 수집기에는 두 계정의 Threads
+토큰이 없어 실제 수치는 미수집입니다. 사용자가 이미 연결한 Meta 앱의 인증을 재사용하며,
+Instagram 토큰으로 대체하지 않습니다.
 연결 권한·토큰 주입·실응답 검증·장애/누락 처리·복구와 실제 표시 규칙은
 [Monitoring Threads 운영 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#threads-조회와-반응)이 정본입니다.
 Kustomize/테스트 → 기본 브랜치 push → Argo revision/rollout → 인증 상태 → 실제 Grafana 렌더

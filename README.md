@@ -134,3 +134,6 @@ Infinity 내부 datasource를 재사용합니다. 인증은 `monitoring/market-t
 Argo CD revision·exporter rollout → JSON/Grafana 실제 차트 순으로 검증합니다. 수집 주기·
 누락값·복구·2027-06-30 레거시 API 종료 대응은
 [Monitoring 운영 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#시장-검색-추이)이 정본입니다.
+
+네이버 인증정보의 수집·표시 경계, 실제 누출 대조 범위와 남은 공통 보안 설정은
+[Monitoring 인증정보 보호 계약](https://github.com/shdkej/monitoring_personal/blob/master/docs/DEPLOYMENT.md#인증정보-보호와-점검-범위)을 따릅니다.

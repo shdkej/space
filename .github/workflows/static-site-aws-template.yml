@@ -307,6 +307,14 @@ jobs:
               >/dev/null
           done < <(find "${{ matrix.build_dir }}" -type f -name index.html -print)
 
+      - name: Remove retired standalone Agents assets
+        if: matrix.app == 'status'
+        shell: bash
+        run: |
+          # Keep the redirect HTML and all collector-owned/public feeds.
+          aws s3 rm "s3://${{ steps.target.outputs.bucket }}/agents/" --recursive \
+            --exclude '*' --include '_next/*' --include '404*' --include 'index.txt'
+
       - name: Invalidate CloudFront
         run: |
           invalidation_id="$(

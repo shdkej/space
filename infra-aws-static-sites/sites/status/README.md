@@ -2,7 +2,7 @@
 
 ## LCML 사무실
 
-`https://status.aws.shdkej.com/office/`는 네 층의 AI 사무실입니다. 소스·데이터 계약·실행·검증·사무실 단독 배포는 [Office README](dashboard/office/README.md)가 소유합니다. 모바일 전체 보기는 네 층과 층 선택 메뉴를 한 화면에 맞추며, 개별 층의 긴 상세는 스크롤합니다. 수집기 복구 패치는 `patches/lcml-office-collector.patch`입니다. 모니터링 전용 수집 제거와 공유 수집 범위는 아래 운영 절차를 따릅니다.
+`https://status.aws.shdkej.com/#office`는 Status의 **사무실** 메뉴입니다. 네 층의 기존 AI 사무실을 공통 메뉴 안에서 표시하며, `/office/`·`/office/index.html`·`/office` 주소는 이 메뉴로 연결합니다. 소스·데이터 계약·실행·검증·사무실 단독 배포는 [Office README](dashboard/office/README.md)가 소유합니다. 모바일 전체 보기는 네 층과 층 선택 메뉴를 한 화면에 맞추며, 개별 층의 긴 상세는 스크롤합니다. 수집기 복구 패치는 `patches/lcml-office-collector.patch`입니다. 모니터링 전용 수집 제거와 공유 수집 범위는 아래 운영 절차를 따릅니다.
 
 ## 목적
 
@@ -11,7 +11,7 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 ## 경로
 
 - 운영 화면: `dist/index.html`
-- 실시간 에이전트 상황실: `dist/agents/index.html` → `https://status.aws.shdkej.com/agents/`
+- 에이전트 요약: Status `/#agents`. 별도 Next.js 상황실은 제거했으며 `/agents/`·`/agents/index.html`·`/agents`는 이 메뉴로 이동하는 작은 HTML만 유지합니다.
 - UI 재질 테스트: `dist/ui-material-test.html`
 - 상태 수집기: `system-dashboard/collector/` (10분마다 `agents-live.json` 갱신)
 - 배포 도메인: `https://status.aws.shdkej.com`
@@ -51,26 +51,17 @@ cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status
 python3 -m http.server 8080 --directory dist
 ```
 
-에이전트 상황실을 다시 빌드하려면:
+사무실과 Status를 함께 빌드하려면:
 
 ```bash
-cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status
-scripts/build-agent-dashboard.sh
+cd dashboard
+node --test office/test/*.test.*
+npm run build:all
 ```
 
-상황실은 Next.js static export, React, Framer Motion, Radix Tooltip, Lucide React를 사용하며 `dist/agents/`에 정적 결과를 생성합니다. 브라우저에서 `agents-live.json`을 60초마다 읽어 5개 역할 카드와 선택한 에이전트의 최근 활동·확인한 근거·다음 전달 방향을 갱신합니다. 공개 피드의 `roleWatchers`에는 기획·개발·마케팅·디자인·운영 와처의 상태·최근 확인 시각·활동 요약·확인한 근거가 들어갑니다. 수집기 감사 로그와 크론 실행 이력은 피드에 남지만 상황실에는 직접 노출하지 않습니다. 피드가 없거나 오래된 경우 마지막 안전 상태와 수집 대기 문구를 유지합니다.
+`build:all`은 기존 Status와 Office Vite 진입점을 빌드합니다. 사무실은 같은 출처의 `/office/?embedded=1` 프레임으로 표시해 장면 CSS와 Status 스타일을 분리합니다. 프레임에는 수집 상태와 층 선택만 남기며 공통 헤더·메뉴·새로고침은 Status가 소유합니다. 사무실을 떠나면 프레임을 해제하므로 별도 화면의 폴링도 중지합니다. 메뉴는 hash 주소를 사용해 직접 링크·새로고침·뒤로/앞으로 이동을 지원합니다.
 
-소스를 수정하고 번들하려면:
-
-```bash
-cd /home/ubuntu/workspace/space/infra-aws-static-sites/sites/status/dashboard
-npm install
-npm run build
-```
-
-라이브 피드의 `agents`가 비어 있어도 `roleWatchers`의 역할별 관찰을 Agents 메뉴에 표시한다. Loop 메뉴는 `crons` 목록만 표시한다. 크론 수집이 실패하면 카드와 빈 화면에 `확인 필요`·수집기 확인 안내를, 정상적으로 0개면 `등록된 크론 없음`을 보여 구분한다. 크론 목록이 복구되면 각 크론의 설정 상세를 연다.
-
-브라우저에서 `http://localhost:8080/ui-material-test.html`을 열고 390px 모바일과 데스크톱 폭을 확인합니다.
+`agent-dashboard/` 소스·Next.js 의존성·`build-agent-dashboard.sh`·배포된 Next 자산은 제거했습니다. `dashboard/scripts/build-redirects.mjs`가 이전 주소의 이동 HTML을 재생성합니다. 공개 피드와 기존 Status Agents·Loop·System 화면은 계속 같은 수집기를 사용합니다.
 
 ## 검증
 
@@ -86,14 +77,14 @@ Chrome headless로 데스크톱 렌더를 확인했습니다. 모바일에서는
 - 상세 메뉴에서는 본문 영역만 내부 스크롤하고 하단 내비게이션은 flex 레이아웃 끝에 고정합니다. 홈 화면도 뷰포트 안에 맞춰 세로 스크롤 없이 고정합니다.
 - 상세 모달의 닫기 버튼은 Radix 모달의 접근성·포인터 범위 안인 `Dialog.Content` 내부에 둡니다. 크론 상세의 스크롤은 `infra-aws-static-sites/sites/status/dashboard/src/main.jsx`의 `.cron-dialog-scroll`이 맡고, X 버튼은 스크롤 컨테이너 밖에서 화면 하단 중앙에 고정합니다. 모바일 터치 영역은 56×56px이며 safe-area를 반영합니다.
 - 기본 테마는 흰색 캔버스를 사용하고, 레몬색은 로고·포커스·상태 표시 같은 강조점에만 제한적으로 사용합니다.
-- `/agents/`는 기획·개발·마케팅·디자인·운영 5개 역할을 별도 상황실로 표시합니다. 메인 에이전트는 상단 오케스트레이터로, 각 역할은 하단 카드와 최근 관찰·전달 흐름으로 표시합니다. 메인 status 화면의 `Agents` 카드·메뉴에서 상황실로 이동할 수 있고, 상황실의 로고·하단 링크로 홈에 돌아옵니다.
+- `사무실`: 네 층 장면·층 이동·화이트보드·사람 상세를 Status 메뉴 안에서 표시합니다. `Agents` 메뉴는 기존 요약과 상태 이력을 보여주며 별도 페이지로 여는 링크는 제거했습니다.
 - 첫 화면 상단 메시지는 `status.json`의 접점 상태와 10분 주기 `agents-live.json`의 레이어·산출물·수집기 신호를 우선순위로 조합합니다. 브라우저는 60초마다 상태·운영·시계열 피드를 다시 읽어 새로고침 없이 표시를 갱신합니다. 이상 신호가 있으면 가장 먼저 확인할 대상을 보여줍니다.
 
 ## 알려진 한계
 
 이 화면은 실제 제품의 의존성을 판별하는 것이 아니라, 스크린샷에서 관찰한 재질·아이콘·단계 표현을 비교하기 위한 시각 테스트입니다. Radix는 동작 primitive를 제공하고, 글래스 재질·단계선·인덴트의 시각 스타일은 제품에 맞춘 CSS입니다.
 
-에이전트 상황실의 공개 피드는 `agents-live.json`이 제공하는 에이전트 롤업·크론·산출물 범위에 한정됩니다. 에이전트 간 대화 원문이나 비공개 태스크 상세는 공개하지 않으며, 현재 전달선은 실제 공개 가능한 역할 흐름을 표현하는 읽기 전용 시각화입니다.
+Status·사무실의 공개 피드는 `agents-live.json`이 제공하는 에이전트 롤업·크론·산출물 범위에 한정됩니다. 에이전트 간 대화 원문이나 비공개 태스크 상세는 공개하지 않으며, 표시 내용은 공개 가능한 읽기 전용 요약입니다.
 
 2026-10-30 변경: CMS의 System·Flow 탭을 제거하고 System 상세에 역할 관찰 상태의 집계만 추가했습니다. 개별 실행 내용과 CMS 원본 스냅샷은 공개 Status 요약으로 복사하지 않습니다. 상세 모달의 닫기 버튼은 하단 중앙에 고정하며, 모바일에서 브라우저 문서는 스크롤되지 않고 상세 목록 영역만 스크롤됩니다. iOS Safari에서 아래 여백이 드러나지 않도록 `html`·`body`·앱 루트를 `100dvh`에 잠그고 `viewport-fit=cover`를 적용하며, 하단 내비게이션은 콘텐츠 스크롤과 분리합니다.
 2026-10-30 보완: 상세 모달의 닫기 버튼이 `Dialog.Content` 바깥에 있어 Radix가 모달 외부 요소를 `aria-hidden`·`pointer-events: none`으로 격리하는 문제를 수정했습니다. 버튼을 콘텐츠 내부로 옮기고 패널의 중앙 배치를 transform 없이 유지해 닫기 버튼의 화면 하단 고정을 보존합니다. 모바일 터치 영역은 56×56px입니다.
@@ -150,3 +141,10 @@ Grafana용 exporter는 GA4 속성별 최근 완료 7일의 참여시간·세션�
 전환 전 코드·설정·전체 역사 파일은 `/home/ubuntu/.local/state/openclaw/backups/status-monitoring-removal-20261127/`에 보존했습니다. 운영 checkout의 `collect_crons` 최적화와 함께 실행한 87개 테스트도 통과했습니다. 테스트는 기존 CLI와 Gateway RPC 두 읽기 전용 목록 조회를 모두 지원합니다.
 
 System의 노드 목록은 `evidence.kubectl`과 `evidence.kubeconfig`를 명시하여 systemd와 수동 실행에서 같은 클러스터를 읽습니다. 환경 PATH에 kubectl이 없어도 Office와 동일한 실행 파일·설정을 사용합니다.
+
+## 2026-11-27 메뉴 통합 배포·복구
+
+- 소스 정본은 Space의 이 디렉터리입니다. 새 대시보드·서비스·수집기를 만들지 않습니다.
+- `npm run build:all` → 기존 Office 테스트 → 실제 브라우저에서 사무실 네 층·메뉴 복귀·이전 주소·피드 오류 확인 → main push → Status 배포 workflow → 같은 라이브 확인 순서입니다.
+- Status S3 동기화는 삭제 옵션 없이 공개 피드를 보존합니다. 별도 상황실을 폐기하는 단계에서만 `agents/_next/*`, `agents/404*`, `agents/index.txt`를 제거합니다. `agents/`와 `agents/index.html`의 이동 HTML은 남깁니다. 소스와 과거 자산은 이전 Git 커밋에 보존됩니다.
+- 복구는 이 통합 변경의 Git revert 후 기존 정적 배포입니다. 새 cleanup 단계도 같이 되돌려야 과거 상황실 자산을 다시 게시할 수 있습니다. Office·Agents·시계열 공개 JSON과 수집기·예약 작업은 이번 변경의 수정 대상이 아닙니다.

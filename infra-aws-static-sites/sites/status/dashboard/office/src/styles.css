@@ -136,3 +136,18 @@
   .is-overview .floor-rail{left:16px;transform:none;width:calc(100% - var(--building-column) - 48px);max-width:none}
   .building-note{font-size:8px;padding:0}
 }
+
+/* The surrounding Status shell owns the brand, page footer and main menu. */
+.embedded .brand, .embedded .brand-tagline, .embedded .status-home, .embedded .page-footer { display:none; }
+.embedded .topbar { height:48px; }
+.embedded .collection-state { margin-left:0; text-align:left; }
+.embedded .collection-state > span { justify-content:flex-start; }
+.embedded .workspace { min-height:calc(100dvh - 48px); }
+@media (min-width:961px) {
+  .embedded .workspace:not(.is-overview) { --office-header-height:48px; }
+  .embedded .building-scene { width:min(calc(100% - 230px),calc(100dvh - 178px)); }
+}
+@media (max-width:620px), (max-width:960px) and (max-height:500px) {
+  .embedded.has-overview .workspace { min-height:0; }
+  .embedded.has-overview .topbar { height:48px; }
+}

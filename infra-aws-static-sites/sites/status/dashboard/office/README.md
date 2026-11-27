@@ -13,7 +13,7 @@ npm run build:office
 npx vite --config vite.office.config.js
 ```
 
-빌드는 `../dist/office/`만 교체합니다. 배포는 상위 Status README의 기존 S3/CloudFront 경로를 사용합니다. 로컬 정적 확인은 `../dist/`를 HTTP로 제공하고 `/office/`를 엽니다. 개발 Vite 서버에는 별도로 같은 출처의 `/office-live.json`이 필요합니다. 실행 환경의 자격증명이나 수집 원천에 브라우저가 직접 접근하지 않습니다.
+빌드는 `../dist/office/`만 교체합니다. 배포는 상위 Status README의 기존 S3/CloudFront 경로를 사용합니다. 통합 로컬 확인은 `npm run build:all` 후 `../dist/`를 HTTP로 제공하고 `/#office`를 엽니다. 이전 `/office/`는 공통 메뉴로 이동하고 `/office/?embedded=1`은 내장 화면 진입점입니다. Office만 개발할 때는 `/office/?embedded=1`을 열며 같은 출처의 `/office-live.json`이 필요합니다. 실행 환경의 자격증명이나 수집 원천에 브라우저가 직접 접근하지 않습니다.
 
 ## 데이터와 화면
 
@@ -61,7 +61,7 @@ npx vite --config vite.office.config.js
 
 ## 운영 경계
 
-로그인 없는 기존 Status의 `/office/` 경로이며, 공개 가능한 요약만 수집기가 공급해야 합니다. UI에는 샘플 데이터나 폴백 가상 세션이 없습니다. 상주 명단은 현재 OpenClaw 등록 원천에서 수집하며 실행 세션과 구분합니다. Codex는 로컬 SQLite의 최신 turn 및 같은 turn의 활동 시각 메타데이터만 읽습니다. 테스트 fixture는 테스트 코드 안에만 있습니다. 세션 생존 판정·질문 공개 요약·지표 정의의 정확성은 수집기 계약에 의존합니다. 프로젝트 설정에 정의된 AARRR이 없으면 화면에서 새 지표를 만들어 채우지 않습니다.
+로그인 없는 기존 Status의 `/#office` 메뉴이며, 공개 가능한 요약만 수집기가 공급해야 합니다. UI에는 샘플 데이터나 폴백 가상 세션이 없습니다. 상주 명단은 현재 OpenClaw 등록 원천에서 수집하며 실행 세션과 구분합니다. Codex는 로컬 SQLite의 최신 turn 및 같은 turn의 활동 시각 메타데이터만 읽습니다. 테스트 fixture는 테스트 코드 안에만 있습니다. 세션 생존 판정·질문 공개 요약·지표 정의의 정확성은 수집기 계약에 의존합니다. 프로젝트 설정에 정의된 AARRR이 없으면 화면에서 새 지표를 만들어 채우지 않습니다.
 
 원천 수집과 배포 방법은 상위 [Status README](../../README.md), 수집기 계약은 승인된 [구현 계획](../../../../../docs/superpowers/plans/2026-11-11-lcml-office.md)을 참고합니다.
 
@@ -77,3 +77,9 @@ aws cloudfront create-invalidation --distribution-id E9GKZBY9S3VTW --paths '/off
 ```
 
 배포 후 `/office/`와 `/office/index.html`, 참조 JS·CSS의 HTTP 응답과 로컬 SHA256을 비교합니다. 모바일 세로·가로에서 문서 높이=뷰포트 높이, 네 층과 메뉴의 화면 내 경계, 층 진입·전체 보기 복귀, 오류 안내를 확인합니다. 기기 자체 Safari 주소 막대 동작은 별도 실기기 확인 대상입니다.
+
+## Status 메뉴 통합 (2026-11-27)
+
+사용자 진입 주소는 `https://status.aws.shdkej.com/#office`입니다. 기존 React/Vite 사무실은 같은 출처의 프레임으로 재사용하며 등록 명단·실행 세션·층 이동·수집기를 변경하지 않습니다. 내장 모드는 중복 로고·Status 복귀 링크·페이지 푸터를 숨기고 수집 상태와 층 선택을 남깁니다. 상위 Status가 공통 메뉴와 새로고침·주소 이동을 담당합니다. 별도 Agents 상황실은 폐기되었고 Status의 기존 Agents 요약은 유지됩니다.
+
+통합 최초 배포는 `npm run build:all` 후 상위 Status 절차를 따릅니다. 이후 장면만 수정하면 기존 사무실 단독 배포 범위를 사용할 수 있습니다. `/office/`·`/office/index.html`은 메뉴로 이동하므로 렌더 검증은 `/#office`에서 수행하고, 내장 화면의 피드 오류·모바일 네 층·층 상세 스크롤·Status 메뉴 복귀를 확인합니다.

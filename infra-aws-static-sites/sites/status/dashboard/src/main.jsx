@@ -7,7 +7,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { Archive, Bot, CalendarRange, Camera, Clapperboard, FlaskConical, GalleryVerticalEnd, Globe2, Images, Landmark, ListTree, Luggage, Rocket, ShieldCheck, SlidersHorizontal, Sprout } from "lucide-react";
-import { Activity, ArrowUpRight, Check, ChevronDown, ChevronRight, CircleAlert, Clock3, ExternalLink, Layers3, RefreshCw, Server, Sparkles, X } from "lucide-react";
+import { Activity, ArrowUpRight, Building2, Check, ChevronDown, ChevronRight, CircleAlert, Clock3, ExternalLink, Layers3, RefreshCw, Server, Sparkles, X } from "lucide-react";
 import { clsx } from "clsx";
 import "./styles.css";
 
@@ -15,8 +15,13 @@ const tabs = [
   { id: "system", label: "System", icon: Server },
   { id: "surfaces", label: "Surfaces", icon: Layers3 },
   { id: "agents", label: "Agents", icon: Activity },
+  { id: "office", label: "사무실", icon: Building2 },
   { id: "output", label: "Loop", icon: RefreshCw },
 ];
+const viewFromHash = () => {
+  const value = window.location.hash.slice(1);
+  return tabs.some(tab => tab.id === value) ? value : "home";
+};
 const stateText = { ok: "정상", warn: "확인 필요", bad: "중단", none: "데이터 없음" };
 const stateClass = (state) => state === "ok" || state === "warn" || state === "bad" ? state : "none";
 const ago = (iso) => {
@@ -223,7 +228,13 @@ function agentHistoryRows(agents) {
 }
 
 function App() {
-  const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [history, setHistory] = React.useState(null); const [range, setRange] = React.useState("day"); const [view, setView] = React.useState("home"); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
+  const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [history, setHistory] = React.useState(null); const [range, setRange] = React.useState("day"); const [view, setView] = React.useState(viewFromHash); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
+  const officeFrame = React.useRef(null);
+  React.useEffect(() => {
+    const sync = () => { setView(viewFromHash()); setSelected(null); };
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
   const load = React.useCallback(async () => { setLoading(true); const [a, b, c] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json()), fetch("./metrics-history.json", { cache: "no-store" }).then((r) => r.ok ? r.json() : null)]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setHistory(c.status === "fulfilled" ? c.value : null); setLoading(false); }, []);
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
   const [publicCommits, setPublicCommits] = React.useState({});
@@ -281,12 +292,12 @@ function App() {
   const detailRows = view === "surfaces" ? checks : view === "agents" ? agentHistoryRows(agents) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : layers;
   const hasHistoryView = ["system", "agents"].includes(view);
   const chartMetric = (row) => history?.metrics?.[row.metricId] || null;
-  const navigate = (next) => { setView(next); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
-  return <Tooltip.Provider delayDuration={250}><div className={clsx("app-shell", view === "home" && "home-mode")}>
-    <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={load} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
-    <main className="screen-area">{view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
+  const navigate = (next) => { window.location.hash = next === "home" ? "" : next; setView(next); setSelected(null); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
+  return <Tooltip.Provider delayDuration={250}><div className={clsx("app-shell", view === "home" && "home-mode", view === "office" && "office-mode")}>
+    <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={() => { load(); if (view === "office") officeFrame.current?.contentWindow?.location.reload(); }} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
+    <main className="screen-area">{view === "office" ? <iframe ref={officeFrame} className="office-frame" src="/office/?embedded=1" title="사무실 · 네 층의 사람과 오늘의 일" /> : view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}{view === "agents" && <a className="detail-action" href="/agents/">에이전트 페이지 열기 <ArrowUpRight size={14} /></a>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `${view === "system" ? "L1 상태" : "시계열"} 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label={view === "system" ? "L1·L3 그래프 기간" : "그래프 기간"}>{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong>{view !== "system" && <small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small>}</button>)}</div></div>}
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `${view === "system" ? "L1 상태" : "시계열"} 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label={view === "system" ? "L1·L3 그래프 기간" : "그래프 기간"}>{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong>{view !== "system" && <small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small>}</button>)}</div></div>}
       <div className={clsx("detail-list", view === "surfaces" && "surface-tiles", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "surfaces" ? detailRows.map(item => <SurfaceCard key={item.url || item.name} item={item} onOpen={setSelected} />) : hasHistoryView ? detailRows.map(row => {
         if (row.workflow) {
           return <HistoryItem key={row.name} row={row} range={range} showChart={false}>
@@ -298,7 +309,7 @@ function App() {
           {row.artifacts && <ArtifactTimeline entries={row.artifacts} />}
           {row.observations && <ul className="layer-observations">{row.observations.map(line => <li key={line}>{line}</li>)}</ul>}
         </HistoryItem>;
-      }) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+      }) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} aria-current={view === "home" ? "page" : undefined} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} aria-current={view === id ? "page" : undefined} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

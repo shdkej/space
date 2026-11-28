@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ChevronDown } from "lucide-react";
 
 const feed = "https://raw.githubusercontent.com/shdkej/infinity/main/data/promotion-index.json";
 const labels = { all: "전체", reflected: "Wiki 반영", pending_promotion: "승격 대기", not_applicable: "위키 대상 아님" };
@@ -46,7 +47,8 @@ export function KnowledgeMap({ refresh }) {
       <p>Knowledge Lab 문서 {entries.length}개 · {new Date(model.generated_at).toLocaleString("ko-KR")} 갱신</p>
       <div className="kl-filters" role="group" aria-label="반영 상태">
         {Object.entries(labels).map(([key, label]) => <button key={key} aria-pressed={filter === key} onClick={() => select(key)}>
-          {key !== "all" && <i className={'kl-color ' + key} />} {label} {counts[key]}
+          <span>{key !== "all" && <i aria-hidden="true" className={'kl-color ' + key} />}{label}</span>
+          <span className="kl-count">{counts[key]}</span>
         </button>)}
       </div>
       <div className="kl-field" aria-label="문서별 반영 상태">
@@ -56,13 +58,16 @@ export function KnowledgeMap({ refresh }) {
       </div>
       <h2>{labels[filter]} 문서 {visible.length}개</h2>
       {visible.slice(0, limit).map(entry => <article className="kl-file" key={entry.source}>
-        <a href={"https://github.com/shdkej/knowledge-lab/blob/main/" + entry.source} target="_blank" rel="noreferrer">{entry.source}</a>
+        <a href={"https://github.com/shdkej/knowledge-lab/blob/main/" + entry.source} target="_blank" rel="noreferrer" className="kl-source" title={entry.source}>
+          <strong>{entry.source.split("/").pop()}</strong>
+          {entry.source.includes("/") && <span>{entry.source.slice(0, entry.source.lastIndexOf("/"))}/</span>}
+        </a>
         <small>{labels[category(entry)]} · {entry.status}</small>
         <p>{entry.reason}</p>
         {(entry.promotion_targets || []).map(path => <a key={path} href={"https://shdkej.com/agent-wiki" + path} target="_blank" rel="noreferrer">Wiki · {path}</a>)}
         {!entry.promotion_targets?.length && entry.promotion_reason !== entry.reason && <small>{entry.promotion_reason || entry.promotion_target_note}</small>}
       </article>)}
-      {visible.length > limit && <button className="kl-more" onClick={() => setLimit(limit + 48)}>문서 더 보기</button>}
+      {visible.length > limit && <button className="kl-more" onClick={() => setLimit(limit + 48)}>문서 더 보기 <ChevronDown size={15} aria-hidden="true" /></button>}
     </>}
   </section>;
 }

@@ -13,7 +13,6 @@ import sys
 
 from analytics_history import attach_history
 from support_inquiries import collect_support
-from work_counts import publish_work_counts
 from calendar_periods import TIME_ZONES, merge_periods, requested_periods, validate_session_events
 
 BASE = Path(__file__).resolve().parent
@@ -340,12 +339,6 @@ def main():
         success = True
         inventory = json.loads((BASE / "analytics-inventory.json").read_text())
         client = s3_client()
-        if not (args.seed_only or args.legacy_private or args.history_seed_dir):
-            try:
-                success = publish_work_counts(client, BUCKET, log)
-            except Exception as error:
-                log(f"work counts publish failed ({type(error).__name__})")
-                success = False
         sources = SOURCES
         if args.seed_only:
             sources = [s for s in SOURCES if (args.history_seed_dir / f"analytics-{s}.json").is_file()]

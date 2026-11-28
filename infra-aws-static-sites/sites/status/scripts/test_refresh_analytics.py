@@ -24,11 +24,10 @@ class RefreshTests(unittest.TestCase):
     def test_scheduled_refresh_does_not_query_gmail(self):
         with TemporaryDirectory() as tmp, patch.object(Path, "home", return_value=Path(tmp)), \
              patch.object(refresh.sys, "argv", ["refresh-analytics.py"]), \
-             patch.object(refresh, "s3_client"), patch.object(refresh, "publish_work_counts", return_value=True) as work, patch.object(refresh, "log"), \
+             patch.object(refresh, "s3_client"), patch.object(refresh, "log"), \
              patch.object(refresh, "collect_support") as gmail, patch.object(refresh, "refresh", return_value=True) as public:
             self.assertEqual(refresh.main(), 0)
             gmail.assert_not_called()
-            work.assert_called_once()
             self.assertEqual(public.call_count, len(refresh.SOURCES))
 
     def test_daily_instagram_includes_private_snapshot_and_ga4_private_is_opt_in(self):

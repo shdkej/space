@@ -2,7 +2,8 @@
   "ga4": {
     "blog": "252603434",
     "afzma": "523848883",
-    "policycock": "565383231"
+    "policycock": "565383231",
+    "Virtue": "566078860"
   },
   "posthog": {
     "policycock": {
@@ -27,6 +28,11 @@
       "project": "424014",
       "app_id": "virtue",
       "hosts": ["virtue.minimalcollector.com", "virtue.aws.shdkej.com", "virtue.oracle.shdkej.com"]
+    },
+    "afzma": {
+      "project": "424014",
+      "app_id": "afzma",
+      "host": "afzma.aws.shdkej.com"
     },
     "앱 미지정": {
       "project": "424014",

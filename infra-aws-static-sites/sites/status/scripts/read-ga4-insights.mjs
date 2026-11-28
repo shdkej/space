@@ -1,5 +1,6 @@
 // Execute with Ego Lite's nodejs command in the signed-in Korean Analytics UI.
 const properties = [
+  ["Virtue", "110967461", "566078860", "Virtue"],
   ["blog", "110967461", "252603434", "내 블로그"],
   ["afzma", "383859191", "523848883", "afzma"],
   ["policycock", "417124324", "565383231", "모두의정책 웹사이트"],

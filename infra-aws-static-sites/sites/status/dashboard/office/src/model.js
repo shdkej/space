@@ -30,7 +30,7 @@ export const FLOORS = [
     },
   },
   {
-    id: 1, name: '제품실', english: 'PRODUCT', leader: '지니', description: '생각을 제품으로, 제품을 일상으로', board: '세 시스템의 오늘', short: 'Make',
+    id: 1, name: '제품실', english: 'PRODUCT', leader: '피오', description: '생각을 제품으로, 제품을 일상으로', board: '세 시스템의 오늘', short: 'Make',
     visual: {
       asset: 'floor-product.png', alt: '세 개발 워크벤치, 서버 관제와 참고 자료 라이브러리를 갖춘 제품실', accent: '#597183', space: '개발 랩 · 세 시스템 워크벤치',
       board: [24.1, 28.85, 17.65, 14.45, -16.8], plaque: [44, 44.3], entrance: [14, 66],

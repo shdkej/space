@@ -3269,3 +3269,56 @@ index b44fe2a..c6144c8 100644
 -- 
 2.43.0
 
+From 621e56a894236c7eaed52bf2293576bb32b362d2 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Sat, 28 Nov 2026 03:12:29 +0000
+Subject: [PATCH] Use Pio as the product owner display name
+
+---
+ README.md               | 2 +-
+ collector/manifest.yaml | 2 +-
+ collector/office.py     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/README.md b/README.md
+index 39cedfa..0c5f887 100644
+--- a/README.md
++++ b/README.md
+@@ -90,7 +90,7 @@ ARM Knowledge Lab checkout의 Git HEAD 첫 부모 이력에서 source 아래 일
+ | 프로젝트 지표 | 기존 PostHog exporter → Prometheus | 설정된 프로젝트와 실제 `service` label을 함께 보여줍니다. 프로젝트에 없는 수치를 다른 프로젝트 값으로 채우지 않습니다. |
+ | 전략·가치·가설 | manifest에서 지정한 `PROJECT.md`, `BRAND.md`, 기존 리서치 문서 | 지정한 근거 문구가 실제 문서에 있을 때만 검토된 짧은 요약을 공개합니다. 문서 전체를 자동 노출하지 않습니다. 가설은 미검증 리서치라는 상태와 출처·관찰 행동을 명시합니다. |
+ 
+-상주 명단은 1층 지니·레드, 2층 고딘·디자인, 3층 SAM·세미, 4층 HJ·대표 자리입니다. `kind: owner`인 대표는 사용자가 정의한 자리이며 사람의 온라인 상태가 아닙니다. 실제 활동은 별도 `sessions`로 연결합니다. 등록 조회 실패 시 이전 공개 JSON의 명단과 각 `observedAt`을 보존하고 `sources.residents.state: unknown`으로 표시합니다. 등록을 다시 확인하면 변경·삭제된 명단을 반영합니다.
++상주 명단은 1층 피오·레드, 2층 고딘·디자인, 3층 SAM·세미, 4층 HJ·대표 자리입니다. `kind: owner`인 대표는 사용자가 정의한 자리이며 사람의 온라인 상태가 아닙니다. 실제 활동은 별도 `sessions`로 연결합니다. 등록 조회 실패 시 이전 공개 JSON의 명단과 각 `observedAt`을 보존하고 `sources.residents.state: unknown`으로 표시합니다. 등록을 다시 확인하면 변경·삭제된 명단을 반영합니다.
+ 
+ Codex는 스레드의 최신 turn만 사용합니다. 명시적 `inProgress`이며 **같은 turn의 item 활동이 720초 이내**일 때만 `working`입니다. 프로세스 존재, 스레드의 `active` 표시, 다른 turn의 최근 item은 실행 중 근거로 쓰지 않습니다. 완료 시각이 있는 최신 terminal turn만 종료하며, 이전 turn 종료가 새 실행을 덮지 않습니다. `provider: codex`와 `codex:` 해시 ID로 OpenClaw 세션과 구분하고 실제 부모 관계는 `parentId`로 연결합니다.
+ 
+diff --git a/collector/manifest.yaml b/collector/manifest.yaml
+index 4f8e819..6b2263a 100644
+--- a/collector/manifest.yaml
++++ b/collector/manifest.yaml
+@@ -114,7 +114,7 @@ office:
+   codex_state_db: /home/ubuntu/.codex/state_5.sqlite
+   # Agent seats are filtered by current agents.entries registration; owner is a defined seat.
+   residents:
+-    - {agentId: genie, name: 지니, floor: 1, role: 제품실 · 프로젝트 오너, kind: agent}
++    - {agentId: genie, name: 피오, floor: 1, role: 제품실 · 프로젝트 오너, kind: agent}
+     - {agentId: red, name: 레드, floor: 1, role: 제품 검토, kind: agent}
+     - {agentId: marketing, name: 고딘, floor: 2, role: 고객실 · CMO, kind: agent}
+     - {agentId: design, name: 디자인, floor: 2, role: 디자인, kind: agent}
+diff --git a/collector/office.py b/collector/office.py
+index a95b487..6f7550d 100644
+--- a/collector/office.py
++++ b/collector/office.py
+@@ -20,7 +20,7 @@ CADENCE = 600
+ STALE = 720
+ UPSTREAM_STALE = 45 * 60  # Match the PostHog exporter's successful snapshot TTL.
+ AGENTS = {
+-    'main': ('SAM', 3), 'sam': ('SAM', 3), 'genie': ('지니', 1),
++    'main': ('SAM', 3), 'sam': ('SAM', 3), 'genie': ('피오', 1),
+     'marketing': ('고딘', 2), 'godin': ('고딘', 2), 'cmo': ('고딘', 2),
+     'design': ('디자인', 2), 'red': ('레드', 1), 'hj': ('HJ', 4),
+     'taxops': ('세미', 3),
+-- 
+2.43.0
+

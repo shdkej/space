@@ -56,7 +56,9 @@ export function systemLayers(live, publicCommits, workflow) {
   };
   const life = collected("review") && system?.layers?.find(row => row?.key?.toLowerCase() === "l1");
   const crons = collected("crons") && Array.isArray(live?.crons) ? live.crons : null;
-  const backlogs = collected("backlogs") && Array.isArray(system?.backlogs) ? system.backlogs : null;
+  const backlogs = collected("backlogs") && Array.isArray(system?.backlogs)
+    ? system.backlogs.filter(row => row.name !== "marketing-inbox-7d")
+    : null;
   // Accept the previous feed during rollout; the reduced collector publishes evidence only.
   const evidence = live?.evidence || live?.monitoring;
   const evidenceReady = collected(live?.evidence ? "evidence" : "monitoring");

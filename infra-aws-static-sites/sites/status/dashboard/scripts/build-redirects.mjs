@@ -6,6 +6,6 @@ const page = (view, title) => `<!doctype html>
 `;
 const dist = new URL('../../dist/', import.meta.url);
 await mkdir(new URL('agents/', dist), { recursive: true });
-await writeFile(new URL('agents/index.html', dist), page('agents', '에이전트'));
-await writeFile(new URL('agents.html', dist), page('agents', '에이전트'));
-await writeFile(new URL('office.html', dist), page('office', '사무실'));
+await writeFile(new URL('agents/index.html', dist), page('agents', 'Agents'));
+await writeFile(new URL('agents.html', dist), page('agents', 'Agents'));
+await writeFile(new URL('office.html', dist), page('agents', 'Agents'));

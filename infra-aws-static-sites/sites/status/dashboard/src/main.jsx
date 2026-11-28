@@ -15,13 +15,13 @@ import "./styles.css";
 const tabs = [
   { id: "system", label: "System", icon: Server },
   { id: "surfaces", label: "Surfaces", icon: Layers3 },
-  { id: "agents", label: "Agents", icon: Activity },
-  { id: "office", label: "사무실", icon: Building2 },
+  { id: "agents", label: "Agents", icon: Building2 },
   { id: "output", label: "Loop", icon: RefreshCw },
   { id: "knowledge", label: "KL 맵", icon: ListTree },
 ];
 const viewFromHash = () => {
-  const value = window.location.hash.slice(1);
+  const hash = window.location.hash.slice(1);
+  const value = hash === "office" ? "agents" : hash;
   return tabs.some(tab => tab.id === value) ? value : "home";
 };
 const stateText = { ok: "정상", warn: "확인 필요", bad: "중단", none: "데이터 없음" };
@@ -208,34 +208,18 @@ function HistoryItem({ row, metric, range, children, showChart = true }) {
   </details>;
 }
 
-function agentHistoryRows(agents) {
-  const occurrences = new Map();
-  return agents.map(agent => {
-    const name = agent.name || agent.id;
-    let key = `agent:id:${agent.id}`;
-    if (!agent.id) {
-      const occurrence = (occurrences.get(name) || 0) + 1;
-      occurrences.set(name, occurrence);
-      key = `agent:name:${occurrence}:${name}`;
-    }
-    return {
-      key,
-      name,
-      state: agent.state || "ok",
-      detail: agent.detail || `${agent.crons || agent.executionLogs?.length || 0}개 실행 기록`,
-      metricId: "agents.status",
-      seriesName: name,
-    };
-  });
-}
-
 function App() {
   const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [history, setHistory] = React.useState(null); const [range, setRange] = React.useState("day"); const [view, setView] = React.useState(viewFromHash); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
   const [workCounts, setWorkCounts] = React.useState(null);
   const [mapRefresh, refreshMap] = React.useReducer(value => value + 1, 0);
   const officeFrame = React.useRef(null);
   React.useEffect(() => {
-    const sync = () => { setView(viewFromHash()); setSelected(null); };
+    const sync = () => {
+      const next = viewFromHash();
+      if (window.location.hash === "#office") window.history.replaceState(window.history.state, "", "#agents");
+      setView(next); setSelected(null);
+    };
+    sync();
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
   }, []);
@@ -286,22 +270,6 @@ function App() {
   const workflowFeed = useWorkflowHistory(view === "system");
   const layers = systemLayers(live, publicCommits, workflowLayer(workflowFeed), workCounts);
   const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks, layers });
-  const roleWatchers = live?.roleWatchers || [];
-  const liveAgents = live?.agents || [];
-  const staticAgents = data?.agents || [];
-  // The collector can publish role watcher activity even when the OpenClaw
-  // cron CLI is temporarily unavailable. Use it for the Agents roster only;
-  // Loop remains the cron schedule view.
-  const agents = liveAgents.length ? liveAgents : roleWatchers.length ? roleWatchers.map((watcher) => ({
-    id: watcher.id,
-    name: watcher.name || watcher.id,
-    state: watcher.state || "none",
-    crons: watcher.executionLogs?.length || 0,
-    lastActivityAt: watcher.lastActivityAt,
-    detail: watcher.detail,
-    activity: watcher.activity,
-    executionLogs: watcher.executionLogs || [],
-  })) : staticAgents;
   const crons = live?.crons || [];
   const cronAudit = live?.audit?.sections?.find((section) => section.name === "crons");
   const cronCollectionFailed = cronAudit?.state === "error";
@@ -310,16 +278,16 @@ function App() {
   const loopNote = crons.length ? `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신` : cronCollectionFailed ? "크론 목록 수집 오류" : live ? "등록된 크론 없음" : "라이브 피드 확인 대기";
   const loopEmptyMessage = cronCollectionFailed ? "크론 목록을 가져오지 못했습니다. 수집기 상태를 확인하고 있습니다." : live ? "등록된 크론이 없습니다." : "크론 정보를 불러오는 중입니다.";
   const detailCountLabel = view === "output" ? (crons.length ? `${crons.length}개 크론` : cronCollectionFailed ? "목록 확인 필요" : live ? "등록된 크론 없음" : "수집 대기") : null;
-  const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: `${agents.length || "--"} agents`, note: roleWatchers.length ? "역할별 관찰 연결" : "현재 실행 인계", icon: Activity }, { id: "output", label: "Loop", value: loopLabel, note: loopNote, icon: RefreshCw }];
-  const detailRows = view === "surfaces" ? checks : view === "agents" ? agentHistoryRows(agents) : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : layers;
-  const hasHistoryView = ["system", "agents"].includes(view);
+  const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: "네 층의 에이전트", note: "실행 상태 · 판단 대기", icon: Building2 }, { id: "output", label: "Loop", value: loopLabel, note: loopNote, icon: RefreshCw }];
+  const detailRows = view === "surfaces" ? checks : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : layers;
+  const hasHistoryView = view === "system";
   const chartMetric = (row) => history?.metrics?.[row.metricId] || null;
   const navigate = (next) => { window.location.hash = next === "home" ? "" : next; setView(next); setSelected(null); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
-  return <Tooltip.Provider delayDuration={250}><div className={clsx("app-shell", view === "home" && "home-mode", view === "office" && "office-mode")}>
-    <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={() => { load(); if (view === "knowledge") refreshMap(); if (view === "office") officeFrame.current?.contentWindow?.location.reload(); }} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
-    <main className="screen-area">{view === "knowledge" ? <KnowledgeMap refresh={mapRefresh} /> : view === "office" ? <iframe ref={officeFrame} className="office-frame" src="/office/?embedded=1" title="사무실 · 네 층의 사람과 오늘의 일" /> : view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
+  return <Tooltip.Provider delayDuration={250}><div className={clsx("app-shell", view === "home" && "home-mode", view === "agents" && "office-mode")}>
+    <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={() => { load(); if (view === "knowledge") refreshMap(); if (view === "agents") officeFrame.current?.contentWindow?.location.reload(); }} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
+    <main className="screen-area">{view === "knowledge" ? <KnowledgeMap refresh={mapRefresh} /> : view === "agents" ? <iframe ref={officeFrame} className="office-frame" src="/office/?embedded=1" title="Agents · 네 층의 사람과 오늘의 일" /> : view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
-    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `${view === "system" ? "L1 상태" : "시계열"} 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label={view === "system" ? "L1·L3 그래프 기간" : "그래프 기간"}>{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong>{view !== "system" && <small>{item.hours === 24 ? "24시간" : `${item.hours / 24}일`}</small>}</button>)}</div></div>}
+    </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `L1 상태 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="L1·L3 그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong></button>)}</div></div>}
       <div className={clsx("detail-list", view === "surfaces" && "surface-tiles", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "surfaces" ? detailRows.map(item => <SurfaceCard key={item.url || item.name} item={item} onOpen={setSelected} />) : hasHistoryView ? detailRows.map(row => {
         if (row.workflow) {
           return <HistoryItem key={row.name} row={row} range={range} showChart={false}>

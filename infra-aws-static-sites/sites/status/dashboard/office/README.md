@@ -1,4 +1,4 @@
-# LCML Office
+# Agents — LCML Office
 
 LCML은 회사의 실행 세션과 결정 대기 항목을 네 층의 사무실로 보여주는 읽기 전용 화면입니다. 제품실(지니), 고객실(세스고딘 CMO), 비즈니스실(SAM), 대표실(사용자)의 책임을 구분합니다. 현재 등록된 OpenClaw 에이전트 7명과 대표 자리는 쉬는 동안에도 사람으로 표시합니다. 직접·위임 실행 중 하나를 해당 인물의 상태에 연결하고 나머지 동시 실행은 추가 작업자로 표시합니다. 첫 화면은 4→3→2→1층이 하나의 골조 안에 세로로 연결된 건물 단면입니다. 각 층을 누르거나 키보드로 선택하면 해당 층의 큰 장면과 상세로 들어갑니다.
 
@@ -13,7 +13,7 @@ npm run build:office
 npx vite --config vite.office.config.js
 ```
 
-빌드는 `../dist/office/`만 교체합니다. 배포는 상위 Status README의 기존 S3/CloudFront 경로를 사용합니다. 통합 로컬 확인은 `npm run build:all` 후 `../dist/`를 HTTP로 제공하고 `/#office`를 엽니다. 이전 `/office/`는 공통 메뉴로 이동하고 `/office/?embedded=1`은 내장 화면 진입점입니다. Office만 개발할 때는 `/office/?embedded=1`을 열며 같은 출처의 `/office-live.json`이 필요합니다. 실행 환경의 자격증명이나 수집 원천에 브라우저가 직접 접근하지 않습니다.
+빌드는 `../dist/office/`만 교체합니다. 배포는 상위 Status README의 기존 S3/CloudFront 경로를 사용합니다. 통합 로컬 확인은 `npm run build:all` 후 `../dist/`를 HTTP로 제공하고 `/#agents`를 엽니다. 이전 `/office/`는 공통 메뉴로 이동하고 `/office/?embedded=1`은 내장 화면 진입점입니다. Office만 개발할 때는 `/office/?embedded=1`을 열며 같은 출처의 `/office-live.json`이 필요합니다. 실행 환경의 자격증명이나 수집 원천에 브라우저가 직접 접근하지 않습니다.
 
 ## 데이터와 화면
 
@@ -61,7 +61,7 @@ npx vite --config vite.office.config.js
 
 ## 운영 경계
 
-로그인 없는 기존 Status의 `/#office` 메뉴이며, 공개 가능한 요약만 수집기가 공급해야 합니다. UI에는 샘플 데이터나 폴백 가상 세션이 없습니다. 상주 명단은 현재 OpenClaw 등록 원천에서 수집하며 실행 세션과 구분합니다. Codex는 로컬 SQLite의 최신 turn 및 같은 turn의 활동 시각 메타데이터만 읽습니다. 테스트 fixture는 테스트 코드 안에만 있습니다. 세션 생존 판정·질문 공개 요약·지표 정의의 정확성은 수집기 계약에 의존합니다. 프로젝트 설정에 정의된 AARRR이 없으면 화면에서 새 지표를 만들어 채우지 않습니다.
+로그인 없는 기존 Status의 `/#agents` 메뉴이며, 공개 가능한 요약만 수집기가 공급해야 합니다. UI에는 샘플 데이터나 폴백 가상 세션이 없습니다. 상주 명단은 현재 OpenClaw 등록 원천에서 수집하며 실행 세션과 구분합니다. Codex는 로컬 SQLite의 최신 turn 및 같은 turn의 활동 시각 메타데이터만 읽습니다. 테스트 fixture는 테스트 코드 안에만 있습니다. 세션 생존 판정·질문 공개 요약·지표 정의의 정확성은 수집기 계약에 의존합니다. 프로젝트 설정에 정의된 AARRR이 없으면 화면에서 새 지표를 만들어 채우지 않습니다.
 
 원천 수집과 배포 방법은 상위 [Status README](../../README.md), 수집기 계약은 승인된 [구현 계획](../../../../../docs/superpowers/plans/2026-11-11-lcml-office.md)을 참고합니다.
 
@@ -80,6 +80,6 @@ aws cloudfront create-invalidation --distribution-id E9GKZBY9S3VTW --paths '/off
 
 ## Status 메뉴 통합 (2026-11-27)
 
-사용자 진입 주소는 `https://status.aws.shdkej.com/#office`입니다. 기존 React/Vite 사무실은 같은 출처의 프레임으로 재사용하며 등록 명단·실행 세션·층 이동·수집기를 변경하지 않습니다. 내장 모드는 중복 로고·Status 복귀 링크·페이지 푸터를 숨기고 수집 상태와 층 선택을 남깁니다. 상위 Status가 공통 메뉴와 새로고침·주소 이동을 담당합니다. 별도 Agents 상황실은 폐기되었고 Status의 기존 Agents 요약은 유지됩니다.
+사용자 진입 주소는 `https://status.aws.shdkej.com/#agents`입니다. 2026-11-28 사무실 메뉴를 Agents로 바꿨으며 이전 `/#office` 및 `/office/`·`/agents/` 계열 주소는 이 화면으로 연결합니다. 기존 React/Vite 사무실은 같은 출처의 프레임으로 재사용하며 등록 명단·실행 세션·층 이동·수집기를 변경하지 않습니다. 내장 모드는 중복 로고·Status 복귀 링크·페이지 푸터를 숨기고 수집 상태와 층 선택을 남깁니다. 상위 Status가 공통 메뉴와 새로고침·주소 이동을 담당합니다. 별도 Agents 상황실과 Status의 이전 Agents 요약·상태 이력 화면은 폐기했습니다. 이 네 층 장면이 단일 Agents 메뉴이며 홈 버튼도 같은 화면으로 연결합니다.
 
-통합 최초 배포는 `npm run build:all` 후 상위 Status 절차를 따릅니다. 이후 장면만 수정하면 기존 사무실 단독 배포 범위를 사용할 수 있습니다. `/office/`·`/office/index.html`은 메뉴로 이동하므로 렌더 검증은 `/#office`에서 수행하고, 내장 화면의 피드 오류·모바일 네 층·층 상세 스크롤·Status 메뉴 복귀를 확인합니다.
+통합 최초 배포는 `npm run build:all` 후 상위 Status 절차를 따릅니다. 이후 장면만 수정하면 기존 사무실 단독 배포 범위를 사용할 수 있습니다. `/office/`·`/office/index.html`은 메뉴로 이동하므로 렌더 검증은 `/#agents`에서 수행하고, 내장 화면의 피드 오류·모바일 네 층·층 상세 스크롤·Status 메뉴 복귀를 확인합니다.

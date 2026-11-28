@@ -240,7 +240,7 @@ function App() {
   const go = useCallback(next => { setFloor(previous => { setDirection(next > previous ? 'going-up' : next < previous ? 'going-down' : ''); return next; }); setOverview(false); setSelected(null); }, []);
   function railKey(event) { if (['ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) { event.preventDefault(); const next = event.key === 'Home' ? 4 : event.key === 'End' ? 1 : Math.min(4, Math.max(1, floor + (event.key === 'ArrowUp' ? 1 : -1))); go(next); document.getElementById(`floor-${next}`)?.focus(); } }
   return <div className={`app-shell ${embedded ? 'embedded' : ''} ${overview ? 'has-overview' : ''}`}>
-    <header className="topbar"><a className="brand" href="/#office" target="_top" aria-label="LCML 홈"><span className="brand-mark"><i /><i /><i /><i /></span><span>LCML</span></a><p className="brand-tagline">Less complexity,<br /><b>More Life.</b></p><div className="collection-state"><span><Dot live={live} />{connection === 'loading' ? '첫 관측을 불러오는 중' : live ? fresh.partial ? '일부 실행 원천 확인 중' : '10분마다, 지금을 기록해요' : '확인 중 · 새 관측을 기다려요'}</span><small>마지막 수집 {clockTime(feed?.observedAt, data.day.timeZone)} <i>·</i> 10분 주기</small></div><a className="status-home" href="/" target="_top" aria-label="Status로 돌아가기">Status <ArrowUpRight size={15} /></a></header>
+    <header className="topbar"><a className="brand" href="/#agents" target="_top" aria-label="Agents 홈"><span className="brand-mark"><i /><i /><i /><i /></span><span>LCML</span></a><p className="brand-tagline">Less complexity,<br /><b>More Life.</b></p><div className="collection-state"><span><Dot live={live} />{connection === 'loading' ? '첫 관측을 불러오는 중' : live ? fresh.partial ? '일부 실행 원천 확인 중' : '10분마다, 지금을 기록해요' : '확인 중 · 새 관측을 기다려요'}</span><small>마지막 수집 {clockTime(feed?.observedAt, data.day.timeZone)} <i>·</i> 10분 주기</small></div><a className="status-home" href="/" target="_top" aria-label="Status로 돌아가기">Status <ArrowUpRight size={15} /></a></header>
     <div className={`workspace ${overview ? 'is-overview' : ''}`}>
       <nav className="floor-rail" aria-label="엘리베이터 층 선택" onKeyDown={railKey}><span className="rail-label">FLOORS</span><div className="floor-buttons">{FLOORS.map(f => <button id={`floor-${f.id}`} key={f.id} className={floor === f.id && !overview ? 'active' : ''} aria-pressed={floor === f.id && !overview} aria-label={`${f.id}층 ${f.name}`} onClick={() => go(f.id)}><span>0{f.id}</span><small>{f.name}</small><i /></button>)}</div><button className={`overview-button ${overview ? 'active' : ''}`} onClick={() => { setOverview(true); setSelected(null); }} aria-pressed={overview} aria-label="전체 보기"><Layers size={18} /><small>전체 보기</small></button><span className="rail-bottom">L / M</span></nav>
       <main className="main-room">
@@ -256,6 +256,6 @@ function App() {
 }
 export { Metrics, Strategy, Owner, OfficeScene, Repositories, Overview };
 if (typeof document !== 'undefined') {
-  if (!embedded) window.location.replace('/#office');
+  if (!embedded) window.location.replace('/#agents');
   else createRoot(document.getElementById('root')).render(<App />);
 }

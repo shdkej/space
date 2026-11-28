@@ -1,5 +1,7 @@
 // Execute with Ego Lite's nodejs command in the signed-in Korean Analytics UI.
 const properties = [
+  ["miniapp-image-tools", "110967461", "566086976", "miniapp-image-tools"],
+  ["Infinity", "110967461", "566021124", "Infinity"],
   ["Virtue", "110967461", "566078860", "Virtue"],
   ["blog", "110967461", "252603434", "내 블로그"],
   ["afzma", "383859191", "523848883", "afzma"],

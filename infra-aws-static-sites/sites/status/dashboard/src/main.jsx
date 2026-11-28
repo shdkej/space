@@ -231,6 +231,7 @@ function agentHistoryRows(agents) {
 
 function App() {
   const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [history, setHistory] = React.useState(null); const [range, setRange] = React.useState("day"); const [view, setView] = React.useState(viewFromHash); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
+  const [workCounts, setWorkCounts] = React.useState(null);
   const [mapRefresh, refreshMap] = React.useReducer(value => value + 1, 0);
   const officeFrame = React.useRef(null);
   React.useEffect(() => {
@@ -238,7 +239,25 @@ function App() {
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
   }, []);
-  const load = React.useCallback(async () => { setLoading(true); const [a, b, c] = await Promise.allSettled([fetch("./status.json", { cache: "no-store" }).then((r) => r.json()), fetch("./agents-live.json", { cache: "no-store" }).then((r) => r.json()), fetch("./metrics-history.json", { cache: "no-store" }).then((r) => r.ok ? r.json() : null)]); setData(a.status === "fulfilled" ? a.value : null); setLive(b.status === "fulfilled" ? b.value : null); setHistory(c.status === "fulfilled" ? c.value : null); setLoading(false); }, []);
+  const load = React.useCallback(async () => {
+    setLoading(true);
+    const readFeed = async name => {
+      try {
+        const response = await fetch("./" + name, { cache: "no-store" });
+        return response.ok ? await response.json() : null;
+      } catch {
+        return null;
+      }
+    };
+    const [status, agents, metrics, counts] = await Promise.all(
+      ["status.json", "agents-live.json", "metrics-history.json", "work-counts.json"].map(readFeed)
+    );
+    setData(status);
+    setLive(agents);
+    setHistory(metrics);
+    setWorkCounts(counts);
+    setLoading(false);
+  }, []);
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
   const [publicCommits, setPublicCommits] = React.useState({});
   const lastCommitCheck = React.useRef(0);
@@ -265,7 +284,7 @@ function App() {
     };
   }, [view]);
   const workflowFeed = useWorkflowHistory(view === "system");
-  const layers = systemLayers(live, publicCommits, workflowLayer(workflowFeed));
+  const layers = systemLayers(live, publicCommits, workflowLayer(workflowFeed), workCounts);
   const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks, layers });
   const roleWatchers = live?.roleWatchers || [];
   const liveAgents = live?.agents || [];

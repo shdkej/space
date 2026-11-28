@@ -24,10 +24,11 @@ class RefreshTests(unittest.TestCase):
     def test_scheduled_refresh_does_not_query_gmail(self):
         with TemporaryDirectory() as tmp, patch.object(Path, "home", return_value=Path(tmp)), \
              patch.object(refresh.sys, "argv", ["refresh-analytics.py"]), \
-             patch.object(refresh, "s3_client"), patch.object(refresh, "log"), \
+             patch.object(refresh, "s3_client"), patch.object(refresh, "publish_work_counts", return_value=True) as work, patch.object(refresh, "log"), \
              patch.object(refresh, "collect_support") as gmail, patch.object(refresh, "refresh", return_value=True) as public:
             self.assertEqual(refresh.main(), 0)
             gmail.assert_not_called()
+            work.assert_called_once()
             self.assertEqual(public.call_count, len(refresh.SOURCES))
 
     def test_daily_instagram_includes_private_snapshot_and_ga4_private_is_opt_in(self):
@@ -46,7 +47,7 @@ class RefreshTests(unittest.TestCase):
     def test_exporter_cache_preserves_observation_and_rejects_stale_or_partial_snapshots(self):
         from calendar_periods import calendar_windows
         from zoneinfo import ZoneInfo
-        self.start = datetime.now(timezone.utc).replace(hour=3, minute=30, second=0, microsecond=0)
+        self.start = (datetime.now(timezone.utc) - timedelta(days=1)).replace(hour=3, minute=30, second=0, microsecond=0)
         observed = self.start - timedelta(minutes=10)
         clock = patch.object(refresh, "datetime", wraps=datetime)
         mocked = clock.start()

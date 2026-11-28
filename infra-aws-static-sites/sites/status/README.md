@@ -103,10 +103,12 @@ Status·사무실의 공개 피드는 `agents-live.json`이 제공하는 에이�
 
 Grafana 고객 레이어(`/d/layer-customer`)와 제품 레이어(`/d/layer-product`)의 기존 지표에서도 이 인벤토리를 사용합니다. 고객 레이어에서 GA4 신규 사용자·세션과 PostHog 이탈·재방문율을, 제품 레이어에서 PostHog 세션·예외·Web Vitals를 앱별로 비교할 수 있습니다. GA4 피드에 추가된 속성은 다음 exporter 수집 때 표시됩니다.
 
-공유 analytics 피드는 별도로 유지합니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 여덟 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
+공유 analytics 피드는 별도로 유지합니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
 
-- `refresh-analytics.py`, `collect-analytics.py`, `calendar_periods.py`, `analytics_history.py`, `analytics-inventory.json`
+- `work_counts.py`, `refresh-analytics.py`, `collect-analytics.py`, `calendar_periods.py`, `analytics_history.py`, `analytics-inventory.json`
 - `read-ga4-insights.mjs`, `read-instagram-insights.mjs`, `support_inquiries.py`
+
+같은 일일 작업이 System L2의 `work-counts.json`도 갱신합니다. Notion 소셜 미디어 콘텐츠의 전체 페이지와 플랫폼 선택이 빈 페이지, Linear에서 접근 가능한 미보관 이슈 중 상태 유형이 backlog인 건수를 집계합니다. 공개 피드에는 집계값·조회 상태·시각만 기록합니다. L2에서 소스별 조회 실패는 미수집으로 표시하고 36시간을 넘긴 피드는 상태 확인 대상으로 표시합니다.
 
 Windows 예약 작업은 기존 사용자 로그온 세션에서 다음 명령을 실행합니다. 필요한 Python 패키지는 전용 `python/` 디렉터리의 boto3와 그 의존성입니다. PC를 켜고 사용자가 로그인한 뒤 놓친 예약을 보충 실행하도록 설정합니다.
 

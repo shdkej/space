@@ -47,7 +47,7 @@ function artifactLayer(collectedRepos, publicCommits) {
   };
 }
 
-export function systemLayers(live, publicCommits, workflow) {
+export function systemLayers(live, publicCommits, workflow, workCounts) {
   const system = live?.system;
   const sections = live?.audit?.sections || [];
   const collected = name => {
@@ -55,16 +55,24 @@ export function systemLayers(live, publicCommits, workflow) {
     return !section || section.state === "ok";
   };
   const life = collected("review") && system?.layers?.find(row => row?.key?.toLowerCase() === "l1");
-  const crons = collected("crons") && Array.isArray(live?.crons) ? live.crons : null;
   const backlogs = collected("backlogs") && Array.isArray(system?.backlogs)
     ? system.backlogs.filter(row => row.name !== "marketing-inbox-7d")
     : null;
   // Accept the previous feed during rollout; the reduced collector publishes evidence only.
   const evidence = live?.evidence || live?.monitoring;
   const evidenceReady = collected(live?.evidence ? "evidence" : "monitoring");
-  const infra = evidenceReady && evidence?.prometheus;
   const repos = evidenceReady && Array.isArray(evidence?.github) ? evidence.github : [];
-  const cronStates = crons?.map(row => row.status) ?? ["none"];
+  const { notion, linear, observedAt } = workCounts || {};
+  const hasCount = value => Number.isInteger(value) && value >= 0;
+  const notionReady = notion?.status === "ok" && hasCount(notion.total) &&
+    hasCount(notion.withoutPlatform) && notion.withoutPlatform <= notion.total;
+  const linearReady = linear?.status === "ok" && hasCount(linear.backlog);
+  const notionLabel = notionReady
+    ? `Notion 전체 ${count(notion.total)} 중 플랫폼 없음 ${count(notion.withoutPlatform)}`
+    : "Notion 미수집";
+  const linearLabel = linearReady ? "Linear 백로그 " + count(linear.backlog) : "Linear 백로그 미수집";
+  const sampledAt = Date.parse(observedAt);
+  const fresh = Number.isFinite(sampledAt) && Date.now() - sampledAt < 36 * 60 * 60 * 1000;
   const backlogStates = backlogs?.map(row => row.state) ?? ["none"];
 
   return [
@@ -73,14 +81,11 @@ export function systemLayers(live, publicCommits, workflow) {
       detail: life?.detail || life?.reason || "데일리 리뷰 수집 대기", metricId: "system.layer.l1",
     },
     {
-      name: "L2 업/시스템", state: worst([...cronStates, ...backlogStates]),
-      detail: [crons ? "크론 " + crons.length + "개" : "크론 수집 대기",
-        backlogs ? "백로그 " + backlogs.length + "종" : "백로그 수집 대기",
-        Array.isArray(infra?.nodes) ? "인프라 노드 " + infra.nodes.length + "개" : "인프라 수집 대기"].join(" · "),
+      name: "L2 업/시스템", state: worst([...backlogStates, notionReady && linearReady && fresh ? "ok" : "none"]),
+      detail: [notionLabel, linearLabel].join(" · "),
       observations: [
-        ...(crons ? ["크론 " + crons.length + "개 중 주의·중단 " + cronStates.filter(value => ["warn", "bad"].includes(states[value])).length + "개"] : ["크론 상태 수집 대기"]),
+        ...(Number.isFinite(sampledAt) ? ["Notion·Linear 집계 " + new Date(sampledAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }) + " KST"] : []),
         ...(backlogs || []).map(row => row.name + " · " + count(row.count) + " / 경고 " + count(row.warnAt)),
-        ...(infra?.nodes || []).map(row => row.name + " · " + (row.status || "상태 미수집")),
       ],
     },
     workflow,

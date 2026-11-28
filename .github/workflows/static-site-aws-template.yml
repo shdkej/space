@@ -251,7 +251,7 @@ jobs:
           sync_options=(--delete)
           if [ "$DOMAIN_NAME" = "status.aws.shdkej.com" ]; then
             sync_options=()
-            exclusions+=(--exclude "analytics-posthog.json" --exclude "analytics-ga4.json" --exclude "analytics-instagram.json")
+            exclusions+=(--exclude "work-counts.json" --exclude "analytics-posthog.json" --exclude "analytics-ga4.json" --exclude "analytics-instagram.json")
           fi
           aws s3 sync "${{ matrix.build_dir }}/" \
             "s3://${{ steps.target.outputs.bucket }}" \

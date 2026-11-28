@@ -242,51 +242,6 @@
     .knowledge-action { margin-top: 8px; padding: 4px 8px; border-color: #0e7490; background: #083344; color: #cffafe; font-size: 11px; }
     .knowledge-action:hover { background: #0c4a6e; }
     .knowledge-empty { color: var(--muted); font-size: 12px; padding: 8px 0; }
-    .promotion-page { margin: 18px 14px; max-width: 1180px; }
-    .promotion-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-    .promotion-title { margin: 0; font-size: 18px; }
-    .promotion-note { color: var(--muted); font-size: 12px; margin: 4px 0 0; }
-    .promotion-list { border: 1px solid #334155; border-radius: 12px; overflow: hidden; background: var(--panel); }
-    .promotion-row { display: grid; grid-template-columns: 104px minmax(220px, 1.4fr) minmax(180px, 1fr) minmax(180px, 1fr); gap: 12px; align-items: start; padding: 12px 14px; border-top: 1px solid #334155; font-size: 12px; }
-    .promotion-row:first-child { border-top: 0; }
-    .promotion-row-head { color: var(--muted); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; background: #111c30; }
-    .promotion-source { color: #cbd5e1; word-break: break-word; }
-    .promotion-state { font-weight: 650; color: #bae6fd; }
-    .promotion-targets { display: flex; flex-wrap: wrap; gap: 5px; }
-    .promotion-targets a { color: #a5f3fc; text-decoration: none; border-bottom: 1px solid #0e7490; }
-    .promotion-empty { padding: 16px; color: var(--muted); }
-    @media (max-width: 800px) { .promotion-page { margin: 14px 10px; } .promotion-row { grid-template-columns: 1fr; gap: 5px; } .promotion-row-head { display: none; } }
-    .reflection-map { margin: 0 14px 18px; padding: 16px; border: 1px solid #155e75; border-radius: 14px; background: radial-gradient(circle at 88% 12%, rgba(34,211,238,.14), transparent 34%), #0f1b2d; }
-    .reflection-map-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; }
-    .reflection-map-title { margin: 0; font-size: 18px; letter-spacing: -.025em; }
-    .reflection-map-note { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
-    .reflection-total { color: #e0f2fe; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .reflection-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 15px; }
-    .reflection-stat { min-width: 0; padding: 10px; border: 1px solid rgba(148,163,184,.25); border-radius: 9px; background: rgba(15,23,42,.66); }
-    .reflection-stat strong { display: block; color: #f8fafc; font-size: 19px; font-variant-numeric: tabular-nums; }
-    .reflection-stat span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; line-height: 1.35; }
-    .reflection-controls { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 15px; }
-    .reflection-filter { padding: 6px 9px; border: 1px solid #475569; border-radius: 999px; background: #101b2d; color: #cbd5e1; font-size: 11px; }
-    .reflection-filter.active { color: #ecfeff; border-color: #67e8f9; background: #164e63; }
-    .reflection-filter::before { content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 6px 1px 0; border-radius: 50%; background: currentColor; vertical-align: middle; }
-    .reflection-filter[data-filter="all"]::before { background: #e2e8f0; }
-    .reflection-filter[data-filter="reflected"]::before { background: #34d399; }
-    .reflection-filter[data-filter="pending_promotion"]::before { background: #fbbf24; }
-    .reflection-filter[data-filter="not_applicable"]::before { background: #94a3b8; }
-    .reflection-field { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 12px; padding: 11px; border: 1px solid rgba(148,163,184,.22); border-radius: 10px; background: rgba(2,6,23,.36); }
-    .reflection-dot { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 2px; background: #64748b; opacity: .9; cursor: pointer; }
-    .reflection-dot:hover, .reflection-dot:focus-visible { outline: 2px solid #e0f2fe; outline-offset: 2px; transform: scale(1.35); z-index: 1; }
-    .reflection-dot.reflected { background: #34d399; }
-    .reflection-dot.pending_promotion { background: #fbbf24; }
-    .reflection-dot.not_applicable { background: #94a3b8; }
-    .reflection-dot.dimmed { opacity: .13; }
-    .reflection-file-list { display: grid; gap: 0; margin-top: 12px; border-top: 1px solid rgba(148,163,184,.2); }
-    .reflection-file { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 8px 0; border-bottom: 1px solid rgba(148,163,184,.15); font-size: 11px; }
-    .reflection-file-state { color: #bae6fd; }
-    .reflection-file-source { color: #dbeafe; overflow-wrap: anywhere; text-decoration: none; }
-    .reflection-file-target { color: #6ee7b7; text-decoration: none; white-space: nowrap; }
-    .reflection-more { margin: 9px 0 0; color: var(--muted); font-size: 11px; }
-    @media (max-width: 800px) { .reflection-map { margin: 0 10px 14px; } .reflection-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } .reflection-file { grid-template-columns: 64px minmax(0, 1fr); } .reflection-file-target { grid-column: 2; white-space: normal; } }
     .task-trace-strip { display: grid; gap: 10px; }
     .task-trace-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .task-trace-tab { position: relative; min-width: 0; min-height: 74px; padding: 10px 12px; border-radius: 10px; background: #111827; border-color: #475569; color: #e2e8f0; text-align: left; }
@@ -299,7 +254,7 @@
     .task-trace-row:first-child { border-top: 0; }
     .task-trace-label { color: #94a3b8; font-size: 10px; margin-bottom: 3px; }
     .task-trace-value { color: #dbeafe; font-size: 12px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
-    .knowledge-fab { position: fixed; left: 22px; bottom: 22px; z-index: 20; min-height: 48px; padding: 0 18px; border: 1px solid rgba(125,211,252,.62); border-radius: 999px; background: radial-gradient(circle at 25% 20%, rgba(224,242,254,.32), transparent 28%), linear-gradient(135deg, #075985, #0e7490); color: #ecfeff; box-shadow: 0 14px 34px rgba(2,132,199,.28), 0 4px 12px rgba(0,0,0,.34); font-size: 13px; font-weight: 750; letter-spacing: -.01em; }
+    .knowledge-fab { display: inline-flex; align-items: center; text-decoration: none; position: fixed; left: 22px; bottom: 22px; z-index: 20; min-height: 48px; padding: 0 18px; border: 1px solid rgba(125,211,252,.62); border-radius: 999px; background: radial-gradient(circle at 25% 20%, rgba(224,242,254,.32), transparent 28%), linear-gradient(135deg, #075985, #0e7490); color: #ecfeff; box-shadow: 0 14px 34px rgba(2,132,199,.28), 0 4px 12px rgba(0,0,0,.34); font-size: 13px; font-weight: 750; letter-spacing: -.01em; }
     .knowledge-fab::before { content: "✦"; margin-right: 7px; color: #fef3c7; }
     .knowledge-fab:hover { transform: translateY(-2px); background: linear-gradient(135deg, #0284c7, #0891b2); box-shadow: 0 18px 38px rgba(2,132,199,.36), 0 4px 12px rgba(0,0,0,.3); }
     @media (max-width: 640px) { .task-trace-tabs { grid-template-columns: repeat(3, minmax(150px, 1fr)); overflow-x: auto; padding: 2px; } .task-trace-tab:not(:last-child)::after { right: -14px; } .knowledge-fab { left: 14px; bottom: 14px; } }
@@ -842,42 +797,6 @@
       <span class="summary-value" id="sum-stale">–</span>
     </div>
   </div>
-  <div id="knowledge-staging" hidden>
-  <section class="reflection-map" id="reflection-map" aria-labelledby="reflection-map-title">
-    <div class="reflection-map-head">
-      <div>
-        <h2 class="reflection-map-title" id="reflection-map-title">KL → Agent Wiki 반영 맵</h2>
-        <p class="reflection-map-note" id="reflection-map-note">KL 문서를 읽는 중입니다.</p>
-      </div>
-      <span class="reflection-total" id="reflection-map-updated"></span>
-    </div>
-    <div class="reflection-summary" id="reflection-summary"></div>
-    <div class="reflection-controls" id="reflection-controls" aria-label="반영 상태 필터"></div>
-    <div class="reflection-field" id="reflection-field" aria-label="KL 문서 상태 맵"></div>
-    <div class="reflection-file-list" id="reflection-file-list" aria-live="polite"></div>
-    <p class="reflection-more" id="reflection-more"></p>
-  </section>
-  <section class="knowledge-loop" id="knowledge-loop-section" aria-labelledby="knowledge-loop-title">
-    <div class="knowledge-loop-head">
-      <div>
-        <h2 class="knowledge-loop-title" id="knowledge-loop-title">지식 피드백 루프</h2>
-        <p class="knowledge-loop-note" id="knowledge-loop-note">Knowledge Lab에서 컴파일한 ingest · query · lint 로그를 읽는 중입니다.</p>
-      </div>
-      <span class="meta" id="knowledge-loop-updated"></span>
-    </div>
-    <div class="knowledge-loop-grid" id="knowledge-loop-grid" aria-live="polite"></div>
-  </section>
-  <section class="promotion-page" id="promotion-page" hidden aria-labelledby="promotion-title">
-    <div class="promotion-head">
-      <div>
-        <h2 class="promotion-title" id="promotion-title">소스 → Ingest → Wiki 승격</h2>
-        <p class="promotion-note" id="promotion-note">파일명·내용 유사도 대신 KL ingest 원장의 명시 출처·target만 표시합니다.</p>
-      </div>
-      <span class="meta" id="promotion-updated"></span>
-    </div>
-    <div class="promotion-list" id="promotion-list" aria-live="polite"></div>
-  </section>
-  </div>
   <main>
     <section class="column" data-key="backlog">
       <div class="column-head">
@@ -937,7 +856,7 @@
       <div class="cards" data-cards></div>
     </section>
   </main>
-  <button type="button" class="knowledge-fab" id="knowledge-open">KL 반영 맵</button>
+  <a class="knowledge-fab" href="https://status.aws.shdkej.com/#knowledge">KL 반영 맵 ↗</a>
   <div class="modal-backdrop" id="detail-modal" aria-hidden="true">
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
       <div class="modal-head">
@@ -952,15 +871,26 @@
   <div class="modal-backdrop" id="knowledge-modal" aria-hidden="true">
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="knowledge-modal-title">
       <div class="modal-head">
-        <div class="modal-title" id="knowledge-modal-title">KL → Agent Wiki 반영 맵</div>
+        <div class="modal-title" id="knowledge-modal-title">지식 피드백 루프</div>
       </div>
-      <div class="modal-body" id="knowledge-modal-body"></div>
+      <div class="modal-body">
+        <section class="knowledge-loop" id="knowledge-loop-section" aria-labelledby="knowledge-modal-title">
+          <div class="knowledge-loop-head">
+            <div>
+              <p class="knowledge-loop-note" id="knowledge-loop-note">Knowledge Lab에서 컴파일한 ingest · query · lint 로그를 읽는 중입니다.</p>
+            </div>
+            <span class="meta" id="knowledge-loop-updated"></span>
+          </div>
+          <div class="knowledge-loop-grid" id="knowledge-loop-grid" aria-live="polite"></div>
+        </section>
+      </div>
       <div class="detail-modal-foot">
-        <button class="detail-modal-close" id="knowledge-close" type="button" aria-label="KL 반영 맵 닫기" title="닫기">×</button>
+        <button class="detail-modal-close" id="knowledge-close" type="button" aria-label="지식 피드백 루프 닫기" title="닫기">×</button>
       </div>
     </section>
   </div>
   <footer>
+    <button type="button" id="knowledge-open">지식 피드백 루프</button>
     source:
     <a href="https://github.com/shdkej/infinity/blob/main/INTENTS.yaml" target="_blank" rel="noopener">INTENTS.yaml</a>
     ·
@@ -975,8 +905,6 @@
       rawIntents: "https://raw.githubusercontent.com/shdkej/infinity/main/INTENTS.yaml",
       rawGates: "https://raw.githubusercontent.com/shdkej/infinity/main/GATES.md",
       knowledgeLoop: "https://raw.githubusercontent.com/shdkej/infinity/main/data/knowledge-loop.json",
-      promotionIndex: "https://raw.githubusercontent.com/shdkej/infinity/main/data/promotion-index.json",
-      knowledgeLabBase: "https://github.com/shdkej/knowledge-lab/blob/main/",
       rawBase: "https://raw.githubusercontent.com/shdkej/infinity/main/",
       apiBase: "https://api.github.com/repos/shdkej/infinity/contents/",
       actionEndpoint: "https://k23v4cvkqtxkuj5ceech43m5mq0aedhq.lambda-url.ap-northeast-2.on.aws/",
@@ -991,8 +919,6 @@
     const detailBody = document.getElementById("detail-body");
     const detailClose = document.getElementById("detail-close");
     const knowledgeModal = document.getElementById("knowledge-modal");
-    const knowledgeModalBody = document.getElementById("knowledge-modal-body");
-    const knowledgeStaging = document.getElementById("knowledge-staging");
     const knowledgeOpen = document.getElementById("knowledge-open");
     const knowledgeClose = document.getElementById("knowledge-close");
 
@@ -3230,125 +3156,13 @@
       renderKnowledgeLoop(entries);
     }
 
-    function promotionState(entry) {
-      if (entry.promotion_state === "reflected") return "Wiki 반영됨";
-      if (entry.promotion_state === "pending_promotion") return "승격 대기 · 검토 완료";
-      if (entry.promotion_state === "not_applicable") return "위키 승격 대상 아님";
-      if (entry.status === "selected") return "승격 대기 · 검토 완료";
-      if (entry.promotion_targets && entry.promotion_targets.length) return "Wiki 반영됨";
-      return "위키 승격 대상 아님";
-    }
-
-    function renderPromotionIndex(entries, generatedAt) {
-      const host = document.getElementById("promotion-list");
-      const note = document.getElementById("promotion-note");
-      const updated = document.getElementById("promotion-updated");
-      host.replaceChildren();
-      const head = document.createElement("div"); head.className = "promotion-row promotion-row-head";
-      ["상태", "입력 소스", "Ingest 판정", "Agent Wiki"].forEach((label) => { const cell = document.createElement("div"); cell.textContent = label; head.appendChild(cell); });
-      host.appendChild(head);
-      if (!entries.length) { const empty = document.createElement("div"); empty.className = "promotion-empty"; empty.textContent = "선별 또는 승격된 소스가 없습니다."; host.appendChild(empty); return; }
-      entries.forEach((entry) => {
-        const row = document.createElement("article"); row.className = "promotion-row";
-        const state = document.createElement("div"); state.className = "promotion-state"; state.textContent = promotionState(entry);
-        const source = document.createElement("a"); source.className = "promotion-source"; source.href = SOURCES.knowledgeLabBase + entry.source; source.target = "_blank"; source.rel = "noopener"; source.textContent = entry.source_layer === "infinity" ? "작업 산출물 · " + entry.source : "원본 입력 · " + entry.source;
-        const ingest = document.createElement("div"); ingest.className = "promotion-source"; ingest.textContent = entry.status + (entry.reason ? " · " + entry.reason : "");
-        const targets = document.createElement("div"); targets.className = "promotion-targets";
-        (entry.promotion_targets || []).forEach((target) => { const link = document.createElement("a"); link.href = "https://shdkej.com/agent-wiki" + target; link.target = "_blank"; link.rel = "noopener"; link.textContent = target.replace(/^\/docs\//, ""); targets.appendChild(link); });
-        if (!targets.children.length) { const text = document.createElement("span"); text.className = "promotion-source"; text.textContent = entry.promotion_reason || entry.promotion_target_note || "명시 연결 없음"; targets.appendChild(text); }
-        row.append(state, source, ingest, targets); host.appendChild(row);
-      });
-      note.textContent = "KL 문서 " + entries.length + "개를 표시합니다. 반영은 outputs 출처 링크 또는 ingest target이 명시된 경우만 인정하며, 위키 대상이 아닌 자료는 별도로 표시합니다.";
-      updated.textContent = generatedAt ? "갱신 " + generatedAt : "";
-    }
-
-    let reflectionEntries = [];
-    let reflectionFilter = "all";
-
-    function reflectionCategory(entry) {
-      if (entry.promotion_state) return entry.promotion_state;
-      if (entry.wiki_reflected) return "reflected";
-      if (entry.status === "selected") return "pending_promotion";
-      return "not_applicable";
-    }
-
-    function reflectionLabel(category) {
-      return ({ reflected: "위키 반영됨", pending_promotion: "승격 대기", not_applicable: "위키 대상 아님" })[category] || "전체";
-    }
-
-    function renderReflectionMap() {
-      const summary = document.getElementById("reflection-summary");
-      const controls = document.getElementById("reflection-controls");
-      const field = document.getElementById("reflection-field");
-      const list = document.getElementById("reflection-file-list");
-      const note = document.getElementById("reflection-map-note");
-      const more = document.getElementById("reflection-more");
-      const buckets = { reflected: [], pending_promotion: [], not_applicable: [] };
-      reflectionEntries.forEach((entry) => buckets[reflectionCategory(entry)].push(entry));
-      summary.replaceChildren();
-      [
-        ["reflected", "Wiki 반영됨"],
-        ["pending_promotion", "승격 대기"],
-        ["not_applicable", "위키 대상 아님"],
-      ].forEach(([category, label]) => {
-        const stat = document.createElement("div"); stat.className = "reflection-stat";
-        const value = document.createElement("strong"); value.textContent = String(buckets[category].length);
-        const caption = document.createElement("span"); caption.textContent = label;
-        stat.append(value, caption); summary.appendChild(stat);
-      });
-      controls.replaceChildren();
-      [["all", "전체"], ["reflected", "위키 반영됨"], ["pending_promotion", "승격 대기"], ["not_applicable", "위키 대상 아님"]].forEach(([category, label]) => {
-        const button = document.createElement("button"); button.type = "button"; button.className = "reflection-filter" + (reflectionFilter === category ? " active" : "");
-        button.dataset.filter = category; button.textContent = label + " · " + (category === "all" ? reflectionEntries.length : buckets[category].length);
-        button.addEventListener("click", () => { reflectionFilter = category; renderReflectionMap(); }); controls.appendChild(button);
-      });
-      field.replaceChildren();
-      reflectionEntries.forEach((entry) => {
-        const category = reflectionCategory(entry); const dot = document.createElement("button");
-        dot.type = "button"; dot.className = "reflection-dot " + category + (reflectionFilter !== "all" && reflectionFilter !== category ? " dimmed" : "");
-        dot.title = reflectionLabel(category) + " · " + entry.source;
-        dot.setAttribute("aria-label", dot.title);
-        dot.addEventListener("click", () => { reflectionFilter = category; renderReflectionMap(); }); field.appendChild(dot);
-      });
-      const visible = reflectionEntries.filter((entry) => reflectionFilter === "all" || reflectionCategory(entry) === reflectionFilter);
-      list.replaceChildren();
-      visible.slice(0, 12).forEach((entry) => {
-        const row = document.createElement("article"); row.className = "reflection-file";
-        const state = document.createElement("span"); state.className = "reflection-file-state"; state.textContent = reflectionLabel(reflectionCategory(entry));
-        const source = document.createElement("a"); source.className = "reflection-file-source"; source.href = SOURCES.knowledgeLabBase + entry.source; source.target = "_blank"; source.rel = "noopener"; source.textContent = entry.source;
-        row.append(state, source);
-        if (entry.promotion_targets && entry.promotion_targets.length) { const target = document.createElement("a"); target.className = "reflection-file-target"; target.href = "https://shdkej.com/agent-wiki" + entry.promotion_targets[0]; target.target = "_blank"; target.rel = "noopener"; target.textContent = "Wiki 보기 ↗"; row.appendChild(target); }
-        list.appendChild(row);
-      });
-      note.textContent = "점 하나가 KL 문서 1개입니다. 초록은 명시적 outputs 연결, 노랑은 승격 대기, 회색은 애초 위키 승격 대상이 아닌 자료입니다.";
-      more.textContent = visible.length > 12 ? "현재 " + reflectionLabel(reflectionFilter) + " " + visible.length + "개 중 12개만 표시합니다. 점을 누르면 같은 상태로 필터링됩니다." : "";
-    }
-
-    async function loadPromotionIndex() {
-      const model = await fetchJsonWithRetry(SOURCES.promotionIndex, "promotion index");
-      reflectionEntries = Array.isArray(model.entries) ? model.entries : [];
-      document.getElementById("reflection-map-updated").textContent = reflectionEntries.length ? "KL 문서 " + reflectionEntries.length + "개 · 갱신 " + (model.generated_at || "") : "";
-      renderPromotionIndex(reflectionEntries, model.generated_at || "");
-      renderReflectionMap();
-    }
-
     function openKnowledgeModal() {
-      const reflection = document.getElementById("reflection-map");
-      const loop = document.getElementById("knowledge-loop-section");
-      const promotion = document.getElementById("promotion-page");
-      promotion.hidden = false;
-      knowledgeModalBody.append(reflection, loop, promotion);
       knowledgeModal.classList.add("open");
       knowledgeModal.setAttribute("aria-hidden", "false");
       document.body.classList.add("modal-open");
     }
 
     function closeKnowledgeModal() {
-      const reflection = document.getElementById("reflection-map");
-      const loop = document.getElementById("knowledge-loop-section");
-      const promotion = document.getElementById("promotion-page");
-      promotion.hidden = true;
-      knowledgeStaging.append(reflection, loop, promotion);
       knowledgeModal.classList.remove("open");
       knowledgeModal.setAttribute("aria-hidden", "true");
       document.body.classList.remove("modal-open");
@@ -3362,10 +3176,7 @@
 
     async function loadAndRender() {
       clearErrors();
-      Promise.allSettled([loadKnowledgeLoop(), loadPromotionIndex()]).then(results => {
-        const failed = results.filter(result => result.status === "rejected").map(result => result.reason?.message || "알 수 없는 오류");
-        if (failed.length) showError("지식 흐름 일부 로드 실패: " + failed.join(" · "));
-      });
+      loadKnowledgeLoop().catch(error => showError("지식 피드백 루프 로드 실패: " + error.message));
       statusEl.textContent = lastDoneItems.length ? "동기화 중..." : "로딩 중...";
       let intentsText = "";
       try { intentsText = await fetchTextWithFallback(SOURCES.intents, SOURCES.rawIntents); }

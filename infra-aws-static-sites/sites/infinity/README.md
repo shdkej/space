@@ -11,7 +11,7 @@ Shows the live Infinity intent registry and its execution evidence at
   artifacts from the `shdkej/infinity` repository's `main` branch. The main
   registry is fetched through the GitHub Contents API first so a refresh sees a
   just-pushed Archive card; the raw URL is only a fallback when that API fails.
-- The page loads a local copy of js-yaml 4.1.1 to preserve nested registry fields and keep date strings intact. The KL map and feedback loop load independently of the archive board.
+- The page loads a local copy of js-yaml 4.1.1 to preserve nested registry fields and keep date strings intact. The feedback loop loads independently of the archive board.
 - The parser ignores cards retained inside HTML comments and treats a terminal
   Archive record as authoritative over a stale Inbox/Active/Waiting duplicate.
   Archive card titles are shortened to 72 characters on the board; the full
@@ -42,8 +42,7 @@ Shows the live Infinity intent registry and its execution evidence at
 - The intent detail closes through a persistent, bottom-centered circular
   control. Its 44px touch target stays above the mobile safe area so a long
   detail can be dismissed without returning to the top of the page.
-- The KL → Agent Wiki map uses the same persistent, bottom-centered circular
-  close control and touch target as the intent detail.
+- The floating KL map link opens the read-only Status view at `https://status.aws.shdkej.com/#knowledge`. Infinity keeps the knowledge feedback loop and its signed actions in the footer dialog.
 
 ## Development and verification
 

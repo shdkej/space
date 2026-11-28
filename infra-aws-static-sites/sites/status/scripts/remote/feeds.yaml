@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: public-analytics-feeds
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 64Mi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: public-analytics
+spec:
+  schedule: "15 10 * * *"
+  timeZone: Asia/Seoul
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 21600
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 900
+      template:
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          nodeSelector:
+            kubernetes.io/hostname: oracle-arm-2
+          initContainers:
+            - name: dependencies
+              image: python:3.12-slim
+              command: [python, -m, pip, install, --disable-pip-version-check, --no-cache-dir, --target=/deps, "google-auth[requests]==2.40.3"]
+              volumeMounts:
+                - {name: deps, mountPath: /deps}
+          containers:
+            - name: collect
+              image: python:3.12-slim
+              command: [python, -B, /app/collect-public.py]
+              env:
+                - {name: PYTHONPATH, value: /deps}
+                - {name: GOOGLE_APPLICATION_CREDENTIALS, value: /etc/ga4/credentials.json}
+                - name: INSTAGRAM_ACCESS_TOKEN
+                  valueFrom: {secretKeyRef: {name: analytics-instagram-api, key: access-token}}
+                - name: INSTAGRAM_ACCOUNT_ID
+                  valueFrom: {secretKeyRef: {name: analytics-instagram-api, key: account-id}}
+                - name: INSTAGRAM_GRAPH_HOST
+                  valueFrom: {secretKeyRef: {name: analytics-instagram-api, key: graph-host}}
+              volumeMounts:
+                - {name: app, mountPath: /app, readOnly: true}
+                - {name: deps, mountPath: /deps, readOnly: true}
+                - {name: ga4, mountPath: /etc/ga4, readOnly: true}
+                - {name: feeds, mountPath: /feeds}
+          volumes:
+            - name: deps
+              emptyDir: {}
+            - name: app
+              configMap: {name: public-analytics-source}
+            - name: ga4
+              secret:
+                secretName: grafana-ga4-credentials
+                items:
+                  - {key: GA4_PRIVATE_KEY, path: credentials.json}
+            - name: feeds
+              persistentVolumeClaim: {claimName: public-analytics-feeds}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: public-analytics-feeds
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: public-analytics-feeds}
+  template:
+    metadata:
+      labels: {app: public-analytics-feeds}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: oracle-arm-2
+      containers:
+        - name: feeds
+          image: nginxinc/nginx-unprivileged:stable-alpine
+          ports: [{containerPort: 8080}]
+          volumeMounts:
+            - {name: feeds, mountPath: /usr/share/nginx/html/public-analytics, readOnly: true}
+      volumes:
+        - name: feeds
+          persistentVolumeClaim: {claimName: public-analytics-feeds, readOnly: true}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: public-analytics-feeds
+spec:
+  selector: {app: public-analytics-feeds}
+  ports: [{port: 80, targetPort: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: public-analytics-feeds
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: metrics.oracle.shdkej.com
+      http:
+        paths:
+          - path: /public-analytics/analytics-posthog.json
+            pathType: Exact
+            backend:
+              service: {name: public-analytics-feeds, port: {number: 80}}
+          - path: /public-analytics/analytics-ga4.json
+            pathType: Exact
+            backend:
+              service: {name: public-analytics-feeds, port: {number: 80}}
+          - path: /public-analytics/analytics-instagram.json
+            pathType: Exact
+            backend:
+              service: {name: public-analytics-feeds, port: {number: 80}}

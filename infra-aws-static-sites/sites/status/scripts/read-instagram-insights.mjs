@@ -3,7 +3,8 @@ const task = await taskSpace("Instagram account insights for the status dashboar
 const page = task.page("p1");
 const insightsURL = "https://www.instagram.com/accounts/insights/?timeframe=7";
 const privateMode = typeof collectPrivateInstagram !== "undefined" && collectPrivateInstagram;
-const accounts = privateMode ? ["minimal_collector", "every.policy"] : ["minimal_collector"];
+const onlyEveryPolicy = typeof everyPolicyOnly !== "undefined" && everyPolicyOnly;
+const accounts = onlyEveryPolicy ? ["every.policy"] : privateMode ? ["minimal_collector", "every.policy"] : ["minimal_collector"];
 
 async function openInsights() {
   try {
@@ -95,7 +96,7 @@ try {
     } catch { rows.push({scope, status: "unavailable"}); }
   }
   const result = {schemaVersion: 1, source: "instagram", observedAt: new Date().toISOString(), rows: [rows[0]]};
-  if (privateMode) result.privateAccounts = rows.map(row => row.status === "ok"
+  if (privateMode || onlyEveryPolicy) result.privateAccounts = rows.map(row => row.status === "ok"
     ? {scope: row.scope, status: row.status, observedAt: row.observedAt,
        values: {views: row.values.views, viewers: row.values.viewers}}
     : row);

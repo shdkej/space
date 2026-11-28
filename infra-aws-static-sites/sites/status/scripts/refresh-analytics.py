@@ -70,7 +70,7 @@ def kubectl_command():
     return command
 
 
-def collect(source, previous, legacy_private=False):
+def collect(source, previous, legacy_private=False, every_policy_only=False):
     if source == "posthog":
         command = kubectl_command()
         endpoint = "/api/v1/namespaces/monitoring/services/http:posthog-exporter:metrics/proxy/analytics-posthog.json"
@@ -90,7 +90,8 @@ def collect(source, previous, legacy_private=False):
         if legacy_private:
             code = b"const collectPrivateEngagement = true;\n" + code
     if source == "instagram":
-        code = b"const collectPrivateInstagram = true;\n" + code
+        flag = "everyPolicyOnly" if every_policy_only else "collectPrivateInstagram"
+        code = f"const {flag} = true;\n".encode() + code
     result = subprocess.run([str(BROWSER), "nodejs"], input=code, check=True,
                             timeout=800 if source == "ga4" else 150,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -124,7 +125,8 @@ def merge(source, result, previous, inventory, started):
             continue
         if row.get("status") != "ok" or set(row["values"]) != FIELDS[source]:
             raise ValueError("Unexpected metrics")
-        if any(type(v) is not int or not 0 <= v < 2**53 for v in row["values"].values()):
+        if any((type(v) is not int or not 0 <= v < 2**53) and not (source == "ga4" and v is None)
+               for v in row["values"].values()):
             raise ValueError("Invalid metric")
         at = datetime.fromisoformat(row["observedAt"].replace("Z", "+00:00"))
         earliest = started
@@ -221,10 +223,10 @@ def publish_private(name, key, report, manager):
         raise RuntimeError("Private analytics snapshot verification failed")
 
 
-def private_instagram(collected, started):
+def private_instagram(collected, started, accounts=("every.policy", "minimal_collector")):
     """Allowlist two account snapshots and strip all other browser data."""
     rows = collected.pop("privateAccounts")
-    if sorted(r.get("scope") for r in rows) != ["every.policy", "minimal_collector"]:
+    if sorted(r.get("scope") for r in rows) != sorted(accounts):
         raise ValueError("Unexpected Instagram accounts")
     report = {"schemaVersion": 1, "source": "instagram", "rows": []}
     for row in rows:
@@ -336,6 +338,16 @@ def main():
             except Exception as error:
                 log(f"customer support counts failed ({type(error).__name__})")
                 return 1
+        if not (args.legacy_private or args.history_seed_dir):
+            started = datetime.now(timezone.utc)
+            collected = collect("instagram", {}, every_policy_only=True)
+            snapshot = private_instagram(collected, started, ("every.policy",))
+            if snapshot["rows"][0]["status"] != "ok":
+                log("every.policy unavailable; prior observation retained")
+                return 1
+            publish_engagement(snapshot, "instagram.json")
+            log("every.policy private snapshot verified")
+            return 0
         success = True
         inventory = json.loads((BASE / "analytics-inventory.json").read_text())
         client = s3_client()

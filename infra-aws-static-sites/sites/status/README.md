@@ -103,18 +103,11 @@ Status·사무실의 공개 피드는 `agents-live.json`이 제공하는 에이�
 
 Grafana 고객 레이어(`/d/layer-customer`)와 제품 레이어(`/d/layer-product`)의 기존 지표에서도 이 인벤토리를 사용합니다. 고객 레이어에서 GA4 신규 사용자·세션과 PostHog 이탈·재방문율을, 제품 레이어에서 PostHog 세션·예외·Web Vitals를 앱별로 비교할 수 있습니다. GA4 피드에 추가된 속성은 다음 exporter 수집 때 표시됩니다.
 
-공유 analytics 피드는 별도로 유지합니다. SAM-PC Windows 작업 스케줄러가 매일 오전 10시 15분(한국 시간)에 WSL Ubuntu 사용자 `sam`의 `refresh-analytics.py`를 실행합니다. 소스와 함께 제공하는 아래 여덟 파일을 `~/.local/share/dashboard-analytics/releases/<Space SHA>/`에 설치하고 검증한 릴리스를 `current` 심볼릭 링크로 지정합니다.
+공개 분석 피드 세 파일은 매일 10:15 KST에 k3s의 `monitoring/public-analytics` CronJob이 만듭니다. PostHog는 기존 exporter의 집계를 읽고, GA4는 4개 속성의 Data API에서 최근 7일 및 달력 구간을, Instagram은 Meta Insights에서 `@minimal_collector`의 최근 완료된 UTC 7일 지표와 현재 팔로워 수를 읽습니다. 초기 이력은 기존 공개 피드에서 이어받고 원천별 파일을 원자적으로 교체합니다. 클러스터에서 사용하는 자격은 기존 GA4·Instagram 조회용 Secret입니다.
 
-- `refresh-analytics.py`, `collect-analytics.py`, `calendar_periods.py`, `analytics_history.py`, `analytics-inventory.json`
-- `read-ga4-insights.mjs`, `read-instagram-insights.mjs`, `support_inquiries.py`
+`metrics.oracle.shdkej.com/public-analytics/` 아래에서 세 공개 JSON의 정확한 경로만 제공합니다. Space의 `Publish k3s analytics feeds` 워크플로가 기존 AWS 배포 역할로 매일 10:30 및 12:30 KST에 세 파일을 `static-status-aws-shdkej-com` 버킷에 조건부 게시하고 같은 버전을 다시 읽어 검증합니다. 수동 실행도 가능합니다. 소비자 주소는 `https://status.aws.shdkej.com/analytics-{posthog,ga4,instagram}.json`입니다. 운영 배포 정의는 `argocd/apps/public-analytics.yaml`과 `scripts/kustomization.yaml`에 있습니다.
 
-Windows 예약 작업은 기존 사용자 로그온 세션에서 다음 명령을 실행합니다. 필요한 Python 패키지는 전용 `python/` 디렉터리의 boto3와 그 의존성입니다. PC를 켜고 사용자가 로그인한 뒤 놓친 예약을 보충 실행하도록 설정합니다.
-
-```text
-wsl.exe -d Ubuntu -u sam --exec /usr/bin/env PYTHONPATH=/home/sam/.local/share/dashboard-analytics/python /usr/bin/python3 /home/sam/.local/share/dashboard-analytics/current/refresh-analytics.py
-```
-
-예약 실행은 Kubernetes API의 서비스 프록시로 `monitoring/posthog-exporter`의 `/analytics-posthog.json`을 읽고, GA4 4개 속성과 Instagram을 로그인된 한국어 Egolite에서 읽습니다. PostHog API 조회는 클러스터의 exporter가 수행합니다. 게시기는 PATH 또는 `~/.local/bin/kubectl` 및 기존 KUBECONFIG 또는 `~/.local/share/dashboard-analytics/kubeconfig` 연결을 사용합니다. 45분 이내에 관측된 완전한 스냅샷을 받아 세션 ID가 있는 이벤트 수와 달력 구간을 검증합니다. 코드는 AWS 자격 파일에서 필요한 키만 읽고 브라우저의 원문 출력을 운영 로그에 기록하지 않습니다. 수집기는 이전 S3 객체의 ETag로 조건부 게시한 뒤 같은 버전을 다시 읽어 본문을 검증합니다. 다른 실행이 진행 중이면 중복 실행을 건너뜁니다. 일부 속성만 실패하면 그 행의 직전 값·관측 시각을 유지하며 실패 상태를 붙입니다. 한 원천이 모두 실패하면 해당 S3 객체를 보존하고 나머지 원천을 계속 처리합니다. 부분 실패와 전체 실패는 종료 코드 1이며 원천별 결과를 표준 출력에서 확인할 수 있습니다. 브라우저 로그인이 만료되면 해당 사이트에 다시 로그인한 후 예약 작업을 재실행합니다.
+SAM-PC의 기존 10:15 예약 작업은 로그인된 Egolite에서 `@every.policy`의 조회수·조회한 사람 수만 읽고 `monitoring/ga4-session-engagement`의 비공개 `instagram.json`으로 전달합니다. 실패하면 마지막 성공 관측을 보존합니다. 예약 명령은 기존 `~/.local/share/dashboard-analytics/current/refresh-analytics.py`를 사용합니다. 이전 실행 파일과 같은 디렉터리 구성을 유지합니다.
 
 수동 원천 점검용 수집 명령은 고정된 원천에만 접속합니다. GA4는 읽기 권한의 `GA4_ACCESS_TOKEN` 또는 Google Application Default Credentials(Python google-auth 및 requests 필요), PostHog는 projects query 읽기 권한의 `POSTHOG_ACCESS_TOKEN` 또는 `POSTHOG_PERSONAL_API_KEY` 및 선택적인 `POSTHOG_HOST`, Instagram은 프로페셔널 계정의 Insights 권한을 가진 `INSTAGRAM_ACCESS_TOKEN`과 선택적인 `INSTAGRAM_ACCOUNT_ID`를 실행 환경에서 사용합니다. Instagram 응답 username을 확인한 뒤 계정 전체의 집계만 발행합니다. 토큰을 명령행 인수로 전달하지 마세요.
 
@@ -132,9 +125,7 @@ python3 scripts/collect-analytics.py "$source_name" --output-dir "$STATE_DIR" &&
 
 Grafana 고객 문의 수는 클러스터의 exporter가 기존 계정 인증과 읽기 전용 모드로 `gog`를 실행해 매시간 갱신합니다. 등록 앱 이름으로 시작하는 최근 7일의 수신 대화를 앱별로 한 번 집계합니다. 공개 Space 예약 작업은 Gmail을 조회하지 않습니다. 이전 수집기를 수동으로 대조할 때만 `refresh-analytics.py --support-only`를 사용합니다. 이 명령은 로컬 `~/.local/share/dashboard-analytics/gmail-support-account`의 계정으로 비공개 ConfigMap을 갱신하며 운영 exporter는 그 값을 읽지 않습니다.
 
-Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API와 Meta Insights API를 직접 읽습니다. SAM-PC 예약 작업은 공개 피드를 갱신하면서 Ego의 @every.policy 조회수·조회한 사람을 비공개 instagram.json에 기록합니다. 공개 Instagram 피드에는 @minimal_collector만 포함됩니다. GA4의 이전 수집 방식으로 복구할 때는 `refresh-analytics.py --legacy-private`로 Grafana용 ConfigMap을 별도로 갱신할 수 있습니다.
-
-브라우저 권한을 사용하는 경우 로그인된 Egolite의 한국어 Instagram Insights에서 `ego-browser nodejs < scripts/read-instagram-insights.mjs`로 공개 가능한 숫자만 추출합니다. 내보낸 JSON을 검증한 후 같은 Instagram 객체에 게시합니다. GA4 홈에서는 ‘지난 7일’ 및 각 달력 기간을 선택하고 ‘새 사용자 수’와 ‘세션수’를 확인합니다. 새 구간과 최근 마감 구간을 다시 조회해 GA4 피드에 반영합니다. 화면 새로고침은 마지막으로 게시된 피드를 읽습니다.
+Grafana 전용 유입·참여 지표는 클러스터의 exporter가 GA4 Data API와 Meta Insights API를 직접 읽습니다. `@every.policy`는 로컬이 전송한 비공개 관측을 사용합니다.
 
 공유 analytics 피드의 앱별 실측은 일·주·월 집계를 제공합니다. 제거한 Status 메뉴에서는 표시하지 않습니다. 각 점은 한국 시간 기준 완료된 하루, 월요일~일요일 한 주, 또는 달력 한 달의 원천 집계입니다. 최근 7일·4주·2개월을 표시합니다. Metrics의 기존 연결은 최근 7일을 유지하며 GA4·PostHog 연결에서 집계 기간을 선택할 수 있습니다. Instagram은 최근 7일 계정 집계를 사용합니다. 피드는 최근 31일의 실제 관측을 보존합니다. 과거 보고서로 보강한 점에는 집계 종료 시각과 조회 시각을 각각 기록합니다. 기존 운영 피드에 검증된 원천 이력을 추가할 때는 `refresh-analytics.py --history-seed-dir DIR --seed-only`를 실행합니다. 최신 집계값과 조회 시각은 이 작업으로 바뀌지 않습니다.
 

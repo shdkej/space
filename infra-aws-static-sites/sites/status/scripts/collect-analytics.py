@@ -82,29 +82,23 @@ def instagram(now):
     account = os.environ.get("INSTAGRAM_ACCOUNT_ID") or "me"
     if account != "me" and not re.fullmatch(r"[0-9]{5,30}", account):
         raise ValueError("unexpected account ID")
-    base = "https://graph.instagram.com/v23.0"
-    profile = request(f"{base}/{account}?fields=id,username", token)
+    host = os.environ.get("INSTAGRAM_GRAPH_HOST", "graph.instagram.com")
+    if host not in {"graph.instagram.com", "graph.facebook.com"}:
+        raise ValueError("Unexpected Instagram API host")
+    base = f"https://{host}/v27.0"
+    profile = request(f"{base}/{account}?fields=id,username,followers_count", token)
     if profile.get("username") != INSTAGRAM or not re.fullmatch(r"[0-9]{5,30}", str(profile.get("id", ""))):
         raise ValueError("Instagram account does not match @minimal_collector")
     end = datetime.combine(now.date(), time.min, UTC)
-    values = {}
-    for key in ["views", "reach"]:
-        query = urlencode({"metric": key, "period": "day", "metric_type": "total_value",
-                           "since": int((end - timedelta(days=7)).timestamp()), "until": int(end.timestamp())})
-        try:
-            response = request(f"{base}/{profile['id']}/insights?{query}", token)
-        except HTTPError as error:
-            if key == "reach" and error.code == 400:
-                values[key] = None
-                continue
-            raise
-        metric = next((item for item in response["data"] if item.get("name") == key), {})
-        value = metric.get("total_value", {}).get("value")
-        if value is None and key == "reach":
-            values[key] = None
-        else:
-            values[key] = count(value)
-    return {"scope": INSTAGRAM, "timeZone": "UTC", "method": "Instagram Insights API", **period(end.date()), "values": values}
+    fields = {"views": "views", "reach": "viewers", "total_interactions": "interactions", "profile_views": "profileVisits"}
+    query = urlencode({"metric": ",".join(fields), "period": "day", "metric_type": "total_value",
+                       "since": int((end - timedelta(days=7)).timestamp()), "until": int(end.timestamp())})
+    result = request(f"{base}/{profile['id']}/insights?{query}", token)
+    metrics = {row["name"]: count(row["total_value"]["value"]) for row in result["data"]}
+    values = {output: metrics[metric] for metric, output in fields.items()}
+    values["followers"] = count(profile["followers_count"])
+    return {"scope": INSTAGRAM, "timeZone": "UTC", "method": "Instagram Insights API",
+            **period(end.date()), "values": values}
 
 
 def reporting_hosts(config):

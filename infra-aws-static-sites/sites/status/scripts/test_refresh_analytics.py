@@ -21,14 +21,16 @@ class RefreshTests(unittest.TestCase):
                               "values": {"newUsers": 8, "sessions": 13}}]}
         self.inventory = {"ga4": {"a": "1", "b": "2"}}
 
-    def test_scheduled_refresh_does_not_query_gmail(self):
+    def test_scheduled_refresh_only_collects_every_policy(self):
         with TemporaryDirectory() as tmp, patch.object(Path, "home", return_value=Path(tmp)), \
              patch.object(refresh.sys, "argv", ["refresh-analytics.py"]), \
-             patch.object(refresh, "s3_client"), patch.object(refresh, "log"), \
-             patch.object(refresh, "collect_support") as gmail, patch.object(refresh, "refresh", return_value=True) as public:
+             patch.object(refresh, "s3_client") as s3, patch.object(refresh, "collect") as collect, \
+             patch.object(refresh, "private_instagram", return_value={"rows": [{"status": "ok"}]}), \
+             patch.object(refresh, "publish_engagement") as publish:
             self.assertEqual(refresh.main(), 0)
-            gmail.assert_not_called()
-            self.assertEqual(public.call_count, len(refresh.SOURCES))
+            collect.assert_called_once_with("instagram", {}, every_policy_only=True)
+            publish.assert_called_once()
+            s3.assert_not_called()
 
     def test_daily_instagram_includes_private_snapshot_and_ga4_private_is_opt_in(self):
         for source, flag in (("ga4", b"const collectPrivateEngagement = true;"),

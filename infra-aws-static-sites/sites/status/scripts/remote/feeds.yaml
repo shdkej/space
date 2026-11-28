@@ -40,12 +40,6 @@ spec:
               env:
                 - {name: PYTHONPATH, value: /deps}
                 - {name: GOOGLE_APPLICATION_CREDENTIALS, value: /etc/ga4/credentials.json}
-                - name: INSTAGRAM_ACCESS_TOKEN
-                  valueFrom: {secretKeyRef: {name: analytics-instagram-api, key: access-token}}
-                - name: INSTAGRAM_ACCOUNT_ID
-                  valueFrom: {secretKeyRef: {name: analytics-instagram-api, key: account-id}}
-                - name: INSTAGRAM_GRAPH_HOST
-                  valueFrom: {secretKeyRef: {name: analytics-instagram-api, key: graph-host}}
               volumeMounts:
                 - {name: app, mountPath: /app, readOnly: true}
                 - {name: deps, mountPath: /deps, readOnly: true}

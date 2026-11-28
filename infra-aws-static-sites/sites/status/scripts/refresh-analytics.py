@@ -7,6 +7,7 @@ import fcntl
 import json
 import os
 from pathlib import Path
+from zoneinfo import ZoneInfo
 import shutil
 import subprocess
 import sys
@@ -105,7 +106,7 @@ FIELDS = {
 }
 
 
-def merge(source, result, previous, inventory, started):
+def merge(source, result, previous, inventory, started, *, hourly_cache=False):
     expected = {"minimal_collector"} if source == "instagram" else set(inventory[source])
     if result.get("source") != source or result.get("schemaVersion") != 1:
         raise ValueError("Wrong source")
@@ -144,6 +145,17 @@ def merge(source, result, previous, inventory, started):
                     or row["periodEnd"] != (today - timedelta(days=1)).isoformat()
                     or row["observedAt"] != result["observedAt"]):
                 raise ValueError("Unexpected exporter snapshot period")
+        elif hourly_cache:
+            zone = "Asia/Seoul" if source == "ga4" else "UTC"
+            today = started.astimezone(ZoneInfo(zone)).date()
+            prior = old.get(scope, {}).get("observedAt")
+            earliest = started - timedelta(hours=3)
+            if prior:
+                earliest = max(earliest, datetime.fromisoformat(prior.replace("Z", "+00:00")))
+            if (row["timeZone"] != zone or row["periodStart"] != (today - timedelta(days=7)).isoformat()
+                    or row["periodEnd"] != (today - timedelta(days=1)).isoformat() or at < earliest):
+                merged.append({**old.get(scope, {"scope": scope}), "status": "unavailable"})
+                continue
         if at < earliest or at.timestamp() > datetime.now(timezone.utc).timestamp() + 60:
             raise ValueError("Stale observation")
         if set(row) - allowed_fields:

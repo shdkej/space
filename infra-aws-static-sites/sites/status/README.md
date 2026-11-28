@@ -124,7 +124,7 @@ Status·사무실의 공개 피드는 `agents-live.json`이 제공하는 에이�
 
 Grafana 고객 레이어(`/d/layer-customer`)와 제품 레이어(`/d/layer-product`)의 기존 지표에서도 이 인벤토리를 사용합니다. 고객 레이어에서 GA4 신규 사용자·세션과 PostHog 이탈·재방문율을, 제품 레이어에서 PostHog 세션·예외·Web Vitals를 앱별로 비교할 수 있습니다. GA4 피드에 추가된 속성은 다음 exporter 수집 때 표시됩니다.
 
-공개 분석 피드 세 파일은 매일 10:15 KST에 k3s의 `monitoring/public-analytics` CronJob이 만듭니다. PostHog는 기존 exporter의 집계를 읽고, GA4는 4개 속성의 Data API에서 최근 7일 및 달력 구간을, Instagram은 Meta Insights에서 `@minimal_collector`의 최근 완료된 UTC 7일 지표와 현재 팔로워 수를 읽습니다. 초기 이력은 기존 공개 피드에서 이어받고 원천별 파일을 원자적으로 교체합니다. 클러스터에서 사용하는 자격은 기존 GA4·Instagram 조회용 Secret입니다.
+공개 분석 피드 세 파일은 매일 10:15 KST에 k3s의 `monitoring/public-analytics` CronJob이 만듭니다. PostHog와 GA4 최근 7일 합계, Instagram `@minimal_collector`의 다섯 지표는 기존 exporter의 내부 캐시를 사용합니다. GA4 달력 구간은 필요한 구간만 Data API에서 보강합니다. 월요일에는 직전 달력 주간과 같은 7일 합계를 재사용합니다. GA4는 속성 시간대, Instagram은 UTC 기준의 완료된 기간과 실제 관측 시각을 검증합니다. 초기 이력은 기존 공개 피드에서 이어받고 원천별 파일을 원자적으로 교체합니다. CronJob은 달력 보강용 GA4 자격만 사용합니다. Instagram 조회 자격은 exporter가 사용합니다.
 
 `metrics.oracle.shdkej.com/public-analytics/` 아래에서 세 공개 JSON의 정확한 경로만 제공합니다. Space의 `Publish k3s analytics feeds` 워크플로가 기존 AWS 배포 역할로 매일 10:30 및 12:30 KST에 세 파일을 `static-status-aws-shdkej-com` 버킷에 조건부 게시하고 같은 버전을 다시 읽어 검증합니다. 수동 실행도 가능합니다. 소비자 주소는 `https://status.aws.shdkej.com/analytics-{posthog,ga4,instagram}.json`입니다. 운영 배포 정의는 `argocd/apps/public-analytics.yaml`과 `scripts/kustomization.yaml`에 있습니다.
 

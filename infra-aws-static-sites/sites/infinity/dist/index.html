@@ -896,7 +896,8 @@
     ·
     <a href="https://github.com/shdkej/infinity/blob/main/GATES.md" target="_blank" rel="noopener">GATES.md</a>
     — GitHub Contents API를 우선 읽고 raw URL은 장애 시에만 사용합니다
-  </footer>
+  <label><input type="checkbox" id="ga-visit-choice"> Google 애널리틱스에 익명 방문 통계 보내기 (선택)</label>
+</footer>
   <script src="./vendor/js-yaml-4.1.1.min.js"></script>
   <script>
     const SOURCES = {
@@ -3273,5 +3274,40 @@
     loadAndRender();
     rescheduleAuto();
   </script>
+<script>
+(() => {
+  const choice = document.getElementById('ga-visit-choice');
+  const key = 'infinity.ga-visits.v1';
+  let frame;
+  if (window.parent !== window) return;
+  function sync() {
+    frame?.remove();
+    frame = null;
+    choice.disabled = navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true;
+    let saved;
+    try { saved = JSON.parse(localStorage.getItem(key) || 'null'); } catch {}
+    choice.checked = !choice.disabled && saved?.expires > Date.now();
+    if (!choice.checked) return;
+    frame = document.createElement('iframe');
+    frame.hidden = true;
+    frame.title = '익명 방문 집계';
+    frame.referrerPolicy = 'no-referrer';
+    frame.src = './public-visit.html';
+    document.body.append(frame);
+  }
+  choice.addEventListener('change', () => {
+    try {
+      if (choice.checked) localStorage.setItem(key, JSON.stringify({expires:Date.now()+30*86400000}));
+      else {
+        localStorage.removeItem(key);
+        for (const name of ['_ga', '_ga_D07B1WB6D8']) document.cookie = name + '=; Max-Age=0; Path=/';
+      }
+    } catch {}
+    sync();
+  });
+  window.addEventListener('storage', event => { if (event.key === key || event.key === null) sync(); });
+  sync();
+})();
+</script>
 </body>
 </html>

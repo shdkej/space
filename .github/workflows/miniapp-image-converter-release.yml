@@ -91,7 +91,7 @@ jobs:
           RELEASE_MODE: ${{ inputs.mode }}
         run: |
           set -euo pipefail
-          git show 80966e76cec4e197240ac836ba1513106eda7a20:infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html > "$RUNNER_TEMP/baseline-source.html"
+          git show dc43b456354f3f03edf402a8dfce0a10172f8d81:infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html > "$RUNNER_TEMP/baseline-source.html"
           python3 - "$RUNNER_TEMP" <<'PY'
           import hashlib,json,os,re,sys
           from pathlib import Path
@@ -101,7 +101,7 @@ jobs:
           marker='__POSTHOG_MINIAPP_PROJECT_TOKEN__'
           if source.count(marker)!=1: raise SystemExit('Baseline placeholder count mismatch')
           baseline=source.replace(marker,token).encode()
-          expected='0c4f03f1ddb99bf9f4bbcb462e00ef853c38819496cbb52a2f44f46d4094533b'
+          expected='dee66985a1dd09a33cdcd5ccf0f9dd9a98c20953a3c41672d2815622b1b59e39'
           if hashlib.sha256(baseline).hexdigest()!=expected: raise SystemExit('Immutable baseline reconstruction hash mismatch')
           candidate_source=Path('infra-aws-static-sites/sites/miniapp-image-tools/dist/index.html').read_text()
           if candidate_source.count(marker)!=1: raise SystemExit('Release placeholder count mismatch')
@@ -119,7 +119,7 @@ jobs:
               if head.get('ContentType')!='text/html' or head.get('CacheControl')!='public,max-age=60' or head.get('Metadata')!={} or head.get('ServerSideEncryption')!='AES256':
                   raise SystemExit('Unexpected metadata; cannot reproduce exactly: '+label)
           (root/'baseline.html').write_bytes(baseline)
-          print('Immutable t05 baseline reconstructed; both exact-key HEAD/GET bodies, lengths, hashes and restore headers verified; restore accepts only baseline or this release body')
+          print('Immutable preceding release reconstructed; both exact-key HEAD/GET bodies, lengths, hashes and restore headers verified; restore accepts only baseline or this release body')
           PY
       - name: Rehearse or restore baseline on both exact keys and read back
         if: ${{ inputs.mode == 'rehearse' || inputs.mode == 'restore' }}
@@ -227,4 +227,4 @@ jobs:
             cmp "$file" "$RUNNER_TEMP/live-$label.html"
           done
           rollback_needed=0
-          echo "Exact two-path release and invalidation $id verified; source file from $GITHUB_SHA (rollback to immutable 80966e76 content)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Exact two-path release and invalidation $id verified; source file from $GITHUB_SHA (rollback to immutable dc43b456 content)" >> "$GITHUB_STEP_SUMMARY"

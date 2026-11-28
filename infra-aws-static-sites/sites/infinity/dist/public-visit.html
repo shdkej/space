@@ -1,0 +1,19 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="referrer" content="no-referrer"><title>Infinity</title><script>
+(() => {
+    if (window.parent === window) return;
+    if (navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true || document.referrer) return;
+    let saved;
+    try { saved = JSON.parse(localStorage.getItem('infinity.ga-visits.v1') || 'null'); } catch {}
+    if (!(saved?.expires > Date.now())) return;
+    history.replaceState(null, '', '/');
+    window.dataLayer = [];
+    function gtag() { window.dataLayer.push(arguments); }
+    gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_personalization:'denied',ad_user_data:'denied'});
+    gtag('js',new Date());
+    gtag('config','G-D07B1WB6D8',{cookie_domain:'none',cookie_expires:2592000,allow_google_signals:false,allow_ad_personalization_signals:false,page_title:'Infinity',page_location:location.origin+'/',page_referrer:''});
+    const tag = document.createElement('script');
+    tag.async = true;
+    tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-D07B1WB6D8';
+    document.head.append(tag);
+})();
+</script></html>

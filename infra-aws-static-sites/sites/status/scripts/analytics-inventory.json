@@ -2,8 +2,7 @@
   "ga4": {
     "blog": "252603434",
     "afzma": "523848883",
-    "policycock": "565383231",
-    "purple-place-bb6ce": "376243766"
+    "policycock": "565383231"
   },
   "posthog": {
     "policycock": {
@@ -16,17 +15,17 @@
     },
     "Infinity": {
       "project": "424014",
-      "app_id": null,
+      "app_id": "infinity",
       "host": "infinity.aws.shdkej.com"
     },
-    "shdkej.com": {
+    "blog": {
       "project": "424014",
-      "app_id": null,
+      "app_id": "blog",
       "host": "shdkej.com"
     },
     "Virtue": {
       "project": "424014",
-      "app_id": null,
+      "app_id": "virtue",
       "hosts": ["virtue.minimalcollector.com", "virtue.aws.shdkej.com", "virtue.oracle.shdkej.com"]
     },
     "앱 미지정": {

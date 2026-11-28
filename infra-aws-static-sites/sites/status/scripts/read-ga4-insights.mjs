@@ -3,7 +3,6 @@ const properties = [
   ["blog", "110967461", "252603434", "내 블로그"],
   ["afzma", "383859191", "523848883", "afzma"],
   ["policycock", "417124324", "565383231", "모두의정책 웹사이트"],
-  ["purple-place-bb6ce", "110967461", "376243766", "purple-place-bb6ce"],
 ];
 
 const task = await taskSpace("Daily GA4 account aggregates for Status");

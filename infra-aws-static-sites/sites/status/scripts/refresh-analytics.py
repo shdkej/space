@@ -12,7 +12,7 @@ import shutil
 import subprocess
 import sys
 
-from analytics_history import attach_history
+from analytics_history import attach_history, canonical_previous
 from support_inquiries import collect_support
 from calendar_periods import TIME_ZONES, merge_periods, requested_periods, validate_session_events
 
@@ -113,6 +113,7 @@ def merge(source, result, previous, inventory, started, *, hourly_cache=False):
     rows = result["rows"]
     if len(rows) != len(expected) or {r["scope"] for r in rows} != expected:
         raise ValueError("Wrong scopes")
+    previous = canonical_previous(source, previous)
     old = {row["scope"]: row for row in previous.get("rows", [])}
     successful = 0
     calendar_complete = True

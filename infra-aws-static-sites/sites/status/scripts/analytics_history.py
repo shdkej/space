@@ -60,6 +60,14 @@ def history_for(source, candidates, now):
     return [*by_date.values(), *recent[-144:]]
 
 
+def canonical_previous(source, previous):
+    if source != "posthog":
+        return previous
+    rows = [{**row, "scope": "blog"} if row["scope"] == "shdkej.com" else row
+            for row in previous.get("rows", [])]
+    return {**previous, "rows": rows}
+
+
 def attach_history(source, feed, previous, seed=None, now=None):
     now = now or datetime.now(timezone.utc)
     rows = feed["rows"]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Collect approved, account-level dashboard aggregates into a single atomic file."""
-from analytics_history import attach_history
+from analytics_history import attach_history, canonical_previous
 from calendar_periods import TIME_ZONES, requested_periods, merge_periods
 
 import argparse
@@ -114,20 +114,23 @@ def posthog_query(config, known_hosts):
     project, app = config["project"], config["app_id"]
     if not re.fullmatch(r"[0-9]{1,24}", project):
         raise ValueError("invalid PostHog project")
+    selected_hosts = reporting_hosts(config)
+    for name in [*known_hosts, *selected_hosts]:
+        if not re.fullmatch(r"[a-z0-9.-]+", name):
+            raise ValueError("invalid reporting hostname")
+    unattributed = "properties.app_id IS NULL"
+    if selected_hosts:
+        names = ", ".join(f"'{name}'" for name in selected_hosts)
+        unattributed += f" AND properties.$host IN ({names})"
+    elif known_hosts:
+        names = ", ".join(f"'{name}'" for name in known_hosts)
+        unattributed += f" AND coalesce(properties.$host, '') NOT IN ({names})"
     if app is None:
-        app_filter = "properties.app_id IS NULL"
-        selected_hosts = reporting_hosts(config)
-        for name in [*known_hosts, *selected_hosts]:
-            if not re.fullmatch(r"[a-z0-9.-]+", name):
-                raise ValueError("invalid reporting hostname")
-        if selected_hosts:
-            names = ", ".join(f"'{name}'" for name in selected_hosts)
-            app_filter += f" AND properties.$host IN ({names})"
-        elif known_hosts:
-            names = ", ".join(f"'{name}'" for name in known_hosts)
-            app_filter += f" AND coalesce(properties.$host, '') NOT IN ({names})"
+        app_filter = unattributed
     elif isinstance(app, str) and re.fullmatch(r"[A-Za-z0-9_-]{1,100}", app):
         app_filter = f"properties.app_id = '{app}'"
+        if selected_hosts:
+            app_filter = f"({app_filter} OR ({unattributed}))"
     else:
         raise ValueError("invalid PostHog app ID")
     return (f"{host}/api/projects/{project}/query/",
@@ -240,6 +243,7 @@ def collect(source, output, inventory, calendar=False):
     scopes = inventory_for(source, inventory)
     destination = output / f"analytics-{source}.json"
     previous = json.loads(destination.read_text()) if destination.is_file() else {}
+    previous = canonical_previous(source, previous)
     old = {r["scope"]: r for r in previous.get("rows", [])}
     rows, success = [], 0
     token = ga4_token() if source == "ga4" else (os.environ.get("POSTHOG_PERSONAL_API_KEY") or os.environ.get("POSTHOG_ACCESS_TOKEN"))

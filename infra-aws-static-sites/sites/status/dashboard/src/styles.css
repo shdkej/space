@@ -1107,13 +1107,13 @@ body:has(.dialog-content) .bottom-nav {
 .kl-map > p { margin: 4px 0 0; font-size: 12px; line-height: 1.5; }
 .kl-map h2 { margin: 26px 0 0; padding-bottom: 20px; font-size: 16px; letter-spacing: -.025em; }
 .kl-filters {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 0 22px;
+  display: flex; align-items: center; gap: 0 22px;
   margin: 16px 0 10px;
 }
 .kl-filters button {
   display: inline-flex; align-items: center; justify-content: flex-start; gap: 5px;
   min-height: 36px; padding: 4px 1px; border: 0; background: transparent;
-  font-size: 13px; color: var(--muted);
+  white-space: nowrap; font-size: 13px; color: var(--muted);
 }
 .kl-filters button > span:first-child { display: inline-flex; align-items: center; gap: 5px; }
 .kl-filters button:hover, .kl-filters button[aria-pressed=true] { color: var(--ink); }
@@ -1124,7 +1124,13 @@ body:has(.dialog-content) .bottom-nav {
 .kl-count { font-size: 11px; font-variant-numeric: tabular-nums; }
 .kl-filters button:focus-visible, .kl-more:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 @media (max-width: 560px) {
-  .kl-filters { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); column-gap: 22px; }
+  .kl-filters { justify-content: space-between; gap: 2px; }
+  .kl-filters button { padding-inline: 0; gap: 3px; font-size: 12px; }
+  .kl-filters button > span:first-child { gap: 3px; }
+}
+@media (max-width: 360px) {
+  .kl-filters .kl-color { display: none; }
+  .kl-count { font-size: 10px; }
 }
 .kl-field { display: grid; grid-template-columns: repeat(auto-fill, minmax(7px, 1fr)); gap: 2px; padding: 9px; border: 1px solid var(--line); border-radius: 8px; }
 .kl-color { display: inline-block; width: 7px; height: 7px; padding: 0; border: 0; border-radius: 2px; }
@@ -1133,7 +1139,11 @@ body:has(.dialog-content) .bottom-nav {
 .kl-color.not_applicable { background: #a4a7ae; }
 .kl-color[data-dimmed=true] { opacity: .18; }
 .kl-file { display: grid; gap: 2px; padding: 0; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
-.kl-file + .kl-file { margin-top: 52px; }
+.kl-file + .kl-file { position: relative; margin-top: 52px; }
+.kl-file + .kl-file::before {
+  content: ""; position: absolute; inset: -26px 0 auto;
+  height: 1px; background: var(--line);
+}
 .kl-file a { color: var(--ink); text-underline-offset: 3px; }
 .kl-source { display: grid; justify-items: start; gap: 1px; text-decoration: none; }
 .kl-source strong { font-size: 15px; letter-spacing: -.015em; }

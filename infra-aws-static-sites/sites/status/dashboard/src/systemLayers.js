@@ -74,6 +74,7 @@ export function systemLayers(live, publicCommits, workflow, workCounts) {
   const sampledAt = Date.parse(observedAt);
   const fresh = Number.isFinite(sampledAt) && Date.now() - sampledAt < 36 * 60 * 60 * 1000;
   const backlogStates = backlogs?.map(row => row.state) ?? ["none"];
+  const summarized = backlogs?.find(row => row.name === "kl-summarized");
 
   return [
     {
@@ -83,9 +84,11 @@ export function systemLayers(live, publicCommits, workflow, workCounts) {
     {
       name: "L2 업/시스템", state: worst([...backlogStates, notionReady && linearReady && fresh ? "ok" : "none"]),
       detail: [notionLabel, linearLabel].join(" · "),
-      observations: [
-        ...(Number.isFinite(sampledAt) ? ["Notion·Linear 집계 " + new Date(sampledAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }) + " KST"] : []),
-        ...(backlogs || []).map(row => row.name + " · " + count(row.count) + " / 경고 " + count(row.warnAt)),
+      collections: [
+        { name: "Notion · 소셜 미디어 콘텐츠", description: "보관·휴지통을 제외한 전체 페이지", value: notionReady ? count(notion.total) : "미수집" },
+        { name: "Notion · 플랫폼 미지정", description: "소셜 미디어 콘텐츠 중 ‘플랫폼’이 비어 있는 페이지", value: notionReady ? count(notion.withoutPlatform) : "미수집" },
+        { name: "Linear · 백로그", description: "접근 가능한 미보관 이슈 중 backlog 상태인 이슈", value: linearReady ? count(linear.backlog) : "미수집" },
+        { name: "Knowledge Lab · 마케팅 자료", description: "요약 완료 상태로 남아 있는 자료", value: count(summarized?.count) },
       ],
     },
     workflow,

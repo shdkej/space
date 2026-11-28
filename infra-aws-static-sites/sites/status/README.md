@@ -55,6 +55,10 @@ ARM 인증은 `/home/ubuntu/.config/system-dashboard/notion.env`의 `NOTION_SOCI
 
 복구 자료는 ARM `/home/ubuntu/.local/state/openclaw/backups/status-l2-20261128/`에 있습니다. 최신 L2 패치만 역적용하거나 해당 변경 전 파일을 복원한 뒤 공개 전용 실행으로 재게시합니다. 타이머·기존 다른 작업 변경을 전체 reset하지 않습니다. API 권한 밖의 페이지·이슈는 집계되지 않으며, 조회 도중 원본 편집에 대한 트랜잭션 스냅샷은 보장되지 않습니다.
 
+L2 펼침 상세는 **무엇을 수집하는지**를 보여줍니다. Notion 소셜 미디어 콘텐츠의 전체 활성 페이지, 같은 원천의 플랫폼 미지정 페이지, Linear의 미보관 backlog 이슈, Knowledge Lab 마케팅 자료의 요약 완료 항목을 각각 원천·수집 기준·현재 건수로 표시합니다. 집계 시각만 나열하던 상세를 이 네 행으로 바꿨으며 콘텐츠 제목·원문 목록은 게시하지 않습니다. 0건과 미수집 구분은 동일하게 유지합니다.
+
+이 상세 화면 변경은 `dashboard/src/{systemLayers.js,main.jsx,styles.css}`가 소유합니다. `dashboard/`에서 `npm test` → `npm run build` → PC·모바일 L2 펼침/접기·키보드·실패 상태 확인 후, 변경한 소스와 `dist/`를 Space main에 게시합니다. 기존 AWS 정적 배포는 운영 JSON을 보존합니다. 수집기·10분 타이머·공개 피드 스키마는 바뀌지 않습니다. 화면 복구는 해당 UI 커밋을 revert하고 같은 배포를 실행합니다.
+
 ## UI 재질 테스트 범위
 
 `ui-material-test.html`은 `ui-material-test/`의 React 소스를 Vite로 번들한 결과입니다. 실제로 다음 라이브러리를 사용합니다.

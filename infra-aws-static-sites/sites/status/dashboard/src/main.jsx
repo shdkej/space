@@ -329,7 +329,13 @@ function App() {
         }
         return <HistoryItem key={row.key || row.metricId || row.name} row={row} metric={chartMetric(row)} range={range} showChart={Boolean(row.metricId)}>
           {row.artifacts && <ArtifactTimeline entries={row.artifacts} />}
-          {row.observations && <ul className="layer-observations">{row.observations.map(line => <li key={line}>{line}</li>)}</ul>}
+          {row.collections && <section className="collection-details" aria-label="수집 대상">
+            <h3>수집 대상</h3>
+            <ul>{row.collections.map(source => <li key={source.name}>
+              <div><strong>{source.name}</strong><p>{source.description}</p></div>
+              <span className="collection-count">{source.value}</span>
+            </li>)}</ul>
+          </section>}
         </HistoryItem>;
       }) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} aria-current={view === "home" ? "page" : undefined} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} aria-current={view === id ? "page" : undefined} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }

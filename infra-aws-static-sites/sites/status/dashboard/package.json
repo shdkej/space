@@ -5,7 +5,8 @@
   "scripts": {
     "build": "vite build && node scripts/build-redirects.mjs",
     "build:office": "vite build --config vite.office.config.js",
-    "build:all": "npm run build && npm run build:office"
+    "build:all": "npm run build && npm run build:office",
+    "test": "node --test test/*.test.mjs office/test/*.test.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",

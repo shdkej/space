@@ -630,7 +630,7 @@ body:has(.dialog-content) .bottom-nav {
   .hero-score {
     border-left: 0;
     border-top: 1px solid var(--line);
-    padding: 18px 8px 0 0;
+    padding: 18px 8px 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: auto auto;

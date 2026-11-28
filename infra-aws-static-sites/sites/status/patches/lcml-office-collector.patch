@@ -2499,3 +2499,528 @@ index 36eb114..9f0df55 100644
      def test_git_error_is_unknown_and_never_emits_command_paths(self):
          self.settings['repositories'] = [{'name':'OpenClaw','path':'/home/private','url':'https://github.com/example/repo?token=SECRET'}]
          repos, _ = office.collect_repositories(self.settings, NOW, run=lambda args:(1,'fatal /home/private SECRET'))
+From 8a3fa168b3b49374c1a35ccb33612cef482ef199 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Sat, 28 Nov 2026 01:21:19 +0000
+Subject: [PATCH] Collect Notion and Linear L2 counts on the existing ARM timer
+
+---
+ README.md                           |  27 ++++-
+ collector/collector.py              | 170 +++++++++++++++++++++-------
+ collector/manifest.yaml             |  15 +--
+ collector/tests/test_work_counts.py | 160 ++++++++++++++++++++++++++
+ 4 files changed, 325 insertions(+), 47 deletions(-)
+ create mode 100644 collector/tests/test_work_counts.py
+
+diff --git a/README.md b/README.md
+index 64318da..7246087 100644
+--- a/README.md
++++ b/README.md
+@@ -32,7 +32,7 @@ python3 collector/collector.py --publish-public-only
+ 
+ 크론 상태는 매 주기 `openclaw cron list`에서 읽고, 전체 실행 이력 순회는 수집기 주기를 막지 않도록 별도 운영 로그로 분리합니다. 실행 환경 PATH에서 CLI를 찾지 못하면 `.nvm/alias/default`가 가리키는 Node 버전의 `bin`을 보조 경로로 사용합니다. 수집기 주기 자체는 `audit.sections`에 확인 영역·성공 여부·소요 시간·공개 가능한 요약으로 남깁니다.
+ 역할별 상황실은 크론 목록을 직접 보여주지 않습니다. `roleWatchers`의 각 역할에 `activity.summary`, `activity.checked`, `activity.next`를 제공해 해당 에이전트가 무엇을 확인했고 다음에 무엇을 넘기는지 표시합니다.
+-노션 `updatedAt`은 수집 시각이 아니라 API 응답의 페이지 `last_edited_time`(로컬 동기화 경로 사용 시 최신 파일 수정 시각)입니다. 단순 조회만으로 노션 갱신일이 바뀌지 않도록 유지합니다.
++노션 `updatedAt`은 수집 시각이 아니라 API 응답의 활성 페이지 `last_edited_time`입니다. 단순 조회만으로 노션 갱신일이 바뀌지 않도록 유지합니다. L2 집계의 실제 조회 시각은 아래 `work-counts.json`의 `observedAt`입니다.
+ GitHub 저장소 커밋 시각은 `GITHUB_TOKEN`/`GH_TOKEN`이 있으면 GitHub API를 사용하고, 없으면 호스트의 `gh` 인증을 사용합니다. 따라서 비공개 저장소도 `state: ok`로 수집할 수 있습니다. 수집기를 설치하거나 재설치한 뒤에는 `systemctl --user enable --now system-dashboard-collector.timer`로 타이머를 활성화해야 합니다.
+ 
+ ## 셋업 (1회)
+@@ -41,6 +41,31 @@ GitHub 저장소 커밋 시각은 `GITHUB_TOKEN`/`GH_TOKEN`이 있으면 GitHub
+ 2. `collector/.env.example`을 `collector/.env`로 복사하고 값 채운 뒤 `chmod 600`
+ 3. `collector/install.sh` 실행 (systemd timer 등록)
+ 
++## L2 Notion·Linear 운영 집계
++
++`oracle-arm-2`의 사용자 `system-dashboard-collector.timer`는 `OnCalendar=*:0/10`, `Persistent=true`로 같은 이름의 서비스를 실행합니다. 서비스의 작업 디렉터리는 위 `collector/`이며 `/usr/bin/python3 .../collector/collector.py`가 진입점입니다. 타이머·서비스·S3 버킷은 재사용하며 SAM-PC 수집기는 사용하지 않습니다.
++
++- Notion 데이터 소스 `68b8485f-29f4-4bed-a0e1-459cf18c69df`를 API `2025-09-03`의 `data_sources/{id}/query`로 끝까지 순회합니다. 활성 페이지 전체 수와 `플랫폼` select가 null인 수를 같은 응답에서 계산합니다. 이 결과는 기존 Notion 요약과 L2 피드에서 함께 사용합니다. 과거 database query·로컬 동기화 파일 수 fallback은 사용하지 않습니다.
++- Linear는 연결된 인증이 접근할 수 있는 워크스페이스 전체 `issues`에서 `includeArchived: false`, `state.type == backlog`를 조건으로 조회합니다. 팀·담당자 제한 없이 `hasNextPage`가 false일 때까지 `endCursor`를 따라갑니다.
++- `marketing-inbox-7d`의 원본 조회·집계 설정은 제거하고 `kl-summarized`는 유지합니다.
++- 한 서비스의 HTTP/GraphQL 오류, 잘못된 응답 또는 진행하지 않는 cursor는 해당 서비스만 `{"status":"unavailable"}`로 만듭니다. 정상 0건은 `status: ok`와 0을 함께 게시합니다. 부분 페이지 합계·과거 파일 수로 성공을 대신하지 않습니다.
++
++호스트 인증은 manifest의 `notion.env_file`과 `linear.env_file`에서 각각 `NOTION_SOCIAL_MEDIA_API_KEY`, `LINEAR_API_KEY`를 읽습니다. 운영 위치는 `/home/ubuntu/.config/system-dashboard/{notion,linear}.env`이며 권한은 600입니다. ARM의 기존 인증만 사용하고 키·API 원문·페이지/이슈 제목·ID를 출력하거나 Git에 넣지 않습니다. 파일 경로를 지정하지 않은 테스트/수동 환경에서는 같은 이름의 환경변수를 사용할 수 있습니다.
++
++기존 `public_publish.bucket`의 `work-counts.json`에 `notion`(total, withoutPlatform, status), `linear`(backlog, status), UTC `observedAt`만 게시합니다. `max-age=60`, `application/json`을 사용합니다. 다른 공개 피드의 게시 실패와 독립적으로 게시를 시도합니다. 상태 조회 실패가 있어도 이번 관측 시각과 서비스별 상태를 게시합니다.
++
++검증과 적용 순서:
++
++1. `PYTHONPATH=collector python3 -m unittest discover -s collector/tests`와 `git diff --check`.
++2. `systemctl --user show system-dashboard-collector.service -p ActiveState -p ExecStart -p WorkingDirectory`, 타이머의 다음 시각 확인. 실행 중이면 종료 후 적용합니다.
++3. 운영 변경 전 파일을 비공개 호스트 백업에 보관하고, Space `patches/lcml-office-collector.patch`의 최신 L2 패치를 `git apply --check` 후 적용합니다. 원격 독립 저장소가 조회되지 않으므로 기존 Space 복구 패치열을 소스 배포 경로로 유지합니다.
++4. `python3 collector/collector.py --publish-public-only`로 첫 게시. `agents-live.json`에서 marketing-inbox-7d 부재·kl-summarized 보존, `work-counts.json`의 집계·시각·스키마를 검사합니다.
++5. 기존 타이머의 다음 자동 실행 성공과 `observedAt` 갱신을 확인하고 운영 Status L2 표시 숫자를 같은 공개 피드와 대조합니다.
++
++복구는 최신 L2 패치만 역적용하거나 변경 전 파일을 복원하고 공개 전용 실행으로 다시 게시합니다. 이전 공개 객체는 호스트 백업에 보관합니다. API 접근 범위 밖의 페이지/이슈는 집계할 수 없으며 페이지네이션 중 원본 편집에 대한 트랜잭션 스냅샷은 API가 보장하지 않습니다. 중복 ID는 한 번만 셉니다.
++
++API 계약: [Notion data source query](https://developers.notion.com/reference/query-a-data-source), [Linear pagination](https://linear.app/developers/pagination), [Linear filtering](https://linear.app/developers/filtering).
++
+ ## LCML 사무실 스냅샷
+ 
+ `https://status.aws.shdkej.com/office/`는 실행 세션·현재 태스크·사용자 판단 대기·저장소 상태·고객 지표를 네 층으로 보여줍니다. 인증 없는 공개 화면이며, `collector/office.py`가 기존 **10분 systemd 주기**에 `office-live.json`을 추가합니다. 별도 서버나 크론은 만들지 않습니다. 프런트엔드 소스와 배포는 상위 Status 저장소의 `dashboard/office/`와 README가 소유합니다.
+diff --git a/collector/collector.py b/collector/collector.py
+index 0a8c75a..e5d671f 100644
+--- a/collector/collector.py
++++ b/collector/collector.py
+@@ -731,6 +731,7 @@ def build_snapshot(cfg, collect_crons_fn=None):
+         ("effectiveness", lambda: collect_effectiveness(cfg["effectiveness"])),
+         ("review", lambda: collect_review(cfg)),
+         ("notion", lambda: collect_notion(cfg)),
++        ("work_counts", lambda: collect_work_counts(cfg, payload.get("notion"))),
+         ("evidence", lambda: collect_evidence(cfg)),
+         ("role_watchers", lambda: collect_role_watchers(cfg)),
+     )
+@@ -1061,47 +1062,133 @@ def _latest_notion_edit_time(results, current=None):
+     return latest
+ 
+ 
++def _service_token(settings, key):
++    # Explicit host file makes systemd independent of an interactive shell.
++    path = settings.get("env_file")
++    token = load_env_values(Path(path).expanduser()).get(key) if path else os.environ.get(key)
++    if not token:
++        raise ValueError("service credential unavailable")
++    return token
++
++
++def _next_cursor(more, cursor, seen):
++    if type(more) is not bool:
++        raise ValueError("invalid pagination status")
++    if not more:
++        return None
++    if not isinstance(cursor, str) or not cursor or cursor in seen:
++        raise ValueError("pagination did not advance")
++    seen.add(cursor)
++    return cursor
++
++
+ def collect_notion(cfg):
+-    notion_cfg = cfg.get("notion") or {}
+-    token = os.environ.get("NOTION_SOCIAL_MEDIA_API_KEY")
+-    database_id = notion_cfg.get("social_media_content_database_id")
+-    if token and database_id:
+-        total = 0
++    settings = cfg.get("notion") or {}
++    try:
++        token = _service_token(settings, "NOTION_SOCIAL_MEDIA_API_KEY")
++        source_id = settings["social_media_content_data_source_id"]
++        total = without_platform = 0
++        cursor = latest_edited = None
++        cursors, page_ids = set(), set()
++        while True:
++            body = {"page_size": 100}
++            if cursor:
++                body["start_cursor"] = cursor
++            req = urllib.request.Request(
++                f"https://api.notion.com/v1/data_sources/{source_id}/query",
++                data=json.dumps(body).encode(), method="POST",
++                headers={"Authorization": f"Bearer {token}",
++                         "Notion-Version": "2025-09-03", "Content-Type": "application/json"})
++            with urllib.request.urlopen(req, timeout=30) as res:
++                result = json.load(res)
++            rows = result["results"]
++            if not isinstance(rows, list):
++                raise ValueError("invalid page list")
++            for page in rows:
++                if page.get("archived") or page.get("in_trash") or page.get("is_archived"):
++                    continue
++                if page["object"] != "page":
++                    raise ValueError("unexpected data source entry")
++                platform = page["properties"]["플랫폼"]
++                if platform["type"] != "select" or "select" not in platform:
++                    raise ValueError("platform must be a select property")
++                if page["id"] in page_ids:
++                    continue
++                page_ids.add(page["id"])
++                total += 1
++                without_platform += platform["select"] is None
++                latest_edited = _latest_notion_edit_time([page], latest_edited)
++            cursor = _next_cursor(result["has_more"], result.get("next_cursor"), cursors)
++            if cursor is None:
++                break
++        return {"state": "ok", "count": total, "withoutPlatform": without_platform,
++                "updatedAt": latest_edited, "reason": None, "source": "notion-api"}
++    except Exception:
++        # Neither remote response bodies nor credentials belong in public diagnostics.
++        return {"state": "warn", "count": None, "withoutPlatform": None,
++                "updatedAt": None, "reason": "노션 API 조회 실패", "source": "notion-api"}
++
++
++def collect_linear(cfg):
++    try:
++        token = _service_token(cfg.get("linear") or {}, "LINEAR_API_KEY")
++        query = '''query StatusBacklog($after: String) {
++          issues(first: 100, after: $after, includeArchived: false,
++                 filter: {state: {type: {eq: "backlog"}}}) {
++            nodes { id archivedAt state { type } }
++            pageInfo { hasNextPage endCursor }
++          }
++        }'''
+         cursor = None
+-        latest_edited = None
+-        try:
+-            while True:
+-                body = {"page_size": 100}
+-                if cursor:
+-                    body["start_cursor"] = cursor
+-                req = urllib.request.Request(
+-                    f"https://api.notion.com/v1/databases/{database_id}/query",
+-                    data=json.dumps(body).encode(), method="POST",
+-                    headers={"Authorization": f"Bearer {token}",
+-                             "Notion-Version": "2022-06-28",
+-                             "Content-Type": "application/json"})
+-                with urllib.request.urlopen(req, timeout=30) as res:
+-                    result = json.loads(res.read().decode())
+-                rows = result.get("results", [])
+-                total += len(rows)
+-                latest_edited = _latest_notion_edit_time(rows, latest_edited)
+-                cursor = result.get("next_cursor")
+-                if not result.get("has_more"):
+-                    break
+-            return {"state": "ok", "count": total, "updatedAt": latest_edited, "reason": None, "source": "notion-api"}
+-        except Exception as exc:
+-            return {"state": "warn", "count": None, "updatedAt": None, "reason": f"노션 API 조회 실패: {exc}", "source": "notion-api"}
+-    path = (notion_cfg.get("social_media_content_path") or "").strip()
+-    if not path:
+-        return {"state": "warn", "count": None, "updatedAt": None, "reason": "노션 경로가 설정되지 않았습니다."}
+-    root = Path(path)
+-    if not root.exists():
+-        return {"state": "warn", "count": None, "updatedAt": None, "reason": "노션 콘텐츠 동기화 경로가 없습니다."}
+-    items = [p for p in root.glob("*.md") if p.is_file()]
+-    latest = max((p.stat().st_mtime for p in items), default=0)
+-    return {"state": "ok", "count": len(items),
+-            "updatedAt": iso(dt.datetime.fromtimestamp(latest, dt.timezone.utc)) if latest else None,
+-            "reason": None}
++        cursors, issue_ids = set(), set()
++        while True:
++            req = urllib.request.Request(
++                "https://api.linear.app/graphql",
++                data=json.dumps({"query": query, "variables": {"after": cursor}}).encode(),
++                method="POST", headers={"Authorization": token, "Content-Type": "application/json"})
++            with urllib.request.urlopen(req, timeout=30) as res:
++                result = json.load(res)
++            if result.get("errors"):
++                raise ValueError("GraphQL query failed")
++            issues = result["data"]["issues"]
++            if not isinstance(issues["nodes"], list):
++                raise ValueError("invalid issue list")
++            for issue in issues["nodes"]:
++                if issue["archivedAt"] is None and issue["state"]["type"] == "backlog":
++                    issue_ids.add(issue["id"])
++            info = issues["pageInfo"]
++            cursor = _next_cursor(info["hasNextPage"], info.get("endCursor"), cursors)
++            if cursor is None:
++                break
++        return {"backlog": len(issue_ids), "status": "ok"}
++    except Exception:
++        return {"status": "unavailable"}
++
++
++def collect_work_counts(cfg, notion):
++    notion_counts = {"status": "unavailable"}
++    if notion and notion.get("state") == "ok":
++        notion_counts = {"total": notion["count"], "withoutPlatform": notion["withoutPlatform"], "status": "ok"}
++    return {"notion": notion_counts, "linear": collect_linear(cfg), "observedAt": iso(now_utc())}
++
++
++def publish_work_counts(cfg, payload, run=None):
++    pub = cfg.get("public_publish") or {}
++    key = (cfg.get("work_counts") or {}).get("public_key")
++    if not pub.get("bucket") or not key:
++        return None
++    dest = f"s3://{pub['bucket']}/{key}"
++    args = [_aws_bin(), "s3", "cp", "-", dest,
++            "--cache-control", "max-age=60", "--content-type", "application/json"]
++    if run is not None:
++        code, _ = run(args)
++    else:
++        proc = subprocess.run(args, input=json.dumps(payload, ensure_ascii=False),
++                              capture_output=True, text=True, timeout=60)
++        code = proc.returncode
++    if code != 0:
++        raise RuntimeError("work-counts publish failed")
++    return dest
+ 
+ 
+ def collect_evidence(cfg):
+@@ -1338,6 +1425,11 @@ def publish_status_outputs(cfg, snapshot, run=None):
+     # Each feed is independent. Reuse the once-per-cycle office collection.
+     errors = []
+     feed_dest = history_dest = None
++    if cfg.get("work_counts"):
++        try:
++            publish_work_counts(cfg, snapshot["work_counts"], run=run)
++        except Exception:
++            errors.append("work-counts")
+     if cfg.get("office"):
+         try:
+             payload = snapshot["office"] if "office" in snapshot else office.collect_office(cfg, snapshot)
+diff --git a/collector/manifest.yaml b/collector/manifest.yaml
+index 631955a..ed1669a 100644
+--- a/collector/manifest.yaml
++++ b/collector/manifest.yaml
+@@ -27,11 +27,6 @@ freshness:
+     cadence_hours: 336     # 비정기 — 2주 넘게 조용하면 신호로 본다
+ 
+ backlogs:
+-  - name: marketing-inbox-7d
+-    kind: jsonl_recent           # 최근 window_days 유입 건수 (append-only 로그라 전체 카운트는 무의미)
+-    path: system/data/agent-inbox/marketing.jsonl
+-    window_days: 7
+-    warn_at: 21                  # 정상 유입 2건/일 = 14/주. 3건/일 넘으면 과잉 생산 신호
+   - name: kl-summarized
+     kind: grep_count
+     path: /home/ubuntu/workspace/knowledge-lab/source/external-links/marketing
+@@ -92,8 +87,14 @@ timeseries:
+   retention_days: 31
+ 
+ notion:
+-  social_media_content_database_id: 58930c3b-7ad6-4422-9392-02cef3c5d037
+-  social_media_content_path: /home/ubuntu/workspace/knowledge-lab/source/external-links/notion-social-media-content/items
++  social_media_content_data_source_id: 68b8485f-29f4-4bed-a0e1-459cf18c69df
++  env_file: /home/ubuntu/.config/system-dashboard/notion.env
++
++linear:
++  env_file: /home/ubuntu/.config/system-dashboard/linear.env
++
++work_counts:
++  public_key: work-counts.json
+ 
+ evidence:
+   kubectl: /usr/local/bin/kubectl
+diff --git a/collector/tests/test_work_counts.py b/collector/tests/test_work_counts.py
+new file mode 100644
+index 0000000..badd55b
+--- /dev/null
++++ b/collector/tests/test_work_counts.py
+@@ -0,0 +1,160 @@
++import contextlib
++import io
++import json
++import tempfile
++import unittest
++from pathlib import Path
++from unittest import mock
++
++import collector
++import yaml
++
++
++def page(identifier, platform=None, **extra):
++    return {"object": "page", "id": identifier, "archived": False,
++            "in_trash": False, "last_edited_time": "2026-11-27T01:00:00Z",
++            "properties": {"플랫폼": {"type": "select", "select": platform},
++                           "제목": {"title": [{"plain_text": "private title"}]}}, **extra}
++
++
++def notion_page(rows, more=False, cursor=None):
++    return {"results": rows, "has_more": more, "next_cursor": cursor}
++
++
++def linear_page(rows, more=False, cursor=None):
++    return {"data": {"issues": {"nodes": rows, "pageInfo": {
++        "hasNextPage": more, "endCursor": cursor}}}}
++
++
++class TestWorkCounts(unittest.TestCase):
++    def setUp(self):
++        self.cfg = {"notion": {"social_media_content_data_source_id": "source-id"},
++                    "linear": {}, "work_counts": {"public_key": "work-counts.json"},
++                    "public_publish": {"bucket": "status-bucket", "key": "agents-live.json"}}
++        self.env = mock.patch.dict(collector.os.environ, {
++            "NOTION_SOCIAL_MEDIA_API_KEY": "notion-secret", "LINEAR_API_KEY": "linear-secret"}, clear=True)
++        self.env.start()
++        self.addCleanup(self.env.stop)
++
++    def responses(self, pages):
++        self.requests = []
++        def request(req, **kwargs):
++            self.requests.append(req)
++            result = next(pages)
++            if isinstance(result, Exception):
++                raise result
++            return contextlib.closing(io.BytesIO(json.dumps(result).encode()))
++        return mock.patch.object(collector.urllib.request, "urlopen", side_effect=request)
++
++    def test_notion_counts_all_active_pages_and_empty_select_from_same_traversal(self):
++        with self.responses(iter([
++            notion_page([page("1"), page("2", {"name": "Threads"}), page("archived", archived=True)], True, "cursor-1"),
++            notion_page([page("3"), page("trash", in_trash=True)], True, "cursor-2"),
++            notion_page([page("4", {"name": "Instagram"})]),
++        ])):
++            result = collector.collect_notion(self.cfg)
++        self.assertEqual(result.get("count"), 4)
++        self.assertEqual(result.get("withoutPlatform"), 2)
++        self.assertEqual(result["updatedAt"], "2026-11-27T01:00:00Z")
++        self.assertEqual([json.loads(r.data).get("start_cursor") for r in self.requests], [None, "cursor-1", "cursor-2"])
++        self.assertEqual(self.requests[0].full_url, "https://api.notion.com/v1/data_sources/source-id/query")
++
++    def test_failed_later_page_never_publishes_partial_notion_count(self):
++        with self.responses(iter([notion_page([page("1")], True, "next"), OSError("private error token=secret")])):
++            result = collector.collect_notion(self.cfg)
++        self.assertIsNone(result["count"])
++        self.assertNotIn("private error", json.dumps(result))
++
++    def test_invalid_notion_responses_are_unavailable_not_zero(self):
++        for response in [{}, {"results": [], "has_more": "false"},
++                         notion_page([page("1")], True),
++                         notion_page([page("1", properties={})])]:
++            with self.subTest(response=response), self.responses(iter([response])):
++                self.assertIsNone(collector.collect_notion(self.cfg)["count"])
++
++    def test_repeated_notion_cursor_is_failure(self):
++        with self.responses(iter([notion_page([page("1")], True, "same"), notion_page([page("2")], True, "same")])):
++            self.assertIsNone(collector.collect_notion(self.cfg)["count"])
++
++    def test_linear_paginates_workspace_backlog_without_archived_issues(self):
++        rows = [{"id": "a", "archivedAt": None, "state": {"type": "backlog"}},
++                {"id": "b", "archivedAt": None, "state": {"type": "backlog"}}]
++        with self.responses(iter([linear_page(rows[:1], True, "next"), linear_page(rows[1:])])):
++            result = collector.collect_linear(self.cfg)
++        self.assertEqual(result, {"backlog": 2, "status": "ok"})
++        bodies = [json.loads(r.data) for r in self.requests]
++        self.assertEqual([b["variables"]["after"] for b in bodies], [None, "next"])
++        self.assertIn('includeArchived: false', bodies[0]["query"])
++        self.assertIn('type: {eq: "backlog"}', bodies[0]["query"])
++        self.assertNotIn('team:', bodies[0]["query"])
++
++    def test_linear_zero_is_ok_and_graphql_or_pagination_failure_is_unavailable(self):
++        for responses, expected in [
++            ([linear_page([])], {"backlog": 0, "status": "ok"}),
++            ([{"errors": [{"message": "private error"}], **linear_page([])}], {"status": "unavailable"}),
++            ([linear_page([], True, "next"), OSError("secret")], {"status": "unavailable"}),
++            ([linear_page([], True, "next"), linear_page([], True, "next")], {"status": "unavailable"}),
++            ([{}], {"status": "unavailable"}),
++            ([linear_page([], True)], {"status": "unavailable"}),
++        ]:
++            with self.subTest(responses=responses), self.responses(iter(responses)):
++                self.assertEqual(collector.collect_linear(self.cfg), expected)
++
++    def test_service_failures_are_independent_and_feed_has_only_counts_status_time(self):
++        for notion, linear in [
++            ({"state": "warn", "count": None}, {"backlog": 0, "status": "ok"}),
++            ({"state": "ok", "count": 4, "withoutPlatform": 2, "private": "secret"}, {"status": "unavailable"}),
++        ]:
++            with mock.patch.object(collector, "collect_linear", return_value=linear):
++                result = collector.collect_work_counts(self.cfg, notion)
++            self.assertEqual(set(result), {"notion", "linear", "observedAt"})
++            self.assertEqual(result["linear"], linear)
++            self.assertEqual(result["notion"], {"total": 4, "withoutPlatform": 2, "status": "ok"}
++                             if notion["state"] == "ok" else {"status": "unavailable"})
++            self.assertRegex(result["observedAt"], r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$")
++            self.assertNotIn("secret", json.dumps(result))
++
++    def test_timer_path_publishes_work_counts_even_when_another_feed_fails(self):
++        snapshot = {"work_counts": {"notion": {"status": "unavailable"},
++                    "linear": {"backlog": 0, "status": "ok"}, "observedAt": "2026-11-28T00:00:00Z"}}
++        uploads = []
++        def run(args, **kwargs):
++            uploads.append((args, kwargs.get("input")))
++            return mock.Mock(returncode=0, stdout="", stderr="")
++        with mock.patch.object(collector, "publish_public", side_effect=RuntimeError("agents failed")), \
++             mock.patch.object(collector, "public_roster", return_value=[]), \
++             mock.patch.object(collector, "record_timeseries", return_value=None), \
++             mock.patch.object(collector.subprocess, "run", side_effect=run):
++            with self.assertRaisesRegex(RuntimeError, "agents"):
++                collector.publish_status_outputs(self.cfg, snapshot)
++        work = [(args, body) for args, body in uploads if "s3://status-bucket/work-counts.json" in args]
++        self.assertEqual(len(work), 1)
++        self.assertEqual(json.loads(work[0][1]), snapshot["work_counts"])
++
++    def test_snapshot_reuses_notion_observation_for_work_counts(self):
++        with self.responses(iter([notion_page([page("1"), page("2", {"name": "Threads"})]), linear_page([])])):
++            result = collector.build_snapshot(self.cfg, collect_crons_fn=lambda: [])
++        self.assertEqual(result["notion"]["count"], 2)
++        self.assertEqual(result["work_counts"]["notion"], {"total": 2, "withoutPlatform": 1, "status": "ok"})
++        self.assertEqual(result["work_counts"]["linear"], {"backlog": 0, "status": "ok"})
++        self.assertEqual(len(self.requests), 2)
++
++    def test_host_credential_file_works_without_shell_environment(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "linear.env"
++            path.write_text('LINEAR_API_KEY="file-secret"\n')
++            self.cfg["linear"]["env_file"] = str(path)
++            with mock.patch.dict(collector.os.environ, {}, clear=True), self.responses(iter([linear_page([])])):
++                self.assertEqual(collector.collect_linear(self.cfg), {"backlog": 0, "status": "ok"})
++            self.assertEqual(self.requests[0].get_header("Authorization"), "file-secret")
++
++    def test_config_removes_marketing_source_but_still_collects_kl(self):
++        cfg = yaml.safe_load((collector.BASE / "manifest.yaml").read_text())
++        with tempfile.TemporaryDirectory() as directory:
++            (Path(directory) / "summary.md").write_text("---\nstatus: summarized\n---\n")
++            (Path(directory) / "pending.md").write_text("---\nstatus: queued\n---\n")
++            for entry in cfg["backlogs"]:
++                entry["path"] = directory
++            result = collector.collect_backlogs(cfg)
++        self.assertEqual([row["name"] for row in result], ["kl-summarized"])
++        self.assertEqual(result[0]["count"], 1)
+-- 
+2.43.0
+
+From 7e30336818c224c3393f8462ef676437ef2431c6 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Sat, 28 Nov 2026 01:25:33 +0000
+Subject: [PATCH] Reject malformed archive and workflow state fields before
+ counting
+
+---
+ collector/collector.py              | 9 +++++++++
+ collector/tests/test_work_counts.py | 9 +++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/collector/collector.py b/collector/collector.py
+index e5d671f..f4b2b80 100644
+--- a/collector/collector.py
++++ b/collector/collector.py
+@@ -1105,6 +1105,9 @@ def collect_notion(cfg):
+             if not isinstance(rows, list):
+                 raise ValueError("invalid page list")
+             for page in rows:
++                for flag in ("archived", "in_trash", "is_archived"):
++                    if flag in page and type(page[flag]) is not bool:
++                        raise ValueError("invalid page archive status")
+                 if page.get("archived") or page.get("in_trash") or page.get("is_archived"):
+                     continue
+                 if page["object"] != "page":
+@@ -1112,6 +1115,8 @@ def collect_notion(cfg):
+                 platform = page["properties"]["플랫폼"]
+                 if platform["type"] != "select" or "select" not in platform:
+                     raise ValueError("platform must be a select property")
++                if platform["select"] is not None and not isinstance(platform["select"], dict):
++                    raise ValueError("invalid select value")
+                 if page["id"] in page_ids:
+                     continue
+                 page_ids.add(page["id"])
+@@ -1154,6 +1159,10 @@ def collect_linear(cfg):
+             if not isinstance(issues["nodes"], list):
+                 raise ValueError("invalid issue list")
+             for issue in issues["nodes"]:
++                if issue["archivedAt"] is not None and not isinstance(issue["archivedAt"], str):
++                    raise ValueError("invalid issue archive timestamp")
++                if not isinstance(issue["state"]["type"], str) or not issue["state"]["type"]:
++                    raise ValueError("invalid workflow state type")
+                 if issue["archivedAt"] is None and issue["state"]["type"] == "backlog":
+                     issue_ids.add(issue["id"])
+             info = issues["pageInfo"]
+diff --git a/collector/tests/test_work_counts.py b/collector/tests/test_work_counts.py
+index badd55b..b44fe2a 100644
+--- a/collector/tests/test_work_counts.py
++++ b/collector/tests/test_work_counts.py
+@@ -76,6 +76,15 @@ class TestWorkCounts(unittest.TestCase):
+         with self.responses(iter([notion_page([page("1")], True, "same"), notion_page([page("2")], True, "same")])):
+             self.assertIsNone(collector.collect_notion(self.cfg)["count"])
+ 
++    def test_invalid_archive_or_state_types_cannot_turn_into_successful_zero(self):
++        for row in [page("1", archived="false"), page("1", in_trash=1), page("1", platform="broken")]:
++            with self.subTest(row=row), self.responses(iter([notion_page([row])])):
++                self.assertIsNone(collector.collect_notion(self.cfg)["count"])
++        for row in [{"id": "1", "archivedAt": None, "state": {"type": None}},
++                    {"id": "1", "archivedAt": False, "state": {"type": "backlog"}}]:
++            with self.subTest(row=row), self.responses(iter([linear_page([row])])):
++                self.assertEqual(collector.collect_linear(self.cfg), {"status": "unavailable"})
++
+     def test_linear_paginates_workspace_backlog_without_archived_issues(self):
+         rows = [{"id": "a", "archivedAt": None, "state": {"type": "backlog"}},
+                 {"id": "b", "archivedAt": None, "state": {"type": "backlog"}}]
+-- 
+2.43.0
+

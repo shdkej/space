@@ -34,6 +34,27 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 
 배포 후 테스트 화면은 `https://status.aws.shdkej.com/ui-material-test.html`에서 확인합니다.
 
+### L2 운영 집계 — ARM 단일 게시자
+
+2026-11-28부터 Notion·Linear 집계는 `oracle-arm-2`의 기존 사용자 `system-dashboard-collector.timer`가 게시합니다. 실제 `Triggers=system-dashboard-collector.service`, 작업 경로는 위 `system-dashboard/collector/`, 진입점은 `/usr/bin/python3 .../collector/collector.py`입니다. 기존 `OnCalendar=*:0/10`, `Persistent=true`와 S3 버킷 `static-status-aws-shdkej-com`을 재사용합니다. SAM-PC의 제거된 수집기는 재설치하지 않습니다.
+
+- Notion 데이터 소스 `68b8485f-29f4-4bed-a0e1-459cf18c69df`의 활성 페이지를 끝까지 순회해 전체 수와 `플랫폼` select가 비어 있는 수를 동시에 계산합니다. 같은 결과를 기존 Notion 요약과 L2 집계에 사용합니다.
+- Linear는 연결된 워크스페이스의 접근 가능한 미보관 이슈 중 `state.type == backlog`를 팀 제한 없이 끝까지 순회합니다.
+- `marketing-inbox-7d` 원본 조회·집계 설정은 제거하고 `kl-summarized`는 유지합니다.
+- `work-counts.json`은 `notion: {total, withoutPlatform, status}`, `linear: {backlog, status}`, UTC `observedAt`만 담습니다. 서비스별 조회 실패는 해당 서비스만 `{status: unavailable}`로 게시하고, 정상 0건은 `status: ok`로 구분합니다. 다른 공개 피드 실패와 독립적으로 게시하며 캐시는 60초입니다.
+
+ARM 인증은 `/home/ubuntu/.config/system-dashboard/notion.env`의 `NOTION_SOCIAL_MEDIA_API_KEY`, 같은 디렉터리 `linear.env`의 `LINEAR_API_KEY`를 읽습니다. 키는 기존 ARM 인증에서 연결하며 파일 권한은 600입니다. 키·페이지/이슈 제목·ID·API 응답 원문은 피드·Git·로그에 넣지 않습니다. manifest는 파일 경로만 소유하므로 systemd의 대화형 셸 환경에 의존하지 않습니다.
+
+소스 변경은 `collector/collector.py`, `collector/manifest.yaml`, `collector/tests/test_work_counts.py`, `system-dashboard/README.md`입니다. 독립 저장소 404 상태에 따른 기존 배포 계약대로 소스 커밋 `8a3fa16`과 타입 검증 보완 `7e30336`을 `patches/lcml-office-collector.patch` 끝에 추가했습니다. 기준 `1043559`부터 전체 `git am` 재현 및 103개 테스트를 통과했습니다. 운영 checkout의 기존 크론 조회 최적화는 보존했습니다. 정적 L2 화면 코드는 이미 해당 피드를 읽으므로 변경하지 않았습니다.
+
+배포·검증은 수집기 테스트 → 서비스가 inactive일 때 변경 파일 백업 및 최신 패치 `git apply --check`/적용 → `--publish-public-only` → 공개 두 피드 검사 → 기존 타이머의 다음 자동 실행 → 운영 `/#system` L2와 공개 집계 대조 순서입니다. 공개 전용 첫 실행은 기존 DB·액션 처리를 건드리지 않습니다. 정기 실행은 원래 서비스 경로를 따릅니다. S3 업로드 성공과 공개 CDN 갱신은 캐시 때문에 시차가 있을 수 있어 두 단계를 따로 검사합니다.
+
+첫 공개 검증: `2026-11-28T01:21:46Z` 관측에서 Notion **219**, 플랫폼 없음 **65**, Linear backlog **0**, 모두 `ok`. 같은 피드의 `agents-live.json`에는 `marketing-inbox-7d`가 없고 `kl-summarized` **19**가 유지됐습니다. 운영 L2에서도 같은 세 숫자를 확인했습니다.
+
+자동 실행 검증: 기존 타이머가 **2026-11-28 01:30:06 UTC**에 실행했고 **01:30:29 UTC**에 exit 0으로 종료했습니다. `work-counts.json.observedAt`은 **01:21:46Z → 01:30:12Z**, `agents-live.json.generatedAt`은 **01:30:25Z**로 갱신됐습니다. 최종 Notion 219·플랫폼 없음 65·Linear backlog 0, kl-summarized 19가 유지됐고 marketing-inbox-7d는 없습니다. 다음 예약은 01:40 UTC입니다.
+
+복구 자료는 ARM `/home/ubuntu/.local/state/openclaw/backups/status-l2-20261128/`에 있습니다. 최신 L2 패치만 역적용하거나 해당 변경 전 파일을 복원한 뒤 공개 전용 실행으로 재게시합니다. 타이머·기존 다른 작업 변경을 전체 reset하지 않습니다. API 권한 밖의 페이지·이슈는 집계되지 않으며, 조회 도중 원본 편집에 대한 트랜잭션 스냅샷은 보장되지 않습니다.
+
 ## UI 재질 테스트 범위
 
 `ui-material-test.html`은 `ui-material-test/`의 React 소스를 Vite로 번들한 결과입니다. 실제로 다음 라이브러리를 사용합니다.

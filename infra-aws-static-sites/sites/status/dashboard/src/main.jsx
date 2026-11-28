@@ -204,7 +204,7 @@ function HistoryChart({ metric, row, range, label = metric?.label }) {
 function HistoryItem({ row, metric, range, children, showChart = true }) {
   return <details className="history-item">
     <summary className="history-item-summary"><StatusDot state={row.state} /><span className="history-item-copy"><strong>{row.name}</strong><small>{row.detail || "실시간 상태 변화"}</small></span><span className="row-state">{row.readiness || stateText[row.state] || "확인 대기"}</span><ChevronDown className="history-item-chevron" size={16} aria-hidden="true" /></summary>
-    <div className="history-item-body">{children}{showChart && <HistoryChart metric={metric} row={row} range={range} />}{row.url && <a className="history-grafana-link" href={row.url} target="_blank" rel="noreferrer">Grafana에서 원본 보기 <ExternalLink size={14} /></a>}</div>
+    <div className={clsx("history-item-body", row.collections && "collection-body")}>{children}{showChart && <HistoryChart metric={metric} row={row} range={range} />}{row.url && <a className="history-grafana-link" href={row.url} target="_blank" rel="noreferrer">Grafana에서 원본 보기 <ExternalLink size={14} /></a>}</div>
   </details>;
 }
 
@@ -329,13 +329,12 @@ function App() {
         }
         return <HistoryItem key={row.key || row.metricId || row.name} row={row} metric={chartMetric(row)} range={range} showChart={Boolean(row.metricId)}>
           {row.artifacts && <ArtifactTimeline entries={row.artifacts} />}
-          {row.collections && <section className="collection-details" aria-label="수집 대상">
-            <h3>수집 대상</h3>
-            <ul>{row.collections.map(source => <li key={source.name}>
-              <div><strong>{source.name}</strong><p>{source.description}</p></div>
-              <span className="collection-count">{source.value}</span>
-            </li>)}</ul>
-          </section>}
+          {row.collections && <ul className="collection-details" aria-label="수집 대상">
+            {row.collections.map(source => <li key={source.name}>
+              <span className="history-item-copy"><strong>{source.name}</strong><small>{source.description}</small></span>
+              <span className="row-state collection-count">{source.value}</span>
+            </li>)}
+          </ul>}
         </HistoryItem>;
       }) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span><span>데이터는 읽기 전용으로 표시됩니다.</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} aria-current={view === "home" ? "page" : undefined} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} aria-current={view === id ? "page" : undefined} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
 }

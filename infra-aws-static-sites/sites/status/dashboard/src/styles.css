@@ -1028,13 +1028,11 @@ body:has(.dialog-content) .bottom-nav {
 .surface-tile strong { font-size: 12px; line-height: 1.2; letter-spacing: -.015em; overflow-wrap: anywhere; }
 .surface-tile small { display: inline-flex; align-items: center; gap: 3px; padding-top: 2px; font-size: 10px; line-height: 1.1; color: #514f43; }
 .surface-tile .status-dot { display: block; width: 5px; height: 5px; box-shadow: none; }
-.collection-details h3 { margin: 0 0 8px; font-size: 12px; color: var(--muted); font-weight: 600; }
-.collection-details ul { list-style: none; padding: 0; margin: 0; }
-.collection-details li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; }
+.history-item-body.collection-body { margin: 0 28px 12px 26px; padding: 0; border: 0; border-radius: 0; background: transparent; }
+.collection-details { list-style: none; padding: 0; margin: 0; }
+.collection-details li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: baseline; min-height: 56px; padding: 10px 0; }
 .collection-details li + li { border-top: 1px solid var(--line); }
-.collection-details strong { font-size: 13px; line-height: 1.5; }
-.collection-details p { margin: 4px 0 0; font-size: 12px; line-height: 1.6; color: var(--muted); overflow-wrap: anywhere; }
-.collection-count { font-size: 13px; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.collection-count { font-variant-numeric: tabular-nums; white-space: nowrap; }
 @media (max-width: 620px) {
   .surface-tiles { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 6px; margin-inline: -12px; }
   .surface-tile { padding: 4px 5px; gap: 2px; border-radius: 13px; }

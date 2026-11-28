@@ -2,6 +2,7 @@ import { KnowledgeMap } from "./KnowledgeMap.jsx";
 import { ArtifactTimeline } from "./ArtifactTimeline.jsx";
 import { useWorkflowHistory, workflowChart, workflowLayer } from "./workflowHistory.js";
 import { fetchPublicCommitTimes, systemLayers } from "./systemLayers.js";
+import { attentionItems } from "./attention.js";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -95,13 +96,14 @@ function SurfaceCard({ item, onOpen }) {
     : <button className={tileClass} title={item.detail} onClick={() => onOpen(item)}>{content}</button>;
 }
 
-function DetailDialog({ item, onClose }) {
+function DetailDialog({ item, onClose, onNavigate }) {
   const cron = item?.cron;
+  const attention = item?.attention;
   const formatRun = (value) => value ? new Date(value).toLocaleString("ko-KR", { dateStyle: "medium", timeStyle: "short" }) : "실행 기록 없음";
-  return <Dialog.Root open={Boolean(item)} onOpenChange={(open) => !open && onClose()}><Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className={clsx("dialog-content", cron && "cron-dialog")}>
-    <div className={cron ? "cron-dialog-scroll" : undefined}>
-    <Dialog.Title className="dialog-title"><StatusDot state={item?.state} />{item?.name}</Dialog.Title><Dialog.Description className="dialog-description">{cron ? "크론 설정 · 읽기 전용" : "현재 상태와 다음 확인 지점"}</Dialog.Description>
-    {cron ? <div className="cron-detail">
+  return <Dialog.Root open={Boolean(item)} onOpenChange={(open) => !open && onClose()}><Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className={clsx("dialog-content", (cron || attention) && "cron-dialog")}>
+    <div className={cron || attention ? "cron-dialog-scroll" : undefined}>
+    <Dialog.Title className="dialog-title"><span aria-hidden="true"><StatusDot state={item?.state} /></span>{item?.name}</Dialog.Title><Dialog.Description className="dialog-description">{attention ? "자동 작업 오류 · 서비스 응답 이상 · 수집 문제" : cron ? "크론 설정 · 읽기 전용" : "현재 상태와 다음 확인 지점"}</Dialog.Description>
+    {attention ? <div className="attention-list">{item.items.length ? item.items.map((row, index) => <DetailRow key={row.id} row={row} index={index} onOpen={() => onNavigate(row.view)} />) : <p>현재 수집된 상태에서 확인이 필요한 항목은 없습니다.</p>}</div> : cron ? <div className="cron-detail">
       <div className="dialog-state"><span>상태</span><strong>{cron.enabled ? (stateText[item.state] || "확인 대기") : "비활성"}</strong></div>
       <div className="cron-meta"><div><span>실행 주기</span><strong>{cron.schedule || "확인 대기"} · {cron.tz || "UTC"}</strong></div><div><span>담당 에이전트</span><strong>{cron.agent_id || "main"}</strong></div><div><span>다음 실행</span><strong>{formatRun(cron.next_run_at_ms)}</strong></div><div><span>최근 실행</span><strong>{formatRun(cron.last_run_at_ms)} · {cron.last_status || "unknown"}</strong></div></div>
       <p className="cron-description">{cron.description || "설명이 등록되지 않았습니다."}</p>
@@ -211,6 +213,7 @@ function HistoryItem({ row, metric, range, children, showChart = true }) {
 function App() {
   const [data, setData] = React.useState(null); const [live, setLive] = React.useState(null); const [history, setHistory] = React.useState(null); const [range, setRange] = React.useState("day"); const [view, setView] = React.useState(viewFromHash); const [selected, setSelected] = React.useState(null); const [loading, setLoading] = React.useState(true);
   const [workCounts, setWorkCounts] = React.useState(null);
+  const [hasLoaded, setHasLoaded] = React.useState(false);
   const [mapRefresh, refreshMap] = React.useReducer(value => value + 1, 0);
   const officeFrame = React.useRef(null);
   React.useEffect(() => {
@@ -226,11 +229,15 @@ function App() {
   const load = React.useCallback(async () => {
     setLoading(true);
     const readFeed = async name => {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 10000);
       try {
-        const response = await fetch("./" + name, { cache: "no-store" });
+        const response = await fetch("./" + name, { cache: "no-store", signal: controller.signal });
         return response.ok ? await response.json() : null;
       } catch {
         return null;
+      } finally {
+        window.clearTimeout(timeout);
       }
     };
     const [status, agents, metrics, counts] = await Promise.all(
@@ -240,6 +247,7 @@ function App() {
     setLive(agents);
     setHistory(metrics);
     setWorkCounts(counts);
+    setHasLoaded(true);
     setLoading(false);
   }, []);
   React.useEffect(() => { load(); const interval = window.setInterval(load, 60 * 1000); return () => window.clearInterval(interval); }, [load]);
@@ -269,7 +277,13 @@ function App() {
   }, [view]);
   const workflowFeed = useWorkflowHistory(view === "system");
   const layers = systemLayers(live, publicCommits, workflowLayer(workflowFeed), workCounts);
-  const checks = data?.checks || []; const overall = data?.overall || { state: "warn", score: "--", label: "상태를 불러오는 중입니다." }; const liveAge = ago(live?.generatedAt || data?.generatedAt); const currentMessage = loading && !live ? "운영 신호를 불러오는 중입니다." : priorityMessage({ data, live, checks, layers });
+  const checks = data?.checks || [];
+  const attention = attentionItems({ data, live, workCounts });
+  const attentionState = !hasLoaded ? "none" : attention.length ? "warn" : "ok";
+  const liveAge = ago(live?.generatedAt || data?.generatedAt);
+  const currentMessage = !hasLoaded ? "운영 신호를 불러오는 중입니다." : attention.length
+    ? `${attention[0].name} · ${attention[0].detail}`
+    : priorityMessage({ data, live, checks, layers });
   const crons = live?.crons || [];
   const cronAudit = live?.audit?.sections?.find((section) => section.name === "crons");
   const cronCollectionFailed = cronAudit?.state === "error";
@@ -278,14 +292,14 @@ function App() {
   const loopNote = crons.length ? `${outputs.filter((x) => x.state === "ok").length || 0}개 결과 최신` : cronCollectionFailed ? "크론 목록 수집 오류" : live ? "등록된 크론 없음" : "라이브 피드 확인 대기";
   const loopEmptyMessage = cronCollectionFailed ? "크론 목록을 가져오지 못했습니다. 수집기 상태를 확인하고 있습니다." : live ? "등록된 크론이 없습니다." : "크론 정보를 불러오는 중입니다.";
   const detailCountLabel = view === "output" ? (crons.length ? `${crons.length}개 크론` : cronCollectionFailed ? "목록 확인 필요" : live ? "등록된 크론 없음" : "수집 대기") : null;
-  const cards = [{ id: "system", label: "System", value: overall.state === "ok" ? "조용히 유지" : "확인 필요", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: "네 층의 에이전트", note: "실행 상태 · 판단 대기", icon: Building2 }, { id: "output", label: "Loop", value: loopLabel, note: loopNote, icon: RefreshCw }];
+  const cards = [{ id: "system", label: "System", value: !hasLoaded ? "확인 중" : attention.length ? "확인 필요" : "조용히 유지", note: `${checks.length}개 접점 · ${liveAge}`, icon: Server }, { id: "agents", label: "Agents", value: "네 층의 에이전트", note: "실행 상태 · 판단 대기", icon: Building2 }, { id: "output", label: "Loop", value: loopLabel, note: loopNote, icon: RefreshCw }];
   const detailRows = view === "surfaces" ? checks : view === "output" ? crons.map((x) => ({ name: x.name || x.id, state: x.status === "operational" ? "ok" : "warn", detail: x.schedule || "실행 주기 확인 대기", cron: x })) : layers;
   const hasHistoryView = view === "system";
   const chartMetric = (row) => history?.metrics?.[row.metricId] || null;
   const navigate = (next) => { window.location.hash = next === "home" ? "" : next; setView(next); setSelected(null); window.scrollTo(0, 0); document.querySelector(".screen-area")?.scrollTo(0, 0); };
   return <Tooltip.Provider delayDuration={250}><div className={clsx("app-shell", view === "home" && "home-mode", view === "agents" && "office-mode")}>
     <header className="topbar"><a className="brand" href="/">space<span>/</span>status</a><div className="topbar-actions"><span className="freshness"><Clock3 size={14} /> {loading ? "불러오는 중" : `갱신 ${liveAge}`}</span><Tooltip.Root><Tooltip.Trigger asChild><button className="icon-button" onClick={() => { load(); if (view === "knowledge") refreshMap(); if (view === "agents") officeFrame.current?.contentWindow?.location.reload(); }} aria-label="상태 새로고침"><RefreshCw size={17} /></button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="tooltip">상태 새로고침</Tooltip.Content></Tooltip.Portal></Tooltip.Root></div></header>
-    <main className="screen-area">{view === "knowledge" ? <KnowledgeMap refresh={mapRefresh} /> : view === "agents" ? <iframe ref={officeFrame} className="office-frame" src="/office/?embedded=1" title="Agents · 네 층의 사람과 오늘의 일" /> : view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><div className="hero-score"><span>overall</span><strong>{overall.score}</strong><small><StatusDot state={overall.state} /> {stateText[overall.state] || "확인 대기"}</small></div></section>
+    <main className="screen-area">{view === "knowledge" ? <KnowledgeMap refresh={mapRefresh} /> : view === "agents" ? <iframe ref={officeFrame} className="office-frame" src="/office/?embedded=1" title="Agents · 네 층의 사람과 오늘의 일" /> : view === "home" ? <><section className="hero home-hero"><div className="hero-copy"><span className="eyebrow">지금 봐야 할 것</span><h1>중요한 상태만,<br /><em>다음 행동까지.</em></h1><p aria-live="polite">{currentMessage}</p></div><button className="hero-score" disabled={!hasLoaded} aria-label={hasLoaded ? `확인 필요 ${attention.length}건, 항목 보기` : "운영 상태 확인 중"} aria-haspopup="dialog" onClick={() => setSelected({ attention: true })}><span>확인 필요</span><strong>{hasLoaded ? attention.length : "—"}</strong><small><StatusDot state={attentionState} />{hasLoaded ? "항목 보기" : "확인 중"}<ChevronRight size={13} aria-hidden="true" /></small></button></section>
       <section className="metric-strip">{cards.map(({ id, label, value, note, icon: Icon }) => <button className="metric-card" key={id} onClick={() => navigate(id)}><Icon size={17} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}</section>
     </> : <section className="detail-section detail-screen"><div className="detail-heading"><div><span className="eyebrow">{tabs.find((tab) => tab.id === view)?.label || "상세"}</span><h2>{view === "system" ? "운영 흐름" : `${tabs.find((tab) => tab.id === view)?.label || "상세"} 상태`}</h2></div><div className="detail-heading-actions">{view === "output" ? <span>{detailCountLabel}</span> : <span>{detailRows.length}개 항목</span>}</div></div>{hasHistoryView && <div className="history-toolbar"><span>{history?.generatedAt ? `L1 상태 갱신 ${ago(history.generatedAt)} · 10분 간격` : "시계열 수집 준비 중 · 10분 간격"}</span><div className="history-range" role="group" aria-label="L1·L3 그래프 기간">{timeRanges.map((item) => <button key={item.id} className={range === item.id ? "active" : ""} aria-pressed={range === item.id} onClick={() => setRange(item.id)}><strong>{item.label}</strong></button>)}</div></div>}
       <div className={clsx("detail-list", view === "surfaces" && "surface-tiles", hasHistoryView && "history-list")}>{view === "output" && !detailRows.length ? <p className="empty-state" role="status">{loopEmptyMessage}</p> : view === "surfaces" ? detailRows.map(item => <SurfaceCard key={item.url || item.name} item={item} onOpen={setSelected} />) : hasHistoryView ? detailRows.map(row => {
@@ -304,7 +318,7 @@ function App() {
             </li>)}
           </ul>}
         </HistoryItem>;
-      }) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} aria-current={view === "home" ? "page" : undefined} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} aria-current={view === id ? "page" : undefined} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected} onClose={() => setSelected(null)} /></div></Tooltip.Provider>;
+      }) : detailRows.map((row, i) => <DetailRow row={row} index={i} onOpen={setSelected} key={`${row.name}-${i}`} />)}</div></section>} </main><footer><span>Space status</span></footer><nav className="bottom-nav" aria-label="주요 메뉴"><button className={clsx("bottom-nav-item", view === "home" && "active")} aria-current={view === "home" ? "page" : undefined} onClick={() => navigate("home")}><Sparkles size={16} /><span>Home</span></button>{tabs.map(({ id, label, icon: Icon }) => <button className={clsx("bottom-nav-item", view === id && "active")} aria-current={view === id ? "page" : undefined} key={id} onClick={() => navigate(id)}><Icon size={16} /><span>{label}</span></button>)}</nav><DetailDialog item={selected?.attention ? { ...selected, name: `확인 필요 ${attention.length}건`, state: attentionState, items: attention } : selected} onClose={() => setSelected(null)} onNavigate={navigate} /></div></Tooltip.Provider>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

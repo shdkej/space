@@ -142,7 +142,6 @@ def build_status(registry, outputs, resolve_aws=False, check=False, timeout=5):
         "overall": {
             "state": "ok" if all_ok else "warn",
             "label": f"{label} are the active surfaces",
-            "score": 98 if all_ok else 82,
         },
         "checks": checks,
         "deployments": deployments,

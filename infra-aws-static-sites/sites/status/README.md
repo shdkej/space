@@ -8,6 +8,10 @@
 
 Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 사이트입니다. 운영 화면과 시각 실험 화면은 서로 다른 경로로 분리합니다.
 
+## KL 반영 맵
+
+하단 **KL 맵** 메뉴와 `/#knowledge`에서 문서별 반영 상태, 승격 대기 목록, 원본 및 Wiki 링크를 확인합니다. 화면을 열면 Infinity의 공개 `data/promotion-index.json`을 직접 읽습니다.
+
 ## 경로
 
 - 운영 화면: `dist/index.html`

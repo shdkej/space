@@ -40,7 +40,7 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 
 - Notion 데이터 소스 `68b8485f-29f4-4bed-a0e1-459cf18c69df`의 활성 페이지를 끝까지 순회해 전체 수와 `플랫폼` select가 비어 있는 수를 동시에 계산합니다. 같은 결과를 기존 Notion 요약과 L2 집계에 사용합니다.
 - Linear는 연결된 워크스페이스의 접근 가능한 미보관 이슈 중 `state.type == backlog`를 팀 제한 없이 끝까지 순회합니다.
-- `marketing-inbox-7d` 원본 조회·집계 설정은 제거하고 `kl-summarized`는 유지합니다.
+- `marketing-inbox-7d` 원본 조회·집계 설정은 제거했습니다. 이후 같은 날 사용자 요청으로 `kl-summarized`도 아래 source 추가 집계로 교체했습니다.
 - `work-counts.json`은 `notion: {total, withoutPlatform, status}`, `linear: {backlog, status}`, UTC `observedAt`만 담습니다. 서비스별 조회 실패는 해당 서비스만 `{status: unavailable}`로 게시하고, 정상 0건은 `status: ok`로 구분합니다. 다른 공개 피드 실패와 독립적으로 게시하며 캐시는 60초입니다.
 
 ARM 인증은 `/home/ubuntu/.config/system-dashboard/notion.env`의 `NOTION_SOCIAL_MEDIA_API_KEY`, 같은 디렉터리 `linear.env`의 `LINEAR_API_KEY`를 읽습니다. 키는 기존 ARM 인증에서 연결하며 파일 권한은 600입니다. 키·페이지/이슈 제목·ID·API 응답 원문은 피드·Git·로그에 넣지 않습니다. manifest는 파일 경로만 소유하므로 systemd의 대화형 셸 환경에 의존하지 않습니다.
@@ -55,9 +55,17 @@ ARM 인증은 `/home/ubuntu/.config/system-dashboard/notion.env`의 `NOTION_SOCI
 
 복구 자료는 ARM `/home/ubuntu/.local/state/openclaw/backups/status-l2-20261128/`에 있습니다. 최신 L2 패치만 역적용하거나 해당 변경 전 파일을 복원한 뒤 공개 전용 실행으로 재게시합니다. 타이머·기존 다른 작업 변경을 전체 reset하지 않습니다. API 권한 밖의 페이지·이슈는 집계되지 않으며, 조회 도중 원본 편집에 대한 트랜잭션 스냅샷은 보장되지 않습니다.
 
-L2 펼침 상세는 **무엇을 수집하는지**를 보여줍니다. Notion은 소셜 미디어 콘텐츠의 **플랫폼 미지정/전체**를 한 행으로 합쳐 `65 / 219건`처럼 표시하고, Linear 미보관 backlog와 Knowledge Lab 마케팅 자료의 요약 완료를 포함한 세 행으로 구성합니다. 값은 현재 피드에서 읽으며 0건과 미수집을 구분합니다. 2026-11-28 사용자 피드백 “노션은 미지정/전체 이렇게 합쳐야하고 디자인 좀 기존에 맞게 해라”에 따라, 중첩 테두리 카드·별도 제목을 제거하고 기존 목록의 `history-item-copy`·`row-state` 글자 크기와 정렬·구분선을 재사용합니다. 콘텐츠 제목·원문 목록은 게시하지 않습니다.
+L2 펼침 상세는 **무엇을 수집하는지**를 보여줍니다. Notion은 소셜 미디어 콘텐츠의 **플랫폼 미지정/전체**를 한 행으로 합쳐 `65 / 219건`처럼 표시하고, Linear 미보관 backlog와 Knowledge Lab source 문서의 최근 24시간/7일 추가 건수를 포함한 세 행으로 구성합니다. 값은 현재 피드에서 읽으며 0건과 미수집을 구분합니다. 2026-11-28 사용자 피드백 “노션은 미지정/전체 이렇게 합쳐야하고 디자인 좀 기존에 맞게 해라”에 따라, 중첩 테두리 카드·별도 제목을 제거하고 기존 목록의 `history-item-copy`·`row-state` 글자 크기와 정렬·구분선을 재사용합니다. 콘텐츠 제목·원문 목록은 게시하지 않습니다.
 
 이 상세 화면 변경은 `dashboard/src/{systemLayers.js,main.jsx,styles.css}`가 소유합니다. `dashboard/`에서 `npm test` → `npm run build` → PC·모바일 L2 펼침/접기·키보드·실패 상태 확인 후, 변경한 소스와 `dist/`를 Space main에 게시합니다. 기존 AWS 정적 배포는 운영 JSON을 보존합니다. 수집기·10분 타이머·공개 피드 스키마는 바뀌지 않습니다. 화면 복구는 해당 UI 커밋을 revert하고 같은 배포를 실행합니다.
+
+### Knowledge Lab — source 문서 추가
+
+2026-11-28 사용자 지시 “kl에 source에 추가된 문서 수”, “일별,주별로”, “간단한걸로”를 적용했습니다. L2의 기존 Knowledge Lab 행은 `source 추가 · 최근 24시간 / 7일`과 두 집계 숫자만 표시합니다. KL 맵의 위키 반영 상태와 중복되는 집계나 차트를 추가하지 않습니다.
+
+수집기는 ARM `/home/ubuntu/workspace/knowledge-lab`의 Git HEAD 첫 부모 이력에서 `source/**/*.md`, `source/**/*.mdx` 일반 파일의 추가를 집계합니다. 기간은 관측 시점 직전 24시간·7일이며 커밋 committer UTC 시각을 사용합니다. 기간 내 경로별 한 번만 세고 수정·Git이 인식한 이름 변경·심볼릭 링크·미커밋 파일은 제외합니다. 추가 뒤 삭제된 문서는 기간 내 추가 건수에 남습니다. 따라서 현재 파일 총수나 작성일·수정일 기준 집계와 다릅니다.
+
+`agents-live.json.system.knowledgeSource`는 `{added24h, added7d, status}`만 공개하고, 정상 0건과 `status: unavailable`을 구분합니다. `kl-summarized`의 마케팅 원본 조회와 30/60건 경고 기준을 제거했습니다. 기존 Notion·Linear 피드와 10분 타이머를 재사용합니다. 구현은 collector 코드·manifest·테스트, `dashboard/src/systemLayers.js`이며 수집기 변경은 기존 복구 패치열에 추가합니다. 테스트 → 복구 패치 재현 → 운영 적용·첫 게시 → UI 빌드·기존 AWS 배포 → 공개 피드·모바일/데스크톱 검증 순서입니다. 복구는 이번 패치만 역적용하고 UI 커밋을 revert합니다.
 
 ## UI 재질 테스트 범위
 

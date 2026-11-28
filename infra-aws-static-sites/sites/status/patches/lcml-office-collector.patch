@@ -3024,3 +3024,248 @@ index badd55b..b44fe2a 100644
 -- 
 2.43.0
 
+From a5cb0b839b4d52b3fa3b0c9b09a7965511493918 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Sat, 28 Nov 2026 02:50:31 +0000
+Subject: [PATCH] Count Knowledge Lab source document additions over 24 hours
+ and 7 days
+
+---
+ README.md                                | 10 ++-
+ collector/collector.py                   | 42 ++++++++++++
+ collector/manifest.yaml                  | 11 ++--
+ collector/tests/test_knowledge_source.py | 84 ++++++++++++++++++++++++
+ collector/tests/test_work_counts.py      | 12 +---
+ 5 files changed, 142 insertions(+), 17 deletions(-)
+ create mode 100644 collector/tests/test_knowledge_source.py
+
+diff --git a/README.md b/README.md
+index 7246087..39cedfa 100644
+--- a/README.md
++++ b/README.md
+@@ -59,13 +59,21 @@ GitHub 저장소 커밋 시각은 `GITHUB_TOKEN`/`GH_TOKEN`이 있으면 GitHub
+ 1. `PYTHONPATH=collector python3 -m unittest discover -s collector/tests`와 `git diff --check`.
+ 2. `systemctl --user show system-dashboard-collector.service -p ActiveState -p ExecStart -p WorkingDirectory`, 타이머의 다음 시각 확인. 실행 중이면 종료 후 적용합니다.
+ 3. 운영 변경 전 파일을 비공개 호스트 백업에 보관하고, Space `patches/lcml-office-collector.patch`의 최신 L2 패치를 `git apply --check` 후 적용합니다. 원격 독립 저장소가 조회되지 않으므로 기존 Space 복구 패치열을 소스 배포 경로로 유지합니다.
+-4. `python3 collector/collector.py --publish-public-only`로 첫 게시. `agents-live.json`에서 marketing-inbox-7d 부재·kl-summarized 보존, `work-counts.json`의 집계·시각·스키마를 검사합니다.
++4. `python3 collector/collector.py --publish-public-only`로 첫 게시. `agents-live.json`에서 marketing-inbox-7d·kl-summarized 부재와 `system.knowledgeSource` 집계, `work-counts.json`의 집계·시각·스키마를 검사합니다.
+ 5. 기존 타이머의 다음 자동 실행 성공과 `observedAt` 갱신을 확인하고 운영 Status L2 표시 숫자를 같은 공개 피드와 대조합니다.
+ 
+ 복구는 최신 L2 패치만 역적용하거나 변경 전 파일을 복원하고 공개 전용 실행으로 다시 게시합니다. 이전 공개 객체는 호스트 백업에 보관합니다. API 접근 범위 밖의 페이지/이슈는 집계할 수 없으며 페이지네이션 중 원본 편집에 대한 트랜잭션 스냅샷은 API가 보장하지 않습니다. 중복 ID는 한 번만 셉니다.
+ 
+ API 계약: [Notion data source query](https://developers.notion.com/reference/query-a-data-source), [Linear pagination](https://linear.app/developers/pagination), [Linear filtering](https://linear.app/developers/filtering).
+ 
++## Knowledge Lab source 추가 집계
++
++2026-11-28 사용자 요청으로 `kl-summarized`를 제거하고 `source/` 아래 문서의 최근 24시간·7일 추가 건수로 교체했습니다. 기존 10분 수집·게시 경로가 `agents-live.json.system.knowledgeSource`에 `{added24h, added7d, status}`만 게시합니다. Notion·Linear의 `work-counts.json` 계약은 유지합니다.
++
++ARM Knowledge Lab checkout의 Git HEAD 첫 부모 이력에서 source 아래 일반 `.md`·`.mdx` 파일의 추가를 셉니다. 시각은 커밋이 해당 이력에 들어온 committer UTC 시각이며, 기간 내 같은 경로는 한 번만 셉니다. 기존 문서 수정, Git이 인식한 이름 변경, 심볼릭 링크, 코드 파일과 아직 커밋하지 않은 파일은 제외합니다. 기간 중 추가 후 삭제된 문서는 추가 실적에 포함됩니다. 파일 수정 시각으로 과거 추가일을 추정하지 않습니다.
++
++정상 0건은 `status: ok`이고 저장소 조회 실패·불완전한 shallow 이력은 `status: unavailable`입니다. UI는 최근 24시간 / 7일 두 숫자를 한 행으로 표시하며, 문서가 많이 추가됐다는 이유로 경고하지 않습니다. 문서 경로·본문·커밋 메시지는 게시하지 않습니다. 테스트는 `collector/tests/test_knowledge_source.py`에 실제 임시 Git 이력으로 기간 경계·추가/수정/이름 변경·0건/실패 구분을 검증합니다.
++
+ ## LCML 사무실 스냅샷
+ 
+ `https://status.aws.shdkej.com/office/`는 실행 세션·현재 태스크·사용자 판단 대기·저장소 상태·고객 지표를 네 층으로 보여줍니다. 인증 없는 공개 화면이며, `collector/office.py`가 기존 **10분 systemd 주기**에 `office-live.json`을 추가합니다. 별도 서버나 크론은 만들지 않습니다. 프런트엔드 소스와 배포는 상위 Status 저장소의 `dashboard/office/`와 README가 소유합니다.
+diff --git a/collector/collector.py b/collector/collector.py
+index f4b2b80..c4a85f4 100644
+--- a/collector/collector.py
++++ b/collector/collector.py
+@@ -491,6 +491,44 @@ def collect_freshness(cfg, now_ts):
+ 
+ # --- backlogs ---
+ 
++def collect_knowledge_source(cfg):
++    """Count committed Markdown additions under source/ over 24 hours and 7 days."""
++    repo = (cfg.get("knowledge_source") or {}).get("repo")
++    if not repo:
++        return {"status": "unavailable"}
++    code, shallow = run_cmd(["git", "-C", repo, "rev-parse", "--is-shallow-repository"])
++    if code or shallow.strip() != "false":
++        raise RuntimeError("Knowledge Lab source history unavailable")
++    now = now_utc().timestamp()
++    code, output = run_cmd([
++        "git", "-C", repo, "log", "--first-parent", "--diff-merges=first-parent",
++        "--find-renames", "--diff-filter=A", f"--since-as-filter=@{int(now - 7 * 86400)}",
++        # Detect moves across source/ before filtering paths below.
++        "--format=%x00%ct", "--raw", "-z",
++    ])
++    if code:
++        raise RuntimeError("Knowledge Lab source history unavailable")
++    daily, weekly = set(), set()
++    for record in output.split("\0\0"):
++        if not record:
++            continue
++        parts = record.lstrip("\0").split("\0")
++        stamp = int(parts[0])
++        if not now - 7 * 86400 <= stamp <= now:
++            continue
++        for index in range(1, len(parts) - 1, 2):
++            metadata, path = parts[index].strip().split(), parts[index + 1]
++            # Regular Markdown files only; aliases, code and non-source paths are excluded.
++            if (len(metadata) != 5 or metadata[1] not in ("100644", "100755")
++                    or metadata[-1] != "A" or not path.startswith("source/")
++                    or Path(path).suffix.lower() not in (".md", ".mdx")):
++                continue
++            weekly.add(path)
++            if stamp >= now - 86400:
++                daily.add(path)
++    return {"added24h": len(daily), "added7d": len(weekly), "status": "ok"}
++
++
+ def backlog_status(count, warn_at):
+     if count >= warn_at * 2:
+         return "down"
+@@ -726,6 +764,7 @@ def build_snapshot(cfg, collect_crons_fn=None):
+         ("workflow", lambda: collect_workflow_roles(cfg)),
+         ("freshness", lambda: collect_freshness(cfg, now_ts)),
+         ("backlogs", lambda: collect_backlogs(cfg)),
++        ("knowledge_source", lambda: collect_knowledge_source(cfg)),
+         ("layer_checks", lambda: collect_layer_checks(cfg["pdca"]["layer_check"])),
+         ("pdca", lambda: collect_pdca(cfg)),
+         ("effectiveness", lambda: collect_effectiveness(cfg["effectiveness"])),
+@@ -1040,6 +1079,9 @@ def public_system(snapshot):
+         },
+         "backlogs": [{"name": b.get("name"), "count": b.get("count"), "warnAt": b.get("warn_at"),
+                       "state": _to_public_state(b.get("status"))} for b in backlogs],
++        "knowledgeSource": {key: value for key, value in
++                            (snapshot.get("knowledge_source") or {"status": "unavailable"}).items()
++                            if key in ("added24h", "added7d", "status")},
+         "intents": {"inbox": intents.get("inbox"), "active": intents.get("active"),
+                     "waiting": intents.get("waiting")},
+     }
+diff --git a/collector/manifest.yaml b/collector/manifest.yaml
+index ed1669a..4f8e819 100644
+--- a/collector/manifest.yaml
++++ b/collector/manifest.yaml
+@@ -26,13 +26,10 @@ freshness:
+     pattern: "**/*.html"
+     cadence_hours: 336     # 비정기 — 2주 넘게 조용하면 신호로 본다
+ 
+-backlogs:
+-  - name: kl-summarized
+-    kind: grep_count
+-    path: /home/ubuntu/workspace/knowledge-lab/source/external-links/marketing
+-    glob: "*.md"
+-    pattern: "^status: summarized"
+-    warn_at: 30            # 현재 실측 95건 → down으로 표시되는 게 맞다 (소비 백로그 신호)
++backlogs: []
++
++knowledge_source:
++  repo: /home/ubuntu/workspace/knowledge-lab
+ 
+ intents:
+   path: /home/ubuntu/workspace/infinity/INTENTS.yaml
+diff --git a/collector/tests/test_knowledge_source.py b/collector/tests/test_knowledge_source.py
+new file mode 100644
+index 0000000..3f08262
+--- /dev/null
++++ b/collector/tests/test_knowledge_source.py
+@@ -0,0 +1,84 @@
++import datetime as dt
++import os
++from pathlib import Path
++import subprocess
++import tempfile
++import unittest
++from unittest import mock
++
++import collector
++
++
++class KnowledgeSourceTests(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.repo = Path(self.tmp.name)
++        self.now = dt.datetime(2026, 11, 28, 3, tzinfo=dt.timezone.utc)
++        self.cfg = {"knowledge_source": {"repo": str(self.repo)}}
++        self.git("init", "-q")
++        self.git("config", "user.name", "Test")
++        self.git("config", "user.email", "test@example.invalid")
++        self.write("source/old.md")
++        self.write("outside-old.md", "existing document outside source\n")
++        self.commit(10)
++
++    def git(self, *args, **kwargs):
++        return subprocess.run(["git", "-C", str(self.repo), *args], check=True,
++                              capture_output=True, text=True, **kwargs).stdout
++
++    def write(self, name, text=None):
++        path = self.repo / name
++        path.parent.mkdir(parents=True, exist_ok=True)
++        path.write_text(text if text is not None else f"document {name}\n")
++
++    def commit(self, days):
++        stamp = (self.now - dt.timedelta(days=days)).isoformat()
++        self.git("add", "-A")
++        self.git("commit", "-qm", "fixture", env={**os.environ,
++                 "GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp})
++
++    def collect(self):
++        with mock.patch.object(collector, "now_utc", return_value=self.now):
++            return collector.collect_knowledge_source(self.cfg)
++
++    def test_counts_added_documents_not_edits_renames_code_or_symlinks(self):
++        self.write("source/nested/weekly.md")
++        self.commit(3)
++        self.git("mv", "source/old.md", "source/renamed.md")
++        self.git("mv", "outside-old.md", "source/moved-in.md")
++        self.write("source/nested/weekly.md", "edited\n")
++        self.write("source/한글\n문서.mdx")
++        self.write("source/script.py")
++        self.write("outside.md")
++        (self.repo / "source/alias.md").symlink_to("renamed.md")
++        self.commit(0.5)
++        self.write("source/uncommitted.md")
++        self.assertEqual(self.collect(), {"added24h": 1, "added7d": 2, "status": "ok"})
++
++    def test_exact_boundaries_and_future_commits(self):
++        self.write("source/week.md")
++        self.commit(7)
++        self.write("source/day.md")
++        self.commit(1)
++        self.write("source/future.md")
++        self.commit(-1)
++        self.assertEqual(self.collect(), {"added24h": 1, "added7d": 2, "status": "ok"})
++
++    def test_zero_is_distinct_from_unavailable(self):
++        self.assertEqual(self.collect(), {"added24h": 0, "added7d": 0, "status": "ok"})
++        self.assertEqual(collector.collect_knowledge_source({}), {"status": "unavailable"})
++        self.cfg["knowledge_source"]["repo"] = str(self.repo / "missing")
++        with self.assertRaisesRegex(RuntimeError, "Knowledge Lab"):
++            self.collect()
++
++    def test_shallow_history_is_not_reported_as_complete(self):
++        with mock.patch.object(collector, "run_cmd", return_value=(0, "true\n")):
++            with self.assertRaisesRegex(RuntimeError, "Knowledge Lab"):
++                self.collect()
++
++    def test_public_payload_has_only_aggregates(self):
++        counts = {"added24h": 1, "added7d": 2, "status": "ok", "paths": ["private.md"]}
++        result = collector.public_system({"knowledge_source": counts})
++        self.assertEqual(result["knowledgeSource"], {"added24h": 1, "added7d": 2, "status": "ok"})
++        self.assertEqual(collector.public_system({})["knowledgeSource"], {"status": "unavailable"})
+diff --git a/collector/tests/test_work_counts.py b/collector/tests/test_work_counts.py
+index b44fe2a..c6144c8 100644
+--- a/collector/tests/test_work_counts.py
++++ b/collector/tests/test_work_counts.py
+@@ -157,13 +157,7 @@ class TestWorkCounts(unittest.TestCase):
+                 self.assertEqual(collector.collect_linear(self.cfg), {"backlog": 0, "status": "ok"})
+             self.assertEqual(self.requests[0].get_header("Authorization"), "file-secret")
+ 
+-    def test_config_removes_marketing_source_but_still_collects_kl(self):
++    def test_config_replaces_marketing_summary_with_kl_source_additions(self):
+         cfg = yaml.safe_load((collector.BASE / "manifest.yaml").read_text())
+-        with tempfile.TemporaryDirectory() as directory:
+-            (Path(directory) / "summary.md").write_text("---\nstatus: summarized\n---\n")
+-            (Path(directory) / "pending.md").write_text("---\nstatus: queued\n---\n")
+-            for entry in cfg["backlogs"]:
+-                entry["path"] = directory
+-            result = collector.collect_backlogs(cfg)
+-        self.assertEqual([row["name"] for row in result], ["kl-summarized"])
+-        self.assertEqual(result[0]["count"], 1)
++        self.assertEqual(cfg["backlogs"], [])
++        self.assertEqual(cfg["knowledge_source"]["repo"], "/home/ubuntu/workspace/knowledge-lab")
+-- 
+2.43.0
+

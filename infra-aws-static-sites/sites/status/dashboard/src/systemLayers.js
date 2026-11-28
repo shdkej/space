@@ -74,7 +74,9 @@ export function systemLayers(live, publicCommits, workflow, workCounts) {
   const sampledAt = Date.parse(observedAt);
   const fresh = Number.isFinite(sampledAt) && Date.now() - sampledAt < 36 * 60 * 60 * 1000;
   const backlogStates = backlogs?.map(row => row.state) ?? ["none"];
-  const summarized = backlogs?.find(row => row.name === "kl-summarized");
+  const knowledge = collected("knowledge_source") && system?.knowledgeSource;
+  const knowledgeReady = knowledge?.status === "ok" && hasCount(knowledge.added24h) &&
+    hasCount(knowledge.added7d) && knowledge.added24h <= knowledge.added7d;
 
   return [
     {
@@ -82,12 +84,12 @@ export function systemLayers(live, publicCommits, workflow, workCounts) {
       detail: life?.detail || life?.reason || "데일리 리뷰 수집 대기", metricId: "system.layer.l1",
     },
     {
-      name: "L2 업/시스템", state: worst([...backlogStates, notionReady && linearReady && fresh ? "ok" : "none"]),
+      name: "L2 업/시스템", state: worst([...backlogStates, knowledgeReady ? "ok" : "none", notionReady && linearReady && fresh ? "ok" : "none"]),
       detail: [notionLabel, linearLabel].join(" · "),
       collections: [
         { name: "Notion", description: "소셜 미디어 콘텐츠 · 플랫폼 미지정/전체", value: notionReady ? `${notion.withoutPlatform} / ${count(notion.total)}` : "미수집" },
         { name: "Linear", description: "미보관 이슈 · backlog", value: linearReady ? count(linear.backlog) : "미수집" },
-        { name: "Knowledge Lab", description: "마케팅 자료 · 요약 완료", value: count(summarized?.count) },
+        { name: "Knowledge Lab", description: "source 추가 · 최근 24시간 / 7일", value: knowledgeReady ? `${knowledge.added24h} / ${count(knowledge.added7d)}` : "미수집" },
       ],
     },
     workflow,

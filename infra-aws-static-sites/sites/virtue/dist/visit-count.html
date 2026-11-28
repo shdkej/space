@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><title>Virtue</title></head>
+<body><script>
+(() => {
+  if (window.parent === window || navigator.doNotTrack === "1" || navigator.globalPrivacyControl) return;
+  if (localStorage.getItem("virtue.analyticsConsent.v3") !== "yes") return;
+  const route = decodeURIComponent(location.hash.slice(1));
+  if (!["/", "/add", "/deeds", "/dex", "/me", "/privacy"].includes(route)) return;
+  // The tag sees only the allowlisted screen, never the original URL or referrer.
+  history.replaceState(null, "", route);
+  const id = "G-LV3WPF3067";
+  window.dataLayer = [];
+  function gtag() { window.dataLayer.push(arguments); }
+  gtag("consent", "default", {analytics_storage:"granted", ad_storage:"denied", ad_user_data:"denied", ad_personalization:"denied"});
+  gtag("js", new Date());
+  gtag("config", id, {cookie_domain:"none", cookie_expires:2592000, allow_google_signals:false, allow_ad_personalization_signals:false, page_title:"Virtue", page_location:location.origin + route, page_referrer:""});
+  const tag = document.createElement("script");
+  tag.src = "https://www.googletagmanager.com/gtag/js?id=" + id;
+  tag.async = true;
+  document.head.append(tag);
+})();
+</script></body></html>

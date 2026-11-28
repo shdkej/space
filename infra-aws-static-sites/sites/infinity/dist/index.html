@@ -967,6 +967,7 @@
     <a href="https://github.com/shdkej/infinity/blob/main/GATES.md" target="_blank" rel="noopener">GATES.md</a>
     — GitHub Contents API를 우선 읽고 raw URL은 장애 시에만 사용합니다
   </footer>
+  <script src="./vendor/js-yaml-4.1.1.min.js"></script>
   <script>
     const SOURCES = {
       intents: "https://api.github.com/repos/shdkej/infinity/contents/INTENTS.yaml?ref=main",
@@ -1040,87 +1041,8 @@
       }
     }
 
-    // INTENTS.yaml is the canonical state ledger. This small parser covers the
-    // block YAML emitted by the Infinity migration/runtime writers and avoids
-    // depending on a third-party CDN in the dashboard.
-    function yamlScalar(value) {
-      const text = String(value || "").trim();
-      if (!text) return null;
-      if (text === "null" || text === "~") return null;
-      if (text === "true") return true;
-      if (text === "false") return false;
-      if ((text[0] === "'" && text[text.length - 1] === "'") || (text[0] === '"' && text[text.length - 1] === '"')) {
-        if (text[0] === "'") return text.slice(1, -1).replace(/''/g, "'");
-        try { return JSON.parse(text); } catch (_) { return text.slice(1, -1); }
-      }
-      if (/^-?\d+(?:\.\d+)?$/.test(text)) return Number(text);
-      if (text[0] === "[" || text[0] === "{") {
-        try { return JSON.parse(text.replace(/'/g, '"')); } catch (_) { return text; }
-      }
-      return text;
-    }
-
     function parseYamlDocument(source) {
-      const jsonCandidate = String(source || "").trim();
-      if (!jsonCandidate) return {};
-      try { return JSON.parse(jsonCandidate); } catch (_) {}
-      const lines = String(source).replace(/\r/g, "").split("\n").map((raw, index) => {
-        const match = raw.match(/^( *)((?:- )?)(.*)$/);
-        return { raw, indent: match ? match[1].length : 0, marker: match ? match[2] : "", text: match ? match[3] : "", index };
-      });
-      const useful = lines.filter(line => line.text.trim() && !line.text.trim().startsWith("#"));
-      function parseBlock(pos, indent) {
-        const first = useful[pos];
-        if (!first || first.indent < indent) return [{}, pos];
-        const isList = first.indent === indent && first.marker === "- ";
-        const out = isList ? [] : {};
-        while (pos < useful.length) {
-          const line = useful[pos];
-          if (line.indent < indent) break;
-          if (line.indent > indent) break;
-          if (isList && line.marker !== "- ") break;
-          if (!isList && line.marker === "- ") break;
-          if (isList) {
-            const content = line.text.trim();
-            if (!content) { const nested = parseBlock(pos + 1, indent + 2); out.push(nested[0]); pos = nested[1]; continue; }
-            const pair = content.match(/^([^:]+):(?:\s*(.*))?$/);
-            if (!pair) { out.push(yamlScalar(content)); pos++; continue; }
-            const obj = {};
-            const key = pair[1].trim();
-            const val = pair[2] || "";
-            if (val === ">-" || val === ">" || val === "|-" || val === "|") {
-              const block = []; let next = pos + 1;
-              while (next < useful.length && useful[next].indent > indent) { block.push(useful[next].text.trim()); next++; }
-              obj[key] = val[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
-            } else if (val) { obj[key] = yamlScalar(val); pos++; }
-            else { const nextIndent = useful[pos + 1] && useful[pos + 1].marker === "- " ? useful[pos + 1].indent : indent + 2; const nested = parseBlock(pos + 1, nextIndent); obj[key] = nested[0]; pos = nested[1]; }
-            while (pos < useful.length && useful[pos].indent > indent) {
-              const extra = useful[pos];
-              const extraPair = extra.text.match(/^([^:]+):(?:\s*(.*))?$/);
-              if (!extraPair) { pos++; continue; }
-              const extraKey = extraPair[1].trim(); const extraVal = extraPair[2] || "";
-              if (extraVal === ">-" || extraVal === ">" || extraVal === "|-" || extraVal === "|") {
-                const block = []; let next = pos + 1;
-                while (next < useful.length && useful[next].indent > extra.indent) { block.push(useful[next].text.trim()); next++; }
-                obj[extraKey] = extraVal[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
-              } else if (extraVal) { obj[extraKey] = yamlScalar(extraVal); pos++; }
-              else { const nextIndent = useful[pos + 1] && useful[pos + 1].marker === "- " ? useful[pos + 1].indent : extra.indent + 2; const nested = parseBlock(pos + 1, nextIndent); obj[extraKey] = nested[0]; pos = nested[1]; }
-            }
-            out.push(obj); continue;
-          }
-          const pair = line.text.match(/^([^:]+):(?:\s*(.*))?$/);
-          if (!pair) { pos++; continue; }
-          const key = pair[1].trim(); const val = pair[2] || "";
-          if (val === ">-" || val === ">" || val === "|-" || val === "|") {
-            const block = []; let next = pos + 1;
-            while (next < useful.length && useful[next].indent > indent) { block.push(useful[next].text.trim()); next++; }
-            out[key] = val[0] === ">" ? block.join(" ") : block.join("\n"); pos = next;
-          } else if (val) { out[key] = yamlScalar(val); pos++; }
-          else { const nextIndent = useful[pos + 1] && useful[pos + 1].marker === "- " ? useful[pos + 1].indent : indent + 2; const nested = parseBlock(pos + 1, nextIndent); out[key] = nested[0]; pos = nested[1]; }
-        }
-        return [out, pos];
-      }
-      return parseBlock(0, useful[0] ? useful[0].indent : 0)[0];
+      return jsyaml.load(source, { schema: jsyaml.CORE_SCHEMA }) || {};
     }
 
     function cleanDisplayTitle(value, id) {
@@ -3440,6 +3362,10 @@
 
     async function loadAndRender() {
       clearErrors();
+      Promise.allSettled([loadKnowledgeLoop(), loadPromotionIndex()]).then(results => {
+        const failed = results.filter(result => result.status === "rejected").map(result => result.reason?.message || "알 수 없는 오류");
+        if (failed.length) showError("지식 흐름 일부 로드 실패: " + failed.join(" · "));
+      });
       statusEl.textContent = lastDoneItems.length ? "동기화 중..." : "로딩 중...";
       let intentsText = "";
       try { intentsText = await fetchTextWithFallback(SOURCES.intents, SOURCES.rawIntents); }
@@ -3500,10 +3426,7 @@
       // Archive 필터 재적용을 위해 최신 doneItems 보관
       lastDoneItems = doneItems;
       lastDoneSource = "INTENTS.yaml Archive";
-      Promise.allSettled([loadKnowledgeLoop(), loadPromotionIndex()]).then(results => {
-        const failed = results.filter(result => result.status === "rejected").map(result => result.reason?.message || "알 수 없는 오류");
-        if (failed.length) showError("지식 흐름 일부 로드 실패: " + failed.join(" · "));
-      });
+
 
       statusEl.textContent = "업데이트: " + new Date().toLocaleString("ko-KR");
     }

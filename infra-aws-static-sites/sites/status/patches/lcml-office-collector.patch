@@ -3322,3 +3322,266 @@ index a95b487..6f7550d 100644
 -- 
 2.43.0
 
+From b55fca4f273095d492bddda5a6accf189d8bce24 Mon Sep 17 00:00:00 2001
+From: shdkej <shdkej@gmail.com>
+Date: Sat, 28 Nov 2026 03:45:38 +0000
+Subject: [PATCH] Count missing daily reviews through yesterday in KST
+
+---
+ README.md                               |  8 +++
+ collector/collector.py                  | 66 ++++++++++++---------
+ collector/tests/test_collector.py       | 10 ++--
+ collector/tests/test_review_calendar.py | 78 +++++++++++++++++++++++++
+ 4 files changed, 128 insertions(+), 34 deletions(-)
+ create mode 100644 collector/tests/test_review_calendar.py
+
+diff --git a/README.md b/README.md
+index 0c5f887..b40a53e 100644
+--- a/README.md
++++ b/README.md
+@@ -16,6 +16,14 @@ Infinity Intent 원장은 `INTENTS.yaml`의 Backlog/Inbox/Active/Waiting을 읽
+ 
+ 공개 상태 피드는 `collector/systemd/system-dashboard-collector.timer`가 10분마다 수집합니다. 역할별 watcher 크론은 실행할 때마다 `role-watcher-executions.jsonl`에 시작·종료 시각, 실행 단계, 확인 항목, 결과와 오류를 기록하고, `agents-live.json`은 각 역할 카드에 최근 실행 로그를 최대 8건 공개합니다. 예약 크론의 설정 상세는 읽기 전용으로 공개하되, 프롬프트·명령어에서 환경파일 경로와 자격증명은 수집 단계에서 가립니다. 예약 크론 전체 실행 이력·원문 대화·자격증명은 공개 화면에 노출하지 않습니다.
+ 
++## L1 데일리 리뷰 판정
++
++2026-11-28 사용자 요청에 따라 한국 시간(KST)의 **어제까지** 연속으로 빠진 리뷰 날짜를 셉니다. `review.path`의 `YYYY-MM-DD-review.md` 날짜를 사용하며 파일 수정 시각으로 판정하지 않습니다. 어제 리뷰가 있으면 정상(`데일리 리뷰 어제 작성`), 그제가 마지막이면 1일째 없음·주의, 사흘 전이 마지막이면 2일째 없음·중단입니다. 아직 끝나지 않은 오늘은 누락 일수에 포함하지 않습니다.
++
++오늘 리뷰를 미리 작성해도 어제의 누락을 지우지 않습니다. 오늘·어제가 모두 있으면 `오늘 작성`·정상입니다. 오늘 파일만 있고 이전 기록이 전혀 없으면 어제 미작성 1일만 확인합니다. 기록 자체가 없거나 유효한 과거/오늘 날짜가 없으면 정상으로 만들지 않습니다. 미래 날짜·잘못된 파일명은 유효한 리뷰를 가리지 않도록 제외합니다.
++
++비공개 스냅샷의 `days_since_latest`는 실제 최신 작성일과 오늘의 차이를 유지하고, `days_missing`은 어제까지의 연속 누락 일수입니다. 공개 `agents-live.json.system.layers[l1]`의 상태·설명·사유가 같은 판정을 사용하며 리뷰 본문·헤드라인은 게시하지 않습니다. 기존 10분 타이머·L1 상태 시계열을 재사용하고 과거 관측을 소급 변경하지 않습니다. 검증은 `collector/tests/test_review_calendar.py`의 KST 자정·어제/그제·오늘 작성·잘못된 날짜 사례와 전체 수집기 테스트, 공개 전용 첫 게시와 실제 System L1 대조로 수행합니다. 소스 전달·운영 적용·복구는 아래 기존 Space 패치 경로를 따릅니다.
++
+ ## 공개 시계열
+ 
+ 같은 collector는 `metrics-history.json`에 System 4개 레이어·Flow·Agents 상태만 10분마다 기록하고 31일을 보존합니다. Status의 Monitoring 메뉴는 2026-11-27 사용자 요청으로 제거했습니다. CPU·메모리·디스크·네트워크·제품·비즈니스 수치의 중복 수집, Prometheus 과거 보강, Apify Threads·content-live 수집을 제거했습니다.
+diff --git a/collector/collector.py b/collector/collector.py
+index c4a85f4..1fbcac4 100644
+--- a/collector/collector.py
++++ b/collector/collector.py
+@@ -705,47 +705,48 @@ def collect_review(cfg):
+     root = cfg.get("workspace_root", "")
+     p = resolve_path(root, cfg.get("review", {}).get("path", ""))
+     files = sorted(p.glob("*-review.md")) if p.is_dir() else []
+-    if not files:
++    today = now_utc().astimezone(dt.timezone(dt.timedelta(hours=9))).date()
++    yesterday = today - dt.timedelta(days=1)
++    dated_files = []
++    for path in files:
++        try:
++            day = dt.date.fromisoformat(path.stem.removesuffix("-review"))
++        except ValueError:
++            continue
++        if day <= today:
++            dated_files.append((day, path))
++    if not dated_files:
+         return {
+             "latest": None,
+             "headline": None,
+             "status": "down",
+             "days_since_latest": None,
+-            "reason": "데일리 리뷰가 아직 없습니다",
++            "days_missing": None,
++            "reason": "데일리 리뷰가 아직 없습니다" if not files else "오늘까지의 리뷰 날짜를 확인하지 못했습니다",
+         }
+-    latest = files[-1]
++    latest_date, latest = max(dated_files)
+     headline = None
+     for line in latest.read_text().splitlines():
+         m = re.match(r"^헤드라인:\s*\**(.+?)\**\s*$", line)
+         if m:
+             headline = m.group(1).strip()
+             break
+-    latest_date = latest.stem.replace("-review", "")[:10]
+-    try:
+-        kst = dt.timezone(dt.timedelta(hours=9))
+-        days_since_latest = (now_utc().astimezone(kst).date() - dt.date.fromisoformat(latest_date)).days
+-    except ValueError:
+-        return {
+-            "latest": latest_date,
+-            "headline": headline,
+-            "status": "down",
+-            "days_since_latest": None,
+-            "reason": "최근 리뷰 날짜를 읽지 못했습니다",
+-        }
+-    if days_since_latest <= 1:
+-        status = "operational"
+-        reason = None
+-    elif days_since_latest == 2:
+-        status = "degraded"
+-        reason = "2일째 데일리 리뷰 없음"
++    days_since_latest = (today - latest_date).days
++    # Today is not due yet. A review for today cannot fill yesterday's gap.
++    completed_dates = [day for day, _ in dated_files if day <= yesterday]
++    days_missing = (yesterday - max(completed_dates)).days if completed_dates else 1
++    if days_missing == 0:
++        status, reason = "operational", None
++    elif days_missing == 1:
++        status, reason = "degraded", "1일째 데일리 리뷰 없음"
+     else:
+-        status = "down"
+-        reason = f"{days_since_latest}일째 데일리 리뷰 없음"
++        status, reason = "down", f"{days_missing}일째 데일리 리뷰 없음"
+     return {
+-        "latest": latest_date,
++        "latest": latest_date.isoformat(),
+         "headline": headline,
+         "status": status,
+         "days_since_latest": days_since_latest,
++        "days_missing": days_missing,
+         "reason": reason,
+     }
+ 
+@@ -1037,14 +1038,21 @@ def public_system(snapshot):
+     github = (snapshot.get("evidence") or snapshot.get("monitoring") or {}).get("github") or []
+     pdca = snapshot.get("pdca") or {}
+     intents = (snapshot.get("intents") or {}).get("counts") or {}
+-    l1_status, l1_reason = _l1_status_and_reason(snapshot)
+-    review_days = (snapshot.get("review") or {}).get("days_since_latest")
+-    if review_days is None:
++    review = snapshot.get("review") or {}
++    review_days = review.get("days_since_latest")
++    # Preserve compatibility with snapshots collected before days_missing existed.
++    missing_days = review.get("days_missing", max(0, review_days - 1) if review_days is not None else None)
++    if "days_missing" not in review and missing_days is not None:
++        review = {**review, "reason": f"{missing_days}일째 데일리 리뷰 없음" if missing_days else None}
++    l1_status, l1_reason = _l1_status_and_reason({**snapshot, "review": review})
++    if missing_days is None:
+         l1_detail = "데일리 리뷰 없음"
+-    elif review_days <= 0:
++    elif missing_days > 0:
++        l1_detail = f"데일리 리뷰 {missing_days}일째 없음"
++    elif review_days == 0:
+         l1_detail = "데일리 리뷰 오늘 작성"
+     else:
+-        l1_detail = f"데일리 리뷰 {review_days}일째 없음"
++        l1_detail = "데일리 리뷰 어제 작성"
+     watcher_jobs = _watcher_jobs(crons)
+     l2_status = worst_status([c.get("status") for c in crons])
+     l2_reason = _l2_reason(crons)
+diff --git a/collector/tests/test_collector.py b/collector/tests/test_collector.py
+index 2c229bc..820aff5 100644
+--- a/collector/tests/test_collector.py
++++ b/collector/tests/test_collector.py
+@@ -280,7 +280,7 @@ class TestReviewStatus(unittest.TestCase):
+             (d / f"{two_days_ago.isoformat()}-review.md").write_text("헤드라인: **기록**\n")
+             out = collector.collect_review({"workspace_root": tmp, "review": {"path": "daily-reviews"}})
+             self.assertEqual(out["status"], "degraded")
+-            self.assertEqual(out["reason"], "2일째 데일리 리뷰 없음")
++            self.assertEqual(out["reason"], "1일째 데일리 리뷰 없음")
+ 
+     def test_three_day_old_review_is_down(self):
+         import datetime as dt
+@@ -292,7 +292,7 @@ class TestReviewStatus(unittest.TestCase):
+             (d / f"{three_days_ago.isoformat()}-review.md").write_text("헤드라인: **기록**\n")
+             out = collector.collect_review({"workspace_root": tmp, "review": {"path": "daily-reviews"}})
+             self.assertEqual(out["status"], "down")
+-            self.assertEqual(out["reason"], "3일째 데일리 리뷰 없음")
++            self.assertEqual(out["reason"], "2일째 데일리 리뷰 없음")
+ 
+ 
+ class TestBacklogs(unittest.TestCase):
+@@ -664,14 +664,14 @@ class TestPublicPublish(unittest.TestCase):
+             "intents": {"counts": {}}, "layer_checks": [],
+             "review": {
+                 "latest": "2026-10-15", "status": "degraded",
+-                "days_since_latest": 2, "reason": "2일째 데일리 리뷰 없음",
++                "days_since_latest": 2, "days_missing": 1, "reason": "1일째 데일리 리뷰 없음",
+             },
+         }
+         out = collector.public_system(snapshot)
+         l1 = next(layer for layer in out["layers"] if layer["key"] == "l1")
+         self.assertEqual(l1["state"], "warn")
+-        self.assertEqual(l1["detail"], "데일리 리뷰 2일째 없음")
+-        self.assertIn("2일째 데일리 리뷰 없음", l1["reason"])
++        self.assertEqual(l1["detail"], "데일리 리뷰 1일째 없음")
++        self.assertIn("1일째 데일리 리뷰 없음", l1["reason"])
+ 
+     def test_daily_review_status_ignores_stale_layer_failure(self):
+         snapshot = {
+diff --git a/collector/tests/test_review_calendar.py b/collector/tests/test_review_calendar.py
+new file mode 100644
+index 0000000..3f3cd47
+--- /dev/null
++++ b/collector/tests/test_review_calendar.py
+@@ -0,0 +1,78 @@
++import datetime as dt
++import tempfile
++import unittest
++from pathlib import Path
++from unittest.mock import patch
++
++import collector
++
++
++class TestReviewCalendar(unittest.TestCase):
++    def collect(self, dates, now="2026-11-28T03:00:00+00:00"):
++        with tempfile.TemporaryDirectory() as root:
++            for date in dates:
++                (Path(root) / f"{date}-review.md").write_text("헤드라인: **테스트 기록**\n")
++            with patch.object(collector, "now_utc", return_value=dt.datetime.fromisoformat(now)):
++                review = collector.collect_review({"workspace_root": root, "review": {"path": "."}})
++                l1 = collector.public_system({"review": review})["layers"][0]
++        return review, l1
++
++    def test_yesterday_is_healthy_and_does_not_claim_a_missing_day(self):
++        review, l1 = self.collect(["2026-11-27"])
++        self.assertEqual(review["days_missing"], 0)
++        self.assertEqual(l1["state"], "ok")
++        self.assertEqual(l1["detail"], "데일리 리뷰 어제 작성")
++        self.assertNotIn("reason", l1)
++
++    def test_completed_days_only_count_towards_missing_streak(self):
++        for date, days, state in [("2026-11-26", 1, "warn"), ("2026-11-25", 2, "bad")]:
++            with self.subTest(date=date):
++                review, l1 = self.collect([date])
++                self.assertEqual(review["days_missing"], days)
++                self.assertEqual(l1["state"], state)
++                self.assertEqual(l1["detail"], f"데일리 리뷰 {days}일째 없음")
++                self.assertIn(f"{days}일째 데일리 리뷰 없음", l1["reason"])
++
++    def test_today_does_not_hide_a_missing_yesterday(self):
++        for dates in [["2026-11-26", "2026-11-28"], ["2026-11-28"]]:
++            with self.subTest(dates=dates):
++                review, l1 = self.collect(dates)
++                self.assertEqual(review["days_since_latest"], 0)
++                self.assertEqual(review["days_missing"], 1)
++                self.assertEqual(l1["state"], "warn")
++                self.assertEqual(l1["detail"], "데일리 리뷰 1일째 없음")
++
++    def test_today_and_yesterday_are_healthy(self):
++        review, l1 = self.collect(["2026-11-27", "2026-11-28"])
++        self.assertEqual(review["days_missing"], 0)
++        self.assertEqual(l1["state"], "ok")
++        self.assertEqual(l1["detail"], "데일리 리뷰 오늘 작성")
++
++    def test_korean_midnight_starts_the_next_missing_day(self):
++        before, _ = self.collect(["2026-11-27"], "2026-11-28T14:59:59+00:00")
++        after, l1 = self.collect(["2026-11-27"], "2026-11-28T15:00:00+00:00")
++        self.assertEqual(before["days_missing"], 0)
++        self.assertEqual(after["days_missing"], 1)
++        self.assertEqual(l1["state"], "warn")
++
++    def test_future_or_invalid_dates_cannot_hide_a_missed_review(self):
++        review, l1 = self.collect(["2026-11-26", "2026-11-29", "invalid"])
++        self.assertEqual(review["latest"], "2026-11-26")
++        self.assertEqual(l1["detail"], "데일리 리뷰 1일째 없음")
++        for dates in [[], ["invalid"], ["2026-11-29"]]:
++            with self.subTest(dates=dates):
++                review, l1 = self.collect(dates)
++                self.assertEqual(l1["state"], "bad")
++                self.assertIsNone(review["days_missing"])
++
++    def test_previous_snapshot_detail_and_reason_use_the_same_missing_days(self):
++        review = {"latest": "2026-11-26", "days_since_latest": 2,
++                  "status": "degraded", "reason": "2일째 데일리 리뷰 없음"}
++        l1 = collector.public_system({"review": review})["layers"][0]
++        self.assertEqual(l1["detail"], "데일리 리뷰 1일째 없음")
++        self.assertIn("1일째 데일리 리뷰 없음", l1["reason"])
++        self.assertEqual(review["reason"], "2일째 데일리 리뷰 없음")
++
++
++if __name__ == "__main__":
++    unittest.main()
+-- 
+2.43.0
+

@@ -45,6 +45,12 @@ Space Status 대시보드와 UI 재질 테스트 화면을 보관하는 정적 �
 
 배포 후 테스트 화면은 `https://status.aws.shdkej.com/ui-material-test.html`에서 확인합니다.
 
+### L1 — 어제까지의 리뷰 작성 여부
+
+2026-11-28 사용자 요청으로 한국 시간(KST)의 어제까지 연속 미작성한 날짜를 표시합니다. 어제 리뷰가 있으면 `데일리 리뷰 어제 작성`·정상, 그제가 마지막이면 `1일째 없음`·주의, 사흘 전이 마지막이면 `2일째 없음`·중단입니다. 오늘은 누락 일수에서 제외하며, 오늘 리뷰를 먼저 작성해도 어제 미작성은 남습니다. 날짜는 기존 리뷰 파일명 기준입니다.
+
+판정은 ARM 수집기의 `collect_review`와 공개 `public_system`이 소유하며 System 화면은 기존 `agents-live.json` L1을 그대로 표시합니다. 기존 10분 타이머와 게시 경로를 사용합니다. 변경은 `patches/lcml-office-collector.patch`에 보존하며, 날짜 경계와 전체 수집기 테스트 → 최신 패치 운영 적용 → 공개 전용 게시 → 공개 피드·실제 L1 확인 순서로 검증합니다. 상세·무기록 처리·복구 기준은 수집기 README의 L1 절을 따릅니다. 과거 시계열을 다시 쓰거나 리뷰 파일을 수정하지 않습니다.
+
 ### L2 운영 집계 — ARM 단일 게시자
 
 2026-11-28부터 Notion·Linear 집계는 `oracle-arm-2`의 기존 사용자 `system-dashboard-collector.timer`가 게시합니다. 실제 `Triggers=system-dashboard-collector.service`, 작업 경로는 위 `system-dashboard/collector/`, 진입점은 `/usr/bin/python3 .../collector/collector.py`입니다. 기존 `OnCalendar=*:0/10`, `Persistent=true`와 S3 버킷 `static-status-aws-shdkej-com`을 재사용합니다. SAM-PC의 제거된 수집기는 재설치하지 않습니다.
